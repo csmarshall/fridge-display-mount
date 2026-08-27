@@ -43,7 +43,7 @@ PRICES = [
 ]
 
 DIAGRAM_INFO = {
-    "approval_sheet.svg": ("Approval sheet", "For Veronica. Three views plus plain-language facts.", "key"),
+    "approval_sheet.svg": ("Approval sheet", "For significant-other review. Three views plus plain-language facts.", "key"),
     "bracket_preview.svg": ("Technical flat pattern", "The cut file, annotated. Reference only.", "key"),
     "magnet_pattern_study.svg": ("Magnet layout study", "Does staggering help? Closed-form comparison.", "key"),
     "spacing_explainer.svg": ("Magnet spacing floor", "Why a bigger disc runs out of plate.", "key"),
@@ -69,6 +69,9 @@ DIAGRAM_INFO = {
     "stack_detail.svg": ("Fastener sandwich at one magnet",
                         "Every stack shape that fits, in true section — magnet | plate | washer | "
                         "nut, and whether the fixed 1/2 in stud still reaches.", "key"),
+    "magnet_primer.svg": ("Why not just magnets?",
+                         "Pull vs shear vs peel, and why a 175 lbf magnet delivers 12 lbf where "
+                         "it counts. Start here if the hook looks like overkill.", "key"),
     "fastener_matrix.svg": ("Every fastener permutation",
                            "All 39 nut x washer x threadlocker combinations with the arithmetic "
                            "shown: plate + washer + nut vs stud.", "key"),

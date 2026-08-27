@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
 import generate_bracket as G
 from generate_bracket import (FINISH, MATERIAL, SPECIFIED_LOCKER, SPECIFIED_NUT, SPECIFIED_WASHER,
                               BracketParams, part_no, stack_permutations)
@@ -30,7 +30,7 @@ LOG = logging.getLogger("stack")
 IN = G.MM_PER_INCH
 INK, MUTED, RULE = "#14181c", "#6b757e", "#c9d1d8"
 OK, BAD, MARG = "#0a8f6f", "#b00020", "#b8860b"
-C_FRIDGE, C_MAGNET, C_PLATE = "#dfe3e6", "#e7b6dd", "#b9c2c9"
+C_FRIDGE, C_MAGNET, C_PLATE = FRIDGE_SIDE, "#e7b6dd", "#b9c2c9"
 C_WASHER, C_NUT, C_STUD = "#cdd5db", "#9aa6ae", "#c9a227"
 C_BEAR = "#f0a202"
 

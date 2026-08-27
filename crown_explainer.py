@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_INK, ON_FRIDGE_MUTED
 from generate_bracket import MATERIAL, BracketParams, crown_rise_at, flat_gap
 
 LOG = logging.getLogger("crown")
@@ -72,9 +72,9 @@ def render(path: Path, p: BracketParams) -> None:
     surf = " ".join(f"{a:.1f},{b:.1f}" for a, b in pts)
     out.append(f'<path d="M {pts[0][0]:.1f} {pts[0][1] + SLAB_PX:.1f} L {surf} '
                f'L {pts[-1][0]:.1f} {pts[-1][1] + SLAB_PX:.1f} Z" '
-               f'fill="#dfe3e6" stroke="#8a9199" stroke-width="1.4"/>')
-    out.append(_t(x(reach/2), y(0) + 34, "FRIDGE TOP — domed for rigidity", 9.5, fill="#6a737b"))
-    out.append(_t(x(reach/2), y(0) + 48, f"(dome shown {VEXAG:.0f}x exaggerated)", 8.5, fill="#8a9199"))
+               f'fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.4"/>')
+    out.append(_t(x(reach/2), y(0) + 34, "FRIDGE TOP — domed for rigidity", 9.5, fill=ON_FRIDGE_INK))
+    out.append(_t(x(reach/2), y(0) + 48, f"(dome shown {VEXAG:.0f}x exaggerated)", 8.5, fill=ON_FRIDGE_MUTED))
 
     # rigid arm: straight, touching at the inboard tip, lifted at the bend end
     arm_tip_y = y(crown_at_tip)
@@ -147,7 +147,7 @@ def render(path: Path, p: BracketParams) -> None:
         s2 = 9.0
         out.append(_t(bx + 130, py0, title, 11.5, anchor="middle", fill=colour, weight="bold"))
         # steel
-        out.append(f'<rect x="{bx:.1f}" y="{base:.1f}" width="260" height="16" fill="#dfe3e6" '
+        out.append(f'<rect x="{bx:.1f}" y="{base:.1f}" width="260" height="16" fill="{FRIDGE_SIDE}" '
                    f'stroke="#8a9199" stroke-width="1.2"/>')
         out.append(_t(bx + 130, base + 30, "fridge steel", 9, fill="#6a737b"))
         stand = max(padh, magh)

@@ -58,3 +58,50 @@ def kg_lb(kg: float, dp: int = 2) -> str:
 
 def area_cm2_in2(cm2: float) -> str:
     return f"{cm2:.0f} cm² ({cm2 / 6.4516:.0f} in²)"
+
+
+# --- Fridge palette --------------------------------------------------------------------------
+# ONE home for what the appliance looks like. "#dfe3e6" was hardcoded in ten separate modules,
+# so recolouring the fridge was a ten-file edit and drift was guaranteed.
+#
+# Taken from a photograph of the actual unit (2026-08-27), NOT from a spec sheet. The Samsung
+# RS23A500ASR's "ASR" suffix is Fingerprint Resistant Stainless Steel, which describes the DOORS
+# only. The SIDE PANEL — the face this whole bracket hangs on — is a dark, matte, near-black
+# charcoal. Earlier revisions of these drawings showed it as pale grey, which was wrong.
+#
+# TUNE HERE. These are eyeballed from a photo under kitchen lighting, not measured colour values.
+# If a drawing looks wrong against the real appliance, change these and every sheet follows.
+FRIDGE_SIDE = "#3a3734"          # dark matte charcoal side panel — the mounting face
+FRIDGE_SIDE_EDGE = "#1f1d1b"     # its outline
+FRIDGE_TOP = "#43403c"           # the top, catching more light than the vertical side
+FRIDGE_HINGE_COVER = "#1c1c1c"   # the black plastic hinge cover
+FRIDGE_DOOR = "#b3b7b9"          # stainless door face, flat fallback
+FRIDGE_DOOR_EDGE = "#717577"     # its outline
+FRIDGE_DOOR_HI = "#c9cdcf"       # brushed highlight
+FRIDGE_DOOR_LO = "#989ca0"       # brushed shadow
+
+# Annotation ink for anything drawn ON TOP of the fridge. The sheets were built when the fridge
+# was pale, so they annotate it in near-black; on a charcoal panel that is invisible. Any label
+# that lands on the appliance must use these instead.
+ON_FRIDGE_INK = "#eef1f2"
+ON_FRIDGE_MUTED = "#b0b6b9"
+
+_STAINLESS_ID = "brushedSteel"
+
+
+def stainless_defs(vertical: bool = False) -> str:
+    """A <defs> block for a brushed-stainless fill, referenced via STAINLESS_FILL.
+
+    Stainless reads as metal because of the banding across the brush direction, not because of
+    its average colour — a flat grey rectangle just looks like grey plastic.
+    """
+    x2, y2 = ("0%", "100%") if vertical else ("100%", "0%")
+    return (f'<defs><linearGradient id="{_STAINLESS_ID}" x1="0%" y1="0%" x2="{x2}" y2="{y2}">'
+            f'<stop offset="0%" stop-color="{FRIDGE_DOOR_HI}"/>'
+            f'<stop offset="38%" stop-color="{FRIDGE_DOOR}"/>'
+            f'<stop offset="52%" stop-color="{FRIDGE_DOOR_HI}"/>'
+            f'<stop offset="100%" stop-color="{FRIDGE_DOOR_LO}"/>'
+            f'</linearGradient></defs>')
+
+
+STAINLESS_FILL = f"url(#{_STAINLESS_ID})"

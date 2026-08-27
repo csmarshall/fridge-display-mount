@@ -96,8 +96,8 @@ def person(x_ft, y_floor, scale, height_mm=1727.0, fill="#dfe5ea"):
 
 
 # ---- chore-tracker UI drawn on the screen -----------------------------------------------------
-# The real board. Task on the left, who owns it on the right — which is why "Veronica - Looking
-# Pretty" reads as ("Looking pretty", "Veronica") here rather than the other way round.
+# The real board. Task on the left, who owns it on the right — which is why a row reads as
+# ("Looking pretty", "Sam") here rather than the other way round.
 EYE_FRACTION = 0.935
 STATURES = ((1930.0, "6 ft 4 in"), (1549.0, "5 ft 1 in"))   # the band the brief asks us to serve
 
@@ -105,7 +105,7 @@ GHOST_COLS = ("#e0793a", "#8e6bd6", "#2f8fd6", "#d64f7a")
 
 CHORES = [("Dishes", "Harper", 1),
           ("Garbage", "Miles", 0),
-          ("Looking pretty", "Veronica", 1),
+          ("Looking pretty", "Sam", 1),
           ("Grunt work", "Charles", 0),
           ("Dogs", "Chloe", 1)]
 

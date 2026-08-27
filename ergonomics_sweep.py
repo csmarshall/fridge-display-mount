@@ -18,7 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import (LOG_LEVELS, configure_logging, FRIDGE_SIDE,
+                            FRIDGE_SIDE_EDGE, ON_FRIDGE_MUTED)
 from generate_bracket import DISPLAY, BracketParams
 
 LOG = logging.getLogger("ergonomics")
@@ -139,10 +140,10 @@ def render(path: Path, necks: Sequence[float], params: BracketParams, fridge_hei
         fridge_px = FRIDGE_DEPTH_MM * scale
 
         out.append(f'<rect x="{px:.2f}" y="{y(fridge_height):.2f}" width="{fridge_px:.2f}" '
-                   f'height="{fridge_height * scale:.2f}" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>')
-        out.append(_text(px + fridge_px / 2, y(fridge_height * 0.12), "Samsung RS23A500ASR", size=9, fill="#6a737b"))
+                   f'height="{fridge_height * scale:.2f}" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1"/>')
+        out.append(_text(px + fridge_px / 2, y(fridge_height * 0.12), "Samsung RS23A500ASR", size=9, fill=ON_FRIDGE_MUTED))
         out.append(_text(px + fridge_px / 2, y(fridge_height * 0.12) + 12, "(side panel, face on)",
-                         size=8, fill="#8a9199"))
+                         size=8, fill=ON_FRIDGE_MUTED))
 
         # bracket: arm hooked over the top, neck, body
         arm_px = params.arm_len * scale

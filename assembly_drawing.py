@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
 import generate_bracket as G
 from generate_bracket import (
     DISPLAYS, MATERIAL, BracketParams, build_geometry, derive_flat, set_display,
@@ -168,7 +168,7 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     # ---- depth section ------------------------------------------------------------
     sx0 = X(params.body_w) + 230
     ssc = 2.9
-    stack = [("FRIDGE PANEL", 6.0, "#dfe3e6", "#8a9199"),
+    stack = [("FRIDGE PANEL", 6.0, FRIDGE_SIDE, FRIDGE_SIDE_EDGE),
              ("magnet", params.magnet_standoff, "#2e9e5b", "#1a7a44"),
              ("plate", MATERIAL.thickness, "#8a9199", "#333"),
              ("rear box", d.rear_box_depth, "#c0169a", "#8c1070"),

@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
 from generate_bracket import (
     DISPLAY,
     LBF_PER_KG,
@@ -107,7 +107,7 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
 
         depth_px = FRIDGE_DEPTH_MM * scale
         out.append(f'<rect x="{px:.2f}" y="{margin_t:.2f}" width="{panel_w - 40:.2f}" '
-                   f'height="{depth_px:.2f}" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>')
+                   f'height="{depth_px:.2f}" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1"/>')
         for zone, label, y0 in ((HINGE_CAP_ZONE_MM, "hinge caps", 0.0),
                                 (REAR_STEPDOWN_ZONE_MM, "cable / waterline step-down",
                                  FRIDGE_DEPTH_MM - REAR_STEPDOWN_ZONE_MM)):

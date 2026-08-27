@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
 from generate_bracket import DISPLAY, MM_PER_INCH, BracketParams
 
 LOG = logging.getLogger("orient")
@@ -82,7 +82,7 @@ def render(path: Path, p: BracketParams) -> None:
 
         # cabinet
         out.append(f'<rect x="{X(0):.1f}" y="{Y(height):.1f}" width="{depth*sc:.1f}" '
-                   f'height="{height*sc:.1f}" fill="#dfe3e6" stroke="#8a9199" stroke-width="1.4"/>')
+                   f'height="{height*sc:.1f}" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.4"/>')
         out.append(_t(X(depth/2), Y(height*0.12), "SIDE PANEL", 11, fill="#6a737b"))
         out.append(_t(X(depth/2), Y(height*0.12) + 15, f"{depth:.0f} mm deep x {height:.0f} mm tall",
                       9, fill="#8a9199"))

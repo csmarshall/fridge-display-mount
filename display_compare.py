@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
 from generate_bracket import DISPLAYS, MM_PER_INCH, BracketParams, set_display
 import generate_bracket as G
 
@@ -77,7 +77,7 @@ def render(path: Path, p: BracketParams, neck: float) -> None:
                       11, fill="#2e9e5b", weight="bold"))
 
         out.append(f'<rect x="{X(0):.1f}" y="{Y(height):.1f}" width="{depth*sc:.1f}" '
-                   f'height="{height*sc:.1f}" fill="#dfe3e6" stroke="#8a9199" stroke-width="1.4"/>')
+                   f'height="{height*sc:.1f}" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.4"/>')
         out.append(_t(X(depth/2), Y(height*0.09), "SIDE PANEL", 10.5, fill="#6a737b"))
         out.append(_t(X(6), Y(height) + 16, "FRONT", 9, anchor="start", fill="#6a737b", weight="bold"))
         out.append(_t(X(depth-6), Y(height) + 16, "BACK", 9, anchor="end", fill="#6a737b", weight="bold"))

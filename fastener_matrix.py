@@ -117,11 +117,11 @@ def render(path: Path, p: BracketParams) -> None:
         y += 6
         o.append(f'<rect x="{x0:.1f}" y="{y - 1:.1f}" width="{W - 40 - x0:.1f}" '
                  f'height="{rowh - 2:.1f}" fill="{colour}" fill-opacity="0.10"/>')
-        o.append(_t(x0 + 8, y + 13, f"{title} — {len(members)}", 11.5, anchor="start",
-                    weight="bold", fill=colour))
-        # The group title varies in length, so the blurb cannot sit at a fixed x.
-        o.append(_t(x0 + 26 + len(title) * 7.2, y + 13, blurb, 10, anchor="start",
-                    fill=MUTED))
+        # Measure the string that is ACTUALLY DRAWN, count suffix included. An earlier fix used
+        # len(title) alone and still collided, because the "— 11" is appended at draw time.
+        head = f"{title} — {len(members)}"
+        o.append(_t(x0 + 8, y + 13, head, 11.5, anchor="start", weight="bold", fill=colour))
+        o.append(_t(x0 + 24 + len(head) * 6.9, y + 13, blurb, 10, anchor="start", fill=MUTED))
         y += rowh + 2
 
         for r in members:

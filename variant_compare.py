@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
 from generate_bracket import MATERIAL, BracketParams, crown_rise_at, flat_gap
 
 LOG = logging.getLogger("variants")
@@ -79,7 +79,7 @@ def render(path: Path, params: BracketParams) -> None:
     out.append(f'<path d="M {sx(top_span):.2f} {sy(side_span):.2f} L {sx(top_span):.2f} '
                f'{crown_pts[-1][1]:.2f} L {body} L {sx(rf):.2f} {sy(0):.2f} '
                f'A {rf * scale:.2f} {rf * scale:.2f} 0 0 1 {sx(0):.2f} {sy(rf):.2f} '
-               f'L {sx(0):.2f} {sy(side_span):.2f} Z" fill="#dfe3e6" stroke="#8a9199" stroke-width="1.4"/>')
+               f'L {sx(0):.2f} {sy(side_span):.2f} Z" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.4"/>')
     out.append(_text(sx(top_span / 2), sy(side_span * 0.55), "REFRIGERATOR", size=12, fill="#6a737b"))
     out.append(_text(sx(top_span / 2), sy(side_span * 0.55) + 16,
                      f"top crowned {params.crown_rise:.0f} mm · corner R{rf:.0f} mm", size=9, fill="#8a9199"))

@@ -23,6 +23,8 @@ import ezdxf
 from ezdxf.math import bulge_to_arc
 
 from bracket_common import (
+    FRIDGE_SIDE,
+    FRIDGE_SIDE_EDGE,
     INSUNITS_MILLIMETERS,
     LOG_LEVELS,
     REQUIRED_LAYER,
@@ -2272,7 +2274,7 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
     out.append(
         f'<path d="M {sx(-fridge_w):.2f} {sy(0):.2f} H {sx(-rf):.2f} '
         f'A {rf * scale:.2f} {rf * scale:.2f} 0 0 1 {sx(0):.2f} {sy(rf):.2f} '
-        f'V {sy(fridge_h):.2f} H {sx(-fridge_w):.2f} Z" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>'
+        f'V {sy(fridge_h):.2f} H {sx(-fridge_w):.2f} Z" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1"/>'
     )
     out.append(_svg_text(sx(-fridge_w / 2), sy(fridge_h * 0.78), "REFRIGERATOR", size=10, fill="#6a737b"))
     out.append(_svg_text(sx(-fridge_w / 2), sy(fridge_h * 0.78) + 14,
