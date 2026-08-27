@@ -33,11 +33,21 @@ SIZE_RE = re.compile(r'<svg[^>]*?\bwidth="([\d.]+)"[^>]*?\bheight="([\d.]+)"', r
 
 # Measured at app.sendcutsend.com on this date. Prices are observations, not derived values, so
 # they live here with their date attached rather than pretending to be computed.
-PRICE_DATE = "2026-08-25"
+#
+# RE-QUOTED 2026-08-27 for the .188 in build. The old table below was the .119 in quote and sat on
+# a page that declared .188 settled — every downstream card that reasons from a price (vents,
+# lightening, reach ladder) was arguing from a part that is no longer being made.
+PRICE_DATE = "2026-08-27"
 
 # McMaster 3506K67 unit price, qty 1. An observation with a date, not a derived value.
 MAGNET_UNIT_USD = 23.92
 PRICES = [
+    ("reach180 (AS BUILT, .188 in)", "310 x 738.8", "$112.50", "$126.71", "$197.07"),
+]
+# Only the as-built variant was re-quoted at .188 in. The .119 in ladder below is kept because the
+# reach-cost and vent-cost cards are derived from it, and those RATIOS still hold even though the
+# absolute figures do not. It must never be presented as a current price.
+PRICES_SUPERSEDED_119 = [
     ("reach130 (short)", "310 x 687", "$96.70", "$108.47", "$174.30"),
     ("reach180 (long)", "310 x 737", "$101.04", "$112.81", "$182.54"),
 ]
@@ -49,15 +59,16 @@ DIAGRAM_INFO = {
     "spacing_explainer.svg": ("Magnet spacing floor", "Why a bigger disc runs out of plate.", "key"),
     "assembly_drawing.svg": ("Assembly, 23.8in", "Display and rear box as transparent overlays.", "detail"),
     "assembly_drawing_27in.svg": ("Assembly, 27in", "Same bracket, larger panel.", "detail"),
-    "ergonomics_sweep.svg": ("Ergonomics sweep — SUPERSEDED",
-                            "Rebuilt 2026-08-27 on the Samsung RS23A500ASR case height (1743 mm); it "
-                            "the built neck (257) is not among its panels.", "study"),
-    "arm_width_sweep.svg": ("Arm width sweep — SUPERSEDED",
-                           "Rebuilt 2026-08-27 on the Samsung 610 mm counter-depth top and the MEASURED "
-                           "610 mm with a 406 mm window; magnets derate to 61.25 lbf.", "study"),
+    "ergonomics_sweep.svg": ("Ergonomics sweep",
+                            "Mounting height vs neck length, on the Samsung 1743 mm case height. "
+                            "Note the built neck (257 mm) is not one of the four panels — they "
+                            "bracket it.", "study"),
+    "arm_width_sweep.svg": ("Arm width sweep",
+                           "Arm width vs hold-down on the Samsung 610 mm counter-depth top, "
+                           "against the MEASURED 406 mm clear window.", "study"),
     "thickness_study.svg": ("Thickness study — SUPERSEDED",
                            "ALUMINIUM-era: highlights 0.187 in 5052 at 5.89 kg. The build is "
-                           "A36 steel 0.119 in at 3.71 kg. See docs/PRICE-STUDY.md instead.",
+                           "A36 steel 0.187 in at 5.81 kg. See docs/PRICE-STUDY.md instead.",
                            "study"),
     "variant_compare.svg": ("Variant comparison", "The reach variants side by side.", "study"),
     "crown_explainer.svg": ("Crown explainer", "Why the pad budget is a sum.", "study"),
@@ -179,14 +190,28 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     world = A.World(p, G.DISPLAY, "left")
     rows = A.magnet_rows(geom)
     arm_offs = A.arm_magnet_offsets(p)
-    let_go = A.let_go_lbf(p, world, rows, arm_offs, rep["magnet_derated_pull_lbf"])
-    # ONE model for "how hard to pull off". let_go_lbf said 178 while force_table
-    # said 146 for the same grab, and the page was showing both.
+    # ONE model for "how hard to pull off" — SETTLED 2026-08-27. approval_sheet.let_go_lbf said
+    # 178 lbf while force_table said 146 for the SAME grab, and the page showed both on different
+    # cards. force_table is canonical: it is what the approval sheet and "The numbers" row already
+    # quote, and it is the more conservative of the two. let_go_lbf is no longer called from here.
     import force_table as _ft
-    weakest = _ft.forces(n_body, n_arm, p, rep)["grab the BOTTOM edge and pull"]
+    _ft_forces = _ft.forces(n_body, n_arm, p, rep)
+    weakest = _ft_forces["grab the BOTTOM edge and pull"]
+    let_go = weakest
     # Force-by-direction, computed rather than transcribed: these figures moved by more than 2x
     # when the magnet SKU changed, and the page carried the old ones for a while without noticing.
-    detach_modes, _detach_meta = detach_study.modes(p)
+    # Was detach_study.modes(p), which is a THIRD model and disagreed with both of the others
+    # (299 vs 245/306 for the middle grab). Derived from force_table so one function answers
+    # "how hard to pull it off" everywhere on this page.
+    # Why each direction differs, so the card explains itself rather than listing bare numbers.
+    _WHY = {
+        "grab the BOTTOM edge and pull": "the easiest place to grab, so the honest figure",
+        "grab the MIDDLE and pull": "shorter lever than the bottom edge",
+        "grab the TOP edge and pull": "pulling almost straight into the magnets",
+    }
+    detach_modes = [(k, None, v, _WHY.get(k, "")) for k, v in _ft_forces.items()
+                    if k in _WHY]
+    _detach_meta = None
 
     S: list[Section] = []
 
@@ -194,9 +219,9 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
                      "decisions", items=[
         Item("d-magnets",
              "Magnet layout and count — the four corners are provably optimal",
-             "Exhaustive search, 1.25M layouts, under your margins (12 mm of plate beyond every "
-             "disc = 19x the 0.63 mm tolerance stack; 6 mm between adjacent discs). Result: the "
-             "FOUR CORNERS at inset 30 are the single best positions on the plate — 43.4 units of "
+             "Exhaustive search, 1.25M layouts, under your margins (7.99 mm of plate beyond every "
+             "disc = 12.7x the 0.63 mm tolerance stack; 6 mm between adjacent discs). Result: the "
+             "FOUR CORNERS at inset 32 are the single best positions on the plate — 43.4 units of "
              "any-angle attachment per magnet, more than any other arrangement. Going 4 -> 8 body "
              "buys +97% attachment for +100% magnets: essentially linear, 1.7% LESS efficient per "
              "magnet. There is no knee. Symmetric counts are 4/8/12 only — the centre vent and the "
@@ -263,13 +288,13 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "Charles confirmed the viewing height looks right on the actual fridge. "
              "Adjustable with --screen-centre-height if that ever changes.", "settled"),
         Item("d-thickness",
-             "Plate thickness — SETTLED at 0.188 in (4.75 mm) HRPO",
+             "Plate thickness — SETTLED at 0.187 in / 4.75 mm HRPO (SendCutSend list it as .188)",
              f"Chosen for heft and margin, NOT for stiffness you can feel: plate flex under a "
              f"touch is 0.016 mm here against 0.064 mm at 0.119 in, and neither is perceptible. "
              f"What it buys is {rep['bracket_mass_kg']:.2f} kg instead of 3.71 kg, plus the best "
              f"$/kg and stiffness-per-dollar in the material sweep. Hot-rolled is cheaper stock "
              f"than cold-rolled, which is why .188 HRPO undercuts .135 CRS despite being thicker.",
-             "+$11.71 over the 0.119 build. Commercial TV mounts run 1.8-2.7 mm; this is 4.75 mm.",
+             "+$11.21 over the 0.119 build. Commercial TV mounts run 1.8-2.7 mm; this is 4.75 mm.",
              "settled"),
         Item("d-coat",
              "Powder coat at SendCutSend, or spray it yourself",
@@ -292,7 +317,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "therefore the screen height.", "", "blocked"),
         Item("m-magnetic", "Is the side panel actually magnetic? — YES, measured 2026-08-26",
              "Checked on the actual unit: the TOP and the SIDES are both magnetic. That confirms "
-             "the arm retention magnets will do their job, so all six are fitted in the first "
+             "the arm retention magnets will do their job, so all eight are fitted in the first "
              "order. It also demotes the non-magnetic-panel fallback behind the 190 mm arm width "
              "from a design driver to free insurance.",
              "The hook carries all the weight either way — this was never load-bearing.", "settled"),

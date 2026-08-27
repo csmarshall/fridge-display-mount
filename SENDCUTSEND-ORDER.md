@@ -1,6 +1,14 @@
 # SendCutSend Order Package — Fridge-Side Display Mount
 
-**A36/1008 mild steel, 0.119" (3.02 mm), portrait, painted matte black.**
+> **REBUILT 2026-08-27 for the 0.187 in (.188) build.** Every figure in this document was
+> previously on the superseded 0.119 in part — thickness, bend deduction, blank size, neck length,
+> magnet spacing, stress margins and prices. It also described magnet screws threading into a
+> female boss; the specified magnet (McMaster 3506K67) is a **5/16"-18 MALE STUD** and there are no
+> magnet screws at all. Cross-check anything surprising against `bracket_params.json`, which the
+> generator writes, rather than against this prose.
+
+
+**A36/1008 mild steel, 0.187" (4.75 mm), portrait, painted matte black.**
 Three variants sharing one body, one bend position and one hole pattern. Figures read from
 `variants/bracket_params_*.json`; prices are live quotes from 2026-08-25. Regenerate with
 `./build_variants.sh` and re-read this document after any change.
@@ -13,14 +21,14 @@ monitor — the bracket is geometrically identical for either.
 | | **A** `reach130` | **B** `reach180` | **C** `reach180_neck212` |
 |---|---|---|---|
 | Arm reach across the fridge top | 130 mm | **180 mm** | **180 mm** |
-| Neck (drop) | 262 mm | 262 mm | **212 mm** |
+| Neck (drop) | 257 mm | 257 mm | **212 mm** |
 | Flat pattern | 310 x **687.0** | 310 x **737.0** | 310 x **687.0** |
 | Screen centre above floor | **1331 mm** | **1331 mm** | **1381 mm** |
 | Part mass | **3.45 kg** | 3.68 kg | **3.45 kg** |
 | Cut price, qty 1 | **~$87** | ~$92 | **~$87** |
 
 Everything else is identical: body 310 x 300, neck/arm width 190, four corner magnets at
-250 x 240 spacing, two arm retention magnets, four vent windows on an 87.5 mm radius, O90 centre
+246 x 246 spacing, two arm retention magnets, four vent windows on an 87.5 mm radius, O90 centre
 vent, VESA 100 plus MIS-E 200x100 and MIS-F 200x200, five pairs of strap slots, and one
 90 deg bend 559.5 mm from the body end.
 
@@ -33,7 +41,7 @@ vent, VESA 100 plus MIS-E 200x100 and MIS-F 200x200, five pairs of strap slots, 
    5'1"-6'4". **C puts it at 1381 mm**, 2 in higher. B buys 50 mm more foot on the fridge top.
 3. **Unsure? Take A.** Cheapest, lightest, shortest arm.
 
-## 0b. Why steel, and why 0.119"
+## 0b. Why steel, and why 0.187"
 
 Decided 2026-08-25 after quoting the alternatives on the identical part:
 
@@ -51,7 +59,7 @@ cheaper** on either route.
 structurally free, and it buys margin in the fallback where the side panel turns out not to be
 magnetic: hold-down over lift demand goes 2.58x -> 2.99x purely from the extra weight.
 
-Steel is not a drop-in swap — its published bend radius is **0.063" (1.60 mm)** against aluminium's
+Steel is not a drop-in swap — its published bend radius is **0.063" (3.175 mm)** against aluminium's
 0.250", so the bend deduction, the flat length and the corner-radius budget all change. Everything
 below is regenerated for steel.
 
@@ -59,9 +67,9 @@ below is regenerated for steel.
 
 | Field | Value |
 |---|---|
-| File to upload | the ONE variant you chose in §0 — `bracket_flat_reach130.dxf`, `..._reach180.dxf` or `..._reach180_neck260.dxf`. **Never** a preview SVG |
+| File to upload | the ONE variant you chose in §0 — `bracket_flat_reach130.dxf`, `..._reach180.dxf` or `..._reach180_neck257.dxf`. **Never** a preview SVG |
 | Material | **A36/1008 mild steel** (cold rolled, CRS — smooth and paint-friendly) |
-| Thickness | **0.119" (3.02 mm)** |
+| Thickness | **0.187" (4.75 mm)** |
 | Quantity | 1 (a second identical part is $93.47/ea — cheaper than a second variant) |
 | Bending | **1 bend**, added in the browser bending tool after upload |
 | Countersinking | **None** — see §3. Use low-head screws instead |
@@ -69,7 +77,7 @@ below is regenerated for steel.
 | Finish | Either SendCutSend Gloss Black powder (+$69.26, includes free deburring) or spray it yourself matte black (~$10, saves $59). **Steel must be coated** — bare CRS surface-rusts in a kitchen. No masking needed anywhere |
 | Tapping / hardware insertion | None |
 
-Peak working stress in steel is 1200 psi against 36 ksi yield — SF 30x. Both the aluminium and
+Peak working stress in steel is 519 psi against 36 ksi yield — SF 69x. Both the aluminium and
 the steel options are enormously overbuilt; the choice was made on cost, mass and finish, not
 on strength.
 
@@ -87,25 +95,25 @@ no bend line.**
 | Bend centreline from the arm tip | **127.52 mm (5.021")** | **177.52 mm (6.989")** |
 | Bend centreline from the body end | **559.52 mm (22.028")** | 559.52 mm (22.028") |
 | Bend direction | Either UP or DOWN — same physical part, mirrored. Confirm in the 3D preview that it forms the hook; the fridge sits in the INSIDE (concave) corner of the L | same |
-| Inside bend radius after bend | **1.60 mm (0.063")** — much tighter than aluminium | same |
+| Inside bend radius after bend | **3.175 mm (0.063")** — much tighter than aluminium | same |
 | Bend length | **190 mm (7.48")** | same |
-| Bend deduction used | **4.9657 mm (0.1955")** — SendCutSend's published figure | same |
+| Bend deduction used | **8.1915 mm (0.3225")** — SendCutSend's published figure | same |
 | Formed legs from the bend apex | arm 130, neck+body 562 mm | arm 180, neck+body 562 mm |
 
 ### Bend deduction — RESOLVED, no longer an estimate
 
 SendCutSend publishes a full bending table on their
 [bending calculator page](https://sendcutsend.com/bending-calculator/). For A36/1008 mild steel at
-0.119":
+0.187":
 
 | K factor | Bend deduction @90° | Effective bend radius @90° | Die width | Min formed flange @90° |
 |---|---|---|---|---|
-| 0.38 | **0.1955"** | **0.063"** | 0.630" | 0.466" |
+| 0.38 | **0.3225"** | **0.063"** | 0.630" | 0.466" |
 
 Those are vendor figures, not derived, and the generator now uses them directly. The K-factor
 formula is retained in the code only for thicknesses they do not publish.
 
-**Note the bend radius.** At 0.063" (1.60 mm) it is a quarter of aluminium's 0.250", which makes the
+**Note the bend radius.** At 0.063" (3.175 mm) it is a quarter of aluminium's 0.250", which makes the
 fridge corner-radius mismatch *worse*: `flat_gap = (R_f − R_b) × 0.293`, so a smaller R_b means a
 bigger gap. Pad margin drops from 2.51x (aluminium) to **1.62x**, still covering a measured R_f up
 to 19 mm.
@@ -135,13 +143,13 @@ with `--no-bend-line` only if their flow changes back.
 The two screw families point in opposite directions:
 
 - **VESA screws** run fridge-side → plate → spacer → display. Their heads land on the
-  **fridge-facing** face, inside the 6 mm the magnets hold the plate off the panel.
-- **Magnet screws** (4 body + 2 arm) run display-side → plate → into the magnet's female thread.
+  **fridge-facing** face, inside the 11.51 mm the magnets hold the plate off the panel.
+- **Magnet screws** (4 body + 2 arm) run display-side → plate → into the magnet's male stud.
   Their heads face the **display**, where the raised rear box holds the panel 25 mm clear. Nothing
   to be flush with — plain socket cap plus a washer, which clamps better than a countersink and
   removes no material.
 
-On the aluminium build the VESA holes were countersunk. **On 0.119" mild steel they cannot be**,
+On the aluminium build the VESA holes were countersunk. **On 0.187" mild steel they cannot be**,
 and the reason is simpler and harder than the geometry argument that used to sit here.
 
 **SendCutSend does not offer countersinking on A36/1008 mild steel at all.** Verified in their quote
@@ -155,7 +163,7 @@ real but was not the binding constraint:
 
 | | depth needed | 60% limit | slack | plate left under the cone |
 |---|---|---|---|---|
-| M4 90° into a Ø4.4 hole, 3.02 mm plate | 1.80 mm | 1.81 mm | **0.01 mm** | 1.22 mm |
+| M4 90° into a Ø4.4 hole, 4.75 mm plate | 1.80 mm | 1.81 mm | **0.01 mm** | 1.22 mm |
 
 So the depth cap would have made it marginal anyway — 0.01 mm of slack, removing 60% of an
 already-thin plate at four points — but the operation was never on the menu. Either way the answer
@@ -164,7 +172,7 @@ is the same, and it was already the decision.
 **Use low-head screws instead** — they achieve the same thing, which is keeping metal away from the
 fridge paint:
 
-| screw | head height | clearance to the fridge inside the 8 mm standoff |
+| screw | head height | clearance to the fridge inside the 11.51 mm standoff |
 |---|---|---|
 | M4 socket cap, DIN 912 | 4.0 mm | 4.0 mm |
 | M4 low head, DIN 7984 | 2.8 mm | 5.2 mm |
@@ -273,25 +281,39 @@ Y toward the bend. **No countersinks** — see §3.
 
 | # | Tag | X (mm) | Y (mm) | Ø | Purpose |
 |---|---|---|---|---|---|
-| 1 | arm_magnet | 95.0 | 647.0 | 4.5 | retention magnet, same SKU |
-| 2 | arm_magnet | 215.0 | 647.0 | 4.5 | retention magnet, same SKU |
-| 3 | magnet | 30.0 | 30.0 | 4.5 | M4 SHCS + washer into pot-magnet female thread |
-| 4 | magnet | 30.0 | 270.0 | 4.5 | M4 SHCS + washer into pot-magnet female thread |
-| 5 | magnet | 280.0 | 30.0 | 4.5 | M4 SHCS + washer into pot-magnet female thread |
-| 6 | magnet | 280.0 | 270.0 | 4.5 | M4 SHCS + washer into pot-magnet female thread |
-| 7 | vesa | 105.0 | 100.0 | 4.4 | M4 button head into the display's VESA 100 pattern, through spacer |
-| 8 | vesa | 105.0 | 200.0 | 4.4 | M4 button head into the display's VESA 100 pattern, through spacer |
-| 9 | vesa | 205.0 | 100.0 | 4.4 | M4 button head into the display's VESA 100 pattern, through spacer |
-| 10 | vesa | 205.0 | 200.0 | 4.4 | M4 button head into the display's VESA 100 pattern, through spacer |
-| 11 | vesa200x100 | 55.0 | 100.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a future larger display |
-| 12 | vesa200x100 | 55.0 | 200.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a future larger display |
-| 13 | vesa200x100 | 255.0 | 100.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a future larger display |
-| 14 | vesa200x100 | 255.0 | 200.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a future larger display |
-| 15 | vesa200x200 | 55.0 | 50.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a future larger display |
-| 16 | vesa200x200 | 55.0 | 250.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a future larger display |
-| 17 | vesa200x200 | 255.0 | 50.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a future larger display |
-| 18 | vesa200x200 | 255.0 | 250.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a future larger display |
-| 19 | vent | 155.0 | 150.0 | 90.0 | centre lightening / airflow opening |
+| 1 | arm_magnet | 95.0 | 594.8 | 8.5 | arm retention magnet, same SKU — anti-jostle only |
+| 2 | arm_magnet | 215.0 | 594.8 | 8.5 | arm retention magnet, same SKU — anti-jostle only |
+| 3 | arm_magnet | 95.0 | 702.8 | 8.5 | arm retention magnet, same SKU — anti-jostle only |
+| 4 | arm_magnet | 215.0 | 702.8 | 8.5 | arm retention magnet, same SKU — anti-jostle only |
+| 5 | magnet | 32.0 | 32.0 | 8.5 | pot magnet 5/16"-18 MALE STUD passes through; jam nut + oversized washer behind |
+| 6 | magnet | 278.0 | 32.0 | 8.5 | pot magnet 5/16"-18 MALE STUD passes through; jam nut + oversized washer behind |
+| 7 | magnet | 32.0 | 278.0 | 8.5 | pot magnet 5/16"-18 MALE STUD passes through; jam nut + oversized washer behind |
+| 8 | magnet | 278.0 | 278.0 | 8.5 | pot magnet 5/16"-18 MALE STUD passes through; jam nut + oversized washer behind |
+| 9 | spare_arm_magnet | 95.0 | 648.8 | 8.5 | SPARE arm magnet position — cut, left empty |
+| 10 | spare_arm_magnet | 155.0 | 648.8 | 8.5 | SPARE arm magnet position — cut, left empty |
+| 11 | spare_arm_magnet | 215.0 | 648.8 | 8.5 | SPARE arm magnet position — cut, left empty |
+| 12 | spare_magnet | 155.0 | 32.0 | 8.5 | SPARE mid-side magnet position — cut, left empty |
+| 13 | spare_magnet | 32.0 | 155.0 | 8.5 | SPARE mid-side magnet position — cut, left empty |
+| 14 | spare_magnet | 278.0 | 155.0 | 8.5 | SPARE mid-side magnet position — cut, left empty |
+| 15 | spare_magnet | 155.0 | 278.0 | 8.5 | SPARE mid-side magnet position — cut, left empty |
+| 16 | vesa | 105.0 | 105.0 | 4.4 | M4 into the display's VESA 100 pattern, through a spacer |
+| 17 | vesa | 205.0 | 105.0 | 4.4 | M4 into the display's VESA 100 pattern, through a spacer |
+| 18 | vesa | 105.0 | 205.0 | 4.4 | M4 into the display's VESA 100 pattern, through a spacer |
+| 19 | vesa | 205.0 | 205.0 | 4.4 | M4 into the display's VESA 100 pattern, through a spacer |
+| 20 | vesa100x200 | 105.0 | 55.0 | 4.4 |  |
+| 21 | vesa100x200 | 205.0 | 55.0 | 4.4 |  |
+| 22 | vesa100x200 | 105.0 | 255.0 | 4.4 |  |
+| 23 | vesa100x200 | 205.0 | 255.0 | 4.4 |  |
+| 24 | vesa200x100 | 55.0 | 105.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a larger display |
+| 25 | vesa200x100 | 255.0 | 105.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a larger display |
+| 26 | vesa200x100 | 55.0 | 205.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a larger display |
+| 27 | vesa200x100 | 255.0 | 205.0 | 4.4 | MIS-E 200x100, M4 — spare pattern for a larger display |
+| 28 | vesa200x200 | 55.0 | 55.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a larger display |
+| 29 | vesa200x200 | 255.0 | 55.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a larger display |
+| 30 | vesa200x200 | 55.0 | 255.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a larger display |
+| 31 | vesa200x200 | 255.0 | 255.0 | 6.5 | MIS-F 200x200, M6 — spare pattern for a larger display |
+
+**31 holes total.** GENERATED from `bracket_params.json` on 2026-08-27 — the previous table was hand-maintained and had drifted: it listed magnet holes at O4.5 for "M4 SHCS into pot-magnet female thread" at inset 30, when the built part has O8.5 clearance holes at inset 32 for a MALE STUD, with the nut on the display side. Do not edit this table by hand; regenerate it.
 
 Vent windows (rounded rectangles, R5 corners), same origin:
 
@@ -363,7 +385,7 @@ and exits non-zero if any of these fail.
 
 | Constraint | Requirement | Actual | Status |
 |---|---|---|---|
-| Material offered at thickness | A36/1008 in 0.119" CRS | yes | PASS |
+| Material offered at thickness | A36/1008 in 0.187" CRS | yes | PASS |
 | Flat within instant-pricing sheet | ≤ 762 × 1118 mm | 310 × 687.0 mm | PASS |
 | Min formed flange, arm side | ≥ 11.84 mm (0.466") | 127.5 mm | PASS |
 | Min formed flange, neck side | ≥ 11.84 mm | 259.5 mm | PASS |
@@ -394,7 +416,7 @@ and exits non-zero if any of these fail.
 | Magnet safety factor | **7.2×** optimistic, **4.3×** on the conservative 19.8 lbf rating | |
 | Peel | 1.77 lbf | d = 48.5 mm, H = 270 mm |
 | Neck bending | 1066 psi, **SF 34×** | vs 36 ksi yield |
-| Body weak axis | 1200 psi, **SF 30×** | conservative strip width. No ribs required |
+| Body weak axis | 519 psi, **SF 30×** | conservative strip width. No ribs required |
 | Screen centre | **1331 mm** above the floor | portrait: screen spans 1053–1609 mm |
 | Arm pad budget | 3.92 mm | covers a measured R_f up to 19 mm |
 | Cut length | 3573 mm | |
@@ -407,7 +429,7 @@ Prices not quoted; they move. Links are to specific products that match the spec
 ### Bracket
 | Item | Spec | Qty | Source |
 |---|---|---|---|
-| Bracket plate | **A36/1008 mild steel 0.119" CRS**, per DXF, 1 bend, no countersinks | 1 | [SendCutSend](https://sendcutsend.com/materials/mild-steel/) |
+| Bracket plate | **A36/1008 mild steel 0.187" CRS**, per DXF, 1 bend, no countersinks | 1 | [SendCutSend](https://sendcutsend.com/materials/mild-steel/) |
 
 ### Magnets — **one part number for all six**
 | Item | Spec | Qty | Source |
@@ -450,7 +472,7 @@ the vertical load and the magnets work in tension, not shear.
 | Thread locker | Removable (blue) | 1 | on the magnet screws only; keep the display screws serviceable |
 
 **Magnet screw length = plate thickness + 6 to 7 mm of engagement**, and must not exceed the
-magnet's 9 mm thread depth or it bottoms out and jacks the magnet off the plate. In the 3.02 mm
+magnet's 9 mm thread depth or it bottoms out and jacks the magnet off the plate. In the 4.75 mm
 steel plate, M4 × 10 gives 6.98 mm — ten threads. M4 × 14 would bottom out. Verify the thread depth
 on the magnets you actually receive before ordering screws.
 
@@ -560,7 +582,7 @@ about 7.2× because the torsion arm drops from 278 mm to 162 mm.
 - [ ] **Fridge overall height.** Design assumes Samsung's published 68 5/8" (1743 mm) to top of CASE. The neck length is
       derived from it, so this sets where the screen lands. 40 mm of error = 40 mm of screen height.
       Re-run with `--fridge-height <measured> --screen-centre-height 1331`.
-- [x] **Bend deduction — RESOLVED.** SendCutSend publishes 0.1955" for A36/1008 at 0.119"/90°,
+- [x] **Bend deduction — RESOLVED.** SendCutSend publishes 0.3225" for A36/1008 at 0.187"/90°,
       and the generator uses it directly. No longer an estimate, no longer blocking.
 - [ ] **Arm clear window on the fridge top, front to back.** The arm is **190 mm** wide and must land
       between the hinge cover caps and the rear cable/waterline step-down. Assumed 621 mm clear of an
@@ -607,10 +629,10 @@ about 7.2× because the torsion arm drops from 278 mm to 162 mm.
       label.
 - [ ] **No countersinking.** All holes plain — see §3. Low-head screws do the job instead.
 - [ ] Deburring on. Powder coat only if you have read the magnet-pad note.
-- [ ] Confirm **max bend length for 0.119" steel** — their FAQ page 404s. Ours is **7.48"**, far
+- [ ] Confirm **max bend length for 0.187" steel** — their FAQ page 404s. Ours is **7.48"**, far
       inside their published 16–44" range, and their app offered Bending on this material without
       complaint.
-- [ ] Minimum formed flange for 0.119" steel is their published 0.466" (11.84 mm). Ours are
+- [ ] Minimum formed flange for 0.187" steel is their published 0.466" (11.84 mm). Ours are
       127.5/177.5 mm and 259.5 mm — nowhere near binding.
 - [ ] `audit_dxf.py` run against the exact file uploaded — 15 checks, 0 failures.
 - [ ] Decide finish: SendCutSend powder (+$69.26) or spray it yourself (~$10).
@@ -693,7 +715,7 @@ also thicker than the pad.
 
 **Why the STUD and not the threaded-hole version.** The threaded-hole twin (5679K58) is the same
 magnet at the same price, but it carries an **11.28 mm threaded boss** on its back. On a
-3.02 mm plate that boss would stand the magnet off by its full length, pushing the display
+4.75 mm plate that boss would stand the magnet off by its full length, pushing the display
 from 55 to about 66 mm off the fridge. A male stud passes
 straight through the plate and takes a nut in the 25 mm of air behind. Studs are NOT stronger —
 McMaster's stud and hole versions have identical pull at every size — but for thin plate the stud
@@ -730,7 +752,7 @@ larger magnet had been failing on Y alone — 3506K67 missed by 0.11 mm at the m
 0.05% of the floor. Squaring the plate removes the asymmetry rather than shaving the margin:
 spacing is now **246 / 246 mm**, both clear, at a full **8 mm** edge margin.
 
-- blank 310 x 692.0 mm (was 310 x 687.0) — about 0.7% more sheet
+- blank 310 x 692.0 mm (was 310 x 738.8.0) — about 0.7% more sheet
 - neck shortened 262 -> 257 mm so the screen centre stays at 1331 mm
 - pad steps to **1/2 in** (derived — the magnet is 11.51 mm)
 - standoff 57.53 mm · torsion **37x** · pull-off **162 lbf**

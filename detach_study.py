@@ -32,7 +32,7 @@ def modes(params: BracketParams) -> list[tuple[str, str, float, str]]:
     pull = rep["magnet_derated_pull_lbf"]
     n_body, n_arm = len(rows) * 2, len(offs) * 2
     weight = rep["total_hanging_lbf"]
-    mu = params.mu_bare_nickel
+    mu = params.mu_magnet_face
 
     # Peel about the fridge's top edge. Resisting moment is fixed; the force needed depends
     # entirely on where you grab.

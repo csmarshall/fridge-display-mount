@@ -18,7 +18,7 @@ holes fitted (200×200 M6 provision cut but unused), pad thickness target 11.5 m
 
 | # | Part number | Description | Qty | Unit price | Ext. price | Source | Status |
 |---|---|---|---|---|---|---|---|
-| 1 | SendCutSend custom (`bracket_flat.dxf`) | Bracket: A36/1008 mild steel 0.119 in, 310 × 742 mm flat, 1 bend, 4 countersinks (90° M4, concave face), matte black powder coat | 1 | $185.54 | $185.54 | [sendcutsend.com](https://sendcutsend.com) — live quote 2026-08-27 | VERIFIED (live quote, owner's session) |
+| 1 | SendCutSend custom (`bracket_flat.dxf`) | Bracket: A36/1008 mild steel **0.187 in (4.75 mm) HRPO**, **310 × 738.8 mm** flat, 1 bend, **no countersinks**, **Textured Black** powder coat | 1 | **$197.07** | **$197.07** | [sendcutsend.com](https://sendcutsend.com) — live quote 2026-08-27 | VERIFIED (live quote, owner's session) |
 | 2 | Waveshare 23.8inch FHD Monitor (SKU 34025) | 23.8 in 1920×1080 capacitive touch monitor, optically bonded, VESA 100, incl. 12 V 5 A PSU + screws pack | 1 | $349.99 | $349.99 | [waveshare.com](https://www.waveshare.com/27inch-fhd-monitor.htm) (select "23.8inch") | VERIFIED |
 | 3 | [3506K67](https://www.mcmaster.com/3506K67/) | Encased neodymium magnet, N42, zinc-plated steel case, 1 57/64" OD × 29/64" (11.51 mm) thick, **5/16"-18 × 1/2" male stud**, 175 lbf max pull | 8 | $23.92 | $191.36 | McMaster-Carr | VERIFIED ($20.62 ea at 50+; delivers next day) |
 | 4 | [98514A035](https://www.mcmaster.com/98514A035/) | **JAM nut (half height)**, black-oxide 18-8 stainless, **5/16"-18 UNC** (imperial — NOT M8). 1/2" across flats × **3/16" (4.76 mm)** high. Half height is what leaves room for the oversized washer | 1 pack of 25 | $3.20 | $3.20 | McMaster-Carr | **VERIFIED 2026-08-27.** Plain 18-8 is [91847A030](https://www.mcmaster.com/91847A030/), $7.25/100 |
@@ -149,7 +149,7 @@ screen size — re-check the digits at order time.*
 
 | | |
 |---|---|
-| **Fitted now** (items 1–8, spacers excluded pending measurement) | **$928.73** |
+| **Fitted now** (items 1–8, spacers excluded pending measurement) | **$752.79** |
 | **Optional upgrades** (items 10–12: PSU + cord + 7 spare magnets) | **$204.46** |
 | Item 9 (spacers) | unpriced until measured — typically < $10 |
 

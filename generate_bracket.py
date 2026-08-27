@@ -92,7 +92,7 @@ class Material:
     # 0.016 mm here against 0.064 mm at 0.119 in, and neither is perceptible. What it buys is
     # 5.84 kg instead of 3.71 kg and the best $/kg and stiffness-per-dollar in the whole
     # material sweep — hot-rolled is cheaper stock than cold-rolled, which is why .188 HRPO
-    # undercuts .135 CRS despite being thicker. +$11.71 over the 0.119 build.
+    # undercuts .135 CRS despite being thicker. +$11.21 over the 0.119 build.
     thickness_in: float = 0.187
 
     @property
@@ -596,9 +596,12 @@ class BracketParams:
     # so the 35% derate for thin PAINTED appliance sheet still applies on top.
     magnet_rated_pull_lbf: float = 175.0
     magnet_derate: float = 0.35
-    mu_rubber: float = 0.2   # BARE nickel now, not rubber. Irrelevant: the hook carries
+    # RENAMED from mu_rubber, which held 0.2 while being named for the 0.7 rubber-faced case —
+    # a field whose name asserted the opposite of its value. The specified magnet is a BARE
+    # NICKEL/zinc-cased pot, so there is one coefficient, not two.
+    mu_magnet_face: float = 0.2   # bare nickel on painted sheet. Irrelevant: the hook carries
                              # all vertical load and the magnets work in tension, not shear.
-    mu_bare_nickel: float = 0.2
+
     min_magnet_spacing: float = 240.0  # LOAD-BEARING FLOOR — see CLAUDE.md §1.2
 
     @property
@@ -1555,6 +1558,15 @@ class Washer:
         return self.t_min_in * MM_PER_INCH
 
 
+# NOTE ON THICKNESS: McMaster sells these to a RANGE, and the range DIFFERS BY FINISH:
+#   5/16 plain 18-8   92141A030  0.035-0.065 in
+#   5/16 black oxide  96765A145  0.040-0.060 in   <- specified finish
+#   1.250 plain       90313A111  0.043-0.057 in
+#   1.250 black oxide 90377A164  0.040-0.060 in   <- specified finish
+# t_max here follows the SPECIFIED finish (see FINISH). If the build ever reverts to plain 18-8,
+# the worst-case washer gets 0.005 in THICKER and every stack margin on the fastener sheets moves
+# with it. A review flagged 0.060 as wrong against a 0.069 figure recorded in session notes; that
+# 0.069 was an early mis-read of the plain-finish row and is not the specified part.
 WASHERS: tuple[Washer, ...] = (
     Washer("none", "no washer", 0.0, 0.0, 0.0, 0.0, None, None),
     # 96765A150 is the 3/8 in row — an earlier revision had it here by mis-reading the table.
@@ -1717,8 +1729,7 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
 
     # Magnet capacity: rated pull derated for thin sheet and standoff, then mu for shear.
     derated_pull = params.magnet_rated_pull_lbf * params.magnet_derate
-    shear_rubber = derated_pull * params.mu_rubber
-    shear_bare = derated_pull * params.mu_bare_nickel
+    shear_lbf = derated_pull * params.mu_magnet_face
 
     # Neck bending at the bend root: the hung weight acts at the CG offset from the plate face.
     neck_z_in3 = (params.neck_w / MM_PER_INCH) * (MATERIAL.thickness / MM_PER_INCH) ** 2 / 6.0
@@ -1818,8 +1829,7 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "nut_bearing_psi": clamp_lbf / (nut_bearing_mm2 / MM_PER_INCH ** 2),
         "washer_bearing_psi": clamp_lbf / (washer_bearing_mm2 / MM_PER_INCH ** 2),
         "magnet_bearing_psi": clamp_lbf / (magnet_bearing_mm2 / MM_PER_INCH ** 2),
-        "magnet_shear_rubber_lbf": shear_rubber,
-        "magnet_shear_bare_nickel_lbf": shear_bare,
+        "magnet_shear_lbf": shear_lbf,
         "magnet_tension_sf": derated_pull / force_per_magnet,
         "neck_stress_psi": neck_stress_psi,
         "neck_sf": MATERIAL.yield_psi / neck_stress_psi,

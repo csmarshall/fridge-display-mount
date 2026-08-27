@@ -17,9 +17,9 @@ the entire vertical load transfers into **bearing at the top corner**. `NECK` + 
 
 Rationale: magnets are rated for pull on thick steel at zero gap; neither condition holds
 on 0.6–0.9 mm painted appliance sheet. Derate to **~35 % of rated** pull, then multiply by
-μ (**0.7** rubber-faced, **0.2** bare nickel) for shear. Vendor confirmation: totalElement
+μ (**0.2** — the specified magnet is BARE nickel; a rubber face would give 0.7 but is not what is fitted) for shear. Vendor confirmation: totalElement
 rates a 43 mm rubber pot magnet at 33.5 lb vertical pull but only 7 lb horizontal.
-Magnet-only mounting would need ~15× the display weight in rated pull. The hook removes
+Magnet-only mounting needs ~14x the held weight in RATED pull — **which is not actually out of reach, and this file used to imply it was.** 8 of the specified O48 magnets give 98 lbf of shear against a 21.5 lbf hanging load: SF 4.6. **Shear is therefore NOT the argument for the hook.** The argument is peel (a corner lever beats one magnet, not the total), a possibly non-magnetic panel (every number goes to zero), creep under sustained shear on paint, and the consequence being bonded glass on a floor. Overstating the shear case weakens a design that has better reasons. See `magnet_primer.svg`. The hook removes
 that failure mode entirely and survives a **non-magnetic** (304 stainless) panel.
 
 ### 1.2 Touch input is the governing magnet load
@@ -77,11 +77,12 @@ magnet height matches.
   little under lets the rigid magnets bear while the pad still protects paint. Stock now includes
   METRIC sizes because **11.5 mm sits 0.01 mm from the 11.51 mm magnet** and no imperial size is
   close. Validator bound is now **-0.60 to +0.30 mm**.
-  *Implementation note:* the functional requirement is that the pad must never be THINNER than the
-  magnet — a rigid magnet proud of a thin pad holds the plate off. Being slightly proud is harmless
-  because the pad is compressible sponge. This matters because closed-cell sponge is sold in
-  imperial thicknesses and there is no 6.00 mm stock: 1/4 in is 6.35 mm. The validator therefore
-  accepts 0 to +1.0 mm of pad excess and rejects anything negative.
+  *Implementation note — CORRECTED 2026-08-27.* An earlier version of this paragraph asserted the
+  OPPOSITE rule ("the pad must never be THINNER than the magnet ... accepts 0 to +1.0 mm and
+  rejects anything negative") directly below the rule above it. That text was left over from the
+  6 mm-magnet era and is deleted. The code has always implemented the rule as stated above:
+  `-PAD_UNDERSIZE_ALLOWANCE_MM (0.60) <= excess <= +0.30`, biased UNDER, because a pad proud of
+  the magnets means the plate lands on sponge and the magnets never reach steel.
 - Arm pad is **closed-cell sponge**, thick enough to conform to the top corner radius. A
   rigid bracket landing on folded appliance sheet will line-load and crease it.
 - **Do not blank off the display's rear vents** with solid plate — a Pi 5 behind an
@@ -166,7 +167,12 @@ cap. Until measured, treat as UNKNOWN:
   fudge factor to work, question the framing, not the ruler.
   - hinge cover occupies the **front 203 mm** of the top (ruler 16-24 in)
   - **clear window, rear edge to cover: 406 mm**
-  - arm WIDTH is 190 mm front-to-back -> **fits with 216 mm to spare (2.14x)**
+  - arm WIDTH is 190 mm front-to-back -> the 406 mm window is **2.14x** the arm width
+  - **BUT that is not the installed margin.** The plate is centred on the case depth, which puts
+    the arm's front edge ~6.6 mm from the cover, not 216 mm. The 2.14x figure describes how much
+    window exists; `hinge_clearance.svg` dimensions where the arm actually lands. Quote the 6.6 mm
+    when asking "does it fit", and the 2.14x only when asking "is there room to move it"
+
   This closes "clear window on the fridge top, front to back", which the pre-order checklist
   called the likeliest recut risk. Modelled as `hinge_cover_from_rear` with a validator check on
   `neck_w`, so widening the arm cannot silently run into it.
@@ -192,7 +198,7 @@ Verified 2026-08-24 against sendcutsend.com. Re-verify before ordering; these ch
 
 | Constraint | Value | Source |
 |---|---|---|
-| Material | **A36/1008 mild steel, 0.119" (3.023 mm) CRS** — as built | /materials/mild-steel/ |
+| Material | **A36/1008 mild steel, 0.187" (4.75 mm) HRPO** — as built. SendCutSend label the gauge ".188"; 0.187 in is the actual thickness and what the generator uses. ~~0.119" (3.023 mm) CRS~~ superseded 2026-08-27 | /materials/mild-steel/ |
 | Why steel, not the brief's aluminium | The price study killed 0.187" 5052: it sits past a cost cliff at **$131.49** qty 1, while 0.119" steel is **$87.39** and stiffer per unit price. Steel is also what the magnets want. `--material 5052` still generates a valid part; the bend table differs (steel's effective bend radius is much tighter) so the flat pattern is NOT interchangeable. See `docs/PRICE-STUDY.md` | price study 2026-08-25 |
 | Superseded alloy note | The brief specified 5052, **not 6061-T6** (cracks on tight bends). That reasoning still holds *if* aluminium is ever revisited | brief |
 | Effective bend radius after bend | **0.250" (6.35 mm)** | material bending specs |
@@ -223,39 +229,52 @@ SOLID line would be read as a cut and would slice the part in half.
 | Neck length | **310 mm** | Derived, not hardcoded: `neck = fridge_height - screen_centre - body_h/2`. Screen centre 1331 mm is mid-band for 5'1"-6'4". The brief's "- 12 mm" is not magic either: it is `(display_height - body_height)/2`, 12.3 mm landscape and 127.6 mm portrait. Use `--fridge-height` + `--screen-centre-height` |
 | Fridge crown rise | **3.0 mm** | straightedge across the top; feeds the arm pad budget |
 | Bend deduction | **derived estimate**, `BD = 2(R+T)tan(45) - (pi/2)(R + K*T)` with **K = 0.42** | replace with SendCutSend's bending calculator value |
-| Orientation | **landscape** | portrait is reachable by parameter and is mechanically better (torsion arm 278 -> 162 mm) |
+| Orientation | **portrait — as built** | the generator default is portrait; it is mechanically better (torsion arm 278 -> 162 mm) and the counter-depth cabinet is only 610 mm deep, which a 555 mm landscape display nearly fills |
 | Fridge top corner radius `R_f` | **12 mm** | affects **pad sizing only**, never cut geometry. Straightedge on the side, another on the top; they meet at the theoretical sharp corner; measure from that intersection along the top to the tangent point — for a 90 deg corner that distance is the radius. Cross-check down the side face. Quick screen: a US quarter is O 24.26 mm (R = 12.13 mm) — if it rocks and will not seat, `R_f` < 12 mm |
 
 ---
 
 ## 4b. Settled geometry (as built)
-Body **310 x 300** (hides behind the display in BOTH orientations; portrait is only 324.65 mm wide),
-magnet spacing **250 x 240 mm** against the 240 mm floor. Neck/arm width **190 mm**. Neck **310 mm**.
-Arm reach **180 mm** — SETTLED 2026-08-26 and promoted to the generator default. It is the
-shortest reach that lands the outermost full O48 disc on metal (needs 168 mm; 180 gives 12 mm
-beyond). Costs **$8.85** more than the old 130 mm variant A. Live quote 2026-08-26 on the as-built
-file: cut $103.47, +1 bend $115.24, +matte black **$185.85**. Blank grows 692 -> **742 mm**.
-**Arm retention magnets:** 4 off in TWO rows, same SKU as the body magnets, at **90 and 144 mm**
-from the bend apex, 120 mm apart across the arm. Anti-jostle only — **zero credit in the load
-path**. The 54 mm row pitch is a hard floor (O48 disc + 6 mm); rows cannot sit closer.
-**Cable retention is SLOTS, not round holes** — 5 pairs of 4.0 x 18.0 mm slots (R1.40 ends),
-16.0 mm centre-to-centre so the bridge between a pair is 12.0 mm. Sized for a 1/2 in VELCRO ONE-WRAP
-(12.7 mm) with 2.65 mm clearance per side, which also passes a 5/8 in strap. A flat hook-and-loop
-band cannot thread a 5 mm hole; that hole size only ever suited a zip tie. Slots are `WindowRect`s,
-so they are LWPOLYLINEs in the DXF, and the outermost pair sits at bend **+105** not +115 — an
-18 mm slot at +115 lands 3.5 mm from the arm tip, inside the 2x-thickness edge rule.
+**REFRESHED 2026-08-27 against `bracket_params.json`.** Every figure below was stale — the block
+had drifted a whole revision behind the generator, which is exactly the failure mode this file is
+supposed to prevent. If you change a parameter, re-read the JSON rather than editing prose here.
 
-**Countersinks: the 4 VESA holes only, 90 deg M4, fridge-facing face — which is the CONCAVE
-(inside) face of the bend**, because the fridge sits in the inside corner of the L. Use that rule
-rather than the app's "up/down" bend direction, which only describes screen orientation. Their M4
-profile is 0.315"/0.164"/90 deg; our holes are O4.5 against their 4.17 mm minor, which the app
-accepts and which seats the head ~0.17 mm deeper than nominal. Left at O4.5 deliberately.** Those screw heads are the
-only ones that land near painted steel; the magnet screw heads face the display with 10 mm of
-spacer clearance. Per SendCutSend only the minor hole is drawn, so the DXF is unchanged.
+Body **310 x 310** (hides behind the display in BOTH orientations; portrait is only 324.65 mm
+wide). Magnet inset **32 mm**, giving spacing **246 x 246** against the 240 mm floor, and a
+derived **7.99 mm** of plate beyond each disc — 12.7x the 0.63 mm tolerance stack.
+Neck/arm width **190 mm**. Neck **257 mm**. Arm reach **180 mm** — the shortest that lands the
+outermost full O48 disc on metal. Flat blank **310 x 738.8 mm**, bend line at **562.9**, bend
+deduction **8.19 mm**.
+
+**Arm retention magnets:** rows at **+36 and +144 mm** from the bend apex are FITTED; a third row
+at **+90** is cut but left empty as an upgrade path. 120 mm apart across the arm. Anti-jostle only
+— **zero credit in the load path**. The 54 mm row pitch is a hard floor (O48 disc + 6 mm).
+
+**Cable retention is SLOTS, not round holes** — 5 pairs of 4.0 x 18.0 mm slots (R1.40 ends),
+16.0 mm centre-to-centre so the bridge between a pair is 12.0 mm. Sized for a 1/2 in VELCRO
+ONE-WRAP (12.7 mm) with 2.65 mm clearance per side, which also passes a 5/8 in strap. A flat
+hook-and-loop band cannot thread a 5 mm hole; that hole size only ever suited a zip tie. Slots are
+`WindowRect`s, so they are LWPOLYLINEs in the DXF, and the outermost pair sits at bend **+105**
+not +115 — an 18 mm slot at +115 lands 3.5 mm from the arm tip, inside the 2x-thickness edge rule.
+
+**Countersinks: NONE.** `countersink_vesa = False`. ~~90 deg M4 on the four VESA holes~~ —
+**RETRACTED:** SendCutSend does not offer countersinking on mild steel, and it is not needed
+anyway: the display stands off on M4 spacers and the 11.51 mm magnet standoff clears any
+proud head against the fridge. Any standard M4 head works.
+
+**Live quote 2026-08-27, as-built .188 in file:** cut **$112.50**, +1 bend **$126.71**,
++matte black **$197.07**. (~~$185.85 / blank 742~~ was the .119 in build.)
 
 ## 5. BOM constraints
-- Magnets: **O 43 x 6 mm rubber-coated neodymium pot magnets, M4 female thread.** Not
-  male-stud — a stud needs a nut on the display-facing side and breaks the flat mounting plane.
+- Magnets: **McMaster 3506K67, O 48.02 x 11.51 mm bare-nickel/zinc-cased pot, 5/16"-18 MALE
+  STUD.** ~~O43 x 6 mm rubber-coated, M4 female thread~~ — **RETRACTED 2026-08-27.**
+  The original rule said "not male-stud, because a stud needs a nut on the display-facing side and
+  breaks the flat mounting plane." That reasoning was wrong on its own terms: the display does not
+  sit on the plate, it stands off on M4 spacers, so there is no flat mounting plane for a nut to
+  break — the nut lives in that air gap with ~10 mm of clearance. The female-thread version of
+  this magnet (5679K58) carries an **11.28 mm boss** that would stand the magnet off the plate by
+  that much, which is a far worse problem than a nut in a gap. The male stud is now load-bearing
+  to the design; see `fastener_matrix.svg` for the 39 nut/washer permutations it forces.
 - **M4 spacers** between plate and display: clear the magnet screw heads and open an air channel.
 - Power: 36 W (display) + up to 27 W (Pi 5) = **63 W against a 60 W bundled brick.** Flag the upgrade.
 - **Magnet pull ratings are not trustworthy across vendors.** AMF rates the O43 x 6 rubber pot at

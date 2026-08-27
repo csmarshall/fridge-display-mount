@@ -108,11 +108,11 @@ def render(path: Path, p: BracketParams) -> None:
 
     rated = p.magnet_rated_pull_lbf
     derated = rep["magnet_derated_pull_lbf"]
-    shear = rep["magnet_shear_bare_nickel_lbf"]
+    shear = rep["magnet_shear_lbf"]
     shear_pct = shear / rated * 100.0
     weight = rep["display_weight_lbf"]
     hanging = rep["total_hanging_lbf"]
-    mult = 1.0 / (p.magnet_derate * p.mu_bare_nickel)          # rated lbf needed per lbf held
+    mult = 1.0 / (p.magnet_derate * p.mu_magnet_face)          # rated lbf needed per lbf held
     rated_needed = hanging * mult
     vendor_pct = TOTALELEMENT_HORIZONTAL_LBF / TOTALELEMENT_PULL_LBF * 100.0
 
@@ -181,7 +181,7 @@ def render(path: Path, p: BracketParams) -> None:
          "measured on THICK ground steel, ZERO gap, pulling STRAIGHT OFF"),
         (derated, MARG, f"x {p.magnet_derate:.2f} on the fridge  =  {lbf_n(derated, 1)}  PULL",
          "0.6-0.9 mm painted sheet: thin steel saturates, paint holds the magnet off the metal"),
-        (shear,   BAD,  f"x mu {p.mu_bare_nickel:.1f} friction  =  {lbf_n(shear, 1)}  SHEAR",
+        (shear,   BAD,  f"x mu {p.mu_magnet_face:.1f} friction  =  {lbf_n(shear, 1)}  SHEAR",
          "the load is SLIDING, not pulling — bare nickel on smooth paint barely grips"),
     ]
     for i, (val, col, label, why) in enumerate(steps):
@@ -248,7 +248,7 @@ def render(path: Path, p: BracketParams) -> None:
         (f"Hanging load: display {lbf_n(weight, 1)} + bracket "
          f"{lbf_n(rep['bracket_weight_lbf'], 1)}", f"= {lbf_n(hanging, 1)}", INK),
         (f"Rated pull needed per pound held, in shear: 1 / ({p.magnet_derate:.2f} x "
-         f"{p.mu_bare_nickel:.1f})", f"= {mult:.0f} lbf rated per lbf held", MARG),
+         f"{p.mu_magnet_face:.1f})", f"= {mult:.0f} lbf rated per lbf held", MARG),
         (f"So holding {lbf_n(hanging, 1)} in shear needs",
          f"~{rated_needed:.0f} lbf ({rated_needed * N_PER_LBF / 1000:.1f} kN) RATED — "
          f"{mult:.0f}x whatever it holds, before any safety factor", BAD),
@@ -279,18 +279,24 @@ def render(path: Path, p: BracketParams) -> None:
              f'stroke="{INK}" stroke-width="1.0"/>')
     o.append(_t(gx + 106, gy + 74, "fridge", 11, anchor="middle", fill=MUTED))
     # bracket: arm across the top, spine down the side face, drawn 8 px thick
-    o.append(f'<path d="M{gx - 20:.1f} {gy + 124:.1f} L{gx - 20:.1f} {gy - 14:.1f} '
+    # The spine must stand off the fridge face by the MAGNET, because that is what holds it off:
+    # fridge | magnet | plate. An earlier version drew the spine 12 px off the face and put the
+    # magnets on the far side of it — i.e. on the display side — which inverts the whole stack.
+    mag_gap = 34.0                       # _mini_magnet is 34 px long; the gap IS the magnet
+    spine_in = gx - mag_gap              # inner face of the spine, against the magnets
+    spine_out = spine_in - 8.0           # 8 px of drawn plate thickness
+    o.append(f'<path d="M{spine_out:.1f} {gy + 124:.1f} L{spine_out:.1f} {gy - 14:.1f} '
              f'L{gx + 96:.1f} {gy - 14:.1f} L{gx + 96:.1f} {gy - 6:.1f} '
-             f'L{gx - 12:.1f} {gy - 6:.1f} L{gx - 12:.1f} {gy + 124:.1f} Z" '
+             f'L{spine_in:.1f} {gy - 6:.1f} L{spine_in:.1f} {gy + 124:.1f} Z" '
              f'fill="{C_PLATE}" stroke="{INK}" stroke-width="1.1"/>')
-    o.append(_arrow(gx - 16, gy + 130, gx - 16, gy + 172, INK))
-    o.append(_t(gx - 4, gy + 162, f"all {lbf_n(hanging, 1)} of it", 10.5, weight="bold"))
+    o.append(_arrow(spine_out + 4, gy + 130, spine_out + 4, gy + 172, INK))
+    o.append(_t(spine_out + 16, gy + 162, f"all {lbf_n(hanging, 1)} of it", 10.5, weight="bold"))
     o.append(_arrow(gx + 40, gy - 40, gx + 40, gy - 16, OK))
     o.append(_t(gx + 52, gy - 32, "bearing: the fridge TOP carries the weight", 10.5, fill=OK,
                 weight="bold"))
     for my in (gy + 30, gy + 96):
-        o += _mini_magnet(gx - 54, my)   # magnets between spine and panel
-    o.append(_t(gx - 58, gy + 66, "magnets", 9.5, anchor="end", fill=MUTED))
+        o += _mini_magnet(spine_in, my)   # BETWEEN the spine and the fridge face, as built
+    o.append(_t(spine_out - 6, gy + 66, "magnets", 9.5, anchor="end", fill=MUTED))
     tx5, ty5 = 470.0, y5 + 56
     facts = [
         ("The arm rests ON the fridge top. The vertical load goes into bearing at the corner — "
@@ -312,9 +318,51 @@ def render(path: Path, p: BracketParams) -> None:
             o.append(_t(tx5, fy5, ln, 11, fill=col, weight=wt))
             fy5 += 15
         fy5 += 10
+    # ---- 6. the honest answer to "so how strong WOULD they have to be?" ----------------------
+    # This panel concedes the strongest form of the objection. Pure shear is NOT the reason the
+    # hook exists — 8 of the specified magnets clear it comfortably. Saying otherwise would be
+    # overstating the case, and the real reasons are better ones.
+    y6 = y5 + ch5 + 24
+    ch6 = 250.0
+    o += _card(40, y6, W - 80, ch6,
+               "SO HOW STRONG WOULD THEY HAVE TO BE? — the fair answer", INK)
+    f_shear = p.magnet_derate * p.mu_magnet_face
+    rated = p.magnet_rated_pull_lbf
+    ry = y6 + 52
+    o.append(_t(66, ry, f"To hold {lbf_n(hanging, 1)} by friction alone, TOTAL rated pull across "
+                        f"all magnets (divide by {f_shear:.3f}):", 11.5, fill=MUTED))
+    ry += 24
+    for sf, lab in ((1.0, "on the edge of sliding"), (2.5, "project standard"),
+                    (4.0, "overhead glass")):
+        tot = hanging * sf / f_shear
+        o.append(_t(90, ry, f"SF {sf:.1f}", 11.5, weight="bold",
+                    fill=BAD if sf >= 4 else INK))
+        o.append(_t(150, ry, lab, 10.5, fill=MUTED))
+        o.append(_t(400, ry, lbf_n(tot, 0), 11.5, weight="bold", anchor="end"))
+        o.append(_t(418, ry, f"= {tot/8:.0f} lbf x 8 magnets", 10.5, fill=MUTED))
+        ry += 21
+    ry += 12
+    got = 8 * rated * f_shear
+    o.append(_t(66, ry, f"The magnets already specified are {rated:.0f} lbf each. Eight of them "
+                        f"give {lbf_n(got, 1)} of shear — SF {got/hanging:.1f}.", 11.5,
+               weight="bold", fill=OK))
+    ry += 20
+    o.append(_t(66, ry, "So shear is NOT the reason for the hook. Magnets can carry this weight. "
+                        "The hook is there for what shear numbers do not cover:", 11.5, fill=INK))
+    ry += 20
+    for line in ("PEEL — a lever at one corner beats a single magnet, not the total, and the rest "
+                 "unzip after it.",
+                 "A NON-MAGNETIC panel makes every one of those numbers zero. This one measured "
+                 "magnetic; the design still must not depend on it.",
+                 "CREEP — magnets under sustained shear on painted steel slide slowly. An SF that "
+                 "holds today need not hold in a year.",
+                 "The failure mode is bonded glass onto a kitchen floor, with no warning."):
+        for ln in _wrap(line, 116):
+            o.append(_t(84, ry, ln, 10.5, fill=MUTED))
+            ry += 14
     o.append("</svg>")
 
-    H = y5 + ch5 + 36
+    H = y6 + ch6 + 36
     header = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
               f'viewBox="0 0 {W:.0f} {H:.0f}">'
               f'<rect width="{W:.0f}" height="{H:.0f}" fill="{PAPER}"/>')

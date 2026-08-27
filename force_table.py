@@ -48,7 +48,7 @@ def arm_count_rows(n: int) -> int:
 def forces(n_plate: int, n_arm: int, p: BracketParams, rep: dict) -> dict[str, float]:
     pull = rep["magnet_derated_pull_lbf"]
     weight = rep["total_hanging_lbf"]
-    mu = p.mu_bare_nickel
+    mu = p.mu_magnet_face
     fh = p.fridge_height
     body_bottom = fh - p.neck_len - p.body_h          # plate bottom above the floor
     pos = plate_positions(n_plate, p)
@@ -160,7 +160,7 @@ def render(path: Path, p: BracketParams) -> None:
     fy = y0 + rowh * len(dirs) + 34
     notes = [
         ("Weakest direction is always SLIDING", "it MOVES the mount rather than detaching it — "
-         f"the hook does not resist that axis, and mu is only {p.mu_bare_nickel:.1f} on bare "
+         f"the hook does not resist that axis, and mu is only {p.mu_magnet_face:.1f} on bare "
          f"nickel."),
         ("Doubling the magnets does NOT double the resistance",
          "peel and twist depend on WHERE a magnet sits, not just how many there are. The four "
