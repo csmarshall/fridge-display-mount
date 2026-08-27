@@ -231,8 +231,15 @@ def named(plate: Plate, params: BracketParams):
     i = params.magnet_inset
     corners = [(i, i), (params.body_w - i, i), (i, params.body_h - i),
                (params.body_w - i, params.body_h - i)]
-    second = [(i, 75.0), (params.body_w - i, 75.0),
-              (i, 225.0), (params.body_w - i, 225.0)]
+    # DERIVED, not hardcoded. These were at y = 75 and 225, which sits 43 mm from the corner row
+    # at inset 32 — against a hard floor of disc + 6 mm = 54 mm. The discs overlapped by 5 mm, so
+    # the sheet drew an 8-magnet option that is not physically buildable and made the whole idea
+    # look impossible when a valid version exists. Placed at the floor, spread as far as it allows.
+    row_pitch_floor = params.magnet_disc_dia + 6.0
+    second_lo = i + row_pitch_floor
+    second_hi = params.body_h - i - row_pitch_floor
+    second = [(i, second_lo), (params.body_w - i, second_lo),
+              (i, second_hi), (params.body_w - i, second_hi)]
     midside = [(i, cy), (params.body_w - i, cy)]
     # Labels corrected 2026-08-27. This sheet used to call the 8-up second-row layout "AS BUILT"
     # and the corners-plus-mid-sides layout "REJECTED" — exactly backwards against the cut file,

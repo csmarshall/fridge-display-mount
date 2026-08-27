@@ -26,7 +26,7 @@
 <rect x="224.16" y="230.88" width="166.57" height="97.39" fill="#2b2b2b" fill-opacity="0.85" stroke="#000"/>
 <line x1="222.00" y1="279.58" x2="392.88" y2="279.58" stroke="#e8e8e2" stroke-width="1"/>
 <text x="307.44" y="158.08" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">neck 150 mm</text>
-<text x="307.44" y="172.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1438 mm</text>
+<text x="307.44" y="186.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1438 mm</text>
 <text x="307.44" y="733.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">landscape  1276 – 1600 mm</text>
 <text x="307.44" y="746.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait   1160 – 1716 mm</text>
 <text x="307.44" y="759.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait top 27 mm below fridge top</text>
@@ -41,7 +41,7 @@
 <rect x="554.16" y="254.88" width="166.57" height="97.39" fill="#2b2b2b" fill-opacity="0.85" stroke="#000"/>
 <line x1="552.00" y1="303.58" x2="722.88" y2="303.58" stroke="#e8e8e2" stroke-width="1"/>
 <text x="637.44" y="158.08" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">neck 230 mm</text>
-<text x="637.44" y="172.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1358 mm</text>
+<text x="637.44" y="186.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1358 mm</text>
 <text x="637.44" y="733.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">landscape  1196 – 1520 mm</text>
 <text x="637.44" y="746.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait   1080 – 1636 mm</text>
 <text x="637.44" y="759.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait top 107 mm below fridge top</text>
@@ -56,7 +56,7 @@
 <rect x="884.16" y="278.88" width="166.57" height="97.39" fill="#2b2b2b" fill-opacity="0.85" stroke="#000"/>
 <line x1="882.00" y1="327.58" x2="1052.88" y2="327.58" stroke="#e8e8e2" stroke-width="1"/>
 <text x="967.44" y="158.08" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">neck 310 mm</text>
-<text x="967.44" y="172.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1278 mm</text>
+<text x="967.44" y="186.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1278 mm</text>
 <text x="967.44" y="733.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">landscape  1116 – 1440 mm</text>
 <text x="967.44" y="746.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait   1000 – 1556 mm</text>
 <text x="967.44" y="759.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait top 187 mm below fridge top</text>
@@ -71,7 +71,7 @@
 <rect x="1214.16" y="302.88" width="166.57" height="97.39" fill="#2b2b2b" fill-opacity="0.85" stroke="#000"/>
 <line x1="1212.00" y1="351.58" x2="1382.88" y2="351.58" stroke="#e8e8e2" stroke-width="1"/>
 <text x="1297.44" y="158.08" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">neck 390 mm</text>
-<text x="1297.44" y="172.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1198 mm</text>
+<text x="1297.44" y="186.08" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="middle" fill="#2e9e5b" font-weight="bold">screen centre 1198 mm</text>
 <text x="1297.44" y="733.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">landscape  1036 – 1360 mm</text>
 <text x="1297.44" y="746.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait   920 – 1476 mm</text>
 <text x="1297.44" y="759.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait top 267 mm below fridge top</text>

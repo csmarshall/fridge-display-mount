@@ -63,10 +63,16 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     bw, bh = d.rear_box_h, d.rear_box_w
 
     sc = 1.05
-    ox, oy = 300.0, 250.0          # origin of the front elevation, plate lower-left
     over_v = (dh - params.body_h) / 2.0 * sc
+    # oy was a fixed 250, which worked for the 23.8 in and pushed the 27 in display's top
+    # dimension up underneath the title bar. Derive it from how far the display actually
+    # overhangs, so a taller panel moves the whole elevation down instead of colliding.
+    TITLE_BOTTOM, DIM_SPACE = 96.0, 46.0
+    ox = 300.0
+    oy = TITLE_BOTTOM + over_v + DIM_SPACE
     W = 1560.0
-    H = oy + params.body_h * sc + over_v + 150
+    # Trailing pad was 150 on top of the overhang, leaving a third of the canvas blank.
+    H = oy + params.body_h * sc + over_v + 72
 
     cx, cy = params.body_w / 2, params.body_h / 2
 
@@ -132,10 +138,16 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
         out.append(f'<circle cx="{X(cx):.1f}" cy="{Y(oy_mm):.1f}" '
                    f'r="{d.rear_face_feature_dia/2*sc:.1f}" fill="#e8a33d" fill-opacity="0.75" '
                    f'stroke="#a8630f" stroke-width="1.6"/>')
-    out.append(_t(X(cx) + 34, Y(cy + d.rear_face_feature_radius) - 6,
-                  "Pi fan / GPIO opening", 9, anchor="start", fill="#a8630f", weight="bold"))
-    out.append(_t(X(cx) + 34, Y(cy + d.rear_face_feature_radius) + 6,
-                  "sits inside the vent window", 8.5, anchor="start", fill="#a8630f"))
+    # +34 put this inside the rear-box outline, so the dashed magenta line ran through it.
+    # Anchor outboard of the box instead, with a leader back to the opening.
+    _lx = X(cx + bw / 2) + 14
+    _ly = Y(cy + d.rear_face_feature_radius)
+    out.append(f'<line x1="{X(cx) + d.rear_face_feature_dia/2*sc:.1f}" y1="{_ly:.1f}" '
+               f'x2="{_lx - 4:.1f}" y2="{_ly:.1f}" stroke="#a8630f" stroke-width="0.8"/>')
+    out.append(_t(_lx, _ly - 6, "Pi fan / GPIO opening", 9, anchor="start", fill="#a8630f",
+                  weight="bold"))
+    out.append(_t(_lx, _ly + 6, "sits inside the vent window", 8.5, anchor="start",
+                  fill="#a8630f"))
 
     # neck stub, so the plate does not read as a floating rectangle
     out.append(f'<rect x="{X(cx-params.neck_w/2):.1f}" y="{Y(params.body_h)-52:.1f}" '

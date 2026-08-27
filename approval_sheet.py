@@ -423,7 +423,8 @@ def front_elevation(x0, y0, w, h, W: World, rows) -> str:
                 f'<path d="{d}" fill="none" stroke="{STEEL_DARK}" stroke-width="1.1"/>')
     o.append(rect(0, W.FD, 0, W.FH, fill="#eef2f5", stroke=STEEL_DARK, stroke_width="1.3"))
     o.append(rect(-W.door_proj, 0, 62, W.FH, fill="#e3e9ee", stroke=STEEL_DARK, stroke_width="1.1"))
-    o.append(T(X(-W.door_proj/2), Y(300), "door", 7.5, fill=MUTED, rot=-90))
+    # Y(300) put this near the panel edge where the border clipped it to "do...".
+    o.append(T(X(-W.door_proj/2), Y(W.FH * 0.55), "door", 7.5, fill=MUTED, rot=-90))
     # The hinge cover, MEASURED, and it belongs at the FRIDGE FRONT where the hinge is.
     # CAREFUL WITH THE DATUM: in this view mm is measured BACKWARD FROM THE CASE FRONT — that is
     # why the door is drawn at negative mm. `hinge_cover_from_rear` is rear-referenced, so it has
@@ -431,9 +432,13 @@ def front_elevation(x0, y0, w, h, W: World, rows) -> str:
     cover_depth = W.FD - p.hinge_cover_from_rear          # 204 mm, measured back from the front
     o.append(rect(0, cover_depth, W.FH, W.FH + W.hinge, fill="#cfd8de", stroke=STEEL_DARK,
                   stroke_width="1"))
-    o.append(T(X(cover_depth / 2), Y(W.FH + W.hinge) - 7, "hinge cover", 7.0, fill=MUTED))
-    o.append(T(X(cover_depth / 2), Y(W.FH + W.hinge) + 3, "lifts off", 6.4, fill=MUTED))
-    o.append(dim_h(min(X(cover_depth), X(W.FD)), max(X(cover_depth), X(W.FD)), Y(W.FH) - 54,
+    # These two lines sat at the same height as the "fridge depth 610" dimension and were struck
+    # through by it. One line, inside the cover box it names, clears it.
+    o.append(T(X(cover_depth / 2), Y(W.FH + W.hinge / 2) + 2, "hinge cover (lifts off)", 6.4,
+               fill=MUTED))
+    # -54 put this above the depth dimension and jammed it under the panel header. Moved INSIDE
+    # the cabinet, just below the top line, where nothing else is drawn.
+    o.append(dim_h(min(X(cover_depth), X(W.FD)), max(X(cover_depth), X(W.FD)), Y(W.FH) + 30,
                    f"clear window {p.hinge_cover_from_rear:.0f} — arm needs {p.neck_w:.0f}"))
     # Say which way is which. Without it the reader has to infer orientation from the door.
     # Placed against the GROUND LINE, not the fridge top — the top is above the panel's drawing
@@ -751,7 +756,15 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
         translucent white pad behind the text so a leader passing nearby cannot compete with it.
         """
         px, py, _ = cam.project(world_pt)
-        a = [f'<line x1="{lx:.1f}" y1="{ly + 15:.1f}" x2="{px:.1f}" y2="{py:.1f}" stroke="{INK}" '
+        # The pad the docstring promises was never actually emitted, so these captions were
+        # grey-on-grey over the fridge solid and unreadable — and worse now the side panel is
+        # drawn in its true near-black. Measure the block and lay a panel under it.
+        widest = max([len(text) * 5.9] + [len(l) * 4.6 for l in sub_])
+        blk_h = 16 + 10 * len(sub_)
+        bx0 = lx - 8 if anchor == "start" else lx - widest - 8
+        a = [f'<rect x="{bx0:.1f}" y="{ly - 15:.1f}" width="{widest + 16:.1f}" '
+             f'height="{blk_h:.1f}" rx="4" fill="#fbfcfd" fill-opacity="0.90"/>',
+             f'<line x1="{lx:.1f}" y1="{ly + 15:.1f}" x2="{px:.1f}" y2="{py:.1f}" stroke="{INK}" '
              f'stroke-width="0.9" opacity="0.45"/>',
              f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3" fill="{INK}"/>',
              T(lx, ly - 4, text, 10.5, anchor=anchor, fill=INK, weight="bold")]

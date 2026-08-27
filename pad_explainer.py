@@ -92,7 +92,9 @@ def render(path: Path, p: BracketParams) -> None:
     poly = " ".join(f"{a:.1f},{b:.1f}" for a, b in wedge)
     out.append(f'<polygon points="{poly}" fill="{PAD_FILL}" fill-opacity="0.85" stroke="{PAD_EDGE}" '
                f'stroke-width="1"/>')
-    out.append(_t(x(reach*0.40), arm_root_y + 30, "FOAM fills this wedge", 10,
+    # At 0.40 of the reach the sloped arm line passes through this text. The wedge is
+    # thickest at the ROOT, so label it there, where there is height for it.
+    out.append(_t(x(reach*0.17), arm_root_y + 34, "FOAM fills this wedge", 10,
                   fill="#8a6a10", weight="bold"))
 
     # total gap dimension, left of the bend end
@@ -137,10 +139,16 @@ def render(path: Path, p: BracketParams) -> None:
         ("pad THINNER than magnet", "#b00020", mag - 3.0, mag, "magnet holds the arm up.\nFoam does nothing, and the\nrigid magnet line-loads the sheet."),
     ]
     cw = 390.0
+    # The arm SHOULD sit higher when the pad is thicker — that is the whole point of the middle
+    # panel. But `base` was the same for all three while the arm rose off it, so the tallest case
+    # pushed its arm and its "arm" caption up into the section header. Reserve headroom for the
+    # WORST case across all panels, so every panel shares one datum and none of them collides.
+    s2 = 9.0
+    max_stand = max(max(padh, magh) for _, _, padh, magh, _ in cases)
+    base_y = py0 + 74 + max_stand * s2
     for i, (title, colour, padh, magh, note) in enumerate(cases):
         bx = 90.0 + i * cw
-        base = py0 + 120
-        s2 = 9.0
+        base = base_y
         out.append(_t(bx + 130, py0, title, 11.5, anchor="middle", fill=colour, weight="bold"))
         # steel
         out.append(f'<rect x="{bx:.1f}" y="{base:.1f}" width="260" height="16" fill="{FRIDGE_SIDE}" '

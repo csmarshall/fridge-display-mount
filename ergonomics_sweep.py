@@ -176,7 +176,9 @@ def render(path: Path, necks: Sequence[float], params: BracketParams, fridge_hei
         portrait_top, portrait_bot = centre + DISPLAY.width / 2, centre - DISPLAY.width / 2
         out.append(_text(px + fridge_px / 2, y(fridge_height) - 30, f"neck {neck:.0f} mm",
                          size=13, weight="bold"))
-        out.append(_text(px + fridge_px / 2, y(fridge_height) - 16,
+        # -16 put this at exactly the y of the gold 6'4" eye-line, which runs the full canvas
+        # width, so every one of the four labels rendered with a strikethrough through it.
+        out.append(_text(px + fridge_px / 2, y(fridge_height) - 2,
                          f"screen centre {centre:.0f} mm", size=10, fill="#2e9e5b", weight="bold"))
         lines = [
             f"landscape  {landscape_bot:.0f} – {landscape_top:.0f} mm",

@@ -59,9 +59,12 @@ def render(path: Path, p: BracketParams) -> dict:
     shared_inboard = min(p.neck_w and inboard_shown, p.hinge_cover_inboard, p.arm_len)
     overlap_area = overlap * shared_inboard / 100.0        # cm^2
 
+    BANNER_H = 34.0
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
          f'viewBox="0 0 {W:.0f} {H:.0f}">',
          f'<rect width="{W:.0f}" height="{H:.0f}" fill="#fbfcfd"/>',
+         f'<rect width="{W:.0f}" height="26" fill="#b00020"/>',
+         f'<text x="{W/2:.0f}" y="18" font-family="Helvetica,Arial,sans-serif" font-size="12.5" font-weight="bold" text-anchor="middle" fill="#fff">REFERENCE ONLY — clearance study, not a fabrication drawing</text>',
          _t(ox, 42, "FRIDGE TOP IN PLAN — does the arm meet the hinge cover?", 16,
             anchor="start", weight="bold"),
          _t(ox, 64, "Looking down on the mounting-side corner. The ONLY thing that decides this "

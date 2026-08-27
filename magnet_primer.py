@@ -306,8 +306,12 @@ def render(path: Path, p: BracketParams) -> None:
              f'fill="{C_MAGNET}" stroke="{INK}" stroke-width="0.9"/>')
     o.append(f'<rect x="{spine_in + 70:.1f}" y="{arm_bot:.1f}" width="24" height="{lift:.1f}" '
              f'fill="{C_FOAM}" stroke="#a8830f" stroke-width="0.9"/>')
-    o.append(_t(gx + 100, arm_bot + 11, "sponge pad + arm magnet — the arm never touches bare "
-                "steel", 9.5, anchor="start", fill=MUTED))
+    # Ran right, straight into the facts column of the same card. Two short lines, left of the
+    # fridge box, where the panel is empty.
+    o.append(_t(spine_out - 6, arm_bot - 6, "sponge pad + arm magnet:", 9.0, anchor="end",
+                fill=MUTED))
+    o.append(_t(spine_out - 6, arm_bot + 5, "the arm never touches bare steel", 9.0, anchor="end",
+                fill=MUTED))
     o.append(_arrow(spine_out + 4, gy + 130, spine_out + 4, gy + 172, INK))
     o.append(_t(spine_out + 16, gy + 162, f"all {lbf_n(hanging, 1)} of it", 10.5, weight="bold"))
     o.append(_arrow(gx + 40, gy - 40, gx + 40, gy - 16, OK))

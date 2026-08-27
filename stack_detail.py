@@ -99,13 +99,18 @@ def _section(x0, y0, cw, opt, p, rep) -> list[str]:
     top, bot = axis - half, axis + half
     o: list[str] = []
 
-    o.append(f'<rect x="{x0:.1f}" y="{y0:.1f}" width="{cw:.1f}" height="30" rx="4" '
-             f'fill="{tint}" stroke="{col}" stroke-width="{2.2 if spec else 1.3}"/>')
-    name = opt.nut.name + ("" if opt.washer.key == "none" else f" + {opt.washer.name}")
-    o.append(_t(x0 + 12, y0 + 20, name, 11.5, anchor="start", weight="bold", fill=col))
     verdict = {"ok": f"{opt.slack:+.2f} mm to spare",
                "marginal": f"{opt.slack:+.2f} mm — TOLERANCE STACK",
                "bad": f"SHORT BY {-opt.slack:.2f} mm"}[opt.state]
+    o.append(f'<rect x="{x0:.1f}" y="{y0:.1f}" width="{cw:.1f}" height="30" rx="4" '
+             f'fill="{tint}" stroke="{col}" stroke-width="{2.2 if spec else 1.3}"/>')
+    name = opt.nut.name + ("" if opt.washer.key == "none" else f" + {opt.washer.name}")
+    # The verdict is right-aligned in the same 30 px strip. "distorted-thread locknut
+    # (centre-lock) + OVERSIZED washer O1.250" ran straight into it and the two overprinted.
+    # Shrink the title until it fits the space the verdict leaves, rather than letting it collide.
+    avail = cw - 24 - len(verdict) * 6.2 - 18
+    size = 11.5 if len(name) * 6.4 <= avail else max(8.5, avail / max(len(name), 1) * 1.55)
+    o.append(_t(x0 + 12, y0 + 20, name, size, anchor="start", weight="bold", fill=col))
     o.append(_t(x0 + cw - 12, y0 + 20, verdict, 11, anchor="end", fill=col, weight="bold"))
 
     # ---- the section -------------------------------------------------------------------------
@@ -279,7 +284,7 @@ def render(path: Path, p: BracketParams) -> None:
     fits = [r for r in allperm if r.state == "ok"]
     best_area = max(fits, key=lambda r: r.bearing_area)
     fy = 190 + rows * ch + 30
-    o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="116" fill="#fff" '
+    o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="134" fill="#fff" '
              f'stroke="{OK}" stroke-width="1.6" rx="4"/>')
     o.append(_t(56, fy, f"USE: {spec.label}", 13.5, anchor="start", weight="bold", fill=OK))
     o.append(_t(56, fy + 22,
@@ -294,12 +299,14 @@ def render(path: Path, p: BracketParams) -> None:
                 f"thinnest LOCKNUT, which is exactly what a washer costs. Locking is chemical "
                 f"instead - threadlocker adds no height at all.", 11.5, anchor="start",
                 fill=MUTED))
+    # Was one line and ran past the box and off the canvas. Split at a sentence boundary.
     o.append(_t(56, fy + 62,
                 f"Runner-up is the THIN nylon-insert locknut, no washer: "
                 f"{G.NUTS_BY_KEY['nyloc_thin'].height + spec.plate:.2f} mm used, +1.60 mm spare, "
-                f"and a MECHANICAL lock that needs no chemical and survives being taken apart. "
-                f"It bears on only 70 mm2 - which is harmless, so this is a preference, not a "
-                f"correctness call.", 11.5, anchor="start", fill=MUTED))
+                f"and a MECHANICAL lock that needs no chemical.", 11.5, anchor="start", fill=MUTED))
+    o.append(_t(56, fy + 80,
+                "It survives being taken apart, and bears on only 70 mm2 — which is harmless. So "
+                "this is a preference, not a correctness call.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 82, f"Fasteners are {FINISH.upper()} OXIDE where stocked - only the ARM "
                 f"nuts are visible, facing up against a textured-black arm.", 11.0, anchor="start",
                 fill=MUTED))

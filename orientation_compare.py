@@ -110,7 +110,9 @@ def render(path: Path, p: BracketParams) -> None:
         arm0, arm1 = centre - p.neck_w/2, centre + p.neck_w/2
         out.append(f'<rect x="{X(arm0):.1f}" y="{Y(height) - p.arm_pad*sc - 4:.1f}" '
                    f'width="{p.neck_w*sc:.1f}" height="4" fill="#9a5b00"/>')
-        out.append(_t(X(centre), Y(height) - 18, f"arm {p.neck_w:.0f} mm", 8.5, fill="#5d3600",
+        # Was at Y(height) - 18, the same band as the hinge-cover callout, so the two stacked.
+        # The arm label belongs BELOW its own bar, where nothing else is drawn.
+        out.append(_t(X(centre), Y(height) + 13, f"arm {p.neck_w:.0f} mm", 8.5, fill="#5d3600",
                       weight="bold"))
 
         body_top = height - p.neck_len
@@ -131,9 +133,11 @@ def render(path: Path, p: BracketParams) -> None:
             out.append(f'<rect x="{X(centre - dw/2):.1f}" y="{Y(screen_c + dh/2):.1f}" '
                        f'width="{over_front*sc:.1f}" height="{dh*sc:.1f}" fill="#b00020" '
                        f'fill-opacity="0.45" stroke="#b00020" stroke-width="1.4"/>')
-            out.append(_t(X(centre - dw/2) - 6, Y(screen_c), "into the", 9, anchor="end",
+            # Right-anchored at the door edge, this ran left into the comfort-band pill that
+            # sits at X(0) - 42. Anchor it INSIDE the red overhang instead, which is its subject.
+            out.append(_t(X(centre - dw/2) + 6, Y(screen_c), "into the", 9, anchor="start",
                           fill="#b00020", weight="bold"))
-            out.append(_t(X(centre - dw/2) - 6, Y(screen_c) + 12, "door's path", 9, anchor="end",
+            out.append(_t(X(centre - dw/2) + 6, Y(screen_c) + 12, "door's path", 9, anchor="start",
                           fill="#b00020", weight="bold"))
 
         # comfort band

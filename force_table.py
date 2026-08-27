@@ -96,9 +96,12 @@ def render(path: Path, p: BracketParams) -> None:
     W = x0 + colw * len(LADDER) + 60.0
     H = y0 + rowh * (len(dirs) + 1) + 190.0
 
+    BANNER_H = 34.0
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
          f'viewBox="0 0 {W:.0f} {H:.0f}">',
          f'<rect width="{W:.0f}" height="{H:.0f}" fill="#fbfcfd"/>',
+         f'<rect width="{W:.0f}" height="26" fill="#b00020"/>',
+         f'<text x="{W/2:.0f}" y="18" font-family="Helvetica,Arial,sans-serif" font-size="12.5" font-weight="bold" text-anchor="middle" fill="#fff">REFERENCE ONLY — resistance-to-accident figures, not a fabrication drawing</text>',
          f'<text x="40" y="52" font-family="Helvetica,Arial,sans-serif" font-size="20" '
          f'font-weight="bold" fill="{INK}">HOW HARD YOU HAVE TO HIT IT</text>',
          f'<text x="40" y="78" font-family="Helvetica,Arial,sans-serif" font-size="12.5" '
@@ -122,7 +125,9 @@ def render(path: Path, p: BracketParams) -> None:
         built = (np_ == fitted_plate and na == fitted_arm)
         if built:
             o.append(f'<rect x="{x0 + colw*i:.1f}" y="{y0 - 56:.1f}" width="{colw:.1f}" '
-                     f'height="{rowh*(len(dirs)+1) + 56:.1f}" fill="#e8f4ee"/>')
+                     # len(dirs)+1 counted a row that is not drawn, so the highlight ran ~90 px
+                     # past the last row as an empty green block.
+                     f'height="{rowh*len(dirs) + 56:.1f}" fill="#e8f4ee"/>')
         o.append(f'<text x="{cx:.1f}" y="{y0-38:.1f}" font-family="Helvetica,Arial,sans-serif" '
                  f'font-size="15" font-weight="bold" text-anchor="middle" '
                  f'fill="{INK}">{np_ + na}</text>')

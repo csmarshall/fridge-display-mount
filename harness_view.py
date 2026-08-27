@@ -30,7 +30,14 @@ def draw(path: Path, p: BracketParams) -> dict:
     flat = derive_flat(p)
     geom = build_geometry(p, flat)
     issues = G.validate(p, geom)
-    errs = [i for i in issues if i.severity == "ERROR"]
+    # Dedupe by code. The validator can raise the same failure once per offending feature, and
+    # the panel printed each of them as an identical line ("FAIL hole_window_... short by -2.98")
+    # with no way to tell them apart, which read as a rendering bug rather than as two features.
+    errs, _seen = [], set()
+    for i in issues:
+        if i.severity == "ERROR" and i.code not in _seen:
+            _seen.add(i.code)
+            errs.append(i)
     s = 1.05
     L, Rm, Tp, B = 150.0, 330.0, 120.0, 150.0
     W = flat.width * s + L + Rm
@@ -50,9 +57,16 @@ def draw(path: Path, p: BracketParams) -> dict:
              f'y2="{Y(flat.bend_line_y):.1f}" stroke="#b00020" stroke-width="1.4" '
              f'stroke-dasharray="10 6"/>')
     o.append(T(X(p.body_w)+8, Y(flat.bend_line_y)+4, "bend", 9.5, anchor="start", fill="#b00020"))
+    # These sit on the plate's centreline, which is exactly where the strap slots and the centre
+    # vent are, so the geometry drew straight through the letters. A panel behind each label makes
+    # them legible wherever they land, rather than hunting for a clear spot per region.
     for lbl, yy in (("ARM", (flat.bend_line_y+flat.height)/2), ("NECK", (p.body_h+flat.bend_line_y)/2),
                     ("BODY (the plate)", p.body_h/2)):
-        o.append(T(X(p.body_w/2), Y(yy), lbl, 11, fill=MUTED))
+        lx, ly = X(p.body_w/2), Y(yy)
+        o.append(f'<rect x="{lx - len(lbl)*3.4 - 6:.1f}" y="{ly - 11:.1f}" '
+                 f'width="{len(lbl)*6.8 + 12:.1f}" height="16" rx="3" fill="#fbfcfd" '
+                 f'fill-opacity="0.88"/>')
+        o.append(T(lx, ly, lbl, 11, fill=MUTED))
     # features
     co = geom.center_opening
     o.append(f'<circle cx="{X(co.x):.1f}" cy="{Y(co.y):.1f}" r="{co.radius*s:.1f}" fill="#fff" '
@@ -94,9 +108,11 @@ def draw(path: Path, p: BracketParams) -> dict:
     mg = i - p.magnet_disc_dia/2
     o.append(f'<line x1="{X(0):.1f}" y1="{Y(i)+0:.1f}" x2="{X(i-p.magnet_disc_dia/2):.1f}" '
              f'y2="{Y(i):.1f}" stroke="{BAD if mg<8 else OK}" stroke-width="2.5"/>')
-    o.append(T(X(0)+14, Y(i)-10, f"{mg:.2f} mm of plate", 10.5, anchor="start",
+    # Was at X(0)+14, which is inside the O48 corner disc. Pushed outboard of the plate edge so
+    # the callout reads against paper instead of against the magnet it is describing.
+    o.append(T(X(0)-14, Y(i)-10, f"{mg:.2f} mm of plate", 10.5, anchor="end",
                fill=BAD if mg<8 else OK, weight="bold"))
-    o.append(T(X(0)+14, Y(i)+14, "outside the disc", 9.5, anchor="start", fill=MUTED))
+    o.append(T(X(0)-14, Y(i)+14, "outside the disc", 9.5, anchor="end", fill=MUTED))
     # verdict block
     vx = X(flat.width)+40
     o.append(T(vx, Tp+20, "VALIDATOR", 12, anchor="start", weight="bold"))

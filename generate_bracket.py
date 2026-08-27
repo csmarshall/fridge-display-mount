@@ -2185,7 +2185,9 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
                    f'{fill} stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" '
                    f'opacity="{0.5 if optional else 1.0}"/>')
         if optional:
-            out.append(_svg_text_masked(fx(disc.x), fy(disc.y) + 3.0, "OPTIONAL", size=6.2,
+            # Was at the disc centre, which is exactly where the hole is drawn a few lines
+            # later — every optional disc read "OPT(o)NAL". Dropped clear of the hole.
+            out.append(_svg_text_masked(fx(disc.x), fy(disc.y) + 15.0, "OPTIONAL", size=6.2,
                                         fill="#8c1070"))
     for hole in geom.holes:
         colour = "#c0169a" if "magnet" in hole.tag else "#1a5fb4"
@@ -2431,10 +2433,32 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
                     f"R {MATERIAL.bend_radius:.2f} mm"),
     ]
     callout_y = max(sy(fridge_h), sy(body_bottom), sy(display_top + DISPLAY.height)) + 26
-    for i, (colour, text) in enumerate(callouts):
-        y = callout_y + i * 14
-        out.append(f'<rect x="{elev_x - fridge_w * scale:.2f}" y="{y - 7:.2f}" width="9" height="9" fill="{colour}"/>')
-        out.append(_svg_text(elev_x - fridge_w * scale + 15, y, text, size=8.5, anchor="start", fill="#333"))
+    # These were emitted as single lines and the long ones ran off the right edge of the canvas
+    # and were clipped mid-word. Wrap to the width actually available beside the elevation.
+    cx0 = elev_x - fridge_w * scale
+    avail_chars = max(28, int((width - cx0 - 40) / 4.6))
+
+    def _wrap_callout(text: str) -> list[str]:
+        words, lines, cur = text.split(), [], ""
+        for w in words:
+            trial = f"{cur} {w}".strip()
+            if len(trial) <= avail_chars:
+                cur = trial
+            else:
+                if cur:
+                    lines.append(cur)
+                cur = w
+        if cur:
+            lines.append(cur)
+        return lines
+
+    y = callout_y
+    for colour, text in callouts:
+        out.append(f'<rect x="{cx0:.2f}" y="{y - 7:.2f}" width="9" height="9" fill="{colour}"/>')
+        for ln in _wrap_callout(text):
+            out.append(_svg_text(cx0 + 15, y, ln, size=8.5, anchor="start", fill="#333"))
+            y += 12
+        y += 3
 
     # --- engineering notes ----------------------------------------------------------
     notes = [
