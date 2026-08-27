@@ -557,7 +557,7 @@ about 7.2× because the torsion arm drops from 278 mm to 162 mm.
 
 ### Tier 1 — blocks the order, changes the cut file
 
-- [ ] **Fridge overall height.** Design assumes LG's published 70.5" (1791 mm). The neck length is
+- [ ] **Fridge overall height.** Design assumes Samsung's published 68 5/8" (1743 mm) to top of CASE. The neck length is
       derived from it, so this sets where the screen lands. 40 mm of error = 40 mm of screen height.
       Re-run with `--fridge-height <measured> --screen-centre-height 1331`.
 - [x] **Bend deduction — RESOLVED.** SendCutSend publishes 0.1955" for A36/1008 at 0.119"/90°,

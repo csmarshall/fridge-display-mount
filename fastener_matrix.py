@@ -22,7 +22,7 @@ from typing import Sequence
 
 from bracket_common import LOG_LEVELS, configure_logging
 import generate_bracket as G
-from generate_bracket import (FINISH, MATERIAL, SPECIFIED_NUT, SPECIFIED_WASHER, BracketParams,
+from generate_bracket import (FINISH, MATERIAL, SPECIFIED_LOCKER, SPECIFIED_NUT, SPECIFIED_WASHER, BracketParams,
                               stack_permutations)
 
 LOG = logging.getLogger("matrix")
@@ -127,7 +127,7 @@ def render(path: Path, p: BracketParams) -> None:
         for r in members:
             n += 1
             spec = (r.nut.key == SPECIFIED_NUT and r.washer.key == SPECIFIED_WASHER
-                    and r.locker == "dry")
+                    and r.locker == SPECIFIED_LOCKER)
             if spec:
                 o.append(f'<rect x="{x0:.1f}" y="{y - 1:.1f}" width="{W - 40 - x0:.1f}" '
                          f'height="{rowh - 2:.1f}" fill="{OK}" fill-opacity="0.16"/>')
@@ -171,23 +171,25 @@ def render(path: Path, p: BracketParams) -> None:
     best_area = max(fits, key=lambda r: r.bearing_area)
     o.append(f'<rect x="40" y="{fy - 22:.1f}" width="{W - 80:.1f}" height="132" fill="#fff" '
              f'stroke="{OK}" stroke-width="1.6" rx="4"/>')
-    o.append(_t(56, fy, f"SPECIFIED: {G.NUTS_BY_KEY[SPECIFIED_NUT].name}, no washer", 14,
-                anchor="start", weight="bold", fill=OK))
+    spec = next(r for r in rows if r.nut.key == SPECIFIED_NUT
+                and r.washer.key == SPECIFIED_WASHER and r.locker == SPECIFIED_LOCKER)
+    o.append(_t(56, fy, f"SPECIFIED: {spec.label}", 14, anchor="start", weight="bold", fill=OK))
     o.append(_t(56, fy + 24,
                 f"Of {len(rows)} permutations, {len(fits)} fit and {len(mech)} of those lock "
-                f"MECHANICALLY. The specified one has the most thread to spare of any "
-                f"mechanically-locking stack that fits.", 11.5, anchor="start", fill=MUTED))
+                f"MECHANICALLY. The specified stack is a deliberate pick rather than the top of "
+                f"this sort: {spec.slack:+.2f} mm of thread AND {spec.bearing_area:.0f} mm2 of "
+                f"bearing - the most of anything that fits - with threadlocker doing the locking.",
+                11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 44,
-                f"Adding any washer to it costs {G.WASHERS_BY_KEY['standard'].t:.2f} mm and drops "
-                f"it into the tolerance band. THICKNESS is what runs out, not diameter — which is "
-                f"why the oversized washer is no harder to fit than the standard one.", 11.5,
+                f"THICKNESS is what runs out in this stack, not diameter — which is why the "
+                f"OVERSIZED washer is no harder to fit than the standard one and was taken for "
+                f"free. The half-height jam nut is what pays for it.", 11.5,
                 anchor="start", fill=MUTED))
     o.append(_t(56, fy + 68,
-                f"Best bearing area that still fits: {best_area.label} at "
-                f"{best_area.bearing_area:.0f} mm2 ({best_area.bearing_psi(clamp):.0f} psi) — "
-                f"{best_area.bearing_area / rows[0].bearing_area:.0f}x the specified stack. It is "
-                f"NOT specified because it trades a mechanical locking feature for a chemical one.",
-                11.5, anchor="start", fill=MUTED))
+                f"The cost is that threadlocker is a CHEMICAL lock: it has to be cleaned off and "
+                f"reapplied to service the joint, where a nylon insert does not. Runner-up if you "
+                f"would rather have that: THIN nylon-insert locknut, no washer, +1.60 mm, "
+                f"mechanical, 70 mm2.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 92,
                 f"None of this is close to a bearing problem: even the smallest annulus here is "
                 f"~{MATERIAL.yield_psi / rows[0].bearing_psi(clamp):.0f}x under {MATERIAL.name}'s "

@@ -22,7 +22,7 @@ from typing import Sequence
 
 from bracket_common import LOG_LEVELS, configure_logging
 import generate_bracket as G
-from generate_bracket import (FINISH, MATERIAL, SPECIFIED_NUT, SPECIFIED_WASHER,
+from generate_bracket import (FINISH, MATERIAL, SPECIFIED_LOCKER, SPECIFIED_NUT, SPECIFIED_WASHER,
                               BracketParams, part_no, stack_permutations)
 
 LOG = logging.getLogger("stack")
@@ -275,32 +275,31 @@ def render(path: Path, p: BracketParams) -> None:
 
     spec = next(r for r in allperm
                 if r.nut.key == SPECIFIED_NUT and r.washer.key == SPECIFIED_WASHER
-                and r.locker == "dry")
+                and r.locker == SPECIFIED_LOCKER)
     fits = [r for r in allperm if r.state == "ok"]
     best_area = max(fits, key=lambda r: r.bearing_area)
     fy = 190 + rows * ch + 30
     o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="116" fill="#fff" '
              f'stroke="{OK}" stroke-width="1.6" rx="4"/>')
-    o.append(_t(56, fy, f"USE: {spec.nut.name}, no washer", 13.5, anchor="start", weight="bold",
-                fill=OK))
+    o.append(_t(56, fy, f"USE: {spec.label}", 13.5, anchor="start", weight="bold", fill=OK))
     o.append(_t(56, fy + 22,
                 f"{spec.plate:.2f} + {spec.washer.t:.2f} + {spec.nut.height:.2f} = "
                 f"{spec.needed:.2f} mm against a {spec.stud:.2f} mm stud: "
-                f"{spec.slack:+.2f} mm to spare, with a mechanical locking feature. The most "
-                f"thread of any mechanically-locking stack that fits.", 11.5, anchor="start",
-                fill=MUTED))
+                f"{spec.slack:+.2f} mm to spare, and {spec.bearing_area:.0f} mm2 of bearing - "
+                f"the most of any stack that fits, {spec.bearing_area / 69.9:.0f}x a bare nut.",
+                11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 42,
-                f"You can have LOCKING or a washer, not both: adding one costs "
-                f"{G.WASHERS_BY_KEY['standard'].t:.2f} mm and drops this to "
-                f"{spec.slack - G.WASHERS_BY_KEY['standard'].t:+.2f} mm, inside the tolerance "
-                f"stack. THICKNESS is what runs out, not diameter.", 11.5, anchor="start",
+                f"The half-height JAM nut is what buys the room: it is "
+                f"{G.NUTS_BY_KEY['nyloc_thin'].height - spec.nut.height:.2f} mm shorter than the "
+                f"thinnest LOCKNUT, which is exactly what a washer costs. Locking is chemical "
+                f"instead - threadlocker adds no height at all.", 11.5, anchor="start",
                 fill=MUTED))
     o.append(_t(56, fy + 62,
-                f"And a washer is not needed: {spec.bearing_psi(rep['magnet_derated_pull_lbf']):.0f}"
-                f" psi is {MATERIAL.yield_psi / spec.bearing_psi(rep['magnet_derated_pull_lbf']):.0f}x"
-                f" under {MATERIAL.name}'s yield. Most bearing area available is "
-                f"{best_area.label} at {best_area.bearing_area:.0f} mm2 - it trades mechanical "
-                f"locking for chemical.", 11.5, anchor="start", fill=MUTED))
+                f"Runner-up is the THIN nylon-insert locknut, no washer: "
+                f"{G.NUTS_BY_KEY['nyloc_thin'].height + spec.plate:.2f} mm used, +1.60 mm spare, "
+                f"and a MECHANICAL lock that needs no chemical and survives being taken apart. "
+                f"It bears on only 70 mm2 - which is harmless, so this is a preference, not a "
+                f"correctness call.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 82, f"Fasteners are {FINISH.upper()} OXIDE where stocked - only the ARM "
                 f"nuts are visible, facing up against a matte-black arm.", 11.0, anchor="start",
                 fill=MUTED))

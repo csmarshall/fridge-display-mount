@@ -54,16 +54,6 @@
     "magnet_disc_dia": 48.021874999999994,
     "magnet_standoff": 11.509374999999999,
     "magnet_stud_len": 12.7,
-    "washer_od": 19.049999999999997,
-    "washer_id": 8.737599999999999,
-    "washer_t": 1.7526000000000002,
-    "washer_t_min": 0.889,
-    "nut_across_flats": 12.7,
-    "nut_h_hex": 6.746874999999999,
-    "nut_h_nyloc": 8.73125,
-    "nut_h_nyloc_thin": 6.35,
-    "nut_h_distorted": 6.746874999999999,
-    "nut_h_jam": 4.762499999999999,
     "center_open_dia": 90.0,
     "window_long": 80.0,
     "window_short": 46.0,
@@ -462,34 +452,69 @@
         "plain": "3506K67",
         "black": null
       },
-      "washer": {
-        "plain": "92141A030",
-        "black": "96765A150"
-      },
-      "nut_hex": {
-        "plain": "91841A030",
-        "black": "97149A150"
-      },
-      "nut_jam": {
-        "plain": "91847A030",
-        "black": "98514A035"
-      },
-      "nut_nyloc": {
-        "plain": "91831A030",
-        "black": "94407A105"
+      "threadlocker": {
+        "plain": "91458A115",
+        "black": null
       },
       "nut_nyloc_thin": {
         "plain": "90101A237",
         "black": "90101A122"
       },
-      "nut_distorted": {
+      "nut_distorted_center": {
         "plain": "90047A115",
         "black": null
+      },
+      "nut_distorted_top": {
+        "plain": "90045A453",
+        "black": null
+      },
+      "nut_hex_jam": {
+        "plain": "91847A030",
+        "black": "98514A035"
+      },
+      "nut_hex_std": {
+        "plain": "91841A030",
+        "black": "97149A150"
+      },
+      "nut_keps": {
+        "plain": "96278A519",
+        "black": null
+      },
+      "nut_nyloc_std": {
+        "plain": "91831A030",
+        "black": "94407A105"
+      },
+      "nut_nyloc_flange": {
+        "plain": "94238A102",
+        "black": "94238A330"
+      },
+      "nut_nyloc_thin_heavy": {
+        "plain": "90098A115",
+        "black": null
+      },
+      "nut_flex_top": {
+        "plain": "91839A127",
+        "black": null
+      },
+      "nut_nyloc_heavy": {
+        "plain": "90099A030",
+        "black": null
+      },
+      "washer_standard": {
+        "plain": "92141A030",
+        "black": "96765A145"
+      },
+      "washer_oversized": {
+        "plain": "90313A111",
+        "black": "90377A164"
       }
     },
     "finish": "black",
     "magnet_bearing_area_mm2": 1754.4620631306825,
     "washer_bearing_area_mm2": 225.0612207458609,
+    "washer_oversize_bearing_area_mm2": 731.7686998433587,
+    "specified_bearing_area_mm2": 731.7686998433587,
+    "specified_bearing_psi": 54.00073822296409,
     "nut_bearing_area_mm2": 69.93185246890879,
     "washer_bearing_gain": 3.218293421383647,
     "nut_bearing_psi": 565.065111317744,

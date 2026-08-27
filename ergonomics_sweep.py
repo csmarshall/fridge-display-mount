@@ -56,9 +56,12 @@ def feet_inches(feet: int, inches: float) -> float:
 SHORT = Person("5'1\"", feet_inches(5, 1))
 TALL = Person("6'4\"", feet_inches(6, 4))
 
-# LG side-by-side, US: LRSXS2706 is 70.5 in tall. Verified on lg.com 2026-08-24.
-LG_FRIDGE_HEIGHT_MM = 70.5 * MM_PER_INCH
-LG_FRIDGE_DEPTH_MM = 33.5 * MM_PER_INCH
+# The fridge lives in BracketParams — one home. This sheet used to carry a 70.5 in height and a
+# 33.5 in depth copied from a different fridge's spec page; the actual counter-depth Samsung is 48 mm shorter
+# and 241 mm shallower, and the neck length is derived from that height.
+_FP = BracketParams()
+FRIDGE_HEIGHT_MM = _FP.fridge_height       # 1743.1 mm, top of CASE (not the hinge covers)
+FRIDGE_DEPTH_MM = _FP.fridge_depth         # 609.6 mm
 
 
 def screen_centre_height(fridge_height: float, neck_len: float, body_h: float) -> float:
@@ -103,7 +106,7 @@ def render(path: Path, necks: Sequence[float], params: BracketParams, fridge_hei
         _text(40, 54, "Display mounting height vs. neck (drop) length", size=15,
               anchor="start", weight="bold"),
         _text(40, 71,
-              f"LG side-by-side {fridge_height / MM_PER_INCH:.1f}\" ({fridge_height:.0f} mm) tall · "
+              f"Samsung RS23A500ASR {fridge_height / MM_PER_INCH:.1f}\" ({fridge_height:.0f} mm) to top of case · "
               f"body {params.body_w:.0f} x {params.body_h:.0f} mm · screen centre = VESA centre = body centre, "
               f"so it is identical in both orientations",
               size=10, anchor="start", fill="#555"),
@@ -133,11 +136,11 @@ def render(path: Path, necks: Sequence[float], params: BracketParams, fridge_hei
         px = margin_l + index * panel_w
         centre = screen_centre_height(fridge_height, neck, params.body_h)
         body_top = fridge_height - neck
-        fridge_px = LG_FRIDGE_DEPTH_MM * scale
+        fridge_px = FRIDGE_DEPTH_MM * scale
 
         out.append(f'<rect x="{px:.2f}" y="{y(fridge_height):.2f}" width="{fridge_px:.2f}" '
                    f'height="{fridge_height * scale:.2f}" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>')
-        out.append(_text(px + fridge_px / 2, y(fridge_height * 0.12), "LG side-by-side", size=9, fill="#6a737b"))
+        out.append(_text(px + fridge_px / 2, y(fridge_height * 0.12), "Samsung RS23A500ASR", size=9, fill="#6a737b"))
         out.append(_text(px + fridge_px / 2, y(fridge_height * 0.12) + 12, "(side panel, face on)",
                          size=8, fill="#8a9199"))
 
@@ -207,7 +210,7 @@ def render(path: Path, necks: Sequence[float], params: BracketParams, fridge_hei
                      size=9.5, anchor="start", fill="#333"))
     out.append(_text(40, canvas_h - 20,
                      "Eye/elbow heights derived from stature (eye 0.936, elbow 0.630). Fridge height is the "
-                     "published LG figure — measure yours before committing.",
+                     "published Samsung figure for the CASE, not the hinge covers.",
                      size=9.5, anchor="start", fill="#777"))
     out.append("</svg>")
 
@@ -219,8 +222,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Render a neck-length (drop) sweep against standing ergonomics.")
     p.add_argument("--necks", type=float, nargs="+", default=[150.0, 230.0, 310.0, 390.0],
                    help="candidate neck lengths in mm, one panel each")
-    p.add_argument("--fridge-height", type=float, default=LG_FRIDGE_HEIGHT_MM,
-                   help="MEASURE yours; default is LG's published 70.5 in")
+    p.add_argument("--fridge-height", type=float, default=FRIDGE_HEIGHT_MM,
+                   help="MEASURE yours; default is Samsung's published 68 5/8 in to top of case")
     p.add_argument("--body-height", type=float, default=BracketParams().body_h)
     p.add_argument("--body-width", type=float, default=BracketParams().body_w)
     p.add_argument("--out", type=Path, default=Path("ergonomics_sweep.svg"))

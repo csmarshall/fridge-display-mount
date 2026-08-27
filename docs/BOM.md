@@ -21,8 +21,10 @@ holes fitted (200×200 M6 provision cut but unused), pad thickness target 11.5 m
 | 1 | SendCutSend custom (`bracket_flat.dxf`) | Bracket: A36/1008 mild steel 0.119 in, 310 × 742 mm flat, 1 bend, 4 countersinks (90° M4, concave face), matte black powder coat | 1 | $185.54 | $185.54 | [sendcutsend.com](https://sendcutsend.com) — live quote 2026-08-27 | VERIFIED (live quote, owner's session) |
 | 2 | Waveshare 23.8inch FHD Monitor (SKU 34025) | 23.8 in 1920×1080 capacitive touch monitor, optically bonded, VESA 100, incl. 12 V 5 A PSU + screws pack | 1 | $349.99 | $349.99 | [waveshare.com](https://www.waveshare.com/27inch-fhd-monitor.htm) (select "23.8inch") | VERIFIED |
 | 3 | [3506K67](https://www.mcmaster.com/3506K67/) | Encased neodymium magnet, N42, zinc-plated steel case, 1 57/64" OD × 29/64" (11.51 mm) thick, **5/16"-18 × 1/2" male stud**, 175 lbf max pull | 8 | $23.92 | $191.36 | McMaster-Carr | VERIFIED ($20.62 ea at 50+; delivers next day) |
-| 4 | [90101A122](https://www.mcmaster.com/90101A122/) | **THIN-PROFILE nylon-insert locknut**, black-oxide 18-8 stainless, **5/16"-18 UNC** (imperial — NOT M8). 1/2" across flats × **1/4" (6.35 mm)** high. This is a real locking feature that fits: +1.60 mm of stud to spare | 1 pack of 50 | $18.72 | $18.72 | McMaster-Carr | **VERIFIED 2026-08-27.** Plain 18-8 equivalent is [90101A237](https://www.mcmaster.com/90101A237/), $10.34/50 |
-| 5 | ~~[96765A145](https://www.mcmaster.com/96765A145/)~~ | ~~Washer, general-purpose flat, black-oxide 18-8, 5/16", Ø0.750"/Ø0.344", 0.040"–0.060" thick~~ — **DO NOT ORDER for the magnets.** With the thin locknut it leaves only +0.08 mm, inside the tolerance stack | 0 | — | — | McMaster-Carr | **OUT 2026-08-27** — locknut or washer, not both, and the washer is not needed. See below |
+| 4 | [98514A035](https://www.mcmaster.com/98514A035/) | **JAM nut (half height)**, black-oxide 18-8 stainless, **5/16"-18 UNC** (imperial — NOT M8). 1/2" across flats × **3/16" (4.76 mm)** high. Half height is what leaves room for the oversized washer | 1 pack of 25 | $3.20 | $3.20 | McMaster-Carr | **VERIFIED 2026-08-27.** Plain 18-8 is [91847A030](https://www.mcmaster.com/91847A030/), $7.25/100 |
+| 5 | [90377A164](https://www.mcmaster.com/90377A164/) | **OVERSIZED washer**, black-oxide 18-8, **Ø1.250" OD / Ø0.344" ID, 0.040"–0.060" thick**. Bears on **732 mm²** of plate — 10× a bare nut, at 54 psi | 2 packs of 10 | $8.37 | $16.74 | McMaster-Carr | **IN 2026-08-27.** Same thickness as the Ø0.750" washer, so the extra diameter costs nothing to fit. Standard size is [96765A145](https://www.mcmaster.com/96765A145/) if preferred |
+| 5b | [91458A115](https://www.mcmaster.com/91458A115/) | **Threadlocker, Loctite 243**, medium strength, blue. 105 in·lbf breakaway, removable with hand tools, hardens in 5 min / full strength 24 h. 0.34 fl oz | 1 bottle | $18.42 | $18.42 | McMaster-Carr | **VERIFIED 2026-08-27.** This is the locking feature — the jam nut has none of its own |
+| 5c | **NOT SOURCED** | **Adhesive primer** for the threadlocker. McMaster's own copy: primer "is recommended when working with aluminum, **stainless steel**, and titanium; **black-oxide finishes**" — this build is *both*, so treat it as required, not optional | 1 | — | — | McMaster-Carr | **OPEN.** Part number not sourced. See the locking note |
 | 6 | [91239A180](https://www.mcmaster.com/91239A180/) | VESA screws: M4 × 0.7, **LOW-HEAD** socket cap, 18-8 stainless — pack of 25. NOT flat head: the plate's VESA holes are NOT countersunk (`countersink_vesa = False`; SendCutSend cannot countersink mild steel), so a 90° flat head would sit proud on a plain hole | 1 pack | NOT VERIFIED | — | McMaster-Carr | **NOT VERIFIED — corrected after the BOM was drafted on a wrong countersink premise. Confirm part number and length before ordering.** |
 | 7 | [93375K678](https://www.mcmaster.com/93375K678/) | Neoprene foam strip, closed-cell, **7/16" (11.11 mm) thick**, 2" wide × 10 ft, adhesive-backed, 15 lb/ft³, 12 psi to compress 25% (Soft) | 1 | $141.83 | $141.83 | McMaster-Carr | VERIFIED (price from listing table; see foam note) |
 | 8 | [189755](https://www.hookandloop.com/brands/velcro/cable-ties/1-2-velcro-brand-one-wrap-black) | VELCRO® Brand ONE-WRAP®, 1/2" wide, black, 25 yd roll ($1.25/yd) — for the 4.0 × 18.0 mm cable slots | 1 | $31.25 | $31.25 | hookandloop.com | VERIFIED |
@@ -46,10 +48,10 @@ section in `stack_detail.svg`. Checked against the **thickest** washer McMaster 
 
 | stack | locking | needs | vs stud | |
 |---|---|---|---|---|
-| **THIN nylon-insert locknut, no washer** | **mechanical** | **11.10 mm** | **+1.60 mm** | **SPECIFIED** |
+| **JAM nut + OVERSIZED washer + threadlocker** | **chemical** | **11.04 mm** | **+1.66 mm** | **SPECIFIED — 732 mm² bearing, the most of anything that fits** |
+| JAM nut + threadlocker, no washer | chemical | 9.51 mm | +3.19 mm | fits; most margin of all, least bearing |
+| THIN nylon-insert locknut, no washer | mechanical | 11.10 mm | +1.60 mm | runner-up; mechanical lock, 70 mm² |
 | distorted-thread locknut, no washer | mechanical | 11.50 mm | +1.20 mm | fits; not reusable, no black |
-| JAM nut + threadlocker | chemical | 9.51 mm | +3.19 mm | fits; most margin of all |
-| JAM nut + OVERSIZED washer + threadlocker | chemical | 11.04 mm | +1.66 mm | fits; **732 mm² bearing** |
 | washer + nylon-insert locknut | yes | 15.01 mm | −2.31 mm | does not fit |
 | nylon-insert locknut, no washer | yes | 13.48 mm | −0.78 mm | does not fit |
 | washer + distorted-thread locknut | yes | 13.25 mm | −0.55 mm | does not fit |
@@ -86,12 +88,26 @@ An earlier revision of this BOM said no locking feature fits. That was wrong: it
 one locknut (the standard-height nylon-insert, 8.73 mm), found it too tall, and generalised from
 a single sample. **Two locking constructions fit comfortably:**
 
-- **Thin-profile nylon-insert locknut, 1/4" (6.35 mm)** — +1.60 mm to spare. Specified.
+- **Thin-profile nylon-insert locknut, 1/4" (6.35 mm)** — +1.60 mm to spare, mechanical.
 - **Distorted-thread ("all-metal") locknut, 17/64" (6.75 mm)** — +1.20 mm, and the *same height
-  as a plain hex nut*, so it adds locking for nothing. Runner-up only because it is not reusable
-  and is not stocked in black oxide.
+  as a plain hex nut*, so it adds locking for nothing. Not reusable, not stocked in black.
 
-Threadlocker is no longer needed.
+**CHOSEN 2026-08-27: the third route — a half-height JAM nut with CHEMICAL locking.** A jam nut
+is 1.59 mm shorter than the thinnest locknut, which is almost exactly what a washer costs, and
+threadlocker adds no height at all. That buys back the washer *and* takes the oversized one for
+free, since thickness is what runs out in this stack, not diameter:
+
+| | bearing on the plate | pressure at 61.2 lbf |
+|---|---|---|
+| specified: oversized washer | **732 mm²** | **54 psi** |
+| standard washer | 225 mm² | 176 psi |
+| bare nut (either locknut route) | 70 mm² | 565 psi |
+
+**The cost is that chemical locking is not free.** It has to be cleaned off and reapplied to
+service the joint, where a nylon insert does not — and McMaster explicitly recommends primer for
+stainless *and* for black-oxide finishes, which this build is both of. The primer is item 5c and
+is **not sourced**. If that trade is unwelcome, the runner-up is the thin nylon-insert locknut
+with no washer (+1.60 mm, mechanical, 70 mm²), which needs no chemicals at all.
 
 **The washer is the thing that had to go, not the locking** — for two independent reasons:
 
@@ -102,11 +118,7 @@ Threadlocker is no longer needed.
    36 000 psi yield. There is no point-loading problem for a washer to solve here. A nut backing
    off under touch-cycling, by contrast, is a real failure mode.
 
-**If you would rather have the washer than the locking nut**, the swap is a JAM nut
-([98514A035](https://www.mcmaster.com/98514A035/)) plus an **oversized** washer
-([90377A164](https://www.mcmaster.com/90377A164/), black oxide, Ø1.250"): 11.03 mm used, +1.66 mm
-to spare, and **732 mm²** of bearing — 10× the bare nut. It costs the locking feature, so it
-would want threadlocker. Not the specified build.
+
 
 ### Finish — BLACK OXIDE, specified (2026-08-27)
 
@@ -182,7 +194,8 @@ originally intended — see Decisions.
   nut is 8.73 mm and does not fit, whatever it is made of. The only other construction that fits
   is the distorted-thread type at 17/64" ([90047A115](https://www.mcmaster.com/90047A115/),
   $13.45/50, plain only). Check the **height** column, not the description.
-- **Washers**: none. There is no room for one behind the plate (see the stud-length section).
+- **Washers**: the standard Ø0.750" size ([96765A145](https://www.mcmaster.com/96765A145/)) fits
+  the same stack, but bears on 225 mm² instead of 732 mm² — it gives up two thirds of the bearing area for no gain, since both are the same thickness. Anything thicker than **0.060"** does not fit.
 - **VESA screws**: any standard M4 head — socket cap, pan or low head. The holes are NOT countersunk and do not need to be: the 11.5 mm magnet standoff clears the head. Material is
   non-structural here. Black-oxide is specified for consistency with the magnet fasteners.
 - **Foam**: blended Buna-N/neoprene/vinyl strips on the same McMaster listing, or EPDM equivalents,

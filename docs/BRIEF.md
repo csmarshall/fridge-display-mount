@@ -1,3 +1,11 @@
+> **SUPERSEDED — historical record, do not build from this.**
+> This is the ORIGINAL brief, kept verbatim so the provenance of each decision stays auditable.
+> It describes a **different refrigerator**. The build target is a **Samsung RS23A500ASR**
+> counter-depth side-by-side: 1743.1 mm to top of case, 609.6 mm deep, top and sides both
+> magnetic, top measured FLAT. Every fridge-specific number below has been retracted — see
+> `CLAUDE.md` §2 for what carried over and what did not. Material also changed from 5052
+> aluminium to 0.188 in mild steel (`docs/PRICE-STUDY.md`).
+
 I'm building a magnetic mount that hangs a 23.8" touchscreen on the side panel of a refrigerator. I want you to build the parametric CAD-generation toolchain and the fabrication package for it.
 
 Work in this repo. Create a CLAUDE.md capturing the design invariants below before you write any code, so they survive compaction.

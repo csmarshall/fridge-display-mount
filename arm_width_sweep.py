@@ -33,10 +33,14 @@ from generate_bracket import (
 
 LOG = logging.getLogger("armwidth")
 
-# LG side-by-side, US: 33.5 in deep. Verified on lg.com 2026-08-24.
-FRIDGE_DEPTH_MM = 33.5 * MM_PER_INCH
-# Keep-out estimates until measured — both are pre-order checklist items.
-HINGE_CAP_ZONE_MM = 120.0
+# The fridge lives in BracketParams — one home. This sheet used to carry its own 33.5 in depth
+# copied from a different fridge's spec page, which is 241 mm deeper than the actual counter-depth Samsung and
+# made the arm look far better supported than it is.
+_FP = BracketParams()
+FRIDGE_DEPTH_MM = _FP.fridge_depth                    # 609.6 mm, Samsung RS23A500ASR cabinet
+# The hinge cover was MEASURED from the photo on 2026-08-27, so it is no longer an estimate.
+# The rear step-down still is — it remains a pre-order checklist item.
+HINGE_CAP_ZONE_MM = FRIDGE_DEPTH_MM - _FP.hinge_cover_from_rear
 REAR_STEPDOWN_ZONE_MM = 110.0
 
 
@@ -149,7 +153,7 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
     footer_y = canvas_h - 58
     out.append(_text(40, footer_y,
                      f"Clear window between keep-outs is {clear_window:.0f} mm on a "
-                     f"{FRIDGE_DEPTH_MM:.0f} mm deep top — both keep-outs are ESTIMATES and are on the "
+                     f"{FRIDGE_DEPTH_MM:.0f} mm deep counter-depth top — the hinge cover is MEASURED; the rear step-down is still an ESTIMATE and is on the "
                      f"pre-order measurement checklist.", size=9.5, anchor="start", fill="#333"))
     out.append(_text(40, footer_y + 15,
                      "With working magnets on the body this case never arises — they carry the torsion. "

@@ -50,10 +50,10 @@ DIAGRAM_INFO = {
     "assembly_drawing.svg": ("Assembly, 23.8in", "Display and rear box as transparent overlays.", "detail"),
     "assembly_drawing_27in.svg": ("Assembly, 27in", "Same bracket, larger panel.", "detail"),
     "ergonomics_sweep.svg": ("Ergonomics sweep — SUPERSEDED",
-                            "Built on the RETRACTED LG fridge (1791 mm). Samsung is 1743 mm and "
+                            "Rebuilt 2026-08-27 on the Samsung RS23A500ASR case height (1743 mm); it "
                             "the built neck (257) is not among its panels.", "study"),
     "arm_width_sweep.svg": ("Arm width sweep — SUPERSEDED",
-                           "Assumes the LG 851 mm-deep top and a 4.6 lbf arm magnet. Samsung is "
+                           "Rebuilt 2026-08-27 on the Samsung 610 mm counter-depth top and the MEASURED "
                            "610 mm with a 406 mm window; magnets derate to 61.25 lbf.", "study"),
     "thickness_study.svg": ("Thickness study — SUPERSEDED",
                            "ALUMINIUM-era: highlights 0.187 in 5052 at 5.89 kg. The build is "

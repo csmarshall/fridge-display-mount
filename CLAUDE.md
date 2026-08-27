@@ -63,7 +63,7 @@ reported across `R_f = 3–20 mm`, and asserted against the specified pad thickn
 
 **The pad budget is a sum, not a single term:** corner-radius lift-off and the crown rising under
 the arm STACK. `pad >= (flat_gap(R_f_envelope) + crown_rise_at(reach)) x 1.2`. The envelope is
-`R_f = 15 mm`, the top of the range an LG formed wrapper plausibly produces; coverage beyond it is
+`R_f = 15 mm`, the top of the range a formed steel wrapper plausibly produces; coverage beyond it is
 REPORTED as sensitivity (the 1/4 in pad actually covers a measured R_f up to 19 mm at 130 mm reach)
 rather than designed to, because designing to R_f = 20 would force a pad thickness that no stocked
 magnet height matches.
@@ -144,12 +144,12 @@ Published dimensions (`docs/reference/samsung-RS23A500ASR-specsheet.pdf`), verif
 - the side panel the body hangs on is 610 mm deep, and a **555 mm landscape display leaves only
   27 mm front and back if centred**. Portrait (324.65 mm) is roomy by comparison.
 
-**RETRACTED — these were LG-specific and do not carry over.** The original brief described an LG:
+**RETRACTED — these came from the brief's fridge and do not carry over.** The original brief described a different unit:
 a single formed steel wrapper for both sides and the top, hence a real sheet-metal bend at the top
 edge with R_f in the 6-15 mm range, and a crown from wrapper doming. **None of that is established
 for Samsung.** Samsung may use a separate top panel, a different corner radius, or a plastic top
 cap. Until measured, treat as UNKNOWN:
-- top corner radius `R_f` — the `R_f = 15 mm` design envelope came from LG wrapper reasoning
+- top corner radius `R_f` — the `R_f = 15 mm` design envelope came from that wrapper reasoning
 - whether the top is crowned at all, and by how much
 - ~~whether the top is crowned~~ — **PHOTOGRAPHED 2026-08-27: the top is FLAT.** A yardstick laid
   across roughly 28 in of the top front edge shows no daylight at either end, so `crown_rise = 0`
@@ -220,7 +220,7 @@ SOLID line would be read as a cut and would slice the part in half.
 
 | Parameter | Default | How to resolve |
 |---|---|---|
-| Neck length | **310 mm** | Derived, not hardcoded: `neck = fridge_height - screen_centre - body_h/2`. Screen centre 1331 mm is mid-band for 5'1"-6'4" on a 1791 mm LG. The brief's "- 12 mm" is not magic either: it is `(display_height - body_height)/2`, 12.3 mm landscape and 127.6 mm portrait. Use `--fridge-height` + `--screen-centre-height` |
+| Neck length | **310 mm** | Derived, not hardcoded: `neck = fridge_height - screen_centre - body_h/2`. Screen centre 1331 mm is mid-band for 5'1"-6'4". The brief's "- 12 mm" is not magic either: it is `(display_height - body_height)/2`, 12.3 mm landscape and 127.6 mm portrait. Use `--fridge-height` + `--screen-centre-height` |
 | Fridge crown rise | **3.0 mm** | straightedge across the top; feeds the arm pad budget |
 | Bend deduction | **derived estimate**, `BD = 2(R+T)tan(45) - (pi/2)(R + K*T)` with **K = 0.42** | replace with SendCutSend's bending calculator value |
 | Orientation | **landscape** | portrait is reachable by parameter and is mechanically better (torsion arm 278 -> 162 mm) |

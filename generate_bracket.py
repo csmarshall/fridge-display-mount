@@ -392,7 +392,7 @@ class BracketParams:
     fridge_depth_with_doors: float = 28.625 * MM_PER_INCH  # 727.1 mm
     # 0.0 — Charles reports the top is flat in use (things sit on it without rocking), which is
     # better evidence than any spec sheet. The original 3.0 mm was my own unsourced placeholder,
-    # carried over from the brief's LG wrapper-doming rationale. With crown = 0 the arm pad only
+    # carried over from the original brief's wrapper-doming rationale, which described a different fridge. With crown = 0 the arm pad only
     # has to absorb the corner-radius mismatch, so reach stops costing pad margin.
     crown_rise: float = 0.0
     # 180, not 130: the arm carries THREE magnet rows at +36 / +90 / +144, and the 54 mm row
@@ -569,7 +569,7 @@ class BracketParams:
     optional_arm_centre: bool = True
     arm_magnet_spacing: float = 120.0  # centre-to-centre across the arm width
     fridge_corner_radius: float = 12.0  # MEASURE. Affects pad sizing only, never cut geometry.
-    # Design envelope for the pad, not a guess at the actual radius. LG uses a single formed steel
+    # Design envelope for the pad, not a guess at the actual radius. The brief's fridge used a single formed steel
     # wrapper for both sides and the top, so the top edge is a real sheet-metal bend and lands in
     # the 6-15 mm range. The pad is sized against the top of that band; coverage beyond it is
     # REPORTED as sensitivity rather than designed to, because 3/8 in sponge would then force a
@@ -1571,9 +1571,13 @@ LOCKERS: tuple[tuple[str, str], ...] = (("dry", "as-assembled"), ("threadlocker"
 NUTS_BY_KEY = {n.key: n for n in NUTS}
 WASHERS_BY_KEY = {w.key: w for w in WASHERS}
 
-SPECIFIED_NUT = "nyloc_thin"
-SPECIFIED_WASHER = "none"
-SPECIFIED_LOCKER = "dry"
+# CHOSEN 2026-08-27. Not the highest-ranked row by the sort below — that ranks a mechanical
+# locking feature above a chemical one — but the deliberate pick: it takes the most bearing area
+# available (732 mm2, 10x a bare nut) and the most thread margin of any stack carrying a washer,
+# and accepts threadlocker as the locking feature instead of a nylon insert.
+SPECIFIED_NUT = "hex_jam"
+SPECIFIED_WASHER = "oversized"
+SPECIFIED_LOCKER = "threadlocker"
 
 
 @dataclass(frozen=True)
@@ -1654,6 +1658,12 @@ FINISH = "black"
 
 PART_NOS: dict[str, dict[str, str | None]] = {
     "magnet": {"plain": "3506K67", "black": None},   # zinc case; a black option never existed
+    # Loctite 243, medium strength, blue: 105 in-lbf breakaway, removable with hand tools,
+    # hardens in 5 min / full strength 24 hr. 0.34 fl oz bottle covers 15 positions many times.
+    # McMaster's own copy: primer "is recommended when working with aluminum, STAINLESS STEEL,
+    # and titanium; BLACK-OXIDE finishes" — this build is both, so the primer is not optional
+    # in spirit. Its part number is NOT sourced.
+    "threadlocker": {"plain": "91458A115", "black": None},
     **{f"nut_{n.key}": {"plain": n.part_plain, "black": n.part_black} for n in NUTS},
     **{f"washer_{w.key}": {"plain": w.part_plain, "black": w.part_black}
        for w in WASHERS if w.part_plain},
@@ -1771,6 +1781,11 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
     washer_bearing_mm2 = math.pi / 4.0 * (_w.od ** 2 - _w.bore ** 2)
     washer_oversize_bearing_mm2 = math.pi / 4.0 * (_wo.od ** 2 - _wo.bore ** 2)
     nut_bearing_mm2 = _annulus(NUTS_BY_KEY[SPECIFIED_NUT].bearing_od)
+    # What the SPECIFIED stack actually presses on the plate with — a washer if it
+    # carries one, else the nut face. Everything downstream should quote THIS.
+    _sw = WASHERS_BY_KEY[SPECIFIED_WASHER]
+    specified_bearing_mm2 = (math.pi / 4.0 * (_sw.od ** 2 - _sw.bore ** 2)
+                             if _sw.key != "none" else nut_bearing_mm2)
     clamp_lbf = derated_pull        # the magnet's own pull is what preloads this joint
 
     report = {
@@ -1794,6 +1809,8 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "magnet_bearing_area_mm2": magnet_bearing_mm2,
         "washer_bearing_area_mm2": washer_bearing_mm2,
         "washer_oversize_bearing_area_mm2": washer_oversize_bearing_mm2,
+        "specified_bearing_area_mm2": specified_bearing_mm2,
+        "specified_bearing_psi": clamp_lbf / (specified_bearing_mm2 / MM_PER_INCH ** 2),
         "nut_bearing_area_mm2": nut_bearing_mm2,
         "washer_bearing_gain": washer_bearing_mm2 / nut_bearing_mm2,
         "nut_bearing_psi": clamp_lbf / (nut_bearing_mm2 / MM_PER_INCH ** 2),
@@ -2479,7 +2496,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--arm-pad-thickness", type=float, default=0.0,
                    help="must equal the arm magnet height when arm magnets are fitted")
     p.add_argument("--fridge-height", type=float, default=defaults.fridge_height,
-                   help="height to TOP OF CASE, not top of hinge. LG publishes 1750 mm (68 29/32 in) "
+                   help="height to TOP OF CASE, not top of hinge. Samsung publishes 68 5/8 in "
                         "for the 2706 side-by-sides; their 70 15/32 in figure is to the hinge top")
     p.add_argument("--screen-centre-height", type=float, default=None,
                    help="target height of the screen centre above the floor, mm. Given this, the "
