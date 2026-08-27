@@ -13,7 +13,7 @@ total, and how the hook removes the failure mode instead of trying to overpower 
 
 Every load figure is read out of BracketParams / engineering_report(), so the sheet can never
 disagree with the generator. The only numbers with no home in the params are the totalElement
-vendor citation (33.5 lbf pull vs 7 lbf horizontal for their 43 mm rubber pot magnet — a
+vendor citation (33.5 lb pull vs 7 lb horizontal for their 43 mm rubber pot magnet — a
 published vendor datum, not a derivable quantity); the as-built magnet is bare nickel, so its
 mu = 0.2 is the only friction figure this sheet quotes.
 """
@@ -115,7 +115,7 @@ def render(path: Path, p: BracketParams) -> None:
     shear_pct = shear / rated * 100.0
     weight = rep["display_weight_lbf"]
     hanging = rep["total_hanging_lbf"]
-    mult = 1.0 / (p.magnet_derate * p.mu_magnet_face)          # rated lbf needed per lbf held
+    mult = 1.0 / (p.magnet_derate * p.mu_magnet_face)          # rated lb needed per lb held
     rated_needed = hanging * mult
     vendor_pct = TOTALELEMENT_HORIZONTAL_LBF / TOTALELEMENT_PULL_LBF * 100.0
 
@@ -220,11 +220,11 @@ def render(path: Path, p: BracketParams) -> None:
     half = (W - 80 - 20) / 2.0
     o += _card(40, y3, half, ch3, "PEEL: YOU NEVER FIGHT THE TOTAL", BAD)
     peel_prose = (
-        f"Four magnets at {derated:.0f} lbf ({derated * N_PER_LBF:.0f} N) each sounds like "
-        f"{4 * derated:.0f} lbf ({4 * derated * N_PER_LBF:.0f} N) of holding. It is not. Bump "
+        f"Four magnets at {derated:.0f} lb ({derated * N_PER_LBF:.0f} N) each sounds like "
+        f"{4 * derated:.0f} lb ({4 * derated * N_PER_LBF:.0f} N) of holding. It is not. Bump "
         f"the screen's top edge and the plate rotates about its bottom — the prying force is "
         f"multiplied by the lever ratio, and the whole moment lands on the TOP magnet alone, "
-        f"at its own {derated:.0f} lbf. The instant it lets go, its share dumps onto the next "
+        f"at its own {derated:.0f} lb. The instant it lets go, its share dumps onto the next "
         f"one down. Magnet mounts do not fail by being overpowered; they fail by unzipping, "
         f"one magnet at a time.")
     for j, ln in enumerate(_wrap(peel_prose, 60)):
@@ -251,9 +251,9 @@ def render(path: Path, p: BracketParams) -> None:
         (f"Hanging load: display {lbf_n(weight, 1)} + bracket "
          f"{lbf_n(rep['bracket_weight_lbf'], 1)}", f"= {lbf_n(hanging, 1)}", INK),
         (f"Rated pull needed per pound held, in shear: 1 / ({p.magnet_derate:.2f} x "
-         f"{p.mu_magnet_face:.1f})", f"= {mult:.0f} lbf rated per lbf held", MARG),
+         f"{p.mu_magnet_face:.1f})", f"= {mult:.0f} lb rated per lb held", MARG),
         (f"So holding {lbf_n(hanging, 1)} in shear needs",
-         f"~{rated_needed:.0f} lbf ({rated_needed * N_PER_LBF / 1000:.1f} kN) RATED — "
+         f"~{rated_needed:.0f} lb ({rated_needed * N_PER_LBF / 1000:.1f} kN) RATED — "
          f"{mult:.0f}x whatever it holds, before any safety factor", BAD),
     ]
     ry = y3 + 54
@@ -290,7 +290,7 @@ def render(path: Path, p: BracketParams) -> None:
     spine_out = spine_in - 8.0           # 8 px of drawn plate thickness
     # The arm does NOT rest on bare steel. A sponge pad and the arm magnets sit in the gap, both
     # ~11.5 mm tall, so the arm floats that far above the top. Drawing it touching hid the pad
-    # entirely and made the pad budget in crown_explainer look like it was about nothing.
+    # entirely and made the pad budget in pad_explainer look like it was about nothing.
     lift = 14.0                          # drawn arm standoff = pad/magnet height
     arm_bot = gy - lift
     arm_top = arm_bot - 8.0
@@ -357,11 +357,11 @@ def render(path: Path, p: BracketParams) -> None:
                     fill=BAD if sf >= 4 else INK))
         o.append(_t(150, ry, lab, 10.5, fill=MUTED))
         o.append(_t(400, ry, lbf_n(tot, 0), 11.5, weight="bold", anchor="end"))
-        o.append(_t(418, ry, f"= {tot/8:.0f} lbf x 8 magnets", 10.5, fill=MUTED))
+        o.append(_t(418, ry, f"= {tot/8:.0f} lb x 8 magnets", 10.5, fill=MUTED))
         ry += 21
     ry += 12
     got = 8 * rated * f_shear
-    o.append(_t(66, ry, f"The magnets already specified are {rated:.0f} lbf each. Eight of them "
+    o.append(_t(66, ry, f"The magnets already specified are {rated:.0f} lb each. Eight of them "
                         f"give {lbf_n(got, 1)} of shear — SF {got/hanging:.1f}.", 11.5,
                weight="bold", fill=OK))
     ry += 20
@@ -385,10 +385,10 @@ def render(path: Path, p: BracketParams) -> None:
               f'viewBox="0 0 {W:.0f} {H:.0f}">'
               f'<rect width="{W:.0f}" height="{H:.0f}" fill="{PAPER}"/>')
     path.write_text(header + "".join(o), encoding="utf-8")
-    LOG.info("Wrote %s — derate chain %.0f -> %.1f -> %.1f lbf (%.0f%% of rated); "
-             "magnet-only would need ~%.0f lbf rated for the %.1f lbf hanging load",
+    LOG.info("Wrote %s — derate chain %.0f -> %.1f -> %.1f lb (%.0f%% of rated); "
+             "magnet-only would need ~%.0f lb rated for the %.1f lb hanging load",
              path, rated, derated, shear, shear_pct, rated_needed, hanging)
-    LOG.debug("Vendor citation: totalElement %.1f lbf pull vs %.1f lbf horizontal (%.0f%%)",
+    LOG.debug("Vendor citation: totalElement %.1f lb pull vs %.1f lb horizontal (%.0f%%)",
               TOTALELEMENT_PULL_LBF, TOTALELEMENT_HORIZONTAL_LBF, vendor_pct)
 
 

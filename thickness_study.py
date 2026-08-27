@@ -151,7 +151,7 @@ def render(path: Path, results: Sequence[Result], chosen_in: float) -> None:
         _text(40, 78, "5052-H32. Strength is never the limit — safety factors stay above 15x across "
                       "the whole range. Stiffness is what you feel, and it scales as 1/t³.",
               size=10.5, anchor="start", fill="#555"),
-        _text(40, 95, f"Load case: {BracketParams().press_force_lbf:.0f} lbf pressed at the outer "
+        _text(40, 95, f"Load case: {BracketParams().press_force_lbf:.0f} lb pressed at the outer "
                       f"screen edge, {BracketParams().torsion_arm:.0f} mm off centre. Cantilever "
                       f"model from the VESA screw to the magnet — conservative; the real plate is "
                       f"stiffer.",

@@ -85,12 +85,12 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
         _text(40, 54, "Arm / neck width — plan view, looking DOWN on the fridge top", size=15,
               anchor="start", weight="bold"),
         _text(40, 72,
-              f"Touch press {params.press_force_lbf:.0f} lbf at {params.torsion_arm:.0f} mm = "
-              f"{torsion_in_lbf:.1f} in·lbf about the vertical spine. At the hook that is a couple "
+              f"Touch press {params.press_force_lbf:.0f} lb at {params.torsion_arm:.0f} mm = "
+              f"{torsion_in_lbf:.1f} lb-in of torque about the vertical spine. At the hook that is a couple "
               f"across the arm width: one end lifts, the other presses in.",
               size=10, anchor="start", fill="#555"),
         _text(40, 88,
-              f"Lift demand = {torsion_in_lbf:.1f} in·lbf / arm width. Hold-down = half the assembly "
+              f"Lift demand = {torsion_in_lbf:.1f} lb-in of torque / arm width. Hold-down = half the assembly "
               f"weight + one arm retention magnet. Governing case is a NON-MAGNETIC panel, where the "
               f"body magnets contribute nothing.",
               size=10, anchor="start", fill="#555"),
@@ -137,8 +137,8 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
                          size=11, weight="bold", fill=colour))
 
         lines = [
-            f"lift demand   {lift_demand:5.2f} lbf",
-            f"hold-down     {holddown:5.2f} lbf",
+            f"lift demand   {lift_demand:5.2f} lb",
+            f"hold-down     {holddown:5.2f} lb",
             f"bracket mass  {mass:5.2f} kg",
             f"bend length   {width / MM_PER_INCH:5.2f} in",
             (f"fits the {clear_window:.0f} mm clear window" if fits
@@ -147,7 +147,7 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
         for i, line in enumerate(lines):
             out.append(_text(px + (panel_w - 40) / 2, margin_t + depth_px + 24 + i * 14, line,
                              size=9.5, fill="#b00020" if "exceeds" in line else "#444"))
-        LOG.info("width %5.0f mm: lift %.2f lbf vs hold-down %.2f lbf (margin %.2fx), mass %.2f kg, fits=%s",
+        LOG.info("width %5.0f mm: lift %.2f lb vs hold-down %.2f lb (margin %.2fx), mass %.2f kg, fits=%s",
                  width, lift_demand, holddown, margin, mass, fits)
 
     footer_y = canvas_h - 58
@@ -160,7 +160,7 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
                      "This is the fallback: 304 stainless panel, or a magnet that lets go.",
                      size=9.5, anchor="start", fill="#333"))
     out.append(_text(40, footer_y + 30,
-                     f"Arm magnet hold-down assumed {arm_magnet_pull_lbf:.1f} lbf (one magnet, already "
+                     f"Arm magnet hold-down assumed {arm_magnet_pull_lbf:.1f} lb (one magnet, already "
                      f"derated {params.magnet_derate * 100:.0f}% for thin painted sheet). Arm width does not "
                      f"widen the sheet: the body is already {params.body_w:.0f} mm.",
                      size=9.5, anchor="start", fill="#777"))
@@ -174,14 +174,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Render an arm/neck width study in plan view.")
     p.add_argument("--widths", type=float, nargs="+", default=[130.0, 190.0, 250.0, 300.0])
     p.add_argument("--arm-magnet-rated-pull", type=float, default=13.2,
-                   help="rated pull of ONE arm magnet in lbf, before derating (O36 rubber pot ~6 kg)")
+                   help="rated pull of ONE arm magnet in lb, before derating (O36 rubber pot ~6 kg)")
     p.add_argument("--out", type=Path, default=Path("arm_width_sweep.svg"))
     p.add_argument("--log-level", choices=LOG_LEVELS, default="INFO")
     args = p.parse_args(argv)
     configure_logging(args.log_level)
 
     derated = args.arm_magnet_rated_pull * defaults.magnet_derate
-    LOG.info("Arm magnet: %.1f lbf rated -> %.2f lbf derated hold-down per magnet",
+    LOG.info("Arm magnet: %.1f lb rated -> %.2f lb derated hold-down per magnet",
              args.arm_magnet_rated_pull, derated)
     render(args.out, args.widths, defaults, derated)
     return 0

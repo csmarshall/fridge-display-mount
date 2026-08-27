@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Sequence
 
 from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL
-from generate_bracket import MATERIAL, BracketParams, crown_rise_at, flat_gap
+from generate_bracket import MATERIAL, BracketParams, flat_gap
 
 LOG = logging.getLogger("variants")
 
@@ -70,19 +70,18 @@ def render(path: Path, params: BracketParams) -> None:
               size=11, anchor="start", fill="#555"),
     ]
 
-    # --- the fridge: top surface (with crown) and side panel -------------------------
-    crown_pts = []
+    # --- the fridge: top surface (FLAT — measured) and side panel --------------------
+    top_pts = []
     for i in range(0, int(top_span) + 1, 4):
-        rise = crown_rise_at(float(i), params.fridge_top_width, params.crown_rise)
-        crown_pts.append((sx(float(i)), sy(0) - rise * scale))
-    body = " ".join(f"{x:.2f},{y:.2f}" for x, y in crown_pts)
+        top_pts.append((sx(float(i)), sy(0)))
+    body = " ".join(f"{x:.2f},{y:.2f}" for x, y in top_pts)
     out.append(f'<path d="M {sx(top_span):.2f} {sy(side_span):.2f} L {sx(top_span):.2f} '
-               f'{crown_pts[-1][1]:.2f} L {body} L {sx(rf):.2f} {sy(0):.2f} '
+               f'{top_pts[-1][1]:.2f} L {body} L {sx(rf):.2f} {sy(0):.2f} '
                f'A {rf * scale:.2f} {rf * scale:.2f} 0 0 1 {sx(0):.2f} {sy(rf):.2f} '
                f'L {sx(0):.2f} {sy(side_span):.2f} Z" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.4"/>')
     out.append(_text(sx(top_span / 2), sy(side_span * 0.55), "REFRIGERATOR", size=12, fill="#6a737b"))
     out.append(_text(sx(top_span / 2), sy(side_span * 0.55) + 16,
-                     f"top crowned {params.crown_rise:.0f} mm · corner R{rf:.0f} mm", size=9, fill="#8a9199"))
+                     f"top FLAT (measured) · corner R{rf:.0f} mm", size=9, fill="#8a9199"))
     out.append(_text(sx(top_span) - 8, sy(-14), "← inboard, across the fridge top", size=9.5,
                      anchor="start", fill="#8a9199"))
 
@@ -153,35 +152,34 @@ def render(path: Path, params: BracketParams) -> None:
     cx = 640.0
     rows = []
     for reach, name in ((REACH_A, "A · reach 130"), (REACH_B, "B · reach 180")):
-        crown = crown_rise_at(reach, params.fridge_top_width, params.crown_rise)
-        budget = flat_gap(params.fridge_corner_radius_max, MATERIAL.bend_radius) + crown
+        budget = flat_gap(params.fridge_corner_radius_max, MATERIAL.bend_radius)
         covered = 0.0
         for cand in range(3, 61):
-            if pad >= (flat_gap(float(cand), MATERIAL.bend_radius) + crown) * 1.2:
+            if pad >= flat_gap(float(cand), MATERIAL.bend_radius) * 1.2:
                 covered = float(cand)
             else:
                 break
-        rows.append((name, reach, crown, pad / budget, covered))
-        LOG.info("%s: crown under arm %.2f mm, pad margin %.2fx, covers R_f up to %.0f mm",
-                 name, crown, pad / budget, covered)
+        rows.append((name, reach, pad / budget, covered))
+        LOG.info("%s: pad margin %.2fx, covers R_f up to %.0f mm",
+                 name, pad / budget, covered)
 
     out.append(_text(cx, 150, "What the extra 50 mm changes", size=13, anchor="start", weight="bold"))
-    headers = ("", "footprint on top", "crown ridden", "pad margin", "covers R_f to", "flat length")
+    headers = ("", "footprint on top", "pad margin", "covers R_f to", "flat length")
     colx = [cx, cx + 120, cx + 250, cx + 360, cx + 460, cx + 580]
     for c, h in zip(colx, headers):
         out.append(_text(c, 178, h, size=9.5, anchor="start", weight="bold", fill="#444"))
     out.append(f'<line x1="{cx:.0f}" y1="184" x2="{cx + 500:.0f}" y2="184" stroke="#ccc"/>')
     flats = {REACH_A: 730.9, REACH_B: 780.9}
-    for i, (name, reach, crown, margin, covered) in enumerate(rows):
+    for i, (name, reach, margin, covered) in enumerate(rows):
         y = 206 + i * 22
         colour = "#5d3600" if reach == REACH_A else "#b00020"
-        vals = (name, f"{reach:.0f} mm", f"{crown:.2f} mm", f"{margin:.2f}x",
+        vals = (name, f"{reach:.0f} mm", f"{margin:.2f}x",
                 f"{covered:.0f} mm", f"{flats[reach]:.1f} mm")
         for c, v in zip(colx, vals):
             out.append(_text(c, y, v, size=10, anchor="start", fill=colour))
 
     notes = [
-        "B's longer arm sits further across the crowned top, so it rides more of the dome",
+        "The top is flat, so a longer arm costs no extra pad — only sheet",
         "and its sponge pad has less spare compression — 1.43x versus 1.59x.",
         "",
         "B buys: 50 mm more bearing footprint, so the bracket is harder to rock fore-and-aft.",
@@ -197,8 +195,8 @@ def render(path: Path, params: BracketParams) -> None:
     out.append(_text(cx, 470, "How to choose", size=13, anchor="start", weight="bold"))
     rules = [
         ("measure R_f > 17 mm", "A — B's pad can't cover it"),
-        ("R_f <= 17 and crown <= 3 mm", "B — the extra footprint is free"),
-        ("crown > 5 mm", "A — shorter arm rides less dome"),
+        ("R_f <= 17 mm", "B — the extra footprint is free"),
+        ("R_f > 20 mm", "A — less corner lift to bridge"),
         ("still unsure", "A — more margin, less sheet"),
     ]
     for i, (cond, pick) in enumerate(rules):

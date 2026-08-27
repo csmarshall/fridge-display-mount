@@ -46,9 +46,28 @@ def in_mm(inches: float, dp: int = 3) -> str:
     return f"{inches:.{dp}f} in ({inches * MM_PER_IN:.2f} mm)"
 
 
-def lbf_n(lbf: float, dp: int = 1) -> str:
-    """'16.9 lbf (75 N)'. Force, not torque — lb-ft would be a moment."""
-    return f"{lbf:.{dp}f} lbf ({lbf * N_PER_LBF:.0f} N)"
+def lbf_n(lb: float, dp: int = 1) -> str:
+    """'16.9 lb (75 N)'. FORCE, not torque.
+
+    Writes plain "lb", not "lb". The f is for pound-FORCE, and it is correct engineering
+    notation, but on a page a non-engineer reads it either looks like a typo or gets misread as
+    "pound-feet" — which is a TORQUE, a completely different quantity (force x distance, written
+    lb-ft or ft-lb). For weights and pulls the number is identical either way: one pound-force is
+    the weight of one pound-mass. So the f buys nothing here and costs comprehension.
+
+    Torque is deliberately NOT formatted by this function — see `torque_in_lb`, which spells the
+    units out, so the two can never be confused for each other.
+    """
+    return f"{lb:.{dp}f} lb ({lb * N_PER_LBF:.0f} N)"
+
+
+def torque_in_lb(in_lbf: float, dp: int = 1) -> str:
+    """'105.0 lb-in of torque (11.9 N·m)'. A MOMENT — force times distance.
+
+    Spelled out because lb-in / in-lb / lb-ft / ft-lb are routinely confused with each other and
+    with plain lb. Anything this function formats is a twisting effort, never a weight or a pull.
+    """
+    return f"{in_lbf:.{dp}f} lb-in of torque ({in_lbf * 0.1129848:.1f} N\u00b7m)"
 
 
 def kg_lb(kg: float, dp: int = 2) -> str:

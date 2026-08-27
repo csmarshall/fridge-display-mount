@@ -171,7 +171,7 @@ Nut, washer, and screw packs each cover the full build several times over.
 4. **Display DC jack** (item 10): assumed 5.5/2.5 mm barrel, center-positive — confirm against the
    bundled brick before buying the Mean Well.
 5. **Fridge-side unknowns** (affect pads, not cut geometry, but check before final assembly):
-   top corner radius `R_f`, crown, whether the Samsung side panel is magnetic at all, hinge-cover
+   top corner radius `R_f`, whether the Samsung side panel is magnetic at all, hinge-cover
    clearance. See CLAUDE.md §2.
 6. **SendCutSend bend deduction**: replace the generator's estimated BD with their bending
    calculator value before the production order.
@@ -220,7 +220,7 @@ originally intended — see Decisions.
    stock exists at 7/16".
 3. **Accept Soft-rated foam?** Stocked 7/16" neoprene is 12 psi-to-compress (Soft), not the 50–60A
    firm sponge in the brief. **Recommended: accept** — the pad's job is conforming to the corner
-   radius and crown, and the hook (not the pad) carries the load; a 50–60A solid rubber pad at
+   radius, and the hook (not the pad) carries the load; a 50–60A solid rubber pad at
    this thickness is not a stocked item anywhere obvious. If Charles disagrees, the search widens
    to Grainger/Rubber-Cal custom-cut.
 4. **Buy the PSU upgrade now or try the bundled 60 W brick first?** 63 W budget vs 60 W brick is

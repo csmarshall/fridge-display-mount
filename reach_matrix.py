@@ -30,7 +30,6 @@ from generate_bracket import (
     MM_PER_INCH,
     BracketParams,
     bend_deduction_mm,
-    crown_rise_at,
     flat_gap,
 )
 from thickness_study import evaluate
@@ -97,8 +96,9 @@ def build(params: BracketParams, thicknesses: Sequence[float], reaches: Sequence
         for reach in reaches:
             flat_len = params.body_h + (neck - bd / 2.0) + (reach - bd / 2.0)
             price, measured = price_for(t_in, flat_len)
-            crown = crown_rise_at(reach, params.fridge_top_width, params.crown_rise)
-            budget = flat_gap(params.fridge_corner_radius_max, MATERIAL.bend_radius) + crown
+            # Budget is the corner radius alone; the crown term was removed once the top
+            # measured flat, so reach no longer costs pad.
+            budget = flat_gap(params.fridge_corner_radius_max, MATERIAL.bend_radius)
             res = evaluate(t_in, params)
             # Mass must track the actual reach: a longer arm is more metal. evaluate() only knows
             # the default geometry, so recompute the area here rather than reuse its figure.

@@ -71,7 +71,7 @@ DIAGRAM_INFO = {
                            "A36 steel 0.187 in at 5.81 kg. See docs/PRICE-STUDY.md instead.",
                            "study"),
     "variant_compare.svg": ("Variant comparison", "The reach variants side by side.", "study"),
-    "crown_explainer.svg": ("Crown explainer", "Why the pad budget is a sum.", "study"),
+    "pad_explainer.svg": ("Pad budget", "Why the pad thickness is locked to the magnet height, and what the corner radius costs.", "study"),
     "orientation_compare.svg": ("Orientation", "Portrait vs landscape, counter-depth.", "study"),
     "display_compare.svg": ("23.8 vs 27 inch", "Both panels, same bracket.", "study"),
     # Was falling through to a snake_case filename title with no caption, sitting uncaptioned
@@ -81,13 +81,13 @@ DIAGRAM_INFO = {
                         "Every stack shape that fits, in true section — magnet | plate | washer | "
                         "nut, and whether the fixed 1/2 in stud still reaches.", "key"),
     "magnet_primer.svg": ("Why not just magnets?",
-                         "Pull vs shear vs peel, and why a 175 lbf magnet delivers 12 lbf where "
+                         "Pull vs shear vs peel, and why a 175 lb magnet delivers 12 lb where "
                          "it counts. Start here if the hook looks like overkill.", "key"),
     "fastener_matrix.svg": ("Every fastener permutation",
                            "All 39 nut x washer x threadlocker combinations with the arithmetic "
                            "shown: plate + washer + nut vs stud.", "key"),
     "force_table.svg": ("Force by direction and magnet count",
-                       "What it takes to shift or unseat it, 6 to 15 magnets, in lbf and newtons.",
+                       "What it takes to shift or unseat it, 6 to 15 magnets, in lb and newtons.",
                        "key"),
     "mount_views.svg": ("Both faces of the mount",
                        "Front and back side by side — magnets and foam on the fridge face, "
@@ -175,7 +175,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     geom = build_geometry(p, flat)
     rep = G.engineering_report(p, geom)
     # FITTED only. Giving the optional positions discs made these count holes as magnets, which
-    # is how the page came to claim 293 lbf of pull-off from a 4+4 build. Third instance of this
+    # is how the page came to claim 293 lb of pull-off from a 4+4 build. Third instance of this
     # exact bug today (approval_sheet, assembly_drawing, here) — same cause each time.
     n_body = len([h for h in geom.magnet_discs
                   if h.region == "body" and not h.tag.startswith("spare")])
@@ -191,7 +191,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     rows = A.magnet_rows(geom)
     arm_offs = A.arm_magnet_offsets(p)
     # ONE model for "how hard to pull off" — SETTLED 2026-08-27. approval_sheet.let_go_lbf said
-    # 178 lbf while force_table said 146 for the SAME grab, and the page showed both on different
+    # 178 lb while force_table said 146 for the SAME grab, and the page showed both on different
     # cards. force_table is canonical: it is what the approval sheet and "The numbers" row already
     # quote, and it is the more conservative of the two. let_go_lbf is no longer called from here.
     import force_table as _ft
@@ -227,11 +227,11 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "magnet. There is no knee. Symmetric counts are 4/8/12 only — the centre vent and the "
              "four vent windows occupy both centrelines, so no symmetric 6 exists on the body.",
              f"SETTLED: {len(rows)*2} body + {len(arm_offs)*2} arm, McMaster 3506K67 "
-             f"(O{p.magnet_disc_dia:.0f} x {p.magnet_standoff:.1f} mm, {p.magnet_rated_pull_lbf:.0f} lbf rated, "
-             f"{rep['magnet_derated_pull_lbf']:.1f} lbf derated on painted sheet). That reads "
+             f"(O{p.magnet_disc_dia:.0f} x {p.magnet_standoff:.1f} mm, {p.magnet_rated_pull_lbf:.0f} lb rated, "
+             f"{rep['magnet_derated_pull_lbf']:.1f} lb derated on painted sheet). That reads "
              f"{rep['magnet_tension_sf']:.0f}x on the governing touch-torsion case and lets go at "
-             f"{let_go:.0f} lbf — about {let_go / rep['display_weight_lbf']:.0f}x the display's own "
-             f"{rep['display_weight_lbf']:.1f} lbf. Magnet spend "
+             f"{let_go:.0f} lb — about {let_go / rep['display_weight_lbf']:.0f}x the display's own "
+             f"{rep['display_weight_lbf']:.1f} lb. Magnet spend "
              f"${(len(rows)*2 + len(arm_offs)*2) * MAGNET_UNIT_USD:.2f} at "
              f"${MAGNET_UNIT_USD:.2f} each, qty 1, {PRICE_DATE}. Count was always an insurance "
              f"decision rather than an optimisation — the magnets carry NONE of the weight; the "
@@ -240,11 +240,11 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "settled"),
         Item("d-detach",
              "What it takes to pull it off — by direction",
-             " ".join(f"{name}: {force:.0f} lbf ({why})."
+             " ".join(f"{name}: {force:.0f} lb ({why})."
                       for name, _, force, why in detach_modes if force != float("inf")),
              f"Caveat: these assume a rigid plate with every magnet releasing at once. Peeling "
              f"beats them one at a time — lifting one corner of the arm breaks a single magnet at "
-             f"~{rep['magnet_derated_pull_lbf']:.0f} lbf using the arm as the lever. So these are "
+             f"~{rep['magnet_derated_pull_lbf']:.0f} lb using the arm as the lever. So these are "
              f"resistance-to-accident numbers, NOT removal forces. Weakest direction is sliding it "
              f"along the panel, which MOVES it rather than detaching it — the hook does not resist "
              f"that axis.", "settled"),
@@ -274,8 +274,8 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "that does not scale. Coated: 130 mm $174.30 / 230 mm $190.78 / 330 mm $207.26 / "
              "430 mm $223.74 / 530 mm $240.22. Slopes are fitted from the two LIVE quotes at 130 "
              "and 180 mm, so the far end is projected rather than verified.",
-             "Neither the pad budget nor the 1118 mm sheet limit binds before 530 mm — the crown "
-             "requirement plateaus once the arm is near the crest. What binds is FIT: hinge covers "
+             "Neither the pad budget nor the 1118 mm sheet limit binds before 530 mm — with the "
+             "top measured flat, reach costs sheet but no pad. What binds is FIT: hinge covers "
              "stand 36.5 mm proud, and the cabinet is only 609.6 mm deep, so 330 mm is already "
              "more than halfway across the top. Decide on the measured clear window, not price.",
              "settled"),

@@ -94,7 +94,7 @@ def render(path: Path, p: BracketParams) -> None:
             12, anchor="start", fill=MUTED),
          _t(40, 162, "\"bearing\" is the annulus the OUTERMOST part presses on the plate with — "
                      f"the washer if there is one, else the nut's own face. Pressure is at the "
-                     f"magnet's {clamp:.1f} lbf.", 12, anchor="start", fill=MUTED),
+                     f"magnet's {clamp:.1f} lb.", 12, anchor="start", fill=MUTED),
          _t(40, 184, f"Nut and washer part numbers are the {FINISH.upper()}-OXIDE ones where "
                      f"stocked; a number in grey means only plain 18-8 exists.", 12,
             anchor="start", fill=MUTED)]

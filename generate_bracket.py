@@ -34,7 +34,7 @@ from bracket_common import (
 LOG = logging.getLogger("generate")
 
 MM_PER_INCH = 25.4
-LBF_PER_KG = 2.2046226218  # weight in lbf of one kg under standard gravity
+LBF_PER_KG = 2.2046226218  # weight in lb of one kg under standard gravity
 GRAVITY_SF = 1.0
 
 # ---------------------------------------------------------------------------
@@ -394,9 +394,6 @@ class BracketParams:
     fridge_depth_with_doors: float = 28.625 * MM_PER_INCH  # 727.1 mm
     # 0.0 — Charles reports the top is flat in use (things sit on it without rocking), which is
     # better evidence than any spec sheet. The original 3.0 mm was my own unsourced placeholder,
-    # carried over from the original brief's wrapper-doming rationale, which described a different fridge. With crown = 0 the arm pad only
-    # has to absorb the corner-radius mismatch, so reach stops costing pad margin.
-    crown_rise: float = 0.0
     # 180, not 130: the arm carries THREE magnet rows at +36 / +90 / +144, and the 54 mm row
     # pitch is a hard floor (O48 disc + 6 mm). The binding constraint is landing the outermost
     # full disc on metal, which needs 168 mm; 180 gives 12 mm beyond it. Costs $8.85 coated.
@@ -449,9 +446,9 @@ class BracketParams:
     # top edge, so every added pair helps — but placement is constrained by the vent windows.
     # 75 and 225: the two widest clear O36 bands left on the plate once the vent windows, the
     # centre vent and every VESA pattern are placed. Eight body magnets take the pull-off force
-    # from 60 to 120 lbf on their own. Set () to go back to the four corner magnets.
+    # from 60 to 120 lb on their own. Set () to go back to the four corner magnets.
     # EMPTY: four corner magnets only. The corners are provably the best four positions on the
-    # plate, and at 150 lbf rated each there is no case for a second row.
+    # plate, and at 150 lb rated each there is no case for a second row.
     extra_magnet_rows: tuple[float, ...] = ()
     # Provision, not fitment: four spare magnet holes at the midpoint of each plate side, on the
     # SAME inset line as the corner magnets. Nothing goes in them at build time. If the mount ever
@@ -557,7 +554,7 @@ class BracketParams:
     #
     # FIT ORDER, if ever fitting fewer than four: FRONT (+144) first, then BACK (+36), then
     # MIDDLE (+90). A lift at the arm tip pivots about the BEND, so a row's capacity scales with
-    # its distance from it — front 98 lbf, middle 61, back 24. The front row is 4x the back.
+    # its distance from it — front 98 lb, middle 61, back 24. The front row is 4x the back.
     # Fitting front+back rather than front+middle trades a little of that for a wider fore-aft
     # base against the arm rocking on its pad. PEEL is indifferent to all of this: every row sits
     # on the top surface, so they share the same lever about the fridge's top edge.
@@ -588,9 +585,9 @@ class BracketParams:
     screw_head_height: float = 4.0  # M4 socket head cap screw
     press_force_lbf: float = 5.0
     # McMaster 5679K57: encased neodymium N42 in a zinc-plated STEEL case, threaded hole,
-    # rated 100 lbf. Rating basis is their stated "direct contact with rust-free, unpainted iron",
+    # rated 100 lb. Rating basis is their stated "direct contact with rust-free, unpainted iron",
     # the same basis K&J use, so the 35% derate for thin painted appliance sheet still applies.
-    # Supersedes an unverified 71.7 lbf figure for a K&J part I could not confirm exists.
+    # Supersedes an unverified 71.7 lb figure for a K&J part I could not confirm exists.
     # McMaster 3506K66, N42 in a zinc-plated STEEL case, male 5/16"-18 x 1/2" stud.
     # Their rating basis is "direct contact with rust-free, unpainted iron", the same as K&J's,
     # so the 35% derate for thin PAINTED appliance sheet still applies on top.
@@ -747,18 +744,15 @@ def flat_gap(fridge_radius: float, bracket_radius: float) -> float:
     return (fridge_radius - bracket_radius) * (1.0 - 1.0 / math.sqrt(2.0))
 
 
-def crown_rise_at(reach: float, top_width: float, crown: float) -> float:
-    """How far the crowned fridge top rises under the arm, `reach` mm inboard from the side edge.
-
-    Wrappers are domed across their width for rigidity. Model the dome as a parabola: zero at both
-    side edges, `crown` at the centre. This is what limits arm REACH — the arm runs across the dome
-    — while arm WIDTH runs front-to-back, where the top is straight. The two dimensions are bounded
-    by different things, which is why they are not proportional.
-    """
-    half = top_width / 2.0
-    if reach >= half:
-        return crown
-    return crown * (1.0 - ((half - reach) / half) ** 2)
+# REMOVED 2026-08-27: crown_rise_at(). The original brief described a fridge with a single formed
+# steel wrapper, which domes; the pad budget therefore carried a "crown rise under the arm" term.
+# The Samsung's top was laid across with a straightedge and photographed — it is FLAT, and the
+# term had been zero ever since. A parameter that is provably zero, plus the function and the
+# whole explanatory sheet built around it, is drift waiting to happen: someone re-reads the pad
+# budget in a year and re-derives a dome that does not exist. The pad budget is now the corner
+# radius alone, which is real and still unmeasured.
+#
+# If a future fridge IS crowned, this is the term to put back: budget = flat_gap(R_f) + crown.
 
 
 def derive_flat(params: BracketParams) -> FlatPattern:
@@ -944,7 +938,7 @@ def build_geometry(params: BracketParams, flat: FlatPattern) -> Geometry:
             holes.append(Hole(hx, hy, params.magnet_hole_dia, "magnet"))
             magnet_discs.append(Hole(hx, hy, params.magnet_disc_dia, "magnet_disc"))
 
-    # Retention magnets on the arm. They stop the arm walking fore-aft on the crowned fridge top
+    # Retention magnets on the arm. They stop the arm walking fore-aft on the fridge top
     # and resist a jostle lifting the hook; they are given ZERO credit in the load path. Placed
     # by formed distance from the bend apex, so the flat position moves with the bend deduction.
     if params.arm_magnets:
@@ -1307,13 +1301,13 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
     # The arm pad has two things to absorb at once and they STACK: lift-off from the corner-radius
     # mismatch, and the rise of the crowned top under the arm's reach.
     envelope_gap = flat_gap(params.fridge_corner_radius_max, MATERIAL.bend_radius)
-    crown = crown_rise_at(params.arm_len, params.fridge_top_width, params.crown_rise)
-    pad_budget = envelope_gap + crown
+    # Budget is the corner-radius lift alone. It used to stack a crown term; the top measured flat.
+    pad_budget = envelope_gap
     _check(
         issues, params.arm_pad >= pad_budget * 1.2, "ERROR", "arm_pad",
         f"arm sponge pad {params.arm_pad:.2f} mm must cover the flat gap "
         f"{envelope_gap:.2f} mm at the design envelope R_f = {params.fridge_corner_radius_max:.0f} mm "
-        f"PLUS {crown:.2f} mm of crown rise over a {params.arm_len:.0f} mm reach = "
+        f"over a {params.arm_len:.0f} mm reach = "
         f"{pad_budget:.2f} mm, with compression to spare (>= 1.2x)",
     )
     if params.arm_magnets:
@@ -1328,7 +1322,7 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
         _check(
             issues, arm_disc_gap >= MATERIAL.thickness, "ERROR", "arm_magnet_gap",
             f"arm magnet discs are {arm_disc_gap:.2f} mm apart; need >= {MATERIAL.thickness:.2f} mm "
-            f"so they seat independently on a crowned top",
+            f"so they seat independently",
         )
     # BOUNDS INVERTED 2026-08-27. The old rule allowed the pad to sit up to 2.5 mm PROUD of the
     # magnet and rejected anything under. That is backwards for a joint that has to feel rigid:
@@ -1672,7 +1666,7 @@ FINISH = "black"
 
 PART_NOS: dict[str, dict[str, str | None]] = {
     "magnet": {"plain": "3506K67", "black": None},   # zinc case; a black option never existed
-    # Loctite 243, medium strength, blue: 105 in-lbf breakaway, removable with hand tools,
+    # Loctite 243, medium strength, blue: 105 in-lb breakaway, removable with hand tools,
     # hardens in 5 min / full strength 24 hr. 0.34 fl oz bottle covers 15 positions many times.
     # McMaster's own copy: primer "is recommended when working with aluminum, STAINLESS STEEL,
     # and titanium; BLACK-OXIDE finishes" — this build is both, so the primer is not optional
@@ -1780,16 +1774,15 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
     # Longest arm reach the specified pad can still absorb, given the corner gap already eats into
     # the budget. Scanned rather than solved: the parabola inverts messily and 1 mm is fine here.
     worst_gap_report = flat_gap(params.fridge_corner_radius_max, MATERIAL.bend_radius)
-    crown_here = crown_rise_at(params.arm_len, params.fridge_top_width, params.crown_rise)
     max_covered_radius = 0.0
     for candidate in range(3, 61):
-        if params.arm_pad >= (flat_gap(float(candidate), MATERIAL.bend_radius) + crown_here) * 1.2:
+        if params.arm_pad >= flat_gap(float(candidate), MATERIAL.bend_radius) * 1.2:
             max_covered_radius = float(candidate)
         else:
             break
     max_reach = 0.0
     for candidate in range(10, int(params.fridge_top_width / 2)):
-        budget = worst_gap_report + crown_rise_at(float(candidate), params.fridge_top_width, params.crown_rise)
+        budget = worst_gap_report
         if params.arm_pad >= budget * 1.2:
             max_reach = float(candidate)
         else:
@@ -1856,9 +1849,8 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "flat_gap_by_fridge_radius_mm": gaps,
         "worst_flat_gap_mm": max(gaps.values()),
         "arm_pad_thickness_mm": params.arm_pad,
-        "crown_rise_under_arm_mm": crown_rise_at(params.arm_len, params.fridge_top_width, params.crown_rise),
         "arm_pad_budget_mm": flat_gap(params.fridge_corner_radius_max, MATERIAL.bend_radius)
-            + crown_rise_at(params.arm_len, params.fridge_top_width, params.crown_rise),
+,
         "fridge_corner_radius_envelope_mm": params.fridge_corner_radius_max,
         "max_arm_reach_mm": max_reach,
         "max_fridge_corner_radius_covered_mm": max_covered_radius,
@@ -1887,17 +1879,17 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "bounding_area_mm2": flat.width * flat.height,
     }
 
-    LOG.info("Load path: hook bearing carries %.2f lbf; magnets carry zero vertical load", total_lbf)
+    LOG.info("Load path: hook bearing carries %.2f lb; magnets carry zero vertical load", total_lbf)
     LOG.info(
-        "Touch torsion: %.1f lbf at %.1f mm = %.1f in-lbf over %.0f mm spacing -> %.2f lbf/side (%.2f lbf/magnet)",
+        "Touch torsion: %.1f lb at %.1f mm = %.1f in-lb over %.0f mm spacing -> %.2f lb/side (%.2f lb/magnet)",
         params.press_force_lbf, params.torsion_arm, moment_in_lbf, params.magnet_spacing_x,
         force_per_side, force_per_magnet,
     )
-    LOG.info("Peel: display %.2f lbf at d=%.1f mm + bracket %.2f lbf at d=%.1f mm (derived stack) "
-             "= %.2f in-lbf over H=%.1f mm -> T=%.2f lbf",
+    LOG.info("Peel: display %.2f lb at d=%.1f mm + bracket %.2f lb at d=%.1f mm (derived stack) "
+             "= %.2f in-lb over H=%.1f mm -> T=%.2f lb",
              weight_lbf, params.cg_offset, bracket_lbf, bracket_cg_offset,
              overturning_in_lbf, params.peel_lever, peel_lbf)
-    LOG.info("Magnet: %.1f lbf rated -> %.2f lbf derated pull; SF vs %.2f lbf tension = %.1fx",
+    LOG.info("Magnet: %.1f lb rated -> %.2f lb derated pull; SF vs %.2f lb tension = %.1fx",
              params.magnet_rated_pull_lbf, derated_pull, force_per_magnet, report["magnet_tension_sf"])
     LOG.info("Neck bending %.0f psi (SF %.0fx); body weak axis %.0f psi (SF %.0fx) vs %.0f psi yield",
              neck_stress_psi, report["neck_sf"], body_stress_psi, report["body_weak_axis_sf"], MATERIAL.yield_psi)
@@ -1926,9 +1918,9 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
                  len(arm_offs) * 2, params.arm_magnet_disc_dia, params.arm_magnet_standoff,
                  "/".join(f"{o:.0f}" for o in arm_offs))
     LOG.info(
-        "Arm pad budget: %.2f mm corner gap at the R_f=%.0f mm envelope + %.2f mm crown rise over a "
+        "Arm pad budget: %.2f mm corner gap at the R_f=%.0f mm envelope over a "
         "%.0f mm reach = %.2f mm; pad %.2f mm gives %.2fx. Longest reach this pad supports: %.0f mm",
-        worst_gap_report, params.fridge_corner_radius_max, report["crown_rise_under_arm_mm"],
+        worst_gap_report, params.fridge_corner_radius_max,
         params.arm_len, report["arm_pad_budget_mm"], params.arm_pad,
         params.arm_pad / report["arm_pad_budget_mm"], max_reach,
     )
@@ -2418,15 +2410,15 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
 
     # --- engineering notes ----------------------------------------------------------
     notes = [
-        f"Vertical load {report['total_hanging_lbf']:.2f} lbf (display {report['display_weight_lbf']:.2f} + bracket "
+        f"Vertical load {report['total_hanging_lbf']:.2f} lb (display {report['display_weight_lbf']:.2f} + bracket "
         f"{report['bracket_weight_lbf']:.2f}) bears at the top corner. Magnets carry ZERO vertical load.",
-        f"Touch torsion: {params.press_force_lbf:.0f} lbf at {params.torsion_arm:.0f} mm = "
-        f"{report['torsion_moment_in_lbf']:.1f} in-lbf over {report['magnet_spacing_mm']:.0f} mm spacing -> "
-        f"{report['torsion_force_per_side_lbf']:.2f} lbf/side, {report['torsion_force_per_magnet_lbf']:.2f} lbf/magnet "
-        f"(SF {report['magnet_tension_sf']:.1f}x on {report['magnet_derated_pull_lbf']:.2f} lbf derated pull).",
-        f"Peel {report['peel_lbf']:.2f} lbf over H = {report['peel_lever_mm']:.0f} mm — negligible, as expected. "
+        f"Touch torsion: {params.press_force_lbf:.0f} lb at {params.torsion_arm:.0f} mm = "
+        f"{report['torsion_moment_in_lbf']:.1f} in-lb over {report['magnet_spacing_mm']:.0f} mm spacing -> "
+        f"{report['torsion_force_per_side_lbf']:.2f} lb/side, {report['torsion_force_per_magnet_lbf']:.2f} lb/magnet "
+        f"(SF {report['magnet_tension_sf']:.1f}x on {report['magnet_derated_pull_lbf']:.2f} lb derated pull).",
+        f"Peel {report['peel_lbf']:.2f} lb over H = {report['peel_lever_mm']:.0f} mm — negligible, as expected. "
         f"Arm pad budget {report['arm_pad_budget_mm']:.2f} mm = corner gap at the "
-        f"R_f = {params.fridge_corner_radius_max:.0f} mm envelope plus crown rise; the "
+        f"R_f = {params.fridge_corner_radius_max:.0f} mm envelope; the "
         f"{params.arm_pad:.2f} mm (1/4 in) pad gives "
         f"{params.arm_pad / report['arm_pad_budget_mm']:.2f}x and covers a measured R_f up to "
         f"{report['max_fridge_corner_radius_covered_mm']:.0f} mm.",
@@ -2553,7 +2545,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--no-arm-magnets", action="store_true",
                    help="omit the two arm retention magnet holes")
     p.add_argument("--press-force", type=float, default=defaults.press_force_lbf,
-                   help="assumed touch press at the outer screen edge, lbf")
+                   help="assumed touch press at the outer screen edge, lb")
     p.add_argument("--spacer-length", type=float, default=defaults.spacer_len)
     p.add_argument("--out-dir", type=Path, default=Path("."))
     p.add_argument("--name", default="",

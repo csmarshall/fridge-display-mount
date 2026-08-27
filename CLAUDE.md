@@ -43,8 +43,7 @@ never hardcoded. Report it; do not design around it.
 ### 1.3b Arm width vs arm reach — bounded by different things
 They are **not proportional**. Arm WIDTH runs front-to-back, where the fridge top is straight; it
 costs no sheet (the body already sets the bounding box) and its only limit is the clear window
-between the hinge caps and the rear step-down. Arm REACH runs across the *crowned* direction, costs
-sheet length one-for-one, and is bounded by the arm pad budget.
+between the hinge caps and the rear step-down. Arm REACH runs across the top, costs sheet length one-for-one, and is bounded by the arm pad budget.
 
 Arm width is the fallback structural dimension: under a touch press the hook sees a couple across
 the arm width, `F = M_torsion / arm_width`, which is what holds the arm down if the panel turns out
@@ -61,8 +60,11 @@ At `R_f = 12 mm` that is 1.65 mm; at an implausible 20 mm, 4.0 mm. A 10 mm close
 sponge pad absorbs the whole plausible range. `flat_gap()` is implemented in the generator,
 reported across `R_f = 3–20 mm`, and asserted against the specified pad thickness.
 
-**The pad budget is a sum, not a single term:** corner-radius lift-off and the crown rising under
-the arm STACK. `pad >= (flat_gap(R_f_envelope) + crown_rise_at(reach)) x 1.2`. The envelope is
+**The pad budget is the corner-radius lift alone:** `pad >= flat_gap(R_f_envelope) x 1.2`.
+~~Plus a crown term~~ — **REMOVED 2026-08-27.** The brief's fridge had a formed steel wrapper that
+domes; the Samsung's top was straightedged and photographed FLAT, so the crown term had been zero
+throughout and the parameter, its function and its explanatory sheet were drift waiting to happen.
+If a future fridge IS crowned, the term to restore is `+ crown_rise_at(reach)`. The envelope is
 `R_f = 15 mm`, the top of the range a formed steel wrapper plausibly produces; coverage beyond it is
 REPORTED as sensitivity (the 1/4 in pad actually covers a measured R_f up to 19 mm at 130 mm reach)
 rather than designed to, because designing to R_f = 20 would force a pad thickness that no stocked
@@ -152,12 +154,6 @@ edge with R_f in the 6-15 mm range, and a crown from wrapper doming. **None of t
 for Samsung.** Samsung may use a separate top panel, a different corner radius, or a plastic top
 cap. Until measured, treat as UNKNOWN:
 - top corner radius `R_f` — the `R_f = 15 mm` design envelope came from that wrapper reasoning
-- whether the top is crowned at all, and by how much
-- ~~whether the top is crowned~~ — **PHOTOGRAPHED 2026-08-27: the top is FLAT.** A yardstick laid
-  across roughly 28 in of the top front edge shows no daylight at either end, so `crown_rise = 0`
-  is now evidence-backed rather than an unmeasured default. CAVEAT: a photo at this angle would
-  not resolve 1-2 mm of gentle dome, and it says nothing about the FRONT-TO-BACK direction. Treat
-  as "no gross crown", not as a measurement.
 - **Hinge cover and the front-to-back clear window — MEASURED 2026-08-27.** The photo is a view
   of the **LEFT SIDE PANEL**, the face the display hangs on, so the ruler runs **front-to-back**
   along the top of that panel with its zero at the **REAR** edge.
@@ -187,8 +183,8 @@ cap. Until measured, treat as UNKNOWN:
   sheet and the fallback margin is now free insurance, not a design driver
 - hinge cover footprint and any rear cable/waterline step-down
 
-Samsung's own side elevation draws the top as a flat straight line, but that is an idealised
-drawing and cannot rule out a few mm of crown.
+Samsung's own side elevation draws the top as a flat straight line, and a straightedge laid across
+it agrees (photographed 2026-08-27). Crown is no longer modelled anywhere.
 
 
 ---
@@ -228,7 +224,6 @@ SOLID line would be read as a cut and would slice the part in half.
 | Parameter | Default | How to resolve |
 |---|---|---|
 | Neck length | **310 mm** | Derived, not hardcoded: `neck = fridge_height - screen_centre - body_h/2`. Screen centre 1331 mm is mid-band for 5'1"-6'4". The brief's "- 12 mm" is not magic either: it is `(display_height - body_height)/2`, 12.3 mm landscape and 127.6 mm portrait. Use `--fridge-height` + `--screen-centre-height` |
-| Fridge crown rise | **3.0 mm** | straightedge across the top; feeds the arm pad budget |
 | Bend deduction | **derived estimate**, `BD = 2(R+T)tan(45) - (pi/2)(R + K*T)` with **K = 0.42** | replace with SendCutSend's bending calculator value |
 | Orientation | **portrait — as built** | the generator default is portrait; it is mechanically better (torsion arm 278 -> 162 mm) and the counter-depth cabinet is only 610 mm deep, which a 555 mm landscape display nearly fills |
 | Fridge top corner radius `R_f` | **12 mm** | affects **pad sizing only**, never cut geometry. Straightedge on the side, another on the top; they meet at the theoretical sharp corner; measure from that intersection along the top to the tangent point — for a 90 deg corner that distance is the radius. Cross-check down the side face. Quick screen: a US quarter is O 24.26 mm (R = 12.13 mm) — if it rocks and will not seat, `R_f` < 12 mm |

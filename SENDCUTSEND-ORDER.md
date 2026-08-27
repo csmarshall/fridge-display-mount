@@ -395,7 +395,7 @@ and exits non-zero if any of these fail.
 | Countersinking | not offered on A36/1008 mild steel (their app, verified) | n/a — ISO 7380 button heads | PASS |
 | Magnet disc within its region | overhang ≤ 0 | 8.50 mm inboard | PASS |
 | Magnet spacing (load-bearing) | ≥ 240 mm | 250 mm horizontal, 240 vertical | PASS |
-| Arm pad covers corner gap + crown | ≥ 1.2× the budget | 1.62× | PASS |
+| Arm pad covers the corner gap | ≥ 1.2× the budget | 3.32× | PASS |
 | Bottom pad vs magnet standoff | 0 to +1.0 mm proud | +0.35 mm | PASS |
 | Rear-box opening covered | a window covers it in all 4 rotations | 8.00 mm margin each | PASS |
 | Body open area (vents) | ≥ 15% | 22.7% | PASS |
@@ -524,7 +524,7 @@ a replacement** — the Waveshare page states neither.
    with a square and measure both legs from the bend apex: arm 130 (A) or 180 (B), neck+body 562 mm.
    Deburr anything the service missed.
 2. **Dry-fit the bare bracket, no display, no pads.** Look for three things: the arm rocking
-   fore-aft on the crowned top; contact with the hinge cover caps at the front corners; and the rear
+   fore-aft on the top; contact with the hinge cover caps at the front corners; and the rear
    cable/waterline step-down. Slide it along the top until the arm sits **mid-depth**, clear of all
    three. Mark the position with tape.
 3. **Fit the arm pad.** Clean with IPA, apply the 1/4" closed-cell sponge across the full arm width
@@ -564,7 +564,7 @@ Or one variant with measured inputs:
     --out-dir variants \
     --fridge-height <measured> --screen-centre-height 1331 \
     --bend-deduction <from SendCutSend's calculator> \
-    --fridge-corner-radius <measured> --crown-rise <measured> \
+    --fridge-corner-radius <measured>
     --log-level DEBUG
 ```
 
@@ -595,8 +595,6 @@ about 7.2× because the torsion arm drops from 278 mm to 162 mm.
       becomes curve — for a 90° corner that distance *is* the radius. Cross-check down the side.
       *Quick screen:* a US quarter is Ø24.26 mm (R = 12.13). If it rocks and won't seat, R_f < 12.
       **R_f > 17 mm forces variant A.**
-- [ ] **Crown across the top.** Straightedge front-to-back and side-to-side at the intended arm
-      position; measure the gap at the ends. Assumed 3 mm. **Over ~5 mm prefers variant A.**
 
 ### Tier 3 — can still move the vents, but only if badly wrong
 

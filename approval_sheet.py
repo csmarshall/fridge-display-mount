@@ -232,7 +232,7 @@ def magnet_rows(geom) -> list[float]:
     """FITTED body magnet rows only.
 
     Adding discs to the optional mid-side positions made this pick them up, and the sheet
-    silently went from claiming 8 magnets to 10 and its let-go from 194 to 252 lbf. The optional
+    silently went from claiming 8 magnets to 10 and its let-go from 194 to 252 lb. The optional
     positions are HOLES; a drawing must never count a hole as a magnet.
     """
     return sorted({round(h.y, 3) for h in geom.magnet_discs
@@ -693,8 +693,8 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
     pull = rep["magnet_derated_pull_lbf"]
     base_rows = [r for r in rows if r in (params.magnet_inset, params.body_h - params.magnet_inset)]
     go_now = let_go_lbf(params, W, rows, arm_offs, pull)
-    # ONE model for "how hard is it to pull off". This sheet used to quote let_go_lbf (178 lbf)
-    # while force_table quoted 146 lbf for the same grab — same question, two answers. Defer to
+    # ONE model for "how hard is it to pull off". This sheet used to quote let_go_lbf (178 lb)
+    # while force_table quoted 146 lb for the same grab — same question, two answers. Defer to
     # force_table, and name the DIRECTION, since where you grab is what decides the number.
     import force_table as _ft
     weakest_lbf = _ft.forces(len(rows) * 2, len(arm_offs) * 2, params, rep)[
@@ -789,7 +789,7 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
          f"less than the door handles"),
         ("Finish", "textured black, powder coated",
          "close to the fridge's own side panel"),
-        # "21 lbf" reads as a scary number and gets quoted without its parts. Broken down it is
+        # "21 lb" reads as a scary number and gets quoted without its parts. Broken down it is
         # reassuring: most of it is the BRACKET, and the fridge top carries all of it.
         ("Weighs", f"{rep['total_hanging_lbf']*0.45359237:.1f} kg "
                    f"({rep['total_hanging_lbf']:.0f} lb) all in",
@@ -837,7 +837,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         LOG.error("Refusing to draw a part that does not validate")
         return 1
     a.out.write_text(svg, encoding="utf-8")
-    LOG.info("Wrote %s — mounted %s, %d magnets, body rows %s, lets go at %.0f lbf (was %.0f)",
+    LOG.info("Wrote %s — mounted %s, %d magnets, body rows %s, lets go at %.0f lb (was %.0f)",
              a.out, a.mount_side, info["n_mag"], info["rows"], info["go_now"], info["go_base"])
     return 0
 

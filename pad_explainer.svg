@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="940" viewBox="0 0 1280 940">
 <rect width="1280" height="940" fill="#fbfbf9"/>
 <rect x="0" y="0" width="1280" height="32" fill="#b00020"/>
-<text x="640.0" y="22.0" font-family="Helvetica,Arial,sans-serif" font-size="14" text-anchor="middle" fill="#fff" font-weight="bold">REFERENCE ONLY — why crown, corner radius, foam and arm magnets are one problem</text>
+<text x="640.0" y="22.0" font-family="Helvetica,Arial,sans-serif" font-size="14" text-anchor="middle" fill="#fff" font-weight="bold">REFERENCE ONLY — why the corner radius, the foam pad and the arm magnets are one problem</text>
 <text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="18" text-anchor="start" fill="#111" font-weight="bold">The foam has ONE budget, and two things spend it</text>
 <text x="40.0" y="82.0" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="start" fill="#555" font-weight="normal">Side elevation along the fridge's top edge. Horizontal is true scale; VERTICAL IS EXAGGERATED 14x so gaps of a few mm are visible.</text>
 <text x="40.0" y="150.0" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="start" fill="#111" font-weight="bold">1 — What the foam has to absorb</text>
@@ -19,15 +19,12 @@
 <line x1="115.0" y1="251.5" x2="130.0" y2="251.5" stroke="#b00020" stroke-width="1.5"/>
 <text x="107.5" y="271.8" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="end" fill="#b00020" font-weight="bold">total gap</text>
 <text x="107.5" y="285.8" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="end" fill="#b00020" font-weight="normal">3.46 mm</text>
-<line x1="401.0" y1="300.0" x2="401.0" y2="300.0" stroke="#1a5fb4" stroke-width="1.5"/>
 <line x1="401.0" y1="300.0" x2="401.0" y2="251.5" stroke="#c0169a" stroke-width="1.5"/>
 <line x1="375.0" y1="300.0" x2="407.0" y2="300.0" stroke="#8a9199" stroke-width="0.7" stroke-dasharray="3 2"/>
-<text x="413.0" y="304.0" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#1a5fb4" font-weight="bold">crown rise  0.00 mm</text>
-<text x="413.0" y="318.0" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" fill="#1a5fb4" font-weight="normal">grows if the arm reaches further inboard</text>
 <text x="413.0" y="267.8" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#c0169a" font-weight="bold">corner-radius lift  3.46 mm</text>
 <text x="413.0" y="281.8" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" fill="#c0169a" font-weight="normal">grows if the fridge corner radius is large</text>
-<text x="40.0" y="404.0" font-family="Helvetica,Arial,sans-serif" font-size="11.5" text-anchor="start" fill="#111" font-weight="bold">They STACK: 0.00 + 3.46 = 3.46 mm, against a 11.50 mm pad. That is the whole budget.</text>
-<text x="40.0" y="442.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#b00020" font-weight="bold">Crown is currently modelled as 0.00 mm — ASSUMED, not measured on the Samsung. Measure before trusting this sum.</text>
+<text x="40.0" y="404.0" font-family="Helvetica,Arial,sans-serif" font-size="11.5" text-anchor="start" fill="#111" font-weight="bold">The whole budget is 3.46 mm, against a 11.50 mm pad. That is the whole budget.</text>
+<text x="40.0" y="442.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#6a737b" font-weight="normal">The fridge top is FLAT — straightedged and photographed 2026-08-27. Only the corner radius spends the pad budget.</text>
 <text x="40.0" y="474.0" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="start" fill="#111" font-weight="bold">2 — So why not just use thicker foam? Because the arm magnet has to touch steel</text>
 <text x="220.0" y="500.0" font-family="Helvetica,Arial,sans-serif" font-size="11.5" text-anchor="middle" fill="#2e9e5b" font-weight="bold">pad = magnet height</text>
 <rect x="90.0" y="620.0" width="260" height="16" fill="#3a3734" stroke="#8a9199" stroke-width="1.2"/>
@@ -65,13 +62,13 @@
 <text x="1000.0" y="670.0" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#b00020" font-weight="normal">magnet holds the arm up.</text>
 <text x="1000.0" y="683.0" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#b00020" font-weight="normal">Foam does nothing, and the</text>
 <text x="1000.0" y="696.0" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#b00020" font-weight="normal">rigid magnet line-loads the sheet.</text>
-<text x="40.0" y="790.0" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="start" fill="#111" font-weight="bold">3 — The way out, if your crown measures ugly</text>
+<text x="40.0" y="790.0" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="start" fill="#111" font-weight="bold">3 — The way out, if the corner radius measures ugly</text>
 <rect x="60" y="806" width="12" height="12" fill="#5d3600"/>
 <text x="82.0" y="817.0" font-family="Helvetica,Arial,sans-serif" font-size="11.5" text-anchor="start" fill="#5d3600" font-weight="bold">Keep the arm magnets</text>
 <text x="82.0" y="834.0" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#333" font-weight="normal">pad locked to the stock size that matches the 11.51 mm magnet, currently 11.50 mm  -&gt;  the arm magnets must reach steel</text>
 <rect x="60" y="848" width="12" height="12" fill="#2e9e5b"/>
 <text x="82.0" y="859.0" font-family="Helvetica,Arial,sans-serif" font-size="11.5" text-anchor="start" fill="#2e9e5b" font-weight="bold">Drop the arm magnets</text>
-<text x="82.0" y="876.0" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#333" font-weight="normal">pad thickness becomes free  -&gt;  3/8 in foam tolerates 11.0 mm of crown at 130 mm reach, 8.5 mm at 180 mm</text>
-<text x="60.0" y="912.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#555" font-weight="normal">The arm magnets are anti-jostle only — zero credit in the load path. They are costing you crown tolerance, not strength.</text>
-<text x="60.0" y="929.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#111" font-weight="bold">Measure the crown first. Under ~4 mm and none of this matters: keep the magnets.</text>
+<text x="82.0" y="876.0" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#333" font-weight="normal">pad thickness becomes free  -&gt;  3/8 in foam tolerates a far larger corner radius, 8.5 mm at 180 mm</text>
+<text x="60.0" y="912.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#555" font-weight="normal">The arm magnets are anti-jostle only — zero credit in the load path. They are costing you pad tolerance, not strength.</text>
+<text x="60.0" y="929.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#111" font-weight="bold">The top measured flat, so none of this bites: keep the magnets.</text>
 </svg>

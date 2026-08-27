@@ -103,15 +103,15 @@ def render(path: Path, p: BracketParams) -> None:
          f'font-weight="bold" fill="{INK}">HOW HARD YOU HAVE TO HIT IT</text>',
          f'<text x="40" y="78" font-family="Helvetica,Arial,sans-serif" font-size="12.5" '
          f'fill="{MUTED}">Force to shift or unseat the mount, by direction and magnet count. '
-         f'Each cell is lbf on top, newtons below.</text>',
+         f'Each cell is lb on top, newtons below.</text>',
          f'<text x="40" y="98" font-family="Helvetica,Arial,sans-serif" font-size="12.5" '
          f'fill="{MUTED}">Every magnet is a {p.magnet_disc_dia:.0f} mm pot magnet derated to '
-         f'{rep["magnet_derated_pull_lbf"]:.1f} lbf on painted appliance sheet '
-         f'({p.magnet_rated_pull_lbf:.0f} lbf rated).</text>',
+         f'{rep["magnet_derated_pull_lbf"]:.1f} lb on painted appliance sheet '
+         f'({p.magnet_rated_pull_lbf:.0f} lb rated).</text>',
          f'<text x="40" y="122" font-family="Helvetica,Arial,sans-serif" font-size="12.5" '
          f'fill="#b00020" font-weight="bold">These are resistance-to-ACCIDENT numbers, not '
          f'removal forces — peeling one corner beats them all at '
-         f'{rep["magnet_derated_pull_lbf"]:.0f} lbf.</text>',
+         f'{rep["magnet_derated_pull_lbf"]:.0f} lb.</text>',
          f'<text x="40" y="142" font-family="Helvetica,Arial,sans-serif" font-size="12.5" '
          f'fill="{MUTED}">The magnets carry NO vertical load. The hook does. This table is about '
          f'shifting the plate, not holding the screen up.</text>']
@@ -150,7 +150,7 @@ def render(path: Path, p: BracketParams) -> None:
             grew = "" if i == 0 else f'{(v/vals[0] - 1)*100:+.0f}%'
             o.append(f'<text x="{cx:.1f}" y="{ry-3:.1f}" font-family="Helvetica,Arial,sans-serif" '
                      f'font-size="12.5" text-anchor="middle" font-weight="bold" '
-                     f'fill="{INK}">{v:.0f} lbf</text>')
+                     f'fill="{INK}">{v:.0f} lb</text>')
             o.append(f'<text x="{cx:.1f}" y="{ry+10:.1f}" '
                      f'font-family="Helvetica,Arial,sans-serif" font-size="10.5" '
                      f'text-anchor="middle" fill="{MUTED}">{v*N_PER_LBF:.0f} N</text>')
@@ -167,7 +167,7 @@ def render(path: Path, p: BracketParams) -> None:
          "corners are already the best positions on the plate; mid-sides sit on a centreline and "
          "contribute nothing to rotation about it."),
         ("A firm touch press is about "
-         f"{p.press_force_lbf:.0f} lbf ({p.press_force_lbf*N_PER_LBF:.0f} N)",
+         f"{p.press_force_lbf:.0f} lb ({p.press_force_lbf*N_PER_LBF:.0f} N)",
          "compare that against the twist row — that is the governing everyday load."),
     ]
     for i, (head, body) in enumerate(notes):
@@ -180,7 +180,7 @@ def render(path: Path, p: BracketParams) -> None:
     path.write_text("".join(o), encoding="utf-8")
     LOG.info("Wrote %s — %d directions x %d magnet configurations", path, len(dirs), len(LADDER))
     for (np_, na), t in zip(LADDER, tables):
-        LOG.debug("%d plate + %d reach: slide %.0f lbf, twist %.0f lbf",
+        LOG.debug("%d plate + %d reach: slide %.0f lb, twist %.0f lb",
                   np_, na, t["slide it front-to-back"],
                   t["press the screen edge to twist it off"])
 

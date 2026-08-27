@@ -60,7 +60,7 @@ def modes(params: BracketParams) -> list[tuple[str, str, float, str]]:
          "MOVES it rather than detaching it — the hook does not resist this direction"),
         ("Press the screen edge until it twists off", "torsion about the vertical spine",
          params.press_force_lbf * (pull / (rep["torsion_force_per_side_lbf"] / len(rows))),
-         "a firm touch press is about 5 lbf"),
+         "a firm touch press is about 5 lb"),
         ("Hang off it downwards", "arm bears on the fridge top",
          float("inf"), "nothing to detach — it is already resting on the fridge"),
     ]
@@ -79,18 +79,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         p = BracketParams(extra_magnet_rows=br, extra_arm_magnet_offsets=ao)
         ms, info = modes(p)
         print(f"\n{'='*96}\n{label}  —  {info['n_body']} on the side, {info['n_arm']} on the top lip, "
-              f"{info['pull']:.1f} lbf derated pull each\n{'='*96}")
+              f"{info['pull']:.1f} lb derated pull each\n{'='*96}")
         print(f"{'direction':<46}{'force':>12}   how it resists")
         for name, how, f, note in ms:
-            val = "cannot" if f == float("inf") else f"{f:,.0f} lbf"
+            val = "cannot" if f == float("inf") else f"{f:,.0f} lb"
             print(f"{name:<46}{val:>12}   {how}")
             print(f"{'':<46}{'':>12}   {note}")
     print("\nCAVEAT — these assume the plate is rigid and every magnet lets go at once.")
     print("Peeling defeats them one at a time and takes far less: lifting one corner of the arm")
-    print("breaks a single magnet at ~25 lbf with the arm itself as the lever. That is how you")
+    print("breaks a single magnet at ~25 lb with the arm itself as the lever. That is how you")
     print("would actually take it off, and it is why the numbers below are NOT removal forces.")
-    print(f"\nFor scale: the display weighs {G.DISPLAY.weight_lbf:.1f} lbf and the whole assembly "
-          f"{G.engineering_report(BracketParams(), build_geometry(BracketParams(), derive_flat(BracketParams())))['total_hanging_lbf']:.1f} lbf.")
+    print(f"\nFor scale: the display weighs {G.DISPLAY.weight_lbf:.1f} lb and the whole assembly "
+          f"{G.engineering_report(BracketParams(), build_geometry(BracketParams(), derive_flat(BracketParams())))['total_hanging_lbf']:.1f} lb.")
     return 0
 
 

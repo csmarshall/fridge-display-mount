@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Why the crown, the corner radius, the foam pad and the arm magnets are all one problem.
+"""Why the corner radius, the foam pad and the arm magnets are all one problem.
 
 Three panels, side elevation, looking along the fridge's top front edge:
   1. what the foam has to absorb  2. why the pad cannot simply be thicker  3. the way out
 
-Vertical scale is exaggerated — a 3 mm crown across a 130 mm arm is invisible at true scale.
+Vertical scale is exaggerated — a few mm of corner lift is invisible at true scale.
+
+This sheet used to carry a CROWN term as well: the original brief's fridge had a formed
+steel wrapper that domes. The Samsung's top was straightedged and photographed FLAT, so
+the crown term is gone and the pad budget is the corner radius alone.
 Reference-only.
 """
 
@@ -17,9 +21,9 @@ from pathlib import Path
 from typing import Sequence
 
 from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_INK, ON_FRIDGE_MUTED, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL
-from generate_bracket import MATERIAL, BracketParams, crown_rise_at, flat_gap
+from generate_bracket import MATERIAL, BracketParams, flat_gap
 
-LOG = logging.getLogger("crown")
+LOG = logging.getLogger("pad")
 
 VEXAG = 14.0  # vertical exaggeration; horizontal is true scale
 
@@ -40,13 +44,12 @@ def render(path: Path, p: BracketParams) -> None:
     reach = p.arm_len
     pad = p.arm_pad
     gap_corner = flat_gap(p.fridge_corner_radius_max, MATERIAL.bend_radius)
-    crown_at_tip = crown_rise_at(reach, p.fridge_top_width, p.crown_rise)
 
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
            f'viewBox="0 0 {W:.0f} {H:.0f}">',
            f'<rect width="{W:.0f}" height="{H:.0f}" fill="#fbfbf9"/>',
            f'<rect x="0" y="0" width="{W:.0f}" height="32" fill="#b00020"/>',
-           _t(W/2, 22, "REFERENCE ONLY — why crown, corner radius, foam and arm magnets are one problem",
+           _t(W/2, 22, "REFERENCE ONLY — why the corner radius, the foam pad and the arm magnets are one problem",
               14, fill="#fff", weight="bold"),
            _t(40, 60, "The foam has ONE budget, and two things spend it", 18, anchor="start", weight="bold"),
            _t(40, 82, f"Side elevation along the fridge's top edge. Horizontal is true scale; "
@@ -66,8 +69,8 @@ def render(path: Path, p: BracketParams) -> None:
                            "everywhere, and the foam is what bridges the difference.",
                   10.5, anchor="start", fill="#555"))
 
-    # fridge top surface, rising inboard along the crown parabola
-    pts = [(x(i), y(crown_rise_at(float(i), p.fridge_top_width, p.crown_rise)))
+    # fridge top surface — flat, so this is a straight line
+    pts = [(x(i), y(0.0))
            for i in range(0, int(reach) + 1, 2)]
     surf = " ".join(f"{a:.1f},{b:.1f}" for a, b in pts)
     out.append(f'<path d="M {pts[0][0]:.1f} {pts[0][1] + SLAB_PX:.1f} L {surf} '
@@ -77,8 +80,8 @@ def render(path: Path, p: BracketParams) -> None:
     out.append(_t(x(reach/2), y(0) + 48, f"(dome shown {VEXAG:.0f}x exaggerated)", 8.5, fill=ON_FRIDGE_MUTED))
 
     # rigid arm: straight, touching at the inboard tip, lifted at the bend end
-    arm_tip_y = y(crown_at_tip)
-    arm_root_y = y(crown_at_tip + gap_corner)
+    arm_tip_y = y(0.0)
+    arm_root_y = y(gap_corner)
     out.append(f'<line x1="{x(0):.1f}" y1="{arm_root_y:.1f}" x2="{x(reach):.1f}" y2="{arm_tip_y:.1f}" '
                f'stroke="#5d3600" stroke-width="8" stroke-linecap="round"/>')
     out.append(_t(x(reach/2), arm_root_y - 30, f"RIGID {MATERIAL.name.upper()} ARM", 10.5, fill="#5d3600", weight="bold"))
@@ -100,35 +103,28 @@ def render(path: Path, p: BracketParams) -> None:
                    f'stroke="#b00020" stroke-width="1.5"/>')
     out.append(_t(x(-34), (y(0)+arm_root_y)/2 - 4, "total gap", 10, anchor="end",
                   fill="#b00020", weight="bold"))
-    out.append(_t(x(-34), (y(0)+arm_root_y)/2 + 10, f"{crown_at_tip + gap_corner:.2f} mm",
+    out.append(_t(x(-34), (y(0)+arm_root_y)/2 + 10, f"{gap_corner:.2f} mm",
                   10, anchor="end", fill="#b00020"))
 
     # the two contributions, right of the tip
     rx = x(reach) + 26
-    out.append(f'<line x1="{rx:.1f}" y1="{y(0):.1f}" x2="{rx:.1f}" y2="{y(crown_at_tip):.1f}" '
-               f'stroke="#1a5fb4" stroke-width="1.5"/>')
-    out.append(f'<line x1="{rx:.1f}" y1="{y(crown_at_tip):.1f}" x2="{rx:.1f}" '
-               f'y2="{y(crown_at_tip+gap_corner):.1f}" stroke="#c0169a" stroke-width="1.5"/>')
+    out.append(f'<line x1="{rx:.1f}" y1="{y(0.0):.1f}" x2="{rx:.1f}" '
+               f'y2="{y(gap_corner):.1f}" stroke="#c0169a" stroke-width="1.5"/>')
     out.append(f'<line x1="{x(reach):.1f}" y1="{y(0):.1f}" x2="{rx+6:.1f}" y2="{y(0):.1f}" '
                f'stroke="#8a9199" stroke-width="0.7" stroke-dasharray="3 2"/>')
-    out.append(_t(rx + 12, y(crown_at_tip/2) + 4, f"crown rise  {crown_at_tip:.2f} mm",
-                  10, anchor="start", fill="#1a5fb4", weight="bold"))
-    out.append(_t(rx + 12, y(crown_at_tip/2) + 18, "grows if the arm reaches further inboard",
-                  9, anchor="start", fill="#1a5fb4"))
-    out.append(_t(rx + 12, y(crown_at_tip + gap_corner/2) - 8,
+    out.append(_t(rx + 12, y(gap_corner/2) - 8,
                   f"corner-radius lift  {gap_corner:.2f} mm", 10, anchor="start",
                   fill="#c0169a", weight="bold"))
-    out.append(_t(rx + 12, y(crown_at_tip + gap_corner/2) + 6,
+    out.append(_t(rx + 12, y(gap_corner/2) + 6,
                   "grows if the fridge corner radius is large", 9, anchor="start", fill="#c0169a"))
 
     out.append(_t(40, oy + SLAB_PX + 46,
-                  f"They STACK: {crown_at_tip:.2f} + {gap_corner:.2f} = "
-                  f"{crown_at_tip + gap_corner:.2f} mm, against a {pad:.2f} mm pad. "
+                  f"The whole budget is {gap_corner:.2f} mm, against a {pad:.2f} mm pad. "
                   f"That is the whole budget.", 11.5, anchor="start", fill="#111", weight="bold"))
     # y=470 sat directly on the section-2 heading. Move it up under panel 1 where it belongs.
-    out.append(_t(40, 442, f"Crown is currently modelled as {p.crown_rise:.2f} mm — "
-                  f"ASSUMED, not measured on the Samsung. Measure before trusting this sum.",
-                  10.5, anchor="start", fill="#b00020", weight="bold"))
+    out.append(_t(40, 442, "The fridge top is FLAT — straightedged and photographed "
+                  "2026-08-27. Only the corner radius spends the pad budget.",
+                  10.5, anchor="start", fill="#6a737b"))
 
     # ---------------- panel 2 : why the pad can't just be thicker -----------------
     py0 = 500.0
@@ -177,13 +173,13 @@ def render(path: Path, p: BracketParams) -> None:
 
     # ---------------- panel 3 : the way out ---------------------------------------
     py1 = 790.0
-    out.append(_t(40, py1, "3 — The way out, if your crown measures ugly", 13, anchor="start", weight="bold"))
+    out.append(_t(40, py1, "3 — The way out, if the corner radius measures ugly", 13, anchor="start", weight="bold"))
     lines = [
         ("Keep the arm magnets", "#5d3600",
          f"pad locked to the stock size that matches the {p.arm_magnet_standoff:.2f} mm "
          f"magnet, currently {pad:.2f} mm  ->  the arm magnets must reach steel"),
         ("Drop the arm magnets", "#2e9e5b",
-         "pad thickness becomes free  ->  3/8 in foam tolerates 11.0 mm of crown at 130 mm reach, "
+         "pad thickness becomes free  ->  3/8 in foam tolerates a far larger corner radius, "
          "8.5 mm at 180 mm"),
     ]
     for i, (label, colour, txt) in enumerate(lines):
@@ -193,20 +189,20 @@ def render(path: Path, p: BracketParams) -> None:
         out.append(_t(82, yy + 14, txt, 10, anchor="start", fill="#333"))
     out.append(_t(60, py1 + 122,
                   "The arm magnets are anti-jostle only — zero credit in the load path. They are "
-                  "costing you crown tolerance, not strength.",
+                  "costing you pad tolerance, not strength.",
                   10.5, anchor="start", fill="#555"))
     out.append(_t(60, py1 + 139,
-                  "Measure the crown first. Under ~4 mm and none of this matters: keep the magnets.",
+                  "The top measured flat, so none of this bites: keep the magnets.",
                   10.5, anchor="start", fill="#111", weight="bold"))
     out.append("</svg>")
     path.write_text("\n".join(out), encoding="utf-8")
-    LOG.info("Wrote %s (crown at tip %.2f mm, corner lift %.2f mm, total %.2f vs pad %.2f)",
-             path, crown_at_tip, gap_corner, crown_at_tip + gap_corner, pad)
+    LOG.info("Wrote %s (corner lift %.2f mm vs pad %.2f mm, margin %.2fx)",
+             path, gap_corner, pad, pad / gap_corner)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="Draw the crown / foam / arm-magnet interaction.")
-    ap.add_argument("--out", type=Path, default=Path("crown_explainer.svg"))
+    ap = argparse.ArgumentParser(description="Draw the corner-radius / foam / arm-magnet interaction.")
+    ap.add_argument("--out", type=Path, default=Path("pad_explainer.svg"))
     ap.add_argument("--log-level", choices=LOG_LEVELS, default="INFO")
     a = ap.parse_args(argv)
     configure_logging(a.log_level)
