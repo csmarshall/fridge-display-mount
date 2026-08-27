@@ -16,9 +16,9 @@
 <text x="116.00" y="315.04" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="end" fill="#2e9e5b" font-weight="bold">comfortable touch</text>
 <text x="116.00" y="326.04" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="end" fill="#2e9e5b" font-weight="normal">1216-1450 mm</text>
 <line x1="106" y1="711.00" x2="1546" y2="711.00" stroke="#333" stroke-width="1.4"/>
-<rect x="216.00" y="188.08" width="182.88" height="522.92" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
-<text x="307.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#6a737b" font-weight="normal">Samsung RS23A500ASR</text>
-<text x="307.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#8a9199" font-weight="normal">(side panel, face on)</text>
+<rect x="216.00" y="188.08" width="182.88" height="522.92" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
+<text x="307.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#b0b6b9" font-weight="normal">Samsung RS23A500ASR</text>
+<text x="307.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#b0b6b9" font-weight="normal">(side panel, face on)</text>
 <rect x="280.44" y="183.08" width="54.00" height="5" fill="#9a5b00"/>
 <rect x="278.94" y="188.08" width="57.00" height="45.00" fill="#9a5b00" fill-opacity="0.5"/>
 <rect x="260.94" y="233.08" width="93.00" height="93.00" fill="#9a5b00" fill-opacity="0.5" stroke="#5d3600" stroke-width="0.8"/>
@@ -31,9 +31,9 @@
 <text x="307.44" y="746.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait   1160 – 1716 mm</text>
 <text x="307.44" y="759.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait top 27 mm below fridge top</text>
 <text x="307.44" y="772.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">centre in comfort band</text>
-<rect x="546.00" y="188.08" width="182.88" height="522.92" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
-<text x="637.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#6a737b" font-weight="normal">Samsung RS23A500ASR</text>
-<text x="637.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#8a9199" font-weight="normal">(side panel, face on)</text>
+<rect x="546.00" y="188.08" width="182.88" height="522.92" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
+<text x="637.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#b0b6b9" font-weight="normal">Samsung RS23A500ASR</text>
+<text x="637.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#b0b6b9" font-weight="normal">(side panel, face on)</text>
 <rect x="610.44" y="183.08" width="54.00" height="5" fill="#9a5b00"/>
 <rect x="608.94" y="188.08" width="57.00" height="69.00" fill="#9a5b00" fill-opacity="0.5"/>
 <rect x="590.94" y="257.08" width="93.00" height="93.00" fill="#9a5b00" fill-opacity="0.5" stroke="#5d3600" stroke-width="0.8"/>
@@ -46,9 +46,9 @@
 <text x="637.44" y="746.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait   1080 – 1636 mm</text>
 <text x="637.44" y="759.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait top 107 mm below fridge top</text>
 <text x="637.44" y="772.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">centre in comfort band</text>
-<rect x="876.00" y="188.08" width="182.88" height="522.92" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
-<text x="967.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#6a737b" font-weight="normal">Samsung RS23A500ASR</text>
-<text x="967.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#8a9199" font-weight="normal">(side panel, face on)</text>
+<rect x="876.00" y="188.08" width="182.88" height="522.92" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
+<text x="967.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#b0b6b9" font-weight="normal">Samsung RS23A500ASR</text>
+<text x="967.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#b0b6b9" font-weight="normal">(side panel, face on)</text>
 <rect x="940.44" y="183.08" width="54.00" height="5" fill="#9a5b00"/>
 <rect x="938.94" y="188.08" width="57.00" height="93.00" fill="#9a5b00" fill-opacity="0.5"/>
 <rect x="920.94" y="281.08" width="93.00" height="93.00" fill="#9a5b00" fill-opacity="0.5" stroke="#5d3600" stroke-width="0.8"/>
@@ -61,9 +61,9 @@
 <text x="967.44" y="746.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait   1000 – 1556 mm</text>
 <text x="967.44" y="759.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">portrait top 187 mm below fridge top</text>
 <text x="967.44" y="772.00" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#444" font-weight="normal">centre in comfort band</text>
-<rect x="1206.00" y="188.08" width="182.88" height="522.92" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
-<text x="1297.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#6a737b" font-weight="normal">Samsung RS23A500ASR</text>
-<text x="1297.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#8a9199" font-weight="normal">(side panel, face on)</text>
+<rect x="1206.00" y="188.08" width="182.88" height="522.92" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
+<text x="1297.44" y="648.25" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#b0b6b9" font-weight="normal">Samsung RS23A500ASR</text>
+<text x="1297.44" y="660.25" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="middle" fill="#b0b6b9" font-weight="normal">(side panel, face on)</text>
 <rect x="1270.44" y="183.08" width="54.00" height="5" fill="#9a5b00"/>
 <rect x="1268.94" y="188.08" width="57.00" height="117.00" fill="#9a5b00" fill-opacity="0.5"/>
 <rect x="1250.94" y="305.08" width="93.00" height="93.00" fill="#9a5b00" fill-opacity="0.5" stroke="#5d3600" stroke-width="0.8"/>

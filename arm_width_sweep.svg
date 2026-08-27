@@ -5,7 +5,7 @@
 <text x="40.00" y="54.00" font-family="Helvetica,Arial,sans-serif" font-size="15" text-anchor="start" fill="#111" font-weight="bold">Arm / neck width — plan view, looking DOWN on the fridge top</text>
 <text x="40.00" y="72.00" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#555" font-weight="normal">Touch press 5 lbf at 162 mm = 32.0 in·lbf about the vertical spine. At the hook that is a couple across the arm width: one end lifts, the other presses in.</text>
 <text x="40.00" y="88.00" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#555" font-weight="normal">Lift demand = 32.0 in·lbf / arm width. Hold-down = half the assembly weight + one arm retention magnet. Governing case is a NON-MAGNETIC panel, where the body magnets contribute nothing.</text>
-<rect x="70.00" y="146.00" width="260.00" height="256.03" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="70.00" y="146.00" width="260.00" height="256.03" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
 <rect x="70.00" y="146.00" width="260.00" height="85.34" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
 <text x="76.00" y="188.67" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="start" fill="#b00020" font-weight="normal">hinge caps</text>
 <rect x="70.00" y="355.83" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
@@ -20,7 +20,7 @@
 <text x="200.00" y="454.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bracket mass   4.88 kg</text>
 <text x="200.00" y="468.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bend length    5.12 in</text>
 <text x="200.00" y="482.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">fits the 296 mm clear window</text>
-<rect x="370.00" y="146.00" width="260.00" height="256.03" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="370.00" y="146.00" width="260.00" height="256.03" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
 <rect x="370.00" y="146.00" width="260.00" height="85.34" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
 <rect x="370.00" y="355.83" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
 <rect x="370.00" y="234.12" width="75.60" height="79.80" fill="#9a5b00" fill-opacity="0.55" stroke="#5d3600" stroke-width="1"/>
@@ -32,7 +32,7 @@
 <text x="500.00" y="454.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bracket mass   5.83 kg</text>
 <text x="500.00" y="468.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bend length    7.48 in</text>
 <text x="500.00" y="482.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">fits the 296 mm clear window</text>
-<rect x="670.00" y="146.00" width="260.00" height="256.03" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="670.00" y="146.00" width="260.00" height="256.03" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
 <rect x="670.00" y="146.00" width="260.00" height="85.34" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
 <rect x="670.00" y="355.83" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
 <rect x="670.00" y="221.52" width="75.60" height="105.00" fill="#9a5b00" fill-opacity="0.55" stroke="#5d3600" stroke-width="1"/>
@@ -44,7 +44,7 @@
 <text x="800.00" y="454.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bracket mass   6.79 kg</text>
 <text x="800.00" y="468.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bend length    9.84 in</text>
 <text x="800.00" y="482.03" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">fits the 296 mm clear window</text>
-<rect x="970.00" y="146.00" width="260.00" height="256.03" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="970.00" y="146.00" width="260.00" height="256.03" fill="#3a3734" stroke="#1f1d1b" stroke-width="1"/>
 <rect x="970.00" y="146.00" width="260.00" height="85.34" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
 <rect x="970.00" y="355.83" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
 <rect x="970.00" y="211.02" width="75.60" height="126.00" fill="#9a5b00" fill-opacity="0.55" stroke="#5d3600" stroke-width="1"/>

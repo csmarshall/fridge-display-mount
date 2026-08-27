@@ -8,7 +8,7 @@
 <text x="161.4" y="143.0" font-family="Helvetica,Arial,sans-serif" font-size="15" text-anchor="middle" fill="#b00020" font-weight="bold">LANDSCAPE</text>
 <text x="161.4" y="160.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#555" font-weight="normal">555 mm display in a 546 mm window</text>
 <text x="161.4" y="176.0" font-family="Helvetica,Arial,sans-serif" font-size="12" text-anchor="middle" fill="#b00020" font-weight="bold">DOES NOT FIT — over by 9 mm</text>
-<rect x="70.0" y="205.0" width="182.9" height="522.9" fill="#dfe3e6" stroke="#8a9199" stroke-width="1.4"/>
+<rect x="70.0" y="205.0" width="182.9" height="522.9" fill="#3a3734" stroke="#1f1d1b" stroke-width="1.4"/>
 <text x="161.4" y="665.2" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#6a737b" font-weight="normal">SIDE PANEL</text>
 <text x="161.4" y="680.2" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#8a9199" font-weight="normal">610 mm deep x 1743 mm tall</text>
 <text x="71.8" y="221.0" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" fill="#6a737b" font-weight="bold">FRONT</text>
@@ -33,7 +33,7 @@
 <text x="604.3" y="143.0" font-family="Helvetica,Arial,sans-serif" font-size="15" text-anchor="middle" fill="#2e9e5b" font-weight="bold">PORTRAIT</text>
 <text x="604.3" y="160.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#555" font-weight="normal">325 mm display in a 546 mm window</text>
 <text x="604.3" y="176.0" font-family="Helvetica,Arial,sans-serif" font-size="12" text-anchor="middle" fill="#2e9e5b" font-weight="bold">FITS — 221 mm spare</text>
-<rect x="512.9" y="205.0" width="182.9" height="522.9" fill="#dfe3e6" stroke="#8a9199" stroke-width="1.4"/>
+<rect x="512.9" y="205.0" width="182.9" height="522.9" fill="#3a3734" stroke="#1f1d1b" stroke-width="1.4"/>
 <text x="604.3" y="665.2" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#6a737b" font-weight="normal">SIDE PANEL</text>
 <text x="604.3" y="680.2" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#8a9199" font-weight="normal">610 mm deep x 1743 mm tall</text>
 <text x="514.7" y="221.0" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" fill="#6a737b" font-weight="bold">FRONT</text>
