@@ -316,20 +316,22 @@ def render(path: Path, p: BracketParams) -> None:
                 f"plate. The question was only ever whether it FITS.", 11.5, anchor="start",
                 fill=MUTED))
     o.append(_t(56, fy + 42,
-                f"You can have LOCKING or the washer, not both: the thin nyloc misses with a "
-                f"washer by {abs(p.magnet_stud_len - (t + p.washer_t + p.nut_h_nyloc_thin)):.2f} "
-                f"mm. Locking wins - the bare nut's {rep['nut_bearing_psi']:.0f} psi is still "
-                f"{MATERIAL.yield_psi / rep['nut_bearing_psi']:.0f}x under yield, so the washer "
-                f"is comfort, while a nut backing off under touch-cycling is a real failure.",
-                11.5, anchor="start", fill=MUTED))
+                f"You can have LOCKING or the washer, not both: with a washer the thin nyloc "
+                f"leaves only "
+                f"{p.magnet_stud_len - (t + p.washer_t + p.nut_h_nyloc_thin):+.2f} mm, inside "
+                f"the tolerance stack on three parts. Thickness is what runs out, not diameter - "
+                f"a bigger washer would not help.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 62,
                 f"Runner-up: the distorted-thread locknut is the SAME "
                 f"{p.nut_h_distorted:.2f} mm height as a plain hex nut - locking for nothing - "
                 f"but it is not reusable and is not stocked in black.", 11.0,
                 anchor="start", fill=MUTED))
-    o.append(_t(56, fy + 80, f"Fasteners are specified in {FINISH.upper()} OXIDE throughout: "
-                f"only the ARM nuts are visible, and they face up against a matte-black arm.",
-                11.0, anchor="start", fill=MUTED))
+    o.append(_t(56, fy + 80,
+                f"And the washer is not needed: the bare nut's {rep['nut_bearing_psi']:.0f} psi "
+                f"on the plate is {MATERIAL.yield_psi / rep['nut_bearing_psi']:.0f}x under "
+                f"{MATERIAL.name}'s yield. There is no point-loading problem for it to solve. "
+                f"Fasteners are {FINISH.upper()} OXIDE - only the ARM nuts are visible.", 11.0,
+                anchor="start", fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
     LOG.info("Wrote %s - plate %.2f mm, stud %.2f mm, %d of %d combinations fit, chosen: %s",

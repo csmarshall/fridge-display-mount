@@ -479,16 +479,20 @@ class BracketParams:
     # privately, which meant the plate could be re-holed without the sandwich drawing noticing.
     # Every dimension below was READ OFF the McMaster product table on 2026-08-27, not derived.
     magnet_stud_len: float = 0.5 * MM_PER_INCH        # 3506K67: male 5/16"-18 x 1/2 in stud
-    # 92141A030, general-purpose 18-8 flat washer. OD is 0.750 in, NOT the 0.688 in an SAE table
-    # would give you — McMaster's general-purpose line is closer to USS. Worth 25% more bearing
-    # area than the SAE size, for free.
+    # 96765A145, black-oxide general-purpose 18-8 flat washer. OD is 0.750 in, NOT the 0.688 in
+    # an SAE table would give you — McMaster's general-purpose line is closer to USS.
     washer_od: float = 0.750 * MM_PER_INCH            # 19.05 mm
     washer_id: float = 0.344 * MM_PER_INCH            # 8.74 mm — clears the 7.94 mm stud
-    # McMaster sells this washer to a THICKNESS RANGE of 0.035-0.069 in, not a nominal. A stack
-    # that has to fit must be checked against the THICKEST one you might be shipped, so the max
-    # is the design value. Using the 0.050 in midpoint would pass on paper and rattle in the bag.
-    washer_t: float = 0.069 * MM_PER_INCH             # 1.75 mm worst case
-    washer_t_min: float = 0.035 * MM_PER_INCH         # 0.89 mm — reported, never designed to
+    # McMaster sells this washer to a THICKNESS RANGE (0.040-0.060 in for the black-oxide part),
+    # not a nominal. A stack that has to fit must be checked against the THICKEST one you might be
+    # shipped, so the max is the design value. The midpoint would pass on paper and rattle in the
+    # bag. NOTE the plain part 92141A030 has a DIFFERENT range, 0.035-0.065 in — worse, not better.
+    washer_t: float = 0.060 * MM_PER_INCH             # 1.52 mm worst case, black oxide
+    washer_t_min: float = 0.040 * MM_PER_INCH         # 1.02 mm — reported, never designed to
+    # An OVERSIZED washer is the same thickness and 10x the bearing area. It does not rescue the
+    # locking stack (thickness is what runs out, not diameter) but it is the right washer for any
+    # variant that has room. 90377A164, black oxide, OD 1.250 in, 0.040-0.060 in thick.
+    washer_oversize_od: float = 1.250 * MM_PER_INCH   # 31.75 mm
     # 5/16"-18 nuts are 1/2 in across the flats in every profile. The nut bears on the plate
     # across its INSCRIBED circle, not its corners, so across-flats is the load-bearing number.
     nut_across_flats: float = 0.500 * MM_PER_INCH     # 12.70 mm
@@ -1502,7 +1506,10 @@ FINISH = "black"
 PART_NOS: dict[str, dict[str, str | None]] = {
     #                       plain 18-8     black-oxide 18-8
     "magnet":       {"plain": "3506K67",   "black": None},       # zinc case; no black option
-    "washer":       {"plain": "92141A030", "black": "96765A150"},
+    # 96765A150 is the 3/8 in row — an earlier revision of this file had it here by
+    # mis-reading the table. The 5/16 in black-oxide washer is 96765A145.
+    "washer":       {"plain": "92141A030", "black": "96765A145"},
+    "washer_oversize": {"plain": "90313A111", "black": "90377A164"},
     "nut_hex":      {"plain": "91841A030", "black": "97149A150"},
     "nut_jam":      {"plain": "91847A030", "black": "98514A035"},
     "nut_nyloc":    {"plain": "91831A030", "black": "94407A105"},

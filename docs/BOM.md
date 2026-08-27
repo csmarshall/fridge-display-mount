@@ -22,7 +22,7 @@ holes fitted (200×200 M6 provision cut but unused), pad thickness target 11.5 m
 | 2 | Waveshare 23.8inch FHD Monitor (SKU 34025) | 23.8 in 1920×1080 capacitive touch monitor, optically bonded, VESA 100, incl. 12 V 5 A PSU + screws pack | 1 | $349.99 | $349.99 | [waveshare.com](https://www.waveshare.com/27inch-fhd-monitor.htm) (select "23.8inch") | VERIFIED |
 | 3 | [3506K67](https://www.mcmaster.com/3506K67/) | Encased neodymium magnet, N42, zinc-plated steel case, 1 57/64" OD × 29/64" (11.51 mm) thick, **5/16"-18 × 1/2" male stud**, 175 lbf max pull | 8 | $23.92 | $191.36 | McMaster-Carr | VERIFIED ($20.62 ea at 50+; delivers next day) |
 | 4 | [90101A122](https://www.mcmaster.com/90101A122/) | **THIN-PROFILE nylon-insert locknut**, black-oxide 18-8 stainless, **5/16"-18 UNC** (imperial — NOT M8). 1/2" across flats × **1/4" (6.35 mm)** high. This is a real locking feature that fits: +1.60 mm of stud to spare | 1 pack of 50 | $18.72 | $18.72 | McMaster-Carr | **VERIFIED 2026-08-27.** Plain 18-8 equivalent is [90101A237](https://www.mcmaster.com/90101A237/), $10.34/50 |
-| 5 | ~~[96765A150](https://www.mcmaster.com/96765A150/)~~ | ~~Washer, general-purpose flat, black-oxide 18-8, for 5/16" screw, Ø0.750"/Ø0.344"~~ — **DO NOT ORDER for the magnets.** With the thin locknut the stack misses by 0.15 mm against a worst-case washer | 0 | — | — | McMaster-Carr | **OUT 2026-08-27** — you can have the locknut or the washer, not both. See the stud-length section for why locking wins |
+| 5 | ~~[96765A145](https://www.mcmaster.com/96765A145/)~~ | ~~Washer, general-purpose flat, black-oxide 18-8, 5/16", Ø0.750"/Ø0.344", 0.040"–0.060" thick~~ — **DO NOT ORDER for the magnets.** With the thin locknut it leaves only +0.08 mm, inside the tolerance stack | 0 | — | — | McMaster-Carr | **OUT 2026-08-27** — locknut or washer, not both, and the washer is not needed. See below |
 | 6 | [91239A180](https://www.mcmaster.com/91239A180/) | VESA screws: M4 × 0.7, **LOW-HEAD** socket cap, 18-8 stainless — pack of 25. NOT flat head: the plate's VESA holes are NOT countersunk (`countersink_vesa = False`; SendCutSend cannot countersink mild steel), so a 90° flat head would sit proud on a plain hole | 1 pack | NOT VERIFIED | — | McMaster-Carr | **NOT VERIFIED — corrected after the BOM was drafted on a wrong countersink premise. Confirm part number and length before ordering.** |
 | 7 | [93375K678](https://www.mcmaster.com/93375K678/) | Neoprene foam strip, closed-cell, **7/16" (11.11 mm) thick**, 2" wide × 10 ft, adhesive-backed, 15 lb/ft³, 12 psi to compress 25% (Soft) | 1 | $141.83 | $141.83 | McMaster-Carr | VERIFIED (price from listing table; see foam note) |
 | 8 | [189755](https://www.hookandloop.com/brands/velcro/cable-ties/1-2-velcro-brand-one-wrap-black) | VELCRO® Brand ONE-WRAP®, 1/2" wide, black, 25 yd roll ($1.25/yd) — for the 4.0 × 18.0 mm cable slots | 1 | $31.25 | $31.25 | hookandloop.com | VERIFIED |
@@ -48,11 +48,11 @@ section in `stack_detail.svg`. Checked against the **thickest** washer McMaster 
 | nylon-insert locknut, no washer | yes | 13.48 mm | −0.78 mm | does not fit |
 | washer + distorted-thread locknut | yes | 13.25 mm | −0.55 mm | does not fit |
 | washer + standard hex nut | — | 13.25 mm | −0.55 mm | does not fit |
-| washer + THIN nylon-insert locknut | yes | 12.85 mm | −0.15 mm | inside the tolerance stack |
+| washer + THIN nylon-insert locknut | yes | 12.62 mm | +0.08 mm | inside the tolerance stack |
 | standard hex nut, no washer | — | 11.50 mm | +1.20 mm | fits, but does not lock |
 | distorted-thread locknut, no washer | yes | 11.50 mm | +1.20 mm | fits; runner-up |
 | **THIN nylon-insert locknut, no washer** | **yes** | **11.10 mm** | **+1.60 mm** | **use this** |
-| washer + JAM nut | — | 11.26 mm | +1.44 mm | fits; does not lock |
+| washer + JAM nut | — | 11.03 mm | +1.66 mm | fits; does not lock |
 | JAM nut, no washer | — | 9.51 mm | +3.19 mm | fits; does not lock |
 
 At the earlier .119 in plate the nyloc-without-washer case worked, which is why this BOM was
@@ -87,9 +87,20 @@ a single sample. **Two locking constructions fit comfortably:**
 
 Threadlocker is no longer needed.
 
-**The washer is the thing that had to go, not the locking.** Both cannot fit. That trade is
-one-sided: the bare nut's 565 psi on the plate is still ~64× under mild steel's yield, so the
-washer was comfort — while a nut backing off under touch-cycling is an actual failure mode.
+**The washer is the thing that had to go, not the locking** — for two independent reasons:
+
+1. **It does not fit.** With the thin locknut a worst-case washer leaves +0.08 mm, which is
+   inside the tolerance stack on a stud length, a plate thickness and a washer thickness added
+   together. Note *thickness* is what runs out, not diameter — a larger washer would not help.
+2. **It is not needed.** The bare nut bears at 565 psi on the plate, ~64× under mild steel's
+   36 000 psi yield. There is no point-loading problem for a washer to solve here. A nut backing
+   off under touch-cycling, by contrast, is a real failure mode.
+
+**If you would rather have the washer than the locking nut**, the swap is a JAM nut
+([98514A035](https://www.mcmaster.com/98514A035/)) plus an **oversized** washer
+([90377A164](https://www.mcmaster.com/90377A164/), black oxide, Ø1.250"): 11.03 mm used, +1.66 mm
+to spare, and **732 mm²** of bearing — 10× the bare nut. It costs the locking feature, so it
+would want threadlocker. Not the specified build.
 
 ### Finish — BLACK OXIDE, specified (2026-08-27)
 
@@ -102,7 +113,7 @@ nuts face **up**, where you look straight down at them against a matte-black arm
 | **thin nylon-insert locknut** | 90101A237 — $10.34/50 | **90101A122** — $18.72/50 | +$0.17 |
 | standard hex nut (not used) | 91841A030 — $8.28/50 | 97149A150 — $6.60/25 | +$0.10 |
 | thin/jam hex nut (not used) | 91847A030 — $7.25/100 | 98514A035 — $3.20/25 | +$0.06 |
-| washer (not used) | 92141A030 — $7.53/100 | 96765A150 — $15.95/100 | +$0.08 |
+| washer (not used) | 92141A030 — $7.53/100 | 96765A145 — $15.95/100 | +$0.08 |
 | distorted-thread locknut | 90047A115 — $13.45/50 | **not stocked in black** | — |
 
 At 15 magnet positions the black upcharge is **under $3 for the whole build**. Two caveats:
