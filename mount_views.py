@@ -44,7 +44,7 @@ def render(path: Path, p: BracketParams) -> None:
     gap = 150.0
     ox, oy = 80.0, 150.0
     W = ox * 2 + pw * 2 + gap + 120.0
-    H = oy + ph + 190.0
+    H = oy + ph + 210.0
 
     def panel(x0: float, mirrored: bool) -> list[str]:
         """One face. `mirrored` flips x so the BACK reads as you'd see it from the fridge."""
@@ -170,6 +170,9 @@ def render(path: Path, p: BracketParams) -> None:
     out.append(_t(bx + pw/2, oy + ph + 50,
                   f"{n_spare} HASHED = ADDITIONAL IF NEEDED — holes cut, magnets not bought",
                   9.0, fill="#8c1070", weight="bold"))
+    out.append(_t(bx + pw/2, oy + ph + 98,
+                  "arm fit order if fitting fewer: FRONT row first (4x the back row against a "
+                  "tip lift), then BACK, then MIDDLE", 8.4, fill=MUTED))
     out.append(_t(bx + pw/2, oy + ph + 82,
                   "each mid-side addition covers ~11.5 mm of a vent window — accepted",
                   8.4, fill=MUTED))

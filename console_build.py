@@ -66,6 +66,9 @@ DIAGRAM_INFO = {
     # Was falling through to a snake_case filename title with no caption, sitting uncaptioned
     # among real deliverables. It is a TEST harness — a tool for judging a validator refusal —
     # not a cable harness, and not a fabrication drawing.
+    "stack_detail.svg": ("Fastener sandwich at one magnet",
+                        "magnet | plate | washer | nut in section — and whether the fixed 1/2 in "
+                        "stud still reaches.", "key"),
     "force_table.svg": ("Force by direction and magnet count",
                        "What it takes to shift or unseat it, 6 to 15 magnets, in lbf and newtons.",
                        "key"),
@@ -234,7 +237,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "deliberately lightened variant to validate it if you want the number nailed down.",
              "settled"),
         Item("d-reach",
-             "How far the arm reaches onto the fridge top",
+             "How far the arm reaches onto the fridge top — SETTLED at 180 mm",
              "Reach costs sheet one-for-one, and the cost is linear: about $16.50 per 100 mm "
              "powder-coated — $8.68 laser and material, $7.80 coating, with bending a flat $11.77 "
              "that does not scale. Coated: 130 mm $174.30 / 230 mm $190.78 / 330 mm $207.26 / "
@@ -244,14 +247,24 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "requirement plateaus once the arm is near the crest. What binds is FIT: hinge covers "
              "stand 36.5 mm proud, and the cabinet is only 609.6 mm deep, so 330 mm is already "
              "more than halfway across the top. Decide on the measured clear window, not price.",
-             "blocked"),
+             "settled"),
         Item("d-height",
-             f"Screen centre at {rep['screen_centre_height_mm']:.0f} mm",
+             f"Screen centre at {rep['screen_centre_height_mm']:.0f} mm — APPROVED 2026-08-27",
              f"A 5 ft 1 in viewer's eye line ({1549*0.935:.0f} mm) lands on the screen. A 6 ft 4 in "
              f"viewer's ({1930*0.935:.0f} mm) sits {1930*0.935 - rep['screen_top_portrait_mm']:.0f} mm "
              "ABOVE the top edge, so they look down at it. Normal for a fridge-side display, but it "
              "is a choice.",
-             "Adjustable with --screen-centre-height. Raising it hurts the short viewer.", "open"),
+             "Charles confirmed the viewing height looks right on the actual fridge. "
+             "Adjustable with --screen-centre-height if that ever changes.", "settled"),
+        Item("d-thickness",
+             "Plate thickness — SETTLED at 0.188 in (4.75 mm) HRPO",
+             f"Chosen for heft and margin, NOT for stiffness you can feel: plate flex under a "
+             f"touch is 0.016 mm here against 0.064 mm at 0.119 in, and neither is perceptible. "
+             f"What it buys is {rep['bracket_mass_kg']:.2f} kg instead of 3.71 kg, plus the best "
+             f"$/kg and stiffness-per-dollar in the material sweep. Hot-rolled is cheaper stock "
+             f"than cold-rolled, which is why .188 HRPO undercuts .135 CRS despite being thicker.",
+             "+$11.71 over the 0.119 build. Commercial TV mounts run 1.8-2.7 mm; this is 4.75 mm.",
+             "settled"),
         Item("d-coat",
              "Powder coat at SendCutSend, or spray it yourself",
              "Matte black powder adds $66–70 and pushes delivery Aug 31 → Sep 3. Bare CRS will "

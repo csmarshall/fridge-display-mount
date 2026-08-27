@@ -85,7 +85,13 @@ class Material:
     """5052-H32 as SendCutSend publishes it. All lengths mm unless named otherwise."""
 
     family: str = "mild-steel"
-    thickness_in: float = 0.119
+    # 0.187 in (SendCutSend list it as .188), HRPO. SETTLED 2026-08-27.
+    # Chosen for HEFT and margin, not for stiffness-you-can-feel: plate flex under a touch is
+    # 0.016 mm here against 0.064 mm at 0.119 in, and neither is perceptible. What it buys is
+    # 5.84 kg instead of 3.71 kg and the best $/kg and stiffness-per-dollar in the whole
+    # material sweep — hot-rolled is cheaper stock than cold-rolled, which is why .188 HRPO
+    # undercuts .135 CRS despite being thicker. +$11.71 over the 0.119 build.
+    thickness_in: float = 0.187
 
     @property
     def name(self) -> str:
@@ -538,8 +544,14 @@ class BracketParams:
     # EMPTY: one arm row = 2 magnets, retention only. A second row would not clear the first
     # at this disc size anyway (needs 48.1 mm, the rows are 50 mm apart).
     # THREE evenly spaced arm rows at +36 / +90 / +144, at the 54 mm minimum pitch (O48 disc
-    # + 6 mm). The OUTER two are fitted; the MIDDLE row is an optional upgrade, so the widest
-    # possible couple is bought first and the middle only added if it is ever wanted.
+    # + 6 mm). The OUTER two are fitted; the MIDDLE row is an optional upgrade.
+    #
+    # FIT ORDER, if ever fitting fewer than four: FRONT (+144) first, then BACK (+36), then
+    # MIDDLE (+90). A lift at the arm tip pivots about the BEND, so a row's capacity scales with
+    # its distance from it — front 98 lbf, middle 61, back 24. The front row is 4x the back.
+    # Fitting front+back rather than front+middle trades a little of that for a wider fore-aft
+    # base against the arm rocking on its pad. PEEL is indifferent to all of this: every row sits
+    # on the top surface, so they share the same lever about the fridge's top edge.
     # Anti-jostle only, like the others — ZERO credit in the vertical load path.
     extra_arm_magnet_offsets: tuple[float, ...] = (144.0,)
     # Holes cut, magnets NOT fitted. Drawn hashed on every sheet so nobody orders 6 arm magnets.
@@ -2202,8 +2214,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     p.add_argument("--material", choices=tuple(MATERIALS), default="mild-steel",
                    help="plate material; changes bend radius, deduction and flange minimums")
-    p.add_argument("--thickness", type=float, default=0.119,
-                   help="plate thickness in inches, must be one SendCutSend publishes bend specs for")
+    # default=None, NOT the thickness. A CLI default here silently overrode the Material
+    # dataclass and pinned the build to 0.119 even after the default was changed to 0.187.
+    # This is the fifth time this project has been bitten by a CLI default replacing a real one.
+    p.add_argument("--thickness", type=float, default=None,
+                   help="plate thickness in inches, must be one SendCutSend publishes bend specs "
+                        "for; omit to use the settled default")
     p.add_argument("--display", choices=tuple(DISPLAYS), default="23.8",
                    help="which Waveshare panel to generate for; both share the bracket geometry")
     p.add_argument("--orientation", choices=("landscape", "portrait"), default=defaults.orientation,
@@ -2266,7 +2282,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
     configure_logging(args.log_level)
     LOG.info("Bracket generator starting (orientation=%s, log level=%s)", args.orientation, args.log_level)
-    set_material(args.material, args.thickness)
+    if args.material != MATERIAL.family or args.thickness is not None:
+        set_material(args.material, args.thickness if args.thickness is not None
+                     else MATERIAL.thickness_in)
     set_display(args.display)
 
     neck_len = args.neck_length
