@@ -1715,7 +1715,16 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
     # Nuts, washers and the foam pads. Small, but the point of this block is to stop pretending
     # anything is weightless; a 5/16 jam nut plus an oversized washer is about 12 g a position.
     fastener_mass_kg = n_fitted * 0.012
-    bracket_mass_kg = plate_mass_kg + magnet_mass_kg + fastener_mass_kg
+    # Sponge pads. ~0.2 kg is small but it is not nothing, and leaving it out while listing the
+    # nuts would be arbitrary. 15 lb/ft3 = 0.24 g/cc, from the neoprene listing in docs/BOM.md.
+    FOAM_G_CC = 0.24
+    arm_pad_cc = params.neck_w * params.arm_len * params.arm_pad / 1000.0
+    neck_pad_cc = 2.0 * params.foam_strip_w * params.neck_len * params.bottom_pad_thickness / 1000.0
+    foam_mass_kg = (arm_pad_cc + neck_pad_cc) * FOAM_G_CC / 1000.0
+    # STILL NOT COUNTED, and deliberately so — each is under ~10 g and none is specified yet:
+    # the 4 M4 spacers, the 4 VESA screws, and the display's own cable. Together well under 0.1 kg
+    # against 11 kg, i.e. inside the error on the magnet estimate above.
+    bracket_mass_kg = plate_mass_kg + magnet_mass_kg + fastener_mass_kg + foam_mass_kg
     bracket_lbf = bracket_mass_kg * LBF_PER_KG
     total_lbf = weight_lbf + bracket_lbf
 
@@ -1814,6 +1823,7 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "magnet_mass_kg": magnet_mass_kg,
         "magnet_count_fitted": n_fitted,
         "fastener_mass_kg": fastener_mass_kg,
+        "foam_mass_kg": foam_mass_kg,
         "bracket_mass_kg": bracket_mass_kg,
         "bracket_weight_lbf": bracket_lbf,
         "total_hanging_lbf": total_lbf,

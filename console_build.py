@@ -343,9 +343,12 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
         # Split out, because "bracket mass" alone got quoted as if it were the whole thing, and
         # "total hanging" got read as the screen being that heavy. Most of this is STEEL.
         ("Screen alone", kg_lb(rep['display_mass_kg']), "the Waveshare panel, nothing else"),
-        ("Bracket, magnets, fasteners", kg_lb(rep['bracket_mass_kg']),
-         f"steel plate {rep['plate_mass_kg']:.2f} kg + magnets {rep['magnet_mass_kg']:.2f} kg "
-         f"+ nuts/washers {rep['fastener_mass_kg']:.2f} kg"),
+        ("Bracket, magnets, pads, fasteners", kg_lb(rep['bracket_mass_kg']),
+         f"steel plate {rep['plate_mass_kg']:.2f} + magnets {rep['magnet_mass_kg']:.2f} + foam "
+         f"{rep['foam_mass_kg']:.2f} + nuts/washers {rep['fastener_mass_kg']:.2f} kg. The screen "
+         f"figure is Waveshare's published spec; the steel is derived from the cut geometry; the "
+         f"magnets, foam and fasteners are ESTIMATES (no vendor mass is published for the "
+         f"magnet)"),
         ("WHOLE MOUNTED SYSTEM", kg_lb(rep['total_hanging_lbf'] * 0.45359237),
          "all of it borne by the fridge top, which is structural — the case alone weighs 229 lb"),
         ("Magnets", f"{n_body} body + {n_arm} arm FITTED "

@@ -110,7 +110,7 @@ drawing at
 |---|---|---|
 | Outer dimensions | 555.23 (H) x 324.65 (V) x 18.00 (D) mm | yes |
 | Weight — **SCREEN ALONE** | 3.94 kg (8.69 lb) | yes |
-| Weight — **whole mounted system** | **11.11 kg (24.5 lb)** = screen 3.94 + steel plate 5.81 + magnets 1.27 + fasteners 0.10 | derived |
+| Weight — **whole mounted system** | **11.31 kg (24.9 lb)** = screen 3.94 + steel plate 5.81 + magnets 1.27 + foam 0.20 + fasteners 0.10. Screen is Waveshare's published figure (they do not say whether it includes the stand — if it does, this is conservative); steel is derived from the cut geometry; magnets/foam/fasteners are ESTIMATES. Excluded, together under 0.1 kg: M4 spacers, VESA screws, cable | part measured, part derived, part estimated |
 | Input voltage | 11.5–12.5 V, **>= 3 A to boot** | yes |
 | Typical power | 36 W | yes |
 | Touch | 10-point capacitive, optically bonded, 6H toughened glass | yes |
