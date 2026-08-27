@@ -124,7 +124,7 @@ with no washer (+1.60 mm, mechanical, 70 mm²), which needs no chemicals at all.
 
 Only the **arm** fasteners are visible: the plate's nuts hide in the 10 mm spacer gap behind the
 display, and every magnet body faces the fridge. On the arm the magnets sit underneath and the
-nuts face **up**, where you look straight down at them against a matte-black arm.
+nuts face **up**, where you look straight down at them against a textured-black arm.
 
 | part | plain 18-8 | **black oxide 18-8 (specified)** | delta per piece |
 |---|---|---|---|

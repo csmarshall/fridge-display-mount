@@ -14,7 +14,8 @@ from pathlib import Path
 from typing import Sequence
 
 import render3d as R3
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import (LOG_LEVELS, configure_logging, FRIDGE_DOOR, FRIDGE_SIDE,
+                            FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL)
 import generate_bracket as G
 from generate_bracket import BracketParams, DISPLAYS, MATERIAL, build_geometry, derive_flat, set_display
 
@@ -26,11 +27,13 @@ MUTED = "#6b757e"
 RULE = "#c9d1d8"
 DIM = "#0a8f6f"
 ACCENT = "#c0169a"        # the thing that changed this revision
-STEEL_BODY = "#b9c2c9"    # brushed stainless, base albedo
-STEEL_DOOR = "#c6ced5"
-STEEL_DARK = "#8b959d"
-BRACKET = "#2b3036"       # matte black painted steel
-MAGNET = "#2e9e5b"        # same green the elevations use for a magnet, for one visual vocabulary
+# The whole fridge used to be drawn as "brushed stainless". Only the DOORS are stainless; the
+# SIDE PANEL this bracket hangs on is dark matte charcoal (photographed 2026-08-27).
+STEEL_BODY = FRIDGE_SIDE        # the side panel — the mounting face
+STEEL_DOOR = FRIDGE_DOOR        # stainless, seen edge-on from the side
+STEEL_DARK = FRIDGE_SIDE_EDGE
+BRACKET = "#2b3036"       # textured black painted steel
+MAGNET = MAGNET_FILL      # shared with every other sheet: pink = magnet, gold = pad, for one visual vocabulary
 SCREEN_OFF = "#0d1117"
 
 
@@ -308,7 +311,7 @@ def build_scene(w: World, geom, rows: Sequence[float], arm_offsets: Sequence[flo
                   BRACKET, "body", faces=f"{w.outer} y- y+ z-"))
     apx0, apxw = World.span(w.arm_tip + w.dir * 6, w.plate_out)
     sc.add(R3.box((apx0, w.neck_y0 + 6, w.FH), (apxw, p.neck_w - 12, w.pad),
-                  "#3a4046", "arm-pad", faces=f"{w.inner} y- y+"))
+                  PAD_FILL, "arm-pad", faces=f"{w.inner} y- y+"))
 
     # magnets, in the gap between plate and side panel
     for yb in rows:
@@ -470,7 +473,7 @@ def front_elevation(x0, y0, w, h, W: World, rows) -> str:
         for xb in (p.magnet_inset, p.body_w - p.magnet_inset):
             wy, wz = W.body_to_world(xb, yb)
             extra = yb not in (p.magnet_inset, p.body_h - p.magnet_inset)
-            col = ACCENT if extra else "#2e9e5b"
+            col = ACCENT if extra else MAGNET_FILL
             o.append(f'<circle cx="{X(wy):.1f}" cy="{Y(wz):.1f}" r="{p.magnet_disc_dia/2*s:.1f}" '
                      f'fill="{col}" fill-opacity="0.30" stroke="{col}" stroke-width="1.3"/>')
     o.append(rect(W.yc - W.disp_w/2, W.yc + W.disp_w/2, W.disp_zc - W.disp_h/2,
@@ -588,16 +591,20 @@ def side_elevation(x0, y0, w, h, W: World, rows, arm_offsets, s) -> str:
                   stroke_width="1"))
     o.append(rect(W.arm_tip, W.plate_out, W.arm_z0, W.arm_z1, fill=BRACKET))
     o.append(rect(W.plate_in, W.plate_out, W.body_z0, W.arm_z1, fill=BRACKET))
-    o.append(rect(W.arm_tip + W.dir*6, W.plate_out, W.FH, W.FH + W.pad, fill="#8d949b"))
+    o.append(rect(W.arm_tip + W.dir*6, W.plate_out, W.FH, W.FH + W.pad, fill="{PAD_FILL}", stroke="{PAD_EDGE}", stroke_width="0.8"))
     for off in arm_offsets:
+        # ABOVE the fridge top, not below it. This drew FH - standoff -> FH, which sank the
+        # magnets INTO the fridge and put them on the far side of the steel from the pad beside
+        # them, so the two could never read as the same height. They sit in the gap the pad holds
+        # open: FH -> FH + standoff.
         o.append(rect(W.plate_out - W.dir*(off + p.arm_magnet_disc_dia/2),
                       W.plate_out - W.dir*(off - p.arm_magnet_disc_dia/2),
-                      W.FH - p.arm_magnet_standoff, W.FH,
-                      fill="#2e9e5b", fill_opacity="0.55", stroke="#2e9e5b", stroke_width="1"))
+                      W.FH, W.FH + p.arm_magnet_standoff,
+                      fill="{MAGNET_FILL}", stroke="{MAGNET_EDGE}", stroke_width="1"))
     for yb in rows:
         wy, wz = W.body_to_world(0.0, yb)
         extra = yb not in (p.magnet_inset, p.body_h - p.magnet_inset)
-        col = ACCENT if extra else "#2e9e5b"
+        col = ACCENT if extra else MAGNET_FILL
         o.append(rect(W.face_x, W.plate_in, wz - p.magnet_disc_dia/2, wz + p.magnet_disc_dia/2,
                       fill=col, fill_opacity="0.55", stroke=col, stroke_width="1"))
     o.append(rect(W.plate_out, W.box_out, W.disp_zc - W.box_h/2, W.disp_zc + W.box_h/2,
@@ -713,7 +720,7 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
            fill="#ffffff", weight="bold", spacing="0.7"),
          T(SW - ax - 16, 34, f"Waveshare {display_key}\" portrait  ·  mounted {mount_side.upper()}",
            9.5, anchor="end", fill="#9fb0bd"),
-         T(SW - ax - 16, 50, f"{MATERIAL.name} {MATERIAL.thickness_in:.3f} in, matte black  ·  "
+         T(SW - ax - 16, 50, f"{MATERIAL.name} {MATERIAL.thickness_in:.3f} in, textured black  ·  "
                              f"{n_mag} magnets", 9.5, anchor="end", fill="#9fb0bd"),
          T(ax + 310, 46, "ALL DIMENSIONS IN MILLIMETRES", 9.0, anchor="start",
            fill="#7f8f9c", spacing="1.1")]

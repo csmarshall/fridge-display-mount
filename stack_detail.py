@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL
 import generate_bracket as G
 from generate_bracket import (FINISH, MATERIAL, SPECIFIED_LOCKER, SPECIFIED_NUT, SPECIFIED_WASHER,
                               BracketParams, part_no, stack_permutations)
@@ -30,7 +30,7 @@ LOG = logging.getLogger("stack")
 IN = G.MM_PER_INCH
 INK, MUTED, RULE = "#14181c", "#6b757e", "#c9d1d8"
 OK, BAD, MARG = "#0a8f6f", "#b00020", "#b8860b"
-C_FRIDGE, C_MAGNET, C_PLATE = FRIDGE_SIDE, "#e7b6dd", "#b9c2c9"
+C_FRIDGE, C_MAGNET, C_PLATE = FRIDGE_SIDE, MAGNET_FILL, "#b9c2c9"
 C_WASHER, C_NUT, C_STUD = "#cdd5db", "#9aa6ae", "#c9a227"
 C_BEAR = "#f0a202"
 
@@ -301,7 +301,7 @@ def render(path: Path, p: BracketParams) -> None:
                 f"It bears on only 70 mm2 - which is harmless, so this is a preference, not a "
                 f"correctness call.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 82, f"Fasteners are {FINISH.upper()} OXIDE where stocked - only the ARM "
-                f"nuts are visible, facing up against a matte-black arm.", 11.0, anchor="start",
+                f"nuts are visible, facing up against a textured-black arm.", 11.0, anchor="start",
                 fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")

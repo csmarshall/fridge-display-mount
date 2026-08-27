@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL
 import generate_bracket as G
 from generate_bracket import (
     DISPLAYS, MATERIAL, BracketParams, build_geometry, derive_flat, set_display,
@@ -116,12 +116,12 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     for disc in (h for h in geom.magnet_discs
                  if h.region == "body" and not h.tag.startswith("spare")):
         out.append(f'<circle cx="{X(disc.x):.1f}" cy="{Y(disc.y):.1f}" r="{disc.radius*sc:.1f}" '
-                   f'fill="#2e9e5b" fill-opacity="0.22" stroke="#2e9e5b" stroke-width="1.2"/>')
+                   f'fill="{MAGNET_FILL}" fill-opacity="0.22" stroke="{MAGNET_FILL}" stroke-width="1.2"/>')
     for h in geom.holes:
         if h.region != "body":
             continue
-        col = {"magnet": "#2e9e5b", "vesa": "#1a5fb4", "vesa200x100": "#7aa7d9",
-               "vesa200x200": "#7aa7d9", "arm_magnet": "#2e9e5b"}.get(h.tag, "#555")
+        col = {"magnet": MAGNET_FILL, "vesa": "#1a5fb4", "vesa200x100": "#7aa7d9",
+               "vesa200x200": "#7aa7d9", "arm_magnet": MAGNET_FILL}.get(h.tag, "#555")
         out.append(f'<circle cx="{X(h.x):.1f}" cy="{Y(h.y):.1f}" r="{max(h.radius*sc,1.6):.1f}" '
                    f'fill="#fff" stroke="{col}" stroke-width="1.3"/>')
 
@@ -155,7 +155,7 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
                       colour="#1a5fb4"))
     out.append(_dim_h(X(params.magnet_inset), X(params.body_w-params.magnet_inset),
                       Y(0) + 40, f"MAGNET SPACING {params.body_w-2*params.magnet_inset:.0f}",
-                      colour="#2e9e5b"))
+                      colour=MAGNET_FILL))
 
     # overhang callouts — how far the display covers the plate edge
     over_x = (dw - params.body_w) / 2
@@ -169,7 +169,7 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     sx0 = X(params.body_w) + 230
     ssc = 2.9
     stack = [("FRIDGE PANEL", 6.0, FRIDGE_SIDE, FRIDGE_SIDE_EDGE),
-             ("magnet", params.magnet_standoff, "#2e9e5b", "#1a7a44"),
+             ("magnet", params.magnet_standoff, MAGNET_FILL, "#1a7a44"),
              ("plate", MATERIAL.thickness, "#8a9199", "#333"),
              ("rear box", d.rear_box_depth, "#c0169a", "#8c1070"),
              ("panel", d.panel_depth, "#1a5fb4", "#12447f")]
@@ -197,7 +197,7 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
             ("#1a5fb4", 0.10, f"DISPLAY {display_key} in — {dw:.1f} x {dh:.1f} mm, transparent"),
             ("#c0169a", 0.13, f"REAR BOX bump-out — {bw:.0f} x {bh:.0f} x {d.rear_box_depth:.0f} mm"),
             ("#e8a33d", 0.55, f"rear-face opening, R{d.rear_face_feature_radius:.0f} from VESA centre"),
-            ("#2e9e5b", 0.22, f"{n_body_fitted} body magnets "
+            (MAGNET_FILL, 0.22, f"{n_body_fitted} body magnets "
                               f"O{params.magnet_disc_dia:.2f} mm "
                               f"({params.magnet_disc_dia/25.4:.2f} in) — FITTED"),
             ("#c0169a", 0.10, f"{n_body_opt} more body positions cut but NOT fitted"),

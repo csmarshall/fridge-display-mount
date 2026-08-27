@@ -105,3 +105,13 @@ def stainless_defs(vertical: bool = False) -> str:
 
 
 STAINLESS_FILL = f"url(#{_STAINLESS_ID})"
+
+
+# --- What the soft/hard parts look like, everywhere ------------------------------------------
+# The de-facto convention across most sheets was gold = sponge pad, pink = magnet. approval_sheet
+# and assembly_drawing had drifted to grey/near-black pads and green magnets, which meant the
+# partner-facing sheet was the least legible one on exactly the detail people ask about. One home.
+PAD_FILL = "#f2c14e"        # closed-cell sponge pad
+PAD_EDGE = "#a8830f"
+MAGNET_FILL = "#e7b6dd"     # neodymium pot magnet
+MAGNET_EDGE = "#c0169a"

@@ -8,7 +8,7 @@
 > generator writes, rather than against this prose.
 
 
-**A36/1008 mild steel, 0.187" (4.75 mm), portrait, painted matte black.**
+**A36/1008 mild steel, 0.187" (4.75 mm), portrait, painted textured black.**
 Three variants sharing one body, one bend position and one hole pattern. Figures read from
 `variants/bracket_params_*.json`; prices are live quotes from 2026-08-25. Regenerate with
 `./build_variants.sh` and re-read this document after any change.
@@ -51,7 +51,7 @@ Decided 2026-08-25 after quoting the alternatives on the identical part:
 | **mild steel .119"** | **3.47 kg** | 73% | 0.19 mm | 34x | **2.99x** | **$86.75** | $156.01 |
 | mild steel .135" | 3.94 kg | 107% | 0.13 mm | 42x | 3.12x | $130.49 | $199.75 |
 
-The part is being **coated either way** — SendCutSend powder or matte black rattle can — so bare
+The part is being **coated either way** — SendCutSend powder or textured black rattle can — so bare
 corrosion resistance is not a differentiator and steel's price advantage is real: **about $43
 cheaper** on either route.
 
@@ -74,7 +74,7 @@ below is regenerated for steel.
 | Bending | **1 bend**, added in the browser bending tool after upload |
 | Countersinking | **None** — see §3. Use low-head screws instead |
 | Deburring | Yes — the plate is handled bare-handed during install |
-| Finish | Either SendCutSend Gloss Black powder (+$69.26, includes free deburring) or spray it yourself matte black (~$10, saves $59). **Steel must be coated** — bare CRS surface-rusts in a kitchen. No masking needed anywhere |
+| Finish | Either SendCutSend Gloss Black powder (+$69.26, includes free deburring) or spray it yourself textured black (~$10, saves $59). **Steel must be coated** — bare CRS surface-rusts in a kitchen. No masking needed anywhere |
 | Tapping / hardware insertion | None |
 
 Peak working stress in steel is 519 psi against 36 ksi yield — SF 69x. Both the aluminium and
@@ -499,7 +499,7 @@ is what the "pad = standoff" invariant really protects against; being proud is t
 
 | Item | Spec | Qty | Notes |
 |---|---|---|---|
-| Matte black paint | Self-etching primer for steel + matte black top coat, rattle can | 1 | **Steel must be coated** — bare CRS surface-rusts in a kitchen. Degrease thoroughly first; CRS arrives lightly oiled. No masking needed: coating never lands between a magnet face and the fridge |
+| Matte black paint | Self-etching primer for steel + textured black top coat, rattle can | 1 | **Steel must be coated** — bare CRS surface-rusts in a kitchen. Degrease thoroughly first; CRS arrives lightly oiled. No masking needed: coating never lands between a magnet face and the fridge |
 
 Alternative: SendCutSend Gloss Black powder, +$69.26, includes free deburring. Spraying it yourself
 saves about $59 and gives a matte finish; their powder is tougher and more even.

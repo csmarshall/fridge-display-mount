@@ -26,7 +26,9 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, N_PER_LBF, configure_logging, kg_lb, lbf_n, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
+from bracket_common import (LOG_LEVELS, N_PER_LBF, configure_logging, kg_lb, lbf_n,
+                            FRIDGE_SIDE, FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL,
+                            PAD_EDGE, PAD_FILL)
 import generate_bracket as G
 from generate_bracket import BracketParams
 
@@ -35,8 +37,8 @@ LOG = logging.getLogger("primer")
 INK, MUTED, RULE = "#14181c", "#6b757e", "#c9d1d8"
 OK, BAD, MARG = "#0a8f6f", "#b00020", "#b8860b"
 PAPER, CARD, TINT = "#fbfcfd", "#ffffff", "#f2f5f7"
-C_FOAM = "#f2c14e"
-C_FRIDGE, C_MAGNET, C_PLATE = FRIDGE_SIDE, "#e7b6dd", "#b9c2c9"
+C_FOAM = PAD_FILL
+C_FRIDGE, C_MAGNET, C_PLATE = FRIDGE_SIDE, MAGNET_FILL, "#b9c2c9"
 
 # Published by totalElement for their 43 mm rubber-coated pot magnet. A citation, not a derived
 # value: the vendor's own catalogue is the source, recorded in CLAUDE.md section 1.1.

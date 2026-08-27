@@ -264,7 +264,7 @@ anyway: the display stands off on M4 spacers and the 11.51 mm magnet standoff cl
 proud head against the fridge. Any standard M4 head works.
 
 **Live quote 2026-08-27, as-built .188 in file:** cut **$112.50**, +1 bend **$126.71**,
-+matte black **$197.07**. (~~$185.85 / blank 742~~ was the .119 in build.)
++textured black **$197.07**. (~~$185.85 / blank 742~~ was the .119 in build.)
 
 ## 5. BOM constraints
 - Magnets: **McMaster 3506K67, O 48.02 x 11.51 mm bare-nickel/zinc-cased pot, 5/16"-18 MALE

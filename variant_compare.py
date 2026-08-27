@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL
 from generate_bracket import MATERIAL, BracketParams, crown_rise_at, flat_gap
 
 LOG = logging.getLogger("variants")
@@ -105,7 +105,26 @@ def render(path: Path, params: BracketParams) -> None:
     # the sponge pad under the arm
     out.append(f'<rect x="{sx(REACH_B):.2f}" y="{sy(-pad):.2f}" '
                f'width="{(REACH_B + params.magnet_standoff) * scale:.2f}" height="{pad * scale:.2f}" '
-               f'fill="#f2c14e" fill-opacity="0.55" stroke="#a8830f" stroke-width="0.8"/>')
+               f'fill="{PAD_FILL}" fill-opacity="0.55" stroke="{PAD_EDGE}" stroke-width="0.8"/>')
+
+    # --- what holds the SPINE off the side panel -------------------------------------
+    # This gap was drawn open and left as white air, which implies the plate floats unsupported.
+    # It does not: the magnets hold it off and the bottom pad fills between them. Same treatment
+    # as the arm pad above, so the two contact faces read alike.
+    st = params.magnet_standoff
+    out.append(f'<rect x="{sx(-st):.2f}" y="{sy(side_span):.2f}" '
+               f'width="{st * scale:.2f}" height="{side_span * scale:.2f}" '
+               f'fill="{PAD_FILL}" fill-opacity="0.40" stroke="{PAD_EDGE}" stroke-width="0.6"/>')
+    for yb in (params.magnet_inset, params.body_h - params.magnet_inset):
+        if yb > side_span:
+            continue
+        out.append(f'<rect x="{sx(-st):.2f}" '
+                   f'y="{sy(yb + params.magnet_disc_dia / 2):.2f}" '
+                   f'width="{st * scale:.2f}" '
+                   f'height="{params.magnet_disc_dia * scale:.2f}" '
+                   f'fill="{MAGNET_FILL}" stroke="{MAGNET_EDGE}" stroke-width="0.8"/>')
+    out.append(_text(sx(-st) - 6, sy(side_span * 0.55), "magnets + pad hold the spine off",
+                     size=8.5, anchor="end", fill="#8a9199"))
 
     # --- the extra 50 mm, called out -------------------------------------------------
     out.append(f'<rect x="{sx(REACH_B):.2f}" y="{sy(-pad - t) - 4:.2f}" '

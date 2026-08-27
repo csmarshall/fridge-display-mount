@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_INK, ON_FRIDGE_MUTED
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_INK, ON_FRIDGE_MUTED, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL
 from generate_bracket import MATERIAL, BracketParams, crown_rise_at, flat_gap
 
 LOG = logging.getLogger("crown")
@@ -87,7 +87,7 @@ def render(path: Path, p: BracketParams) -> None:
     # foam wedge
     wedge = pts + [(x(reach), arm_tip_y), (x(0), arm_root_y)]
     poly = " ".join(f"{a:.1f},{b:.1f}" for a, b in wedge)
-    out.append(f'<polygon points="{poly}" fill="#f2c14e" fill-opacity="0.85" stroke="#a8830f" '
+    out.append(f'<polygon points="{poly}" fill="{PAD_FILL}" fill-opacity="0.85" stroke="{PAD_EDGE}" '
                f'stroke-width="1"/>')
     out.append(_t(x(reach*0.40), arm_root_y + 30, "FOAM fills this wedge", 10,
                   fill="#8a6a10", weight="bold"))
@@ -154,7 +154,7 @@ def render(path: Path, p: BracketParams) -> None:
         army = base - stand * s2 - 10
         # foam block
         out.append(f'<rect x="{bx + 20:.1f}" y="{base - padh*s2:.1f}" width="120" '
-                   f'height="{padh*s2:.1f}" fill="#f2c14e" fill-opacity="0.85" stroke="#a8830f"/>')
+                   f'height="{padh*s2:.1f}" fill="{PAD_FILL}" fill-opacity="0.85" stroke="{PAD_EDGE}"/>')
         out.append(_t(bx + 80, base - padh*s2/2 + 4, f"foam {padh:.2f}", 9, fill="#6b5008", weight="bold"))
         # magnet block
         out.append(f'<rect x="{bx + 165:.1f}" y="{base - magh*s2:.1f}" width="70" '

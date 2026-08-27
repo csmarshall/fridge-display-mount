@@ -337,7 +337,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
                      "table",
                      columns=["", "value", "note"],
                      rows=[
-        ("Material", f"{MATERIAL.name} {in_mm(MATERIAL.thickness_in)}", "matte black"),
+        ("Material", f"{MATERIAL.name} {in_mm(MATERIAL.thickness_in)}", "textured black"),
         ("Flat pattern", f"{mm_in(flat.width)} × {mm_in(flat.height, 1)}",
          f"bend deduction {mm_in(flat.bend_deduction, 2)}"),
         # Split out, because "bracket mass" alone got quoted as if it were the whole thing, and
@@ -373,7 +373,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     S.append(Section("prices", "Live prices",
                      f"Quoted at SendCutSend {PRICE_DATE}, qty 1. Deburring included. Nothing in a cart.",
                      "table",
-                     columns=["variant", "blank (mm)", "cut only", "+ bend", "+ matte black"],
+                     columns=["variant", "blank (mm)", "cut only", "+ bend", "+ textured black"],
                      rows=PRICES))
 
     found = sorted(root.glob("*.svg"))

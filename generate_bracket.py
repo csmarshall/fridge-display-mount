@@ -1667,7 +1667,7 @@ def stack_permutations(params: "BracketParams") -> list[StackOption]:
 # Sourced on mcmaster.com 2026-08-27 by reading the product tables directly. A value of None
 # means NOT SOURCED — drawings must say so rather than print a plausible-looking number.
 # Black oxide is the SPECIFIED finish: only the arm fasteners are visible, they face up against a
-# matte-black arm, and the whole build's upcharge is under $3. Plain 18-8 is kept as the fallback.
+# textured-black arm, and the whole build's upcharge is under $3. Plain 18-8 is kept as the fallback.
 FINISH = "black"
 
 PART_NOS: dict[str, dict[str, str | None]] = {
