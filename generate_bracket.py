@@ -327,6 +327,49 @@ class BracketParams:
     # This is the "clear window on the fridge top, front to back" that the pre-order checklist
     # calls the likeliest recut risk. It is now measured, and it passes.
     hinge_cover_from_rear: float = 16.0 * MM_PER_INCH    # 406 mm — cover's rear-most edge
+    # How far the cover reaches INBOARD from the mounting-side edge. NOT resolvable from the
+    # 2026-08-27 photo, which is a side elevation and shows no inboard extent. 104 mm is a
+    # placeholder sized off the visible moulding; it does not affect the clearance result,
+    # because the arm starts at the same edge and so overlaps the cover inboard-wise regardless.
+    # ONLY the front-to-back position decides whether they touch.
+    hinge_cover_inboard: float = 104.0   # ASSUMED — measure if it ever matters
+
+    # Where the plate sits FRONT-TO-BACK on the side panel, measured from the REAR edge.
+    # This decides whether the arm meets the hinge cover, and it had no home until 2026-08-27 —
+    # the clearance was being quoted as if the arm sat hard against the rear edge, which was
+    # never stated anywhere. DERIVED, not chosen: centre the plate on the panel.
+    #
+    # A neat consequence, and the reason this placement is the right default: the panel is 24 in
+    # deep, so thirds are 8 in. Centring the plate ALSO centres the 190 mm (7.48 in) arm in the
+    # middle third, and the hinge cover begins at 406 mm against a 406.4 mm two-thirds line — it
+    # owns the front third almost exactly. Rear third free, middle third arm, front third hinge.
+    # The margin is only 6.6 mm each side, though: that is 203.2 - 190 halved, not an allowance.
+    plate_from_rear_override: float = 0.0
+
+    # --- foam behind the plate ------------------------------------------------------------
+    # The plate stands off the panel by the magnet height, so along the neck there is an open
+    # gap. Fill it, or the mount drums against the fridge and the space reads as unfinished.
+    # TWO strips, not one slab: the strap slots run down the centreline and a hook-and-loop band
+    # has to pass through them and lie behind the plate. A solid pad would block that.
+    foam_strips: bool = True
+
+    @property
+    def foam_channel_w(self) -> float:
+        """Clear centre channel: the strap-slot pair, plus a strap width of room each side."""
+        pair_span = self.cable_tie_pair_gap + self.strap_slot_thickness
+        return pair_span + 2.0 * self.strap_width
+
+    @property
+    def foam_strip_w(self) -> float:
+        """Each side strip. Whatever the channel leaves of the neck width."""
+        return (self.neck_w - self.foam_channel_w) / 2.0
+
+    @property
+    def plate_from_rear(self) -> float:
+        """Plate centred on the side panel, front to back."""
+        if self.plate_from_rear_override:
+            return self.plate_from_rear_override
+        return (self.fridge_depth - self.body_h) / 2.0
     # Charles reports the cover LIFTS slightly, so thin material can be slipped under it. Not
     # relied on: the arm clears it by 216 mm, so this is a fallback, not part of the design.
     hinge_cover_lifts: bool = True
@@ -484,7 +527,7 @@ class BracketParams:
     arm_magnets: bool = True
     arm_magnet_disc_dia: float = (1 + 57 / 64) * MM_PER_INCH  # same SKU: 3506K67
     arm_magnet_standoff: float = (29.0 / 64.0) * MM_PER_INCH
-    arm_magnet_offset: float = 90.0  # formed distance from the bend apex, along the arm
+    arm_magnet_offset: float = 36.0  # formed distance from the bend apex, along the arm
     # Extra rows of arm ("top lip") magnets, as further formed offsets from the bend apex. Each
     # entry adds a PAIR at arm_magnet_spacing. These still carry ZERO vertical load — the hook does
     # that — but they are NOT decorative: they sit on the far side of the pivot from the display,
@@ -494,10 +537,17 @@ class BracketParams:
     # so it clears both the bend keep-out and the 90 mm row without crowding either.
     # EMPTY: one arm row = 2 magnets, retention only. A second row would not clear the first
     # at this disc size anyway (needs 48.1 mm, the rows are 50 mm apart).
-    # THREE evenly spaced arm rows at +36 / +90 / +144, all of them fitted magnet positions —
-    # back, middle and front across the reach at the 54 mm minimum pitch (O48 disc + 6 mm).
+    # THREE evenly spaced arm rows at +36 / +90 / +144, at the 54 mm minimum pitch (O48 disc
+    # + 6 mm). The OUTER two are fitted; the MIDDLE row is an optional upgrade, so the widest
+    # possible couple is bought first and the middle only added if it is ever wanted.
     # Anti-jostle only, like the others — ZERO credit in the vertical load path.
-    extra_arm_magnet_offsets: tuple[float, ...] = (36.0, 144.0)
+    extra_arm_magnet_offsets: tuple[float, ...] = (144.0,)
+    # Holes cut, magnets NOT fitted. Drawn hashed on every sheet so nobody orders 6 arm magnets.
+    optional_arm_magnet_offsets: tuple[float, ...] = (90.0,)
+    # One more optional position: dead centre of the four fitted arm magnets, on the centreline.
+    # It earns its place because it is the only spot on the arm equidistant from all four, and
+    # the strap slots moved outboard with the 180 mm reach, leaving it 43 mm clear of the nearest.
+    optional_arm_centre: bool = True
     arm_magnet_spacing: float = 120.0  # centre-to-centre across the arm width
     fridge_corner_radius: float = 12.0  # MEASURE. Affects pad sizing only, never cut geometry.
     # Design envelope for the pad, not a guess at the actual radius. LG uses a single formed steel
@@ -874,13 +924,25 @@ def build_geometry(params: BracketParams, flat: FlatPattern) -> Geometry:
     # and resist a jostle lifting the hook; they are given ZERO credit in the load path. Placed
     # by formed distance from the bend apex, so the flat position moves with the bend deduction.
     if params.arm_magnets:
-        for off in (params.arm_magnet_offset,) + tuple(params.extra_arm_magnet_offsets):
+        # Fitted rows first, then the optional row. Identical HOLES — the only difference is
+        # whether a magnet is bought for the position, so they are tagged, not moved.
+        fitted = (params.arm_magnet_offset,) + tuple(params.extra_arm_magnet_offsets)
+        optional = tuple(params.optional_arm_magnet_offsets)
+        if params.optional_arm_centre:
+            # Centroid of the fitted rows, on the arm centreline.
+            mid = sum(fitted) / len(fitted)
+            cy_arm = flat.bend_line_y + mid - flat.bend_deduction / 2.0
+            holes.append(Hole(cx, cy_arm, params.magnet_hole_dia, "spare_arm_magnet", "arm"))
+            magnet_discs.append(Hole(cx, cy_arm, params.arm_magnet_disc_dia,
+                                     "spare_arm_magnet_disc", "arm"))
+        for off in fitted + optional:
+            tag = "arm_magnet" if off in fitted else "spare_arm_magnet"
             arm_hole_y = flat.bend_line_y + off - flat.bend_deduction / 2.0
             for sx in (-1, 1):
                 hx = cx + sx * params.arm_magnet_spacing / 2.0
-                holes.append(Hole(hx, arm_hole_y, params.magnet_hole_dia, "arm_magnet", "arm"))
+                holes.append(Hole(hx, arm_hole_y, params.magnet_hole_dia, tag, "arm"))
                 magnet_discs.append(Hole(hx, arm_hole_y, params.arm_magnet_disc_dia,
-                                         "arm_magnet_disc", "arm"))
+                                         f"{tag}_disc", "arm"))
             LOG.debug("arm magnets at y=%.2f (formed %.1f mm from the bend apex, less BD/2=%.3f)",
                       arm_hole_y, off, flat.bend_deduction / 2.0)
 
@@ -909,6 +971,9 @@ def build_geometry(params: BracketParams, flat: FlatPattern) -> Geometry:
         for sx, sy, tag in ((cx, i, "spare_bottom"), (cx, bh - i, "spare_top"),
                             (i, bh / 2.0, "spare_left"), (bw - i, bh / 2.0, "spare_right")):
             holes.append(Hole(sx, sy, params.magnet_hole_dia, "spare_magnet", "body"))
+            # Give them discs too. Without these the drawings show a bare hole and a reader
+            # cannot see how much plate an added magnet would actually occupy.
+            magnet_discs.append(Hole(sx, sy, params.magnet_disc_dia, "spare_magnet_disc", "body"))
         LOG.debug("spare mid-side magnet holes at inset %.1f, O%.1f", i, params.magnet_hole_dia)
 
     center_opening = Hole(cx, cy, params.center_open_dia, "center_vent")
@@ -1248,6 +1313,14 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
     # protects paint across a hair of gap the paint stack closes.
     # Arm WIDTH runs front-to-back, and the hinge cover eats the front of the top. This is the
     # constraint the checklist called the likeliest recut risk.
+    arm_front = params.plate_from_rear + (params.body_h - params.neck_w) / 2.0 + params.neck_w
+    _check(
+        issues, arm_front <= params.hinge_cover_from_rear, "ERROR", "arm_hinge_cover_overlap",
+        f"the arm's front edge sits {arm_front:.0f} mm from the rear but the hinge cover starts "
+        f"at {params.hinge_cover_from_rear:.0f} mm: they OVERLAP by "
+        f"{arm_front - params.hinge_cover_from_rear:.0f} mm. Move the plate rearward "
+        f"(--plate-from-rear) or lift/remove the cover.",
+    )
     window_gap = params.top_clear_window - params.neck_w
     _check(
         issues, window_gap >= 0.0, "ERROR", "arm_width_vs_hinge_cover",
@@ -1781,9 +1854,21 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
     co = geom.center_opening
     out.append(f'<circle cx="{fx(co.x):.2f}" cy="{fy(co.y):.2f}" r="{co.radius:.2f}" fill="#fbfbf9" '
                f'stroke="#222" stroke-width="1.0"/>')
+    # FITTED discs solid-ish; OPTIONAL discs hatched and half-opacity, so nobody orders magnets
+    # for positions that are only holes. Optional = the four mid-sides and the middle arm row.
+    out.append('<pattern id="optmag" width="6" height="6" patternUnits="userSpaceOnUse" '
+               'patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" '
+               'stroke="#c0169a" stroke-width="1.6"/></pattern>')
     for disc in geom.magnet_discs:
-        out.append(f'<circle cx="{fx(disc.x):.2f}" cy="{fy(disc.y):.2f}" r="{disc.radius:.2f}" fill="#c0169a" '
-                   f'fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>')
+        optional = disc.tag.startswith("spare")
+        fill = 'fill="url(#optmag)" fill-opacity="0.30"' if optional else \
+               'fill="#c0169a" fill-opacity="0.10"'
+        out.append(f'<circle cx="{fx(disc.x):.2f}" cy="{fy(disc.y):.2f}" r="{disc.radius:.2f}" '
+                   f'{fill} stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" '
+                   f'opacity="{0.5 if optional else 1.0}"/>')
+        if optional:
+            out.append(_svg_text_masked(fx(disc.x), fy(disc.y) + 3.0, "OPTIONAL", size=6.2,
+                                        fill="#8c1070"))
     for hole in geom.holes:
         colour = "#c0169a" if "magnet" in hole.tag else "#1a5fb4"
         out.append(f'<circle cx="{fx(hole.x):.2f}" cy="{fy(hole.y):.2f}" r="{hole.radius:.2f}" fill="#fff" '
@@ -1807,6 +1892,38 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
                          ("it and reports \"1 Bend\"" if params.bend_line
                           else "SendCutSend web bending tool"),
                          size=8.5, anchor="start", fill="#b00020"))
+
+    # --- foam strips ------------------------------------------------------------------
+    # Drawn so the standoff gap does not read as empty. TWO strips with a clear centre channel,
+    # because the strap slots run down the centreline and a hook-and-loop band has to pass
+    # through them and lie behind the plate. Hardware, not cut geometry — hatched, not outlined.
+    if params.foam_strips:
+        cxm = params.body_w / 2.0
+        chan, strip = params.foam_channel_w, params.foam_strip_w
+        # NECK AND ARM ONLY. Behind the body the four magnets already fill the standoff, and a
+        # strip there would lie straight across the vent windows — the one thing the plate must
+        # not blank off.
+        # NECK ONLY, body top to the bend. Not the body: the four magnets already fill that
+        # standoff and a strip there would lie across the vent windows. Not the ARM either: the
+        # arm bears on the fridge top through its own pad, so foam up there would double up with
+        # it — and it was fouling the optional centre magnet for no reason.
+        foam_y0, foam_y1 = params.body_h, flat.bend_line_y
+        out.append('<pattern id="foam" width="7" height="7" patternUnits="userSpaceOnUse" '
+                   'patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" '
+                   'stroke="#9aa6ae" stroke-width="2.4"/></pattern>')
+        for sx in (cxm - chan / 2.0 - strip, cxm + chan / 2.0):
+            out.append(f'<rect x="{fx(sx):.2f}" y="{fy(foam_y1):.2f}" width="{strip:.2f}" '
+                       f'height="{foam_y1 - foam_y0:.2f}" fill="url(#foam)" fill-opacity="0.55" '
+                       f'stroke="#8a9199" stroke-width="0.8" stroke-dasharray="5 3"/>')
+        mid_y = (foam_y0 + foam_y1) * 0.5
+        out.append(_svg_text_masked(fx(cxm - chan / 2.0 - strip / 2.0), fy(mid_y),
+                                    f"FOAM {strip:.0f}", size=8.5, fill="#5c6b77"))
+        out.append(_svg_text_masked(fx(cxm + chan / 2.0 + strip / 2.0), fy(mid_y),
+                                    f"FOAM {strip:.0f}", size=8.5, fill="#5c6b77"))
+        out.append(_svg_text_masked(fx(cxm), fy(mid_y - 46.0),
+                                    f"{chan:.0f} mm clear —", size=7.6, fill="#5c6b77"))
+        out.append(_svg_text_masked(fx(cxm), fy(mid_y - 57.0),
+                                    "straps feed here", size=7.6, fill="#5c6b77"))
 
     # --- region labels --------------------------------------------------------------
     out.append(_svg_text_masked(fx(flat.width / 2), fy(flat.bend_line_y + 22.0),

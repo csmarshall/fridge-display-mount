@@ -414,15 +414,32 @@ def front_elevation(x0, y0, w, h, W: World, rows) -> str:
     o.append(rect(0, W.FD, 0, W.FH, fill="#eef2f5", stroke=STEEL_DARK, stroke_width="1.3"))
     o.append(rect(-W.door_proj, 0, 62, W.FH, fill="#e3e9ee", stroke=STEEL_DARK, stroke_width="1.1"))
     o.append(T(X(-W.door_proj/2), Y(300), "door", 7.5, fill=MUTED, rot=-90))
-    # The hinge cover, MEASURED. This view runs front-to-back, which is the direction the cover
-    # actually constrains — it eats the FRONT of the top, and the arm's WIDTH has to fit behind it.
-    hc = p.hinge_cover_from_rear
-    o.append(rect(hc, W.FD, W.FH, W.FH + W.hinge, fill="#cfd8de", stroke=STEEL_DARK,
+    # The hinge cover, MEASURED, and it belongs at the FRIDGE FRONT where the hinge is.
+    # CAREFUL WITH THE DATUM: in this view mm is measured BACKWARD FROM THE CASE FRONT — that is
+    # why the door is drawn at negative mm. `hinge_cover_from_rear` is rear-referenced, so it has
+    # to be flipped here. Feeding it in raw put the cover at the back of the fridge.
+    cover_depth = W.FD - p.hinge_cover_from_rear          # 204 mm, measured back from the front
+    o.append(rect(0, cover_depth, W.FH, W.FH + W.hinge, fill="#cfd8de", stroke=STEEL_DARK,
                   stroke_width="1"))
-    o.append(T(X((hc + W.FD) / 2), Y(W.FH + W.hinge) - 7, "hinge cover", 7.0, fill=MUTED))
-    o.append(T(X((hc + W.FD) / 2), Y(W.FH + W.hinge) + 3, "lifts off", 6.4, fill=MUTED))
-    o.append(dim_h(min(X(0), X(hc)), max(X(0), X(hc)), Y(W.FH) - 54,
-                   f"clear window {hc:.0f} — arm needs {p.neck_w:.0f}"))
+    o.append(T(X(cover_depth / 2), Y(W.FH + W.hinge) - 7, "hinge cover", 7.0, fill=MUTED))
+    o.append(T(X(cover_depth / 2), Y(W.FH + W.hinge) + 3, "lifts off", 6.4, fill=MUTED))
+    o.append(dim_h(min(X(cover_depth), X(W.FD)), max(X(cover_depth), X(W.FD)), Y(W.FH) - 54,
+                   f"clear window {p.hinge_cover_from_rear:.0f} — arm needs {p.neck_w:.0f}"))
+    # Say which way is which. Without it the reader has to infer orientation from the door.
+    # Placed against the GROUND LINE, not the fridge top — the top is above the panel's drawing
+    # area once the cabinet is broken, and an earlier version put this in the sheet header.
+    front_x = X(-W.door_proj)
+    outward = 1 if front_x > X(W.FD) else -1
+    # gy + 20 sat exactly under the legend box, which is drawn later and covered it. Put it in
+    # the cropped stub instead, above the ground line, on a mask so it reads over the cabinet.
+    ay = gy - 26
+    o.append(f'<rect x="{min(front_x, front_x - outward*164):.1f}" y="{ay-9:.1f}" '
+             f'width="164" height="18" fill="#fbfcfd" fill-opacity="0.92" rx="2"/>')
+    o.append(f'<line x1="{front_x - outward*70:.1f}" y1="{ay:.1f}" x2="{front_x:.1f}" '
+             f'y2="{ay:.1f}" stroke="{INK}" stroke-width="1.5"/>')
+    o.append(f'<path d="M{front_x:.1f},{ay:.1f} l{-outward*8:.1f},-4 l0,8 z" fill="{INK}"/>')
+    o.append(T(front_x - outward*76, ay + 3.4, "FRIDGE FRONT", 8.4,
+               anchor="end" if outward > 0 else "start", fill=INK, weight="700"))
     o.append(rect(W.neck_y0, W.neck_y1, W.FH, W.arm_z1, fill=BRACKET))
     # The neck from the display's top edge up to the fridge top is VISIBLE painted steel,
     # not hidden behind the panel — draw it solid. Only the part behind the display is ghosted.

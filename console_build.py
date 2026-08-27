@@ -58,6 +58,12 @@ DIAGRAM_INFO = {
     # Was falling through to a snake_case filename title with no caption, sitting uncaptioned
     # among real deliverables. It is a TEST harness — a tool for judging a validator refusal —
     # not a cable harness, and not a fabrication drawing.
+    "mount_views.svg": ("Both faces of the mount",
+                       "Front and back side by side — magnets and foam on the fridge face, "
+                       "VESA and spacers on the display face.", "key"),
+    "hinge_clearance.svg": ("Hinge cover clearance",
+                            "Plan view: where the arm and the hinge cover meet, or miss. The one "
+                            "view that dimensions it.", "key"),
     "harness_view.svg": ("Magnet placement validator",
                          "Diagnostic: draws a candidate the validator REFUSES, so a refusal can "
                          "be judged rather than obeyed. Not a cut file.", "study"),

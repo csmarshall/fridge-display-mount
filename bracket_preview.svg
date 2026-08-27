@@ -20,16 +20,29 @@
 <polygon points="241.000,149.192 241.003,149.284 241.012,149.375 241.027,149.465 241.048,149.555 241.074,149.642 241.107,149.728 241.144,149.811 241.188,149.892 241.236,149.970 241.289,150.045 241.347,150.115 241.410,150.182 241.477,150.245 241.548,150.303 241.622,150.356 241.700,150.405 241.781,150.448 241.864,150.486 241.950,150.518 242.038,150.545 242.127,150.565 242.217,150.580 242.308,150.589 242.400,150.592 243.600,150.592 243.692,150.589 243.783,150.580 243.873,150.565 243.962,150.545 244.050,150.518 244.136,150.486 244.219,150.448 244.300,150.405 244.378,150.356 244.452,150.303 244.523,150.245 244.590,150.182 244.653,150.115 244.711,150.045 244.764,149.970 244.812,149.892 244.856,149.811 244.893,149.728 244.926,149.642 244.952,149.555 244.973,149.465 244.988,149.375 244.997,149.284 245.000,149.192 245.000,133.992 244.997,133.901 244.988,133.810 244.973,133.719 244.952,133.630 244.926,133.542 244.893,133.457 244.856,133.373 244.812,133.292 244.764,133.214 244.711,133.140 244.653,133.069 244.590,133.002 244.523,132.940 244.452,132.882 244.378,132.828 244.300,132.780 244.219,132.737 244.136,132.699 244.050,132.667 243.962,132.640 243.873,132.619 243.783,132.604 243.692,132.595 243.600,132.592 242.400,132.592 242.308,132.595 242.217,132.604 242.127,132.619 242.038,132.640 241.950,132.667 241.864,132.699 241.781,132.737 241.700,132.780 241.622,132.828 241.548,132.882 241.477,132.940 241.410,133.002 241.347,133.069 241.289,133.140 241.236,133.214 241.188,133.292 241.144,133.373 241.107,133.457 241.074,133.542 241.048,133.630 241.027,133.719 241.012,133.810 241.003,133.901 241.000,133.992" fill="#fbfbf9" stroke="#222" stroke-width="1.0"/>
 <polygon points="257.000,149.192 257.003,149.284 257.012,149.375 257.027,149.465 257.048,149.555 257.074,149.642 257.107,149.728 257.144,149.811 257.188,149.892 257.236,149.970 257.289,150.045 257.347,150.115 257.410,150.182 257.477,150.245 257.548,150.303 257.622,150.356 257.700,150.405 257.781,150.448 257.864,150.486 257.950,150.518 258.038,150.545 258.127,150.565 258.217,150.580 258.308,150.589 258.400,150.592 259.600,150.592 259.692,150.589 259.783,150.580 259.873,150.565 259.962,150.545 260.050,150.518 260.136,150.486 260.219,150.448 260.300,150.405 260.378,150.356 260.452,150.303 260.523,150.245 260.590,150.182 260.653,150.115 260.711,150.045 260.764,149.970 260.812,149.892 260.856,149.811 260.893,149.728 260.926,149.642 260.952,149.555 260.973,149.465 260.988,149.375 260.997,149.284 261.000,149.192 261.000,133.992 260.997,133.901 260.988,133.810 260.973,133.719 260.952,133.630 260.926,133.542 260.893,133.457 260.856,133.373 260.812,133.292 260.764,133.214 260.711,133.140 260.653,133.069 260.590,133.002 260.523,132.940 260.452,132.882 260.378,132.828 260.300,132.780 260.219,132.737 260.136,132.699 260.050,132.667 259.962,132.640 259.873,132.619 259.783,132.604 259.692,132.595 259.600,132.592 258.400,132.592 258.308,132.595 258.217,132.604 258.127,132.619 258.038,132.640 257.950,132.667 257.864,132.699 257.781,132.737 257.700,132.780 257.622,132.828 257.548,132.882 257.477,132.940 257.410,133.002 257.347,133.069 257.289,133.140 257.236,133.214 257.188,133.292 257.144,133.373 257.107,133.457 257.074,133.542 257.048,133.630 257.027,133.719 257.012,133.810 257.003,133.901 257.000,133.992" fill="#fbfbf9" stroke="#222" stroke-width="1.0"/>
 <circle cx="251.00" cy="699.03" r="45.00" fill="#fbfbf9" stroke="#222" stroke-width="1.0"/>
-<circle cx="128.00" cy="822.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="128.00" cy="576.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="374.00" cy="822.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="374.00" cy="576.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="191.00" cy="202.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="311.00" cy="202.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="191.00" cy="256.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="311.00" cy="256.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="191.00" cy="148.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
-<circle cx="311.00" cy="148.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3"/>
+<pattern id="optmag" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#c0169a" stroke-width="1.6"/></pattern>
+<circle cx="128.00" cy="822.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="128.00" cy="576.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="374.00" cy="822.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="374.00" cy="576.03" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="251.00" cy="202.00" r="24.01" fill="url(#optmag)" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="0.5"/>
+<rect x="233.36" y="199.67" width="35.28" height="7.56" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="205.00" font-family="Helvetica,Arial,sans-serif" font-size="6.2" text-anchor="middle" fill="#8c1070" font-weight="normal">OPTIONAL</text>
+<circle cx="191.00" cy="256.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="311.00" cy="256.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="191.00" cy="148.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="311.00" cy="148.00" r="24.01" fill="#c0169a" fill-opacity="0.10" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="1.0"/>
+<circle cx="191.00" cy="202.00" r="24.01" fill="url(#optmag)" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="0.5"/>
+<rect x="173.36" y="199.67" width="35.28" height="7.56" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="191.00" y="205.00" font-family="Helvetica,Arial,sans-serif" font-size="6.2" text-anchor="middle" fill="#8c1070" font-weight="normal">OPTIONAL</text>
+<circle cx="311.00" cy="202.00" r="24.01" fill="url(#optmag)" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="0.5"/>
+<rect x="293.36" y="199.67" width="35.28" height="7.56" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="311.00" y="205.00" font-family="Helvetica,Arial,sans-serif" font-size="6.2" text-anchor="middle" fill="#8c1070" font-weight="normal">OPTIONAL</text>
+<circle cx="251.00" cy="822.03" r="24.01" fill="url(#optmag)" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="0.5"/>
+<rect x="233.36" y="819.70" width="35.28" height="7.56" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="825.03" font-family="Helvetica,Arial,sans-serif" font-size="6.2" text-anchor="middle" fill="#8c1070" font-weight="normal">OPTIONAL</text>
+<circle cx="251.00" cy="576.03" r="24.01" fill="url(#optmag)" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="0.5"/>
+<rect x="233.36" y="573.70" width="35.28" height="7.56" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="579.03" font-family="Helvetica,Arial,sans-serif" font-size="6.2" text-anchor="middle" fill="#8c1070" font-weight="normal">OPTIONAL</text>
+<circle cx="128.00" cy="699.03" r="24.01" fill="url(#optmag)" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="0.5"/>
+<rect x="110.36" y="696.70" width="35.28" height="7.56" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="128.00" y="702.03" font-family="Helvetica,Arial,sans-serif" font-size="6.2" text-anchor="middle" fill="#8c1070" font-weight="normal">OPTIONAL</text>
+<circle cx="374.00" cy="699.03" r="24.01" fill="url(#optmag)" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.9" stroke-dasharray="4 3" opacity="0.5"/>
+<rect x="356.36" y="696.70" width="35.28" height="7.56" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="374.00" y="702.03" font-family="Helvetica,Arial,sans-serif" font-size="6.2" text-anchor="middle" fill="#8c1070" font-weight="normal">OPTIONAL</text>
 <circle cx="201.00" cy="749.03" r="2.20" fill="#fff" stroke="#1a5fb4" stroke-width="1.0"/>
 <circle cx="201.00" cy="649.03" r="2.20" fill="#fff" stroke="#1a5fb4" stroke-width="1.0"/>
 <circle cx="301.00" cy="749.03" r="2.20" fill="#fff" stroke="#1a5fb4" stroke-width="1.0"/>
@@ -50,12 +63,13 @@
 <circle cx="128.00" cy="576.03" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="374.00" cy="822.03" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="374.00" cy="576.03" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
-<circle cx="191.00" cy="202.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
-<circle cx="311.00" cy="202.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
+<circle cx="251.00" cy="202.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="191.00" cy="256.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="311.00" cy="256.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="191.00" cy="148.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="311.00" cy="148.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
+<circle cx="191.00" cy="202.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
+<circle cx="311.00" cy="202.00" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="251.00" cy="822.03" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="251.00" cy="576.03" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
 <circle cx="128.00" cy="699.03" r="4.25" fill="#fff" stroke="#c0169a" stroke-width="1.0"/>
@@ -66,6 +80,13 @@
 <text x="438.00" y="310.52" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#b00020" font-weight="normal">90 deg, inside R 1.60 mm</text>
 <text x="438.00" y="322.52" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#b00020" font-weight="normal">dashed LINE in the DXF — the app reads</text>
 <text x="438.00" y="334.52" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#b00020" font-weight="normal">it and reports "1 Bend"</text>
+<pattern id="foam" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9aa6ae" stroke-width="2.4"/></pattern>
+<rect x="156.00" y="289.52" width="72.30" height="254.52" fill="url(#foam)" fill-opacity="0.55" stroke="#8a9199" stroke-width="0.8" stroke-dasharray="5 3"/>
+<rect x="273.70" y="289.52" width="72.30" height="254.52" fill="url(#foam)" fill-opacity="0.55" stroke="#8a9199" stroke-width="0.8" stroke-dasharray="5 3"/>
+<rect x="171.79" y="409.47" width="40.73" height="10.37" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="192.15" y="416.78" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#5c6b77" font-weight="normal">FOAM 72</text>
+<rect x="289.49" y="409.47" width="40.73" height="10.37" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="309.85" y="416.78" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#5c6b77" font-weight="normal">FOAM 72</text>
+<rect x="219.83" y="456.24" width="62.34" height="9.27" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="462.78" font-family="Helvetica,Arial,sans-serif" font-size="7.6" text-anchor="middle" fill="#5c6b77" font-weight="normal">45 mm clear —</text>
+<rect x="213.56" y="467.24" width="74.88" height="9.27" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="473.78" font-family="Helvetica,Arial,sans-serif" font-size="7.6" text-anchor="middle" fill="#5c6b77" font-weight="normal">straps feed here</text>
 <rect x="171.24" y="259.35" width="159.53" height="11.59" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="267.52" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#666" font-weight="normal">ARM — rests on the fridge top</text>
 <rect x="236.55" y="408.61" width="28.90" height="11.59" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="416.78" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#666" font-weight="normal">NECK</text>
 <rect x="195.03" y="544.29" width="111.95" height="10.98" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="251.00" y="552.03" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="middle" fill="#666" font-weight="normal">BODY — vertical spine</text>
@@ -113,7 +134,7 @@
 <path d="M 773.10 175.68 H 878.43 V 493.85 H 880.09 V 174.01 H 773.10 Z" fill="#9a5b00" stroke="#5d3600" stroke-width="0.8"/>
 <rect x="773.10" y="175.68" width="105.33" height="6.33" fill="#f2c14e" fill-opacity="0.8" stroke="#a8830f" stroke-width="0.7"/>
 <line x1="773.10" y1="161.68" x2="872.10" y2="161.68" stroke="#5d3600" stroke-width="0.6"/><line x1="773.10" y1="158.68" x2="773.10" y2="164.68" stroke="#5d3600" stroke-width="0.6"/><line x1="872.10" y1="158.68" x2="872.10" y2="164.68" stroke="#5d3600" stroke-width="0.6"/><text x="822.60" y="158.68" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#5d3600" font-weight="normal">arm 180 mm — set MID-DEPTH</text>
-<rect x="809.39" y="175.68" width="26.41" height="6.33" fill="#c0169a" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.8"/>
+<rect x="839.09" y="175.68" width="26.41" height="6.33" fill="#c0169a" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.8"/>
 <rect x="872.10" y="327.74" width="6.33" height="26.41" fill="#c0169a" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.8"/>
 <rect x="872.10" y="463.04" width="6.33" height="26.41" fill="#c0169a" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.8"/>
 <rect x="872.10" y="471.85" width="6.33" height="22.00" fill="#f2c14e" fill-opacity="0.9" stroke="#a8830f" stroke-width="0.7"/>
@@ -138,9 +159,9 @@
 <rect x="729.10" y="595.35" width="9" height="9" fill="#8a6a10"/>
 <text x="744.10" y="602.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">closed-cell sponge arm pad 11.50 mm (1/4 in) — conforms to the top corner radius</text>
 <rect x="729.10" y="609.35" width="9" height="9" fill="#c0169a"/>
-<text x="744.10" y="616.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">6 x O48 x 12 mm top-lip magnets, same SKU as the body — zero VERTICAL load, but they do resist peel</text>
+<text x="744.10" y="616.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">4 x O48 x 12 mm top-lip magnets, same SKU as the body — zero VERTICAL load, but they do resist peel</text>
 <rect x="729.10" y="623.35" width="9" height="9" fill="#c0169a"/>
-<text x="744.10" y="630.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">4 x O48 x 12 mm BARE nickel pot magnets, M6 female thread — tape the fridge, not the magnet</text>
+<text x="744.10" y="630.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">8 x O48 x 12 mm BARE nickel pot magnets, M6 female thread — tape the fridge, not the magnet</text>
 <rect x="729.10" y="637.35" width="9" height="9" fill="#8a6a10"/>
 <text x="744.10" y="644.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">bottom bearing pad 11.50 mm, -0.01 mm proud of the magnets — sponge squashes flush</text>
 <rect x="729.10" y="651.35" width="9" height="9" fill="#111"/>

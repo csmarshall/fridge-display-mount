@@ -14,6 +14,9 @@
     "fridge_height": 1743.0749999999998,
     "hinge_cover_proud": 36.512499999999996,
     "hinge_cover_from_rear": 406.4,
+    "hinge_cover_inboard": 104.0,
+    "plate_from_rear_override": 0.0,
+    "foam_strips": true,
     "hinge_cover_lifts": true,
     "fridge_top_width": 911.2249999999999,
     "fridge_depth": 609.5999999999999,
@@ -70,11 +73,14 @@
     "arm_magnets": true,
     "arm_magnet_disc_dia": 48.021874999999994,
     "arm_magnet_standoff": 11.509374999999999,
-    "arm_magnet_offset": 90.0,
+    "arm_magnet_offset": 36.0,
     "extra_arm_magnet_offsets": [
-      36.0,
       144.0
     ],
+    "optional_arm_magnet_offsets": [
+      90.0
+    ],
+    "optional_arm_centre": true,
     "arm_magnet_spacing": 120.0,
     "fridge_corner_radius": 12.0,
     "fridge_corner_radius_max": 15.0,
@@ -114,7 +120,7 @@
       250.0
     ],
     "lwpolyline_count": 15,
-    "circle_count": 31,
+    "circle_count": 32,
     "hole_diameters_mm": [
       4.4,
       6.5,
@@ -244,14 +250,8 @@
       "dia": 8.5
     },
     {
-      "tag": "arm_magnet",
-      "x": 95.0,
-      "y": 652.0343,
-      "dia": 8.5
-    },
-    {
-      "tag": "arm_magnet",
-      "x": 215.0,
+      "tag": "spare_arm_magnet",
+      "x": 155.0,
       "y": 652.0343,
       "dia": 8.5
     },
@@ -277,6 +277,18 @@
       "tag": "arm_magnet",
       "x": 215.0,
       "y": 706.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "spare_arm_magnet",
+      "x": 95.0,
+      "y": 652.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "spare_arm_magnet",
+      "x": 215.0,
+      "y": 652.0343,
       "dia": 8.5
     },
     {
@@ -494,7 +506,7 @@
       25.0
     ],
     "rear_face_feature_radius_mm": 87.5,
-    "cut_length_mm": 4372.087318215281,
+    "cut_length_mm": 4398.790855770794,
     "plate_area_mm2": 156384.79187648065,
     "bounding_area_mm2": 230030.633
   }
