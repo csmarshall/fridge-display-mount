@@ -226,7 +226,14 @@ class World:
 
 
 def magnet_rows(geom) -> list[float]:
-    return sorted({round(h.y, 3) for h in geom.magnet_discs if h.region == "body"})
+    """FITTED body magnet rows only.
+
+    Adding discs to the optional mid-side positions made this pick them up, and the sheet
+    silently went from claiming 8 magnets to 10 and its let-go from 194 to 252 lbf. The optional
+    positions are HOLES; a drawing must never count a hole as a magnet.
+    """
+    return sorted({round(h.y, 3) for h in geom.magnet_discs
+                   if h.region == "body" and not h.tag.startswith("spare")})
 
 
 def arm_magnet_offsets(params: BracketParams) -> list[float]:
@@ -757,13 +764,14 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
     o.append(f'<rect x="{ax:.1f}" y="{by:.1f}" width="{SW-80:.1f}" height="{bh_:.1f}" '
              f'fill="#ffffff" stroke="{RULE}" stroke-width="1.2" rx="3"/>')
     facts = [
-        ("The screen", f"Waveshare {display_key} inch touch", f"{d.mass_kg:.1f} kg, portrait"),
+        ("The screen", f"Waveshare {display_key} inch touch",
+         f"{d.mass_kg:.1f} kg ({d.mass_kg/0.45359237:.1f} lb), portrait"),
         ("Sits at", f"{rep['screen_centre_height_mm']/25.4/12:.0f} ft "
                     f"{rep['screen_centre_height_mm']/25.4 % 12:.0f} in to the middle",
-         "works from 5 ft 1 in to 6 ft 4 in"),
+         f"{rep['screen_centre_height_mm']:.0f} mm · works from 5 ft 1 in to 6 ft 4 in"),
         ("Holds on by", "hooking over the top of the fridge",
          f"plus {n_mag} magnets — {n_body} hold the screen flat, {n_arm} steady the arm"),
-        ("Sticks out", f"{W.standoff:.0f} mm — about 2 inches",
+        ("Sticks out", f"{W.standoff:.0f} mm ({W.standoff/25.4:.1f} in)",
          f"less than the door handles"),
         ("Finish", "matte black, powder coated", "cable runs up the back, cleanly strapped down"),
         ("Comes off", "attached with magnets and pads", "no adhesive, no holes in the fridge"),

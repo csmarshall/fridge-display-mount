@@ -20,7 +20,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging
+from bracket_common import (LOG_LEVELS, area_cm2_in2, configure_logging, in_mm,
+                            kg_lb, lbf_n, mm_in)
 import detach_study
 import generate_bracket as G
 from generate_bracket import BracketParams, MATERIAL, build_geometry, derive_flat
@@ -58,6 +59,9 @@ DIAGRAM_INFO = {
     # Was falling through to a snake_case filename title with no caption, sitting uncaptioned
     # among real deliverables. It is a TEST harness — a tool for judging a validator refusal —
     # not a cable harness, and not a fabrication drawing.
+    "force_table.svg": ("Force by direction and magnet count",
+                       "What it takes to shift or unseat it, 6 to 15 magnets, in lbf and newtons.",
+                       "key"),
     "mount_views.svg": ("Both faces of the mount",
                        "Front and back side by side — magnets and foam on the fridge face, "
                        "VESA and spacers on the display face.", "key"),
@@ -266,18 +270,29 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
                      "table",
                      columns=["", "value", "note"],
                      rows=[
-        ("Material", f"{MATERIAL.name} {MATERIAL.thickness_in:.3f} in ({MATERIAL.thickness:.2f} mm)", "matte black"),
-        ("Flat pattern", f"{flat.width:.0f} × {flat.height:.1f} mm", f"bend deduction {flat.bend_deduction:.3f} mm"),
-        ("Bracket mass", f"{rep['bracket_mass_kg']:.2f} kg", f"total hanging {rep['total_hanging_lbf']:.1f} lbf"),
-        ("Magnets", f"{n_body} body + {n_arm} top lip", f"Ø{p.magnet_disc_dia:.0f} × {p.magnet_standoff:.0f} mm bare nickel"),
-        ("Magnet spacing", f"{rep['magnet_spacing_mm']:.0f} mm", f"load-bearing floor {p.min_magnet_spacing:.0f} mm"),
-        ("Torsion margin", f"{rep['magnet_tension_sf']:.1f}×", f"{rep['torsion_force_per_magnet_lbf']:.2f} lbf per magnet"),
-        ("Pull-off force", f"{let_go:.0f} lbf", "straight out at the screen bottom"),
-        ("Screen centre", f"{rep['screen_centre_height_mm']:.0f} mm", f"top {rep['screen_top_portrait_mm']:.0f} / bottom {rep['screen_bottom_portrait_mm']:.0f}"),
-        ("Stands off", f"{world.standoff:.0f} mm", f"arm reaches {p.arm_len:.0f} mm onto the top"),
-        ("Neck bending", f"{rep['neck_stress_psi']:.0f} psi", f"SF {rep['neck_sf']:.0f}× on {MATERIAL.yield_psi:.0f} psi yield"),
-        ("Strap slots", f"{p.strap_slot_thickness:.0f} × {p.strap_slot_length:.0f} mm", "1/2 in ONE-WRAP, also passes 5/8 in"),
-        ("Cut length", f"{rep['cut_length_mm']/25.4:.1f} in", f"{rep['plate_area_mm2']/100:.0f} cm² of plate"),
+        ("Material", f"{MATERIAL.name} {in_mm(MATERIAL.thickness_in)}", "matte black"),
+        ("Flat pattern", f"{mm_in(flat.width)} × {mm_in(flat.height, 1)}",
+         f"bend deduction {mm_in(flat.bend_deduction, 2)}"),
+        ("Bracket mass", kg_lb(rep['bracket_mass_kg']),
+         f"total hanging {lbf_n(rep['total_hanging_lbf'])}"),
+        ("Magnets", f"{n_body} body + {n_arm} top lip",
+         f"Ø{mm_in(p.magnet_disc_dia)} × {mm_in(p.magnet_standoff, 2)} bare nickel"),
+        ("Magnet spacing", mm_in(rep['magnet_spacing_mm']),
+         f"load-bearing floor {mm_in(p.min_magnet_spacing)}"),
+        ("Torsion margin", f"{rep['magnet_tension_sf']:.1f}×",
+         f"{lbf_n(rep['torsion_force_per_magnet_lbf'], 2)} per magnet"),
+        ("Pull-off force", lbf_n(let_go, 0), "straight out at the screen bottom"),
+        ("Screen centre", mm_in(rep['screen_centre_height_mm']),
+         f"top {mm_in(rep['screen_top_portrait_mm'])} / bottom {mm_in(rep['screen_bottom_portrait_mm'])}"),
+        ("Stands off", mm_in(world.standoff),
+         f"arm reaches {mm_in(p.arm_len)} onto the top"),
+        ("Neck bending", f"{rep['neck_stress_psi']:.0f} psi ({rep['neck_stress_psi']*0.00689476:.2f} MPa)",
+         f"SF {rep['neck_sf']:.0f}× on {MATERIAL.yield_psi:.0f} psi "
+         f"({MATERIAL.yield_psi*0.00689476:.0f} MPa) yield"),
+        ("Strap slots", f"{mm_in(p.strap_slot_thickness)} × {mm_in(p.strap_slot_length)}",
+         "1/2 in (12.7 mm) ONE-WRAP, also passes 5/8 in (15.9 mm)"),
+        ("Cut length", f"{rep['cut_length_mm']/25.4:.1f} in ({rep['cut_length_mm']:.0f} mm)",
+         area_cm2_in2(rep['plate_area_mm2']/100) + " of plate"),
     ]))
 
     S.append(Section("prices", "Live prices",
