@@ -1707,7 +1707,21 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         - math.pi * geom.center_opening.radius ** 2
         - sum(w.w * w.h for w in geom.windows)
     )
-    bracket_mass_kg = plate_area_mm2 * MATERIAL.thickness * MATERIAL.density_g_cc / 1e6
+    plate_mass_kg = plate_area_mm2 * MATERIAL.thickness * MATERIAL.density_g_cc / 1e6
+    # The MAGNETS hang on the plate too, and they are not light: eight O48 x 11.51 mm pot magnets
+    # is over a kilo. Counting only the plate understated the load the hook carries — and every
+    # stress margin derived from it — by ~13%. Derived from the disc envelope at an assumed mean
+    # density for a steel-cupped neodymium pot; McMaster do not publish a mass for 3506K67, so
+    # this is an ESTIMATE, deliberately on the heavy side.
+    POT_MAGNET_DENSITY_G_CC = 7.6
+    n_fitted = len([h for h in geom.holes if h.tag in ("magnet", "arm_magnet")])
+    one_magnet_kg = (math.pi / 4.0 * params.magnet_disc_dia ** 2 * params.magnet_standoff
+                     * POT_MAGNET_DENSITY_G_CC / 1e6)
+    magnet_mass_kg = n_fitted * one_magnet_kg
+    # Nuts, washers and the foam pads. Small, but the point of this block is to stop pretending
+    # anything is weightless; a 5/16 jam nut plus an oversized washer is about 12 g a position.
+    fastener_mass_kg = n_fitted * 0.012
+    bracket_mass_kg = plate_mass_kg + magnet_mass_kg + fastener_mass_kg
     bracket_lbf = bracket_mass_kg * LBF_PER_KG
     total_lbf = weight_lbf + bracket_lbf
 
@@ -1803,6 +1817,10 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
 
     report = {
         "display_weight_lbf": weight_lbf,
+        "plate_mass_kg": plate_mass_kg,
+        "magnet_mass_kg": magnet_mass_kg,
+        "magnet_count_fitted": n_fitted,
+        "fastener_mass_kg": fastener_mass_kg,
         "bracket_mass_kg": bracket_mass_kg,
         "bracket_weight_lbf": bracket_lbf,
         "total_hanging_lbf": total_lbf,

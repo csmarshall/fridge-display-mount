@@ -107,7 +107,8 @@ drawing at
 | Property | Value | Verified |
 |---|---|---|
 | Outer dimensions | 555.23 (H) x 324.65 (V) x 18.00 (D) mm | yes |
-| Weight | 3.94 kg | yes |
+| Weight — **SCREEN ALONE** | 3.94 kg (8.69 lb) | yes |
+| Weight — **whole mounted system** | **11.11 kg (24.5 lb)** = screen 3.94 + steel plate 5.81 + magnets 1.27 + fasteners 0.10 | derived |
 | Input voltage | 11.5–12.5 V, **>= 3 A to boot** | yes |
 | Typical power | 36 W | yes |
 | Touch | 10-point capacitive, optically bonded, 6H toughened glass | yes |

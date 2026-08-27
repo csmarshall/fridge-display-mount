@@ -780,7 +780,14 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
          f"plus {n_mag} magnets — {n_body} hold the screen flat, {n_arm} steady the arm"),
         ("Sticks out", f"{W.standoff:.0f} mm ({W.standoff/25.4:.1f} in)",
          f"less than the door handles"),
-        ("Finish", "matte black, powder coated", "cable runs up the back, cleanly strapped down"),
+        ("Finish", "textured black, powder coated",
+         "close to the fridge's own side panel"),
+        # "21 lbf" reads as a scary number and gets quoted without its parts. Broken down it is
+        # reassuring: most of it is the BRACKET, and the fridge top carries all of it.
+        ("Weighs", f"{rep['total_hanging_lbf']*0.45359237:.1f} kg "
+                   f"({rep['total_hanging_lbf']:.0f} lb) all in",
+         f"screen {d.mass_kg:.1f} kg + steel {rep['plate_mass_kg']:.1f} kg + magnets "
+         f"{rep['magnet_mass_kg']:.1f} kg"),
         ("Comes off", "attached with magnets and pads", "no adhesive, no holes in the fridge"),
     ]
     colw = (SW - 2 * ax - 32) / len(facts)

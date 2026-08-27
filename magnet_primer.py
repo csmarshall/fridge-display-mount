@@ -35,6 +35,7 @@ LOG = logging.getLogger("primer")
 INK, MUTED, RULE = "#14181c", "#6b757e", "#c9d1d8"
 OK, BAD, MARG = "#0a8f6f", "#b00020", "#b8860b"
 PAPER, CARD, TINT = "#fbfcfd", "#ffffff", "#f2f5f7"
+C_FOAM = "#f2c14e"
 C_FRIDGE, C_MAGNET, C_PLATE = FRIDGE_SIDE, "#e7b6dd", "#b9c2c9"
 
 # Published by totalElement for their 43 mm rubber-coated pot magnet. A citation, not a derived
@@ -285,10 +286,25 @@ def render(path: Path, p: BracketParams) -> None:
     mag_gap = 34.0                       # _mini_magnet is 34 px long; the gap IS the magnet
     spine_in = gx - mag_gap              # inner face of the spine, against the magnets
     spine_out = spine_in - 8.0           # 8 px of drawn plate thickness
-    o.append(f'<path d="M{spine_out:.1f} {gy + 124:.1f} L{spine_out:.1f} {gy - 14:.1f} '
-             f'L{gx + 96:.1f} {gy - 14:.1f} L{gx + 96:.1f} {gy - 6:.1f} '
-             f'L{spine_in:.1f} {gy - 6:.1f} L{spine_in:.1f} {gy + 124:.1f} Z" '
+    # The arm does NOT rest on bare steel. A sponge pad and the arm magnets sit in the gap, both
+    # ~11.5 mm tall, so the arm floats that far above the top. Drawing it touching hid the pad
+    # entirely and made the pad budget in crown_explainer look like it was about nothing.
+    lift = 14.0                          # drawn arm standoff = pad/magnet height
+    arm_bot = gy - lift
+    arm_top = arm_bot - 8.0
+    o.append(f'<path d="M{spine_out:.1f} {gy + 124:.1f} L{spine_out:.1f} {arm_top:.1f} '
+             f'L{gx + 96:.1f} {arm_top:.1f} L{gx + 96:.1f} {arm_bot:.1f} '
+             f'L{spine_in:.1f} {arm_bot:.1f} L{spine_in:.1f} {gy + 124:.1f} Z" '
              f'fill="{C_PLATE}" stroke="{INK}" stroke-width="1.1"/>')
+    # what fills that gap: sponge pad either side, arm magnet between
+    o.append(f'<rect x="{spine_in + 2:.1f}" y="{arm_bot:.1f}" width="26" height="{lift:.1f}" '
+             f'fill="{C_FOAM}" stroke="#a8830f" stroke-width="0.9"/>')
+    o.append(f'<rect x="{spine_in + 34:.1f}" y="{arm_bot:.1f}" width="30" height="{lift:.1f}" '
+             f'fill="{C_MAGNET}" stroke="{INK}" stroke-width="0.9"/>')
+    o.append(f'<rect x="{spine_in + 70:.1f}" y="{arm_bot:.1f}" width="24" height="{lift:.1f}" '
+             f'fill="{C_FOAM}" stroke="#a8830f" stroke-width="0.9"/>')
+    o.append(_t(gx + 100, arm_bot + 11, "sponge pad + arm magnet — the arm never touches bare "
+                "steel", 9.5, anchor="start", fill=MUTED))
     o.append(_arrow(spine_out + 4, gy + 130, spine_out + 4, gy + 172, INK))
     o.append(_t(spine_out + 16, gy + 162, f"all {lbf_n(hanging, 1)} of it", 10.5, weight="bold"))
     o.append(_arrow(gx + 40, gy - 40, gx + 40, gy - 16, OK))

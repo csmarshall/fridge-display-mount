@@ -71,7 +71,7 @@ def render(path: Path, p: BracketParams, neck: float) -> None:
         body_hide = (dw - p.body_w) / 2.0
 
         out.append(_t(X(depth/2), oy - 62, f'{key} in', 16, weight="bold", fill="#1a5fb4"))
-        out.append(_t(X(depth/2), oy - 44, f"{dw:.1f} wide x {dh:.1f} tall, {d.mass_kg:.2f} kg",
+        out.append(_t(X(depth/2), oy - 44, f"{dw:.1f} wide x {dh:.1f} tall, {d.mass_kg:.2f} kg — SCREEN ONLY",
                       10.5, fill="#555"))
         out.append(_t(X(depth/2), oy - 28, f"{usable - dw:.0f} mm spare in the window",
                       11, fill="#2e9e5b", weight="bold"))
