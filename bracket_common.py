@@ -140,6 +140,9 @@ MAGNET_EDGE = "#c0169a"
 # was fine when the appliance was pale; since it was corrected to its real near-black these are
 # the versions that survive on it. If a label sits on the fridge, it MUST come from here — this
 # has caused the same regression three times in different sheets.
+# CHOOSE BY BACKGROUND, NOT BY SUBJECT. These are for text physically drawn ON the appliance.
+# A label ABOUT the fridge that renders on the white ground still uses the normal dark ink —
+# applying these by label class instead put pale yellow on white in display_compare.
 ON_FRIDGE_BAD = "#ff8a8a"     # warnings / keep-outs
 ON_FRIDGE_OK = "#7fe0b0"      # confirmations
 ON_FRIDGE_WARN = "#ffd27a"    # the arm, foam, anything currently drawn in dark browns

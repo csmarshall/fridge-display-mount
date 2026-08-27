@@ -158,18 +158,6 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     out.append(_dim_v(Y(params.body_h), Y(0), X(0) - 34, f"PLATE {params.body_h:.0f}"))
     out.append(_dim_v(Y(cy+dh/2), Y(cy-dh/2), X(0) - 76, f"DISPLAY {dh:.2f}", colour="#1a5fb4"))
 
-    # Emitted HERE, after the dimensions, not with the rear-box geometry. A panel behind text is
-    # worthless if later drawing paints over it — the REAR BOX dimension, the plate edge and the
-    # plate edge and the display outline. Nothing here can be moved clear of all three, so give it
-    # a panel and let it sit on top of them.
-    out.append(f'<rect x="{_lx - 5:.1f}" y="{_ly - 16:.1f}" width="152" height="26" rx="3" '
-               f'fill="#fbfbf9" fill-opacity="0.92"/>')
-    out.append(_t(_lx, _ly - 6, "Pi fan / GPIO opening", 9, anchor="start", fill="#a8630f",
-                  weight="bold"))
-    out.append(_t(_lx, _ly + 6, "sits inside the vent window", 8.5, anchor="start",
-                  fill="#a8630f"))
-
-
     out.append(_dim_v(Y(cy+bh/2), Y(cy-bh/2), X(cx+bw/2) + 26, f"REAR BOX {bh:.0f}", colour="#c0169a"))
     out.append(_dim_h(X(cx-params.vesa/2), X(cx+params.vesa/2), Y(cy) + 4, f"VESA {params.vesa:.0f}",
                       colour="#1a5fb4"))
@@ -184,6 +172,18 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
                   9, anchor="start", fill="#1a5fb4"))
     out.append(_t(X(0) - 6, Y(0) + 105, f"and {over_y:.1f} mm top and bottom",
                   9, anchor="start", fill="#1a5fb4"))
+
+    # LAST thing drawn on this elevation, deliberately. A panel behind text is worthless if
+    # anything is painted over it afterwards, and this label is crossed by the rear-box dimension,
+    # the plate edge and the display outline. A previous attempt moved it after SOME of the
+    # dimensions; the vertical REAR BOX one still followed and still cut through it.
+    out.append(f'<rect x="{_lx - 5:.1f}" y="{_ly - 16:.1f}" width="152" height="26" rx="3" '
+               f'fill="#fbfbf9" fill-opacity="0.92"/>')
+    out.append(_t(_lx, _ly - 6, "Pi fan / GPIO opening", 9, anchor="start", fill="#a8630f",
+                  weight="bold"))
+    out.append(_t(_lx, _ly + 6, "sits inside the vent window", 8.5, anchor="start",
+                  fill="#a8630f"))
+
 
     # ---- depth section ------------------------------------------------------------
     sx0 = X(params.body_w) + 230

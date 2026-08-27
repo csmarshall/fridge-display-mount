@@ -14,7 +14,8 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_BAD, ON_FRIDGE_WARN
+from bracket_common import (LOG_LEVELS, configure_logging, FRIDGE_SIDE,
+                            FRIDGE_SIDE_EDGE, ON_FRIDGE_BAD)
 from generate_bracket import DISPLAYS, MM_PER_INCH, BracketParams, set_display
 import generate_bracket as G
 
@@ -96,7 +97,10 @@ def render(path: Path, p: BracketParams, neck: float) -> None:
         out.append(f'<rect x="{X(centre - p.neck_w/2):.1f}" '
                    f'y="{Y(height) - p.arm_pad*sc - 4:.1f}" '
                    f'width="{p.neck_w*sc:.1f}" height="4" fill="#9a5b00"/>')
-        out.append(_t(X(centre), Y(height) - 18, f"arm {p.neck_w:.0f}", 8.5, fill=ON_FRIDGE_WARN, weight="bold"))
+        # Dark brown, NOT the on-fridge palette: this label renders above the appliance on the
+        # off-white ground. Colour has to follow the actual background, not the label's subject.
+        out.append(_t(X(centre), Y(height) - 18, f"arm {p.neck_w:.0f}", 8.5, fill="#5d3600",
+                      weight="bold"))
         out.append(f'<rect x="{X(centre - p.body_w/2):.1f}" y="{Y(height - neck):.1f}" '
                    f'width="{p.body_w*sc:.1f}" height="{p.body_h*sc:.1f}" fill="#9a5b00" '
                    f'fill-opacity="0.45" stroke="#5d3600" stroke-width="1"/>')
@@ -122,7 +126,7 @@ def render(path: Path, p: BracketParams, neck: float) -> None:
         out.append(_t(rx, Y(height) + 4, f"{clear_top:.0f} mm below the fridge top", 8.5,
                       anchor="start", fill="#8a9199"))
         out.append(_t(rx, Y(bot) + 20, f"plate hidden by {body_hide:.0f} mm/side", 8.5,
-                      anchor="start", fill=ON_FRIDGE_WARN))
+                      anchor="start", fill="#5d3600"))   # on white, not on the fridge
         LOG.info("%s in portrait: %.1f wide (%.0f spare), top %.0f, bottom %.0f, plate hidden %.1f/side",
                  key, dw, usable - dw, top, bot, body_hide)
 

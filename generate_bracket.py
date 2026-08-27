@@ -25,6 +25,7 @@ from ezdxf.math import bulge_to_arc
 from bracket_common import (
     FRIDGE_SIDE,
     FRIDGE_SIDE_EDGE,
+    ON_FRIDGE_BAD,
     INSUNITS_MILLIMETERS,
     LOG_LEVELS,
     REQUIRED_LAYER,
@@ -2330,7 +2331,7 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
     out.append(_svg_text(sx(-fridge_w / 2), sy(fridge_h * 0.78) + 14,
                          f"top corner R_f = {rf:.0f} mm", size=8.5, fill="#6a737b"))
     out.append(_svg_text(sx(-fridge_w / 2), sy(fridge_h * 0.78) + 26,
-                         "MEASURE THIS", size=8.5, fill="#b00020", weight="bold"))
+                         "MEASURE THIS", size=8.5, fill=ON_FRIDGE_BAD, weight="bold"))
 
     # Bracket section: arm along the fridge top, then down the side face.
     arm_x0 = -params.arm_len
