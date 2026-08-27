@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="679" viewBox="0 0 1300 679">
+<rect width="1300" height="679" fill="#fbfbf9"/>
+<rect x="0" y="0" width="1300" height="30" fill="#b00020"/>
+<text x="650.00" y="21.00" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#fff" font-weight="bold">REFERENCE ONLY — arm width study, not a fabrication drawing</text>
+<text x="40.00" y="54.00" font-family="Helvetica,Arial,sans-serif" font-size="15" text-anchor="start" fill="#111" font-weight="bold">Arm / neck width — plan view, looking DOWN on the fridge top</text>
+<text x="40.00" y="72.00" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#555" font-weight="normal">Touch press 5 lbf at 162 mm = 32.0 in·lbf about the vertical spine. At the hook that is a couple across the arm width: one end lifts, the other presses in.</text>
+<text x="40.00" y="88.00" font-family="Helvetica,Arial,sans-serif" font-size="10" text-anchor="start" fill="#555" font-weight="normal">Lift demand = 32.0 in·lbf / arm width. Hold-down = half the assembly weight + one arm retention magnet. Governing case is a NON-MAGNETIC panel, where the body magnets contribute nothing.</text>
+<rect x="70.00" y="146.00" width="260.00" height="357.38" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="70.00" y="146.00" width="260.00" height="50.40" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<text x="76.00" y="171.20" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="start" fill="#b00020" font-weight="normal">hinge caps</text>
+<rect x="70.00" y="457.18" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<text x="76.00" y="480.28" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="start" fill="#b00020" font-weight="normal">cable / waterline step-down</text>
+<rect x="70.00" y="297.39" width="75.60" height="54.60" fill="#9a5b00" fill-opacity="0.55" stroke="#5d3600" stroke-width="1"/>
+<line x1="70.00" y1="297.39" x2="70.00" y2="351.99" stroke="#b00020" stroke-width="3"/>
+<text x="153.60" y="327.69" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="start" fill="#b00020" font-weight="normal">red = bend line on the top edge</text>
+<text x="200.00" y="112.00" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">arm width 130 mm</text>
+<text x="200.00" y="128.00" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#2e9e5b" font-weight="bold">margin 2.30x</text>
+<text x="200.00" y="527.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">lift demand    6.24 lbf</text>
+<text x="200.00" y="541.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">hold-down     14.34 lbf</text>
+<text x="200.00" y="555.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bracket mass   4.88 kg</text>
+<text x="200.00" y="569.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bend length    5.12 in</text>
+<text x="200.00" y="583.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">fits the 621 mm clear window</text>
+<rect x="370.00" y="146.00" width="260.00" height="357.38" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="370.00" y="146.00" width="260.00" height="50.40" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<rect x="370.00" y="457.18" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<rect x="370.00" y="284.79" width="75.60" height="79.80" fill="#9a5b00" fill-opacity="0.55" stroke="#5d3600" stroke-width="1"/>
+<line x1="370.00" y1="284.79" x2="370.00" y2="364.59" stroke="#b00020" stroke-width="3"/>
+<text x="500.00" y="112.00" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">arm width 190 mm</text>
+<text x="500.00" y="128.00" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#2e9e5b" font-weight="bold">margin 3.60x</text>
+<text x="500.00" y="527.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">lift demand    4.27 lbf</text>
+<text x="500.00" y="541.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">hold-down     15.40 lbf</text>
+<text x="500.00" y="555.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bracket mass   5.83 kg</text>
+<text x="500.00" y="569.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bend length    7.48 in</text>
+<text x="500.00" y="583.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">fits the 621 mm clear window</text>
+<rect x="670.00" y="146.00" width="260.00" height="357.38" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="670.00" y="146.00" width="260.00" height="50.40" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<rect x="670.00" y="457.18" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<rect x="670.00" y="272.19" width="75.60" height="105.00" fill="#9a5b00" fill-opacity="0.55" stroke="#5d3600" stroke-width="1"/>
+<line x1="670.00" y1="272.19" x2="670.00" y2="377.19" stroke="#b00020" stroke-width="3"/>
+<text x="800.00" y="112.00" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">arm width 250 mm</text>
+<text x="800.00" y="128.00" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#2e9e5b" font-weight="bold">margin 5.07x</text>
+<text x="800.00" y="527.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">lift demand    3.25 lbf</text>
+<text x="800.00" y="541.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">hold-down     16.45 lbf</text>
+<text x="800.00" y="555.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bracket mass   6.79 kg</text>
+<text x="800.00" y="569.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bend length    9.84 in</text>
+<text x="800.00" y="583.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">fits the 621 mm clear window</text>
+<rect x="970.00" y="146.00" width="260.00" height="357.38" fill="#dfe3e6" stroke="#8a9199" stroke-width="1"/>
+<rect x="970.00" y="146.00" width="260.00" height="50.40" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<rect x="970.00" y="457.18" width="260.00" height="46.20" fill="#b00020" fill-opacity="0.10" stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>
+<rect x="970.00" y="261.69" width="75.60" height="126.00" fill="#9a5b00" fill-opacity="0.55" stroke="#5d3600" stroke-width="1"/>
+<line x1="970.00" y1="261.69" x2="970.00" y2="387.69" stroke="#b00020" stroke-width="3"/>
+<text x="1100.00" y="112.00" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle" fill="#111" font-weight="bold">arm width 300 mm</text>
+<text x="1100.00" y="128.00" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#2e9e5b" font-weight="bold">margin 6.41x</text>
+<text x="1100.00" y="527.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">lift demand    2.71 lbf</text>
+<text x="1100.00" y="541.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">hold-down     17.33 lbf</text>
+<text x="1100.00" y="555.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bracket mass   7.59 kg</text>
+<text x="1100.00" y="569.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">bend length   11.81 in</text>
+<text x="1100.00" y="583.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="middle" fill="#444" font-weight="normal">fits the 621 mm clear window</text>
+<text x="40.00" y="621.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">Clear window between keep-outs is 621 mm on a 851 mm deep top — both keep-outs are ESTIMATES and are on the pre-order measurement checklist.</text>
+<text x="40.00" y="636.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">With working magnets on the body this case never arises — they carry the torsion. This is the fallback: 304 stainless panel, or a magnet that lets go.</text>
+<text x="40.00" y="651.38" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#777" font-weight="normal">Arm magnet hold-down assumed 4.6 lbf (one magnet, already derated 35% for thin painted sheet). Arm width does not widen the sheet: the body is already 310 mm.</text>
+</svg>

@@ -1,0 +1,4 @@
+# This branch is PUBLISHED PUBLICLY by GitHub Pages.
+# It carries ONLY index.html and the SVGs that page references. Nothing else belongs here —
+# not the cut file, not the BOM, not the sources. Serving from the main branch root made all
+# of those publicly downloadable, which is why this branch exists.
