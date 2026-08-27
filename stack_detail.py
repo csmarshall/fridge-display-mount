@@ -22,7 +22,7 @@ from typing import Sequence
 
 from bracket_common import LOG_LEVELS, configure_logging
 import generate_bracket as G
-from generate_bracket import MATERIAL, PART_NOS, BracketParams
+from generate_bracket import FINISH, MATERIAL, BracketParams, part_no
 
 LOG = logging.getLogger("stack")
 
@@ -80,7 +80,7 @@ def _dim_v(x, axis_y, dia, label, colour=INK, size=9.0):
     return o
 
 
-def _section(x0, y0, cw, name, wsh, nut_h, nut_kind, nut_key, p, rep):
+def _section(x0, y0, cw, name, wsh, nut_h, nut_kind, nut_key, lock, p, rep):
     """Draw one fastener combination. Returns (svg, does_the_stud_engage)."""
     t = MATERIAL.thickness
     stud = p.magnet_stud_len
@@ -102,6 +102,11 @@ def _section(x0, y0, cw, name, wsh, nut_h, nut_kind, nut_key, p, rep):
     o.append(f'<rect x="{x0:.1f}" y="{y0:.1f}" width="{cw:.1f}" height="30" rx="4" '
              f'fill="{tint}" stroke="{col}" stroke-width="1.3"/>')
     o.append(_t(x0 + 12, y0 + 20, name, 12.5, anchor="start", weight="bold", fill=col))
+    if lock:
+        o.append(f'<rect x="{x0 + 13 + len(name) * 6.6:.1f}" y="{y0 + 8:.1f}" width="46" '
+                 f'height="15" rx="7" fill="{INK}"/>')
+        o.append(_t(x0 + 36 + len(name) * 6.6, y0 + 19, "LOCKING", 8.5, fill="#fff",
+                    weight="bold"))
     verdict = {"ok": f"{slack:+.2f} mm thread to spare",
                "marginal": f"{slack:+.2f} mm — INSIDE THE TOLERANCE STACK",
                "bad": f"STUD SHORT BY {-slack:.2f} mm"}[state]
@@ -117,21 +122,25 @@ def _section(x0, y0, cw, name, wsh, nut_h, nut_kind, nut_key, p, rep):
 
     mag_x, mag_w = x, p.magnet_standoff * SCALE
     o += _band(mag_x, mag_w, axis, p.magnet_disc_dia, p.magnet_hole_dia, C_MAGNET)
-    bom.append((C_MAGNET, "MAGNET pot", f"O{p.magnet_disc_dia:.2f} x {p.magnet_standoff:.2f} mm", PART_NOS["magnet"]))
+    bom.append((C_MAGNET, "MAGNET pot", f"O{p.magnet_disc_dia:.2f} x {p.magnet_standoff:.2f} mm",
+                (part_no("magnet")[0], "n/a")))
     x += mag_w
 
     plate_x, plate_w = x, t * SCALE
     o += _band(plate_x, plate_w, axis, RAD_MAX * 2, p.magnet_hole_dia, C_PLATE, brk=True)
-    bom.append((C_PLATE, "PLATE", f"{t:.2f} mm ({MATERIAL.thickness_in:.3f} in)", "this DXF"))
+    bom.append((C_PLATE, "PLATE",
+                f"{t:.2f} mm ({MATERIAL.thickness_in:.3f} in)", ("this DXF", "")))
     x += plate_w
     face = x
 
     if wsh:
         o += _band(x, wsh * SCALE, axis, p.washer_od, p.washer_id, C_WASHER)
-        bom.append((C_WASHER, "WASHER flat", f"O{p.washer_od:.2f} / O{p.washer_id:.2f} x {wsh:.2f} mm", PART_NOS["washer"]))
+        bom.append((C_WASHER, "WASHER flat",
+                    f"O{p.washer_od:.2f} / O{p.washer_id:.2f} x {wsh:.2f} mm", part_no("washer")))
         x += wsh * SCALE
     o += _band(x, nut_h * SCALE, axis, p.nut_across_flats, 5 / 16 * IN, C_NUT)
-    bom.append((C_NUT, f"NUT {nut_kind}", f"{p.nut_across_flats:.2f} mm AF x {nut_h:.2f} mm", PART_NOS[nut_key]))
+    bom.append((C_NUT, f"NUT {nut_kind}",
+                f"{p.nut_across_flats:.2f} mm AF x {nut_h:.2f} mm", part_no(nut_key)))
     x += nut_h * SCALE
     stack_end = x
 
@@ -179,7 +188,7 @@ def _section(x0, y0, cw, name, wsh, nut_h, nut_kind, nut_key, p, rep):
     bx, by = x0 + 306, axis - 62
     o.append(_t(bx, by - 14, "PARTS IN THIS STACK", 9.5, anchor="start", weight="bold",
                 fill=MUTED))
-    for j, (swatch, pname, detail, pn) in enumerate(bom):
+    for j, (swatch, pname, detail, (pn, fin)) in enumerate(bom):
         ry = by + j * 34
         o.append(f'<rect x="{bx:.1f}" y="{ry - 8:.1f}" width="11" height="11" fill="{swatch}" '
                  f'stroke="{INK}" stroke-width="0.8"/>')
@@ -190,10 +199,15 @@ def _section(x0, y0, cw, name, wsh, nut_h, nut_kind, nut_key, p, rep):
                         weight="bold"))
         else:
             o.append(_t(x0 + cw - 12, ry + 1, pn, 10.0, anchor="end",
-                        fill=INK if pn != "this DXF" else MUTED,
-                        weight="bold" if pn != "this DXF" else "normal"))
-            if pn != "this DXF":
-                o.append(_t(x0 + cw - 12, ry + 14, "McMaster-Carr", 8.5, anchor="end", fill=MUTED))
+                        fill=INK if fin else MUTED, weight="bold" if fin else "normal"))
+            if fin:
+                # Say WHICH finish. A silver part on a sheet that claims to be all-black is
+                # exactly the kind of thing nobody notices until the box arrives.
+                label, fill = {
+                    "black": ("black oxide", MUTED),
+                    "n/a": ("zinc case - never black", MUTED),
+                }.get(fin, ("PLAIN - no black stocked", BAD))
+                o.append(_t(x0 + cw - 12, ry + 14, label, 8.5, anchor="end", fill=fill))
 
     # ---- radial dimension ladder ---------------------------------------------------------------
     dx = x0 + 196
@@ -233,19 +247,26 @@ def render(path: Path, p: BracketParams) -> None:
     # Ordered worst-fitting first, so the drawing reads as a search that CONVERGES rather than a
     # list of unrelated options. The jam nut is the half-height one; it is on this sheet because
     # it is the only way to keep the washer once the plate went to 0.188 in.
-    options = [
-        ("washer + nylon-insert locknut", p.washer_t, p.nut_h_nyloc, "nylon-insert", "nut_nyloc"),
-        ("nylon-insert locknut, no washer", 0.0, p.nut_h_nyloc, "nylon-insert", "nut_nyloc"),
-        ("washer + standard hex nut", p.washer_t, p.nut_h_hex, "hex standard", "nut_hex"),
-        ("standard hex nut, no washer", 0.0, p.nut_h_hex, "hex standard", "nut_hex"),
-        ("washer + JAM nut (half height)", p.washer_t, p.nut_h_jam, "hex JAM/thin", "nut_jam"),
-        ("JAM nut, no washer", 0.0, p.nut_h_jam, "hex JAM/thin", "nut_jam"),
+    # FIVE nut constructions x washer/no-washer. The first pass carried only the standard nyloc,
+    # found it too tall, and concluded no locking nut fits — which does not follow. Thin-profile
+    # nylon-insert and distorted-thread ("all-metal") both fit, and the distorted-thread one is
+    # the SAME height as a plain hex nut, so it adds locking for nothing.
+    nuts = [
+        ("nylon-insert locknut", p.nut_h_nyloc, "nylon-insert", "nut_nyloc", True),
+        ("THIN nylon-insert locknut", p.nut_h_nyloc_thin, "nyloc THIN", "nut_nyloc_thin", True),
+        ("distorted-thread locknut", p.nut_h_distorted, "distorted-thread", "nut_distorted", True),
+        ("standard hex nut", p.nut_h_hex, "hex standard", "nut_hex", False),
+        ("JAM nut (half height)", p.nut_h_jam, "hex JAM/thin", "nut_jam", False),
     ]
+    options = []
+    for label, nh, kind, key, lock in nuts:
+        options.append((f"washer + {label}", p.washer_t, nh, kind, key, lock))
+        options.append((f"{label}, no washer", 0.0, nh, kind, key, lock))
 
     cw, ch = 548.0, 436.0
     rows = (len(options) + 1) // 2
     W = 40 + cw * 2 + 24 + 40
-    H = 168 + ch * rows + 130
+    H = 168 + ch * rows + 150
 
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
          f'viewBox="0 0 {W:.0f} {H:.0f}">',
@@ -267,20 +288,22 @@ def render(path: Path, p: BracketParams) -> None:
 
     best = None
     states = {}
-    for i, (name, wsh, nut_h, nkind, nkey) in enumerate(options):
+    fits = []
+    for i, (name, wsh, nut_h, nkind, nkey, lock) in enumerate(options):
         cx = 40 + (i % 2) * (cw + 24)
         cy = 168 + (i // 2) * ch
-        svg, st = _section(cx, cy, cw, name, wsh, nut_h, nkind, nkey, p, rep)
+        svg, st = _section(cx, cy, cw, name, wsh, nut_h, nkind, nkey, lock, p, rep)
         o += svg
         states[name] = st
-        # Prefer a combination that keeps the WASHER: bearing area is the thing at stake, and a
-        # clean thread margin with no washer is not better than a clean margin with one.
-        if st == "ok" and (best is None or (wsh and not best[1])):
-            best = (name, bool(wsh))
+        if st == "ok":
+            fits.append((name, bool(wsh), lock, p.magnet_stud_len - (t + wsh + nut_h)))
+    # LOCKING beats bearing area. Neither bearing case is within 60x of yielding the plate, so the
+    # washer is comfort; a nut backing off under touch-cycling is an actual failure.
+    best = max(fits, key=lambda f: (f[2], f[1], f[3])) if fits else None
 
     fy = 168 + rows * ch + 30
-    ok_name, ok_has_washer = best if best else (None, False)
-    o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="98" fill="#fff" '
+    ok_name = best[0] if best else None
+    o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="116" fill="#fff" '
              f'stroke="{OK if best else BAD}" stroke-width="1.6" rx="4"/>')
     o.append(_t(56, fy, f"USE: {ok_name}" if best else
                 "NO STANDARD NUT FITS - the stud is too short for this plate", 13.5,
@@ -293,27 +316,32 @@ def render(path: Path, p: BracketParams) -> None:
                 f"plate. The question was only ever whether it FITS.", 11.5, anchor="start",
                 fill=MUTED))
     o.append(_t(56, fy + 42,
-                f"On a {t:.2f} mm plate a {p.magnet_stud_len:.2f} mm stud cannot take a washer "
-                f"AND a full-height nut - that combination misses by "
-                f"{abs(p.magnet_stud_len - (t + p.washer_t + p.nut_h_hex)):.2f} mm. A half-height "
-                f"JAM nut buys back {p.nut_h_hex - p.nut_h_jam:.2f} mm and lets the washer stay.",
+                f"You can have LOCKING or the washer, not both: the thin nyloc misses with a "
+                f"washer by {abs(p.magnet_stud_len - (t + p.washer_t + p.nut_h_nyloc_thin)):.2f} "
+                f"mm. Locking wins - the bare nut's {rep['nut_bearing_psi']:.0f} psi is still "
+                f"{MATERIAL.yield_psi / rep['nut_bearing_psi']:.0f}x under yield, so the washer "
+                f"is comfort, while a nut backing off under touch-cycling is a real failure.",
                 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 62,
-                "STILL OPEN: a jam nut is not a locking feature on its own, and the usual fix - "
-                "a second nut jammed against it - does not fit either. This joint is preloaded "
-                f"only by the magnet's own {rep['magnet_derated_pull_lbf']:.1f} lbf, not by "
-                "torque, so it wants a thread-locker. None specified yet.", 11.0, anchor="start",
-                fill=BAD))
+                f"Runner-up: the distorted-thread locknut is the SAME "
+                f"{p.nut_h_distorted:.2f} mm height as a plain hex nut - locking for nothing - "
+                f"but it is not reusable and is not stocked in black.", 11.0,
+                anchor="start", fill=MUTED))
+    o.append(_t(56, fy + 80, f"Fasteners are specified in {FINISH.upper()} OXIDE throughout: "
+                f"only the ARM nuts are visible, and they face up against a matte-black arm.",
+                11.0, anchor="start", fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
-    LOG.info("Wrote %s - plate %.2f mm, stud %.2f mm, workable option: %s",
-             path, t, p.magnet_stud_len, best or "NONE")
+    LOG.info("Wrote %s - plate %.2f mm, stud %.2f mm, %d of %d combinations fit, chosen: %s",
+             path, t, p.magnet_stud_len, len(fits), len(options), ok_name or "NONE")
     LOG.debug("bearing: magnet %.0f mm2 / washer %.0f mm2 / bare nut %.0f mm2 (%.2fx)",
               rep["magnet_bearing_area_mm2"], rep["washer_bearing_area_mm2"],
               rep["nut_bearing_area_mm2"], rep["washer_bearing_gain"])
-    for name, wsh, nut_h, _k, key in options:
-        LOG.debug("%-34s needs %.2f mm, slack %+.2f mm (nut %s)", name, t + wsh + nut_h,
-                  p.magnet_stud_len - (t + wsh + nut_h), PART_NOS[key] or "UNSOURCED")
+    for name, wsh, nut_h, _k, key, lock in options:
+        pn, fin = part_no(key)
+        LOG.debug("%-38s needs %5.2f mm, slack %+.2f mm  %s  %s (%s)", name, t + wsh + nut_h,
+                  p.magnet_stud_len - (t + wsh + nut_h), "LOCK" if lock else "    ",
+                  pn or "UNSOURCED", fin or "-")
 
 
 def main(argv: Sequence[str] | None = None) -> int:

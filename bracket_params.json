@@ -60,7 +60,9 @@
     "washer_t_min": 0.889,
     "nut_across_flats": 12.7,
     "nut_h_hex": 6.746874999999999,
-    "nut_h_nyloc": 8.382,
+    "nut_h_nyloc": 8.73125,
+    "nut_h_nyloc_thin": 6.35,
+    "nut_h_distorted": 6.746874999999999,
     "nut_h_jam": 4.762499999999999,
     "center_open_dia": 90.0,
     "window_long": 80.0,
@@ -456,12 +458,36 @@
     "magnet_derated_pull_lbf": 61.24999999999999,
     "magnet_hole_dia_mm": 8.5,
     "part_nos": {
-      "magnet": "3506K67",
-      "washer": "92141A030",
-      "nut_hex": "91841A030",
-      "nut_jam": "91847A030",
-      "nut_nyloc": null
+      "magnet": {
+        "plain": "3506K67",
+        "black": null
+      },
+      "washer": {
+        "plain": "92141A030",
+        "black": "96765A150"
+      },
+      "nut_hex": {
+        "plain": "91841A030",
+        "black": "97149A150"
+      },
+      "nut_jam": {
+        "plain": "91847A030",
+        "black": "98514A035"
+      },
+      "nut_nyloc": {
+        "plain": "91831A030",
+        "black": "94407A105"
+      },
+      "nut_nyloc_thin": {
+        "plain": "90101A237",
+        "black": "90101A122"
+      },
+      "nut_distorted": {
+        "plain": "90047A115",
+        "black": null
+      }
     },
+    "finish": "black",
     "magnet_bearing_area_mm2": 1754.4620631306825,
     "washer_bearing_area_mm2": 225.0612207458609,
     "nut_bearing_area_mm2": 69.93185246890879,

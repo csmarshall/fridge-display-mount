@@ -493,7 +493,14 @@ class BracketParams:
     # across its INSCRIBED circle, not its corners, so across-flats is the load-bearing number.
     nut_across_flats: float = 0.500 * MM_PER_INCH     # 12.70 mm
     nut_h_hex: float = 17 / 64 * MM_PER_INCH          # 6.75 mm — 91841A030, standard profile
-    nut_h_nyloc: float = 0.330 * MM_PER_INCH          # 8.38 mm — NOT SOURCED; it does not fit
+    nut_h_nyloc: float = 11 / 32 * MM_PER_INCH        # 8.73 mm — 91831A030, standard nyloc
+    # The locking constructions that actually fit. Both were missed on the first pass, which
+    # tested ONE locknut (the standard nyloc), found it too tall, and wrongly concluded that no
+    # locking feature was available at all.
+    nut_h_nyloc_thin: float = 1 / 4 * MM_PER_INCH     # 6.35 mm — 90101A237, thin-profile nyloc
+    # Distorted-thread ("all-metal", Stover-type). Same 17/64 in height as a PLAIN hex nut, so it
+    # is a drop-in that adds locking for free. Not reusable, and harder to remove.
+    nut_h_distorted: float = 17 / 64 * MM_PER_INCH    # 6.75 mm — 90047A115 centre-lock
     # A JAM nut is the half-height one. McMaster's own copy: "About half the height of
     # standard-profile nuts... You can also use them as jam nuts by threading them against
     # another hex nut." It is on this sheet because it is the only profile that leaves room for
@@ -1488,13 +1495,32 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
 
 # Sourced on mcmaster.com 2026-08-27 by reading the product tables directly. A value of None
 # means NOT SOURCED — drawings must say so rather than print a plausible-looking number.
-PART_NOS: dict[str, str | None] = {
-    "magnet": "3506K67",
-    "washer": "92141A030",
-    "nut_hex": "91841A030",
-    "nut_jam": "91847A030",
-    "nut_nyloc": None,
+# Black oxide is the SPECIFIED finish: only the arm fasteners are visible, they face up against a
+# matte-black arm, and the whole build's upcharge is under $3. Plain 18-8 is kept as the fallback.
+FINISH = "black"
+
+PART_NOS: dict[str, dict[str, str | None]] = {
+    #                       plain 18-8     black-oxide 18-8
+    "magnet":       {"plain": "3506K67",   "black": None},       # zinc case; no black option
+    "washer":       {"plain": "92141A030", "black": "96765A150"},
+    "nut_hex":      {"plain": "91841A030", "black": "97149A150"},
+    "nut_jam":      {"plain": "91847A030", "black": "98514A035"},
+    "nut_nyloc":    {"plain": "91831A030", "black": "94407A105"},
+    "nut_nyloc_thin": {"plain": "90101A237", "black": "90101A122"},
+    "nut_distorted":  {"plain": "90047A115", "black": None},      # not stocked in black oxide
 }
+
+
+def part_no(key: str, finish: str = FINISH) -> tuple[str | None, str]:
+    """Part number in the specified finish, falling back to plain when black is not stocked.
+
+    Returns (number, finish_actually_used) so a drawing can SAY when it had to fall back rather
+    than silently printing a silver part on a sheet that claims to be all black.
+    """
+    entry = PART_NOS[key]
+    if entry.get(finish):
+        return entry[finish], finish
+    return entry["plain"], "plain"
 
 
 def engineering_report(params: BracketParams, geom: Geometry) -> dict:
@@ -1612,6 +1638,7 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "magnet_derated_pull_lbf": derated_pull,
         "magnet_hole_dia_mm": params.magnet_hole_dia,
         "part_nos": PART_NOS,
+        "finish": FINISH,
         "magnet_bearing_area_mm2": magnet_bearing_mm2,
         "washer_bearing_area_mm2": washer_bearing_mm2,
         "nut_bearing_area_mm2": nut_bearing_mm2,
