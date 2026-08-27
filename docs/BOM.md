@@ -21,8 +21,8 @@ holes fitted (200×200 M6 provision cut but unused), pad thickness target 11.5 m
 | 1 | SendCutSend custom (`bracket_flat.dxf`) | Bracket: A36/1008 mild steel 0.119 in, 310 × 742 mm flat, 1 bend, 4 countersinks (90° M4, concave face), matte black powder coat | 1 | $185.54 | $185.54 | [sendcutsend.com](https://sendcutsend.com) — live quote 2026-08-27 | VERIFIED (live quote, owner's session) |
 | 2 | Waveshare 23.8inch FHD Monitor (SKU 34025) | 23.8 in 1920×1080 capacitive touch monitor, optically bonded, VESA 100, incl. 12 V 5 A PSU + screws pack | 1 | $349.99 | $349.99 | [waveshare.com](https://www.waveshare.com/27inch-fhd-monitor.htm) (select "23.8inch") | VERIFIED |
 | 3 | [3506K67](https://www.mcmaster.com/3506K67/) | Encased neodymium magnet, N42, zinc-plated steel case, 1 57/64" OD × 29/64" (11.51 mm) thick, **5/16"-18 × 1/2" male stud**, 175 lbf max pull | 8 | $23.92 | $191.36 | McMaster-Carr | VERIFIED ($20.62 ea at 50+; delivers next day) |
-| 4 | **NOT VERIFIED — see note** | Hex nut, 18-8 stainless, **5/16"-18 UNC** (imperial thread — NOT M8). **Plain hex, NOT a nylon-insert locknut.** A nyloc is 8.38 mm tall and will not fit: see the stud-length note | 1 pack | NOT VERIFIED | — | McMaster-Carr | **CHANGED 2026-08-27** — the previously listed nyloc 91831A030 does NOT fit the 4.75 mm plate |
-| 5 | ~~[92141A030](https://www.mcmaster.com/92141A030/)~~ | ~~Washer, 18-8 stainless, for 5/16" screw~~ — **DO NOT ORDER.** A washer adds 1.27 mm and the stud has no room for it at this plate thickness | 0 | — | — | — | **REMOVED 2026-08-27** |
+| 4 | [91847A030](https://www.mcmaster.com/91847A030/) | Hex nut, **THIN / jam profile**, 18-8 stainless, **5/16"-18 UNC** (imperial — NOT M8). 1/2" across flats × **3/16" (4.76 mm)** high. Half the height of a standard nut, which is the only reason a washer still fits | 1 pack of 100 | $7.25 | $7.25 | McMaster-Carr | **VERIFIED 2026-08-27** — read off McMaster's thin-profile hex nut table. Replaces both the nyloc and the standard hex nut |
+| 5 | [92141A030](https://www.mcmaster.com/92141A030/) | Washer, general-purpose flat, 18-8 stainless, for 5/16" screw. **Ø0.750" OD / Ø0.344" ID, 0.035"–0.069" thick** | 1 pack of 100 | $7.53 | $7.53 | McMaster-Carr | **REINSTATED 2026-08-27.** Removed while the stack assumed a full-height nut; the thin nut buys back 1.98 mm and the washer fits again. It triples the bearing area on the plate (70 → 225 mm²), so it is worth having |
 | 6 | [91239A180](https://www.mcmaster.com/91239A180/) | VESA screws: M4 × 0.7, **LOW-HEAD** socket cap, 18-8 stainless — pack of 25. NOT flat head: the plate's VESA holes are NOT countersunk (`countersink_vesa = False`; SendCutSend cannot countersink mild steel), so a 90° flat head would sit proud on a plain hole | 1 pack | NOT VERIFIED | — | McMaster-Carr | **NOT VERIFIED — corrected after the BOM was drafted on a wrong countersink premise. Confirm part number and length before ordering.** |
 | 7 | [93375K678](https://www.mcmaster.com/93375K678/) | Neoprene foam strip, closed-cell, **7/16" (11.11 mm) thick**, 2" wide × 10 ft, adhesive-backed, 15 lb/ft³, 12 psi to compress 25% (Soft) | 1 | $141.83 | $141.83 | McMaster-Carr | VERIFIED (price from listing table; see foam note) |
 | 8 | [189755](https://www.hookandloop.com/brands/velcro/cable-ties/1-2-velcro-brand-one-wrap-black) | VELCRO® Brand ONE-WRAP®, 1/2" wide, black, 25 yd roll ($1.25/yd) — for the 4.0 × 18.0 mm cable slots | 1 | $31.25 | $31.25 | hookandloop.com | VERIFIED |
@@ -37,20 +37,61 @@ holes fitted (200×200 M6 provision cut but unused), pad thickness target 11.5 m
 The magnet's stud is a fixed **12.70 mm (1/2 in)**. Every millimetre of plate comes straight off
 the thread left for the nut. At the settled **4.75 mm** plate:
 
+All six combinations of {nyloc, standard hex, thin/jam nut} × {washer, no washer} are drawn in
+section in `stack_detail.svg`. Checked against the **thickest** washer McMaster might ship
+(0.069 in), because they sell it to a range, not a nominal:
+
 | stack | needs | vs stud | |
 |---|---|---|---|
-| washer + nylon-insert locknut | 14.40 mm | −1.70 mm | does not fit |
+| washer + nylon-insert locknut | 14.88 mm | −2.18 mm | does not fit |
+| washer + standard hex nut | 13.25 mm | −0.55 mm | does not fit |
 | nylon-insert locknut, no washer | 13.13 mm | −0.43 mm | does not fit |
-| washer + standard hex nut | 12.78 mm | −0.08 mm | does not fit |
-| **standard hex nut, no washer** | **11.51 mm** | **+1.19 mm** | **use this** |
+| standard hex nut, no washer | 11.50 mm | +1.20 mm | fits, but no washer |
+| **washer + THIN/jam nut** | **11.26 mm** | **+1.44 mm** | **use this** |
+| thin/jam nut, no washer | 9.51 mm | +3.19 mm | fits; no reason to skip the washer |
 
 At the earlier .119 in plate the nyloc-without-washer case worked, which is why this BOM was
-first drafted with nylocs and washers. It no longer does. See `stack_detail.svg`, which is
-generated from the same parameters and will re-check itself if the thickness changes again.
+first drafted with nylocs. It no longer does. `stack_detail.svg` regenerates from the same
+parameters and re-checks itself if the thickness changes again.
 
-**If you want a locking feature**, the options are a thread-locking patch nut, a jam nut, or
-threadlocker on a plain hex nut — not a nylon insert. None of these is verified; ask before
-ordering.
+### Why the washer is worth the 1.75 mm
+
+Three parts clamp against this plate and they do not share a footprint (all derived in
+`engineering_report()`, reported as `*_bearing_area_mm2`):
+
+| bears on the plate | area | pressure at the magnet's 61.2 lbf |
+|---|---|---|
+| magnet face (Ø48.02 against Ø8.5 hole) | 1754 mm² | 23 psi |
+| **washer (Ø19.05 / Ø8.74)** | **225 mm²** | **176 psi** |
+| bare thin nut (12.70 AF against Ø8.5 hole) | 70 mm² | 565 psi |
+
+None of these threatens 36 000 psi mild steel — this joint is preloaded by the magnet's own pull,
+not by torque. The washer is cheap insurance against point-loading a hole edge, not a structural
+necessity.
+
+**Locking is still open.** A jam nut is not a locking feature on its own, and the usual fix —
+a second nut jammed against it — does not fit either (4.76 + 6.75 + 1.75 + 4.75 = 18.01 mm against
+a 12.70 mm stud). That leaves threadlocker. **Not specified; ask before ordering.**
+
+### Black-oxide alternates — cosmetic, and nearly free
+
+Only the **arm** fasteners are visible: the plate's nuts hide in the 10 mm spacer gap behind the
+display, and every magnet body faces the fridge. On the arm the magnets sit underneath and the
+nuts face **up**, where you look straight down at them against a matte-black arm.
+
+| part | plain 18-8 | black oxide 18-8 | delta per piece |
+|---|---|---|---|
+| thin hex nut | 91847A030 — $7.25/100 | **98514A035** — $3.20/25 | +$0.06 |
+| washer | 92141A030 — $7.53/100 | **96765A150** — $15.95/100 | +$0.08 |
+| standard hex nut (if used) | 91841A030 — $8.28/50 | 97149A150 — $6.60/25 | +$0.10 |
+
+At 15 magnet positions that is **under $3 for the whole build** — take the black. Two caveats:
+black oxide on stainless is a cosmetic conversion coating with little corrosion resistance (fine
+indoors), and it does nothing for the **magnet cases**, which are zinc-plated steel and stay
+silver. On the arm they face down and are not visible; on the plate nothing is.
+
+*Black-oxide part numbers were read from the same McMaster tables on 2026-08-27 but at small
+screen size — re-check the digits at order time.*
 
 **The thread is 5/16"-18 UNC — imperial.** It is NOT M8. The two are close enough (7.94 vs
 8.00 mm) to cross-thread if the wrong box is opened.
@@ -68,15 +109,13 @@ Nut, washer, and screw packs each cover the full build several times over.
 
 ## Measure before ordering
 
-1. **Display VESA insert depth** (item 6 length). M4 × 10 mm leaves ~7 mm of engagement past the
-   3.02 mm plate. The display's insert depth is not published; measure the actual monitor before
+1. **Display VESA insert depth** (item 6 length). M4 × 10 mm leaves only ~5.25 mm of engagement past the
+   4.75 mm plate. The display's insert depth is not published; measure the actual monitor before
    committing. Same McMaster family stocks 8/12/16 mm lengths if 10 mm is wrong. The Waveshare
    "screws pack" contents are also unknown until the box is open.
-2. **Magnet stud stack-up** (items 3/4/5). Stud is 1/2" (12.7 mm). Plate 3.02 mm + washer 1.27 mm
-   + nut 8.73 mm = 13.02 mm — the stud ends ~0.3 mm inside the nut, so the nylon collar is only
-   partially engaged **if the washer is used**. Without the washer: 3.02 + 8.73 = 11.75 mm, stud
-   stands ~1 mm proud through the nut and the collar engages fully. Measure and decide (see
-   Decisions). This is why the washer line says "see note".
+2. **Magnet stud stack-up** (items 3/4/5) — RESOLVED 2026-08-27, see the stud-length section.
+   Plate 4.75 + washer 1.75 (worst case) + thin nut 4.76 = 11.26 mm against a 12.70 mm stud,
+   +1.44 mm to spare. The stale figures that used to sit here were computed on the .119 in plate.
 3. **Spacer length** (item 9) = whatever the nut stack actually measures proud of the plate
    (~10 mm expected), so the display's rear box lands on spacers, not on nuts.
 4. **Display DC jack** (item 10): assumed 5.5/2.5 mm barrel, center-positive — confirm against the

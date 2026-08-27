@@ -472,6 +472,33 @@ class BracketParams:
     # 5/16 in = 7.9375. The magnet body height IS the standoff, so this sets how far the
     # display sits off the fridge and it feeds the CG offset and the bottom pad thickness.
     magnet_standoff: float = (29.0 / 64.0) * MM_PER_INCH   # 11.51 mm, the 3506K67 disc height
+
+    # --- the fastener behind the plate --------------------------------------------------------
+    # These live HERE, next to the hole they pass through, because the plate hole diameter and
+    # the parts that clamp against it are one fact, not four. stack_detail.py used to own them
+    # privately, which meant the plate could be re-holed without the sandwich drawing noticing.
+    # Every dimension below was READ OFF the McMaster product table on 2026-08-27, not derived.
+    magnet_stud_len: float = 0.5 * MM_PER_INCH        # 3506K67: male 5/16"-18 x 1/2 in stud
+    # 92141A030, general-purpose 18-8 flat washer. OD is 0.750 in, NOT the 0.688 in an SAE table
+    # would give you — McMaster's general-purpose line is closer to USS. Worth 25% more bearing
+    # area than the SAE size, for free.
+    washer_od: float = 0.750 * MM_PER_INCH            # 19.05 mm
+    washer_id: float = 0.344 * MM_PER_INCH            # 8.74 mm — clears the 7.94 mm stud
+    # McMaster sells this washer to a THICKNESS RANGE of 0.035-0.069 in, not a nominal. A stack
+    # that has to fit must be checked against the THICKEST one you might be shipped, so the max
+    # is the design value. Using the 0.050 in midpoint would pass on paper and rattle in the bag.
+    washer_t: float = 0.069 * MM_PER_INCH             # 1.75 mm worst case
+    washer_t_min: float = 0.035 * MM_PER_INCH         # 0.89 mm — reported, never designed to
+    # 5/16"-18 nuts are 1/2 in across the flats in every profile. The nut bears on the plate
+    # across its INSCRIBED circle, not its corners, so across-flats is the load-bearing number.
+    nut_across_flats: float = 0.500 * MM_PER_INCH     # 12.70 mm
+    nut_h_hex: float = 17 / 64 * MM_PER_INCH          # 6.75 mm — 91841A030, standard profile
+    nut_h_nyloc: float = 0.330 * MM_PER_INCH          # 8.38 mm — NOT SOURCED; it does not fit
+    # A JAM nut is the half-height one. McMaster's own copy: "About half the height of
+    # standard-profile nuts... You can also use them as jam nuts by threading them against
+    # another hex nut." It is on this sheet because it is the only profile that leaves room for
+    # a washer once the plate went to 0.188 in.
+    nut_h_jam: float = 3 / 16 * MM_PER_INCH           # 4.76 mm — 91847A030, thin profile
     center_open_dia: float = 90.0
     # 80, not 100. The MIS-E 200x100 holes land exactly on the ends of the left/right windows at
     # 100 mm long. The windows cannot move — they sit on the 87.5 mm radius so one covers the Pi's
@@ -1459,6 +1486,17 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
 # ---------------------------------------------------------------------------
 
 
+# Sourced on mcmaster.com 2026-08-27 by reading the product tables directly. A value of None
+# means NOT SOURCED — drawings must say so rather than print a plausible-looking number.
+PART_NOS: dict[str, str | None] = {
+    "magnet": "3506K67",
+    "washer": "92141A030",
+    "nut_hex": "91841A030",
+    "nut_jam": "91847A030",
+    "nut_nyloc": None,
+}
+
+
 def engineering_report(params: BracketParams, geom: Geometry) -> dict:
     """Load-path numbers. Everything derived from the parameters — no measured constants."""
     flat = geom.flat
@@ -1545,6 +1583,18 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         else:
             break
 
+    # Bearing annuli around the magnet hole. Three different parts clamp against this plate and
+    # they do NOT share a footprint: the magnet face is enormous, the bare nut is tiny, and the
+    # washer sits between them. Pressure, not area, is what dents a plate — so report both.
+    def _annulus(outer: float) -> float:
+        return math.pi / 4.0 * (outer ** 2 - params.magnet_hole_dia ** 2)
+
+    magnet_bearing_mm2 = _annulus(params.magnet_disc_dia)
+    # A washer's own bore is larger than the plate hole, so IT is what bounds the inner edge.
+    washer_bearing_mm2 = math.pi / 4.0 * (params.washer_od ** 2 - params.washer_id ** 2)
+    nut_bearing_mm2 = _annulus(params.nut_across_flats)
+    clamp_lbf = derated_pull        # the magnet's own pull is what preloads this joint
+
     report = {
         "display_weight_lbf": weight_lbf,
         "bracket_mass_kg": bracket_mass_kg,
@@ -1560,6 +1610,15 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "peel_lever_mm": params.peel_lever,
         "peel_lbf": peel_lbf,
         "magnet_derated_pull_lbf": derated_pull,
+        "magnet_hole_dia_mm": params.magnet_hole_dia,
+        "part_nos": PART_NOS,
+        "magnet_bearing_area_mm2": magnet_bearing_mm2,
+        "washer_bearing_area_mm2": washer_bearing_mm2,
+        "nut_bearing_area_mm2": nut_bearing_mm2,
+        "washer_bearing_gain": washer_bearing_mm2 / nut_bearing_mm2,
+        "nut_bearing_psi": clamp_lbf / (nut_bearing_mm2 / MM_PER_INCH ** 2),
+        "washer_bearing_psi": clamp_lbf / (washer_bearing_mm2 / MM_PER_INCH ** 2),
+        "magnet_bearing_psi": clamp_lbf / (magnet_bearing_mm2 / MM_PER_INCH ** 2),
         "magnet_shear_rubber_lbf": shear_rubber,
         "magnet_shear_bare_nickel_lbf": shear_bare,
         "magnet_tension_sf": derated_pull / force_per_magnet,
