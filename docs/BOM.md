@@ -37,14 +37,20 @@ holes fitted (200×200 M6 provision cut but unused), pad thickness target 11.5 m
 The magnet's stud is a fixed **12.70 mm (1/2 in)**. Every millimetre of plate comes straight off
 the thread left for the nut. At the settled **4.75 mm** plate:
 
-All ten combinations of {standard nyloc, thin nyloc, distorted-thread, standard hex,
-jam nut} × {washer, no washer} are drawn in
+**`fastener_matrix.svg` carries all 39 permutations** — 11 nut constructions × 3 washer options ×
+with/without threadlocker — each with its arithmetic spelled out. `stack_detail.svg` draws the 17
+distinct stack shapes that fit or are marginal. The summary below is the short version. All
+combinations are checked against
 section in `stack_detail.svg`. Checked against the **thickest** washer McMaster might ship
 (0.069 in), because they sell it to a range, not a nominal:
 
 | stack | locking | needs | vs stud | |
 |---|---|---|---|---|
-| washer + nylon-insert locknut | yes | 15.23 mm | −2.53 mm | does not fit |
+| **THIN nylon-insert locknut, no washer** | **mechanical** | **11.10 mm** | **+1.60 mm** | **SPECIFIED** |
+| distorted-thread locknut, no washer | mechanical | 11.50 mm | +1.20 mm | fits; not reusable, no black |
+| JAM nut + threadlocker | chemical | 9.51 mm | +3.19 mm | fits; most margin of all |
+| JAM nut + OVERSIZED washer + threadlocker | chemical | 11.04 mm | +1.66 mm | fits; **732 mm² bearing** |
+| washer + nylon-insert locknut | yes | 15.01 mm | −2.31 mm | does not fit |
 | nylon-insert locknut, no washer | yes | 13.48 mm | −0.78 mm | does not fit |
 | washer + distorted-thread locknut | yes | 13.25 mm | −0.55 mm | does not fit |
 | washer + standard hex nut | — | 13.25 mm | −0.55 mm | does not fit |

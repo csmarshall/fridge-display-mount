@@ -474,42 +474,11 @@ class BracketParams:
     magnet_standoff: float = (29.0 / 64.0) * MM_PER_INCH   # 11.51 mm, the 3506K67 disc height
 
     # --- the fastener behind the plate --------------------------------------------------------
-    # These live HERE, next to the hole they pass through, because the plate hole diameter and
-    # the parts that clamp against it are one fact, not four. stack_detail.py used to own them
-    # privately, which meant the plate could be re-holed without the sandwich drawing noticing.
-    # Every dimension below was READ OFF the McMaster product table on 2026-08-27, not derived.
+    # Only the STUD lives here, because it is a property of the magnet. Every nut and washer is in
+    # the NUTS / WASHERS catalogues below — one home per part, and the permutation table, the
+    # section drawings and the BOM all derive from the same rows.
     magnet_stud_len: float = 0.5 * MM_PER_INCH        # 3506K67: male 5/16"-18 x 1/2 in stud
-    # 96765A145, black-oxide general-purpose 18-8 flat washer. OD is 0.750 in, NOT the 0.688 in
-    # an SAE table would give you — McMaster's general-purpose line is closer to USS.
-    washer_od: float = 0.750 * MM_PER_INCH            # 19.05 mm
-    washer_id: float = 0.344 * MM_PER_INCH            # 8.74 mm — clears the 7.94 mm stud
-    # McMaster sells this washer to a THICKNESS RANGE (0.040-0.060 in for the black-oxide part),
-    # not a nominal. A stack that has to fit must be checked against the THICKEST one you might be
-    # shipped, so the max is the design value. The midpoint would pass on paper and rattle in the
-    # bag. NOTE the plain part 92141A030 has a DIFFERENT range, 0.035-0.065 in — worse, not better.
-    washer_t: float = 0.060 * MM_PER_INCH             # 1.52 mm worst case, black oxide
-    washer_t_min: float = 0.040 * MM_PER_INCH         # 1.02 mm — reported, never designed to
-    # An OVERSIZED washer is the same thickness and 10x the bearing area. It does not rescue the
-    # locking stack (thickness is what runs out, not diameter) but it is the right washer for any
-    # variant that has room. 90377A164, black oxide, OD 1.250 in, 0.040-0.060 in thick.
-    washer_oversize_od: float = 1.250 * MM_PER_INCH   # 31.75 mm
-    # 5/16"-18 nuts are 1/2 in across the flats in every profile. The nut bears on the plate
-    # across its INSCRIBED circle, not its corners, so across-flats is the load-bearing number.
-    nut_across_flats: float = 0.500 * MM_PER_INCH     # 12.70 mm
-    nut_h_hex: float = 17 / 64 * MM_PER_INCH          # 6.75 mm — 91841A030, standard profile
-    nut_h_nyloc: float = 11 / 32 * MM_PER_INCH        # 8.73 mm — 91831A030, standard nyloc
-    # The locking constructions that actually fit. Both were missed on the first pass, which
-    # tested ONE locknut (the standard nyloc), found it too tall, and wrongly concluded that no
-    # locking feature was available at all.
-    nut_h_nyloc_thin: float = 1 / 4 * MM_PER_INCH     # 6.35 mm — 90101A237, thin-profile nyloc
-    # Distorted-thread ("all-metal", Stover-type). Same 17/64 in height as a PLAIN hex nut, so it
-    # is a drop-in that adds locking for free. Not reusable, and harder to remove.
-    nut_h_distorted: float = 17 / 64 * MM_PER_INCH    # 6.75 mm — 90047A115 centre-lock
-    # A JAM nut is the half-height one. McMaster's own copy: "About half the height of
-    # standard-profile nuts... You can also use them as jam nuts by threading them against
-    # another hex nut." It is on this sheet because it is the only profile that leaves room for
-    # a washer once the plate went to 0.188 in.
-    nut_h_jam: float = 3 / 16 * MM_PER_INCH           # 4.76 mm — 91847A030, thin profile
+
     center_open_dia: float = 90.0
     # 80, not 100. The MIS-E 200x100 holes land exactly on the ends of the left/right windows at
     # 100 mm long. The windows cannot move — they sit on the 87.5 mm radius so one covers the Pi's
@@ -1497,6 +1466,186 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
 # ---------------------------------------------------------------------------
 
 
+
+# =====================================================================================
+# Fastener catalogue — every 5/16"-18 nut and washer considered for the magnet stack.
+# Read off McMaster's product tables on 2026-08-27. Heights are the number in their "Ht."
+# column, which is the load-bearing figure; widths are across the FLATS, because a nut bears
+# on its inscribed circle, not its corners.
+# =====================================================================================
+
+
+@dataclass(frozen=True)
+class Nut:
+    key: str
+    name: str
+    height_in: float
+    locking: str                 # "mechanical" | "none"
+    part_plain: str
+    part_black: str | None
+    across_flats_in: float = 0.500
+    # What actually TOUCHES the plate. For a plain nut that is the across-flats circle; a flange
+    # nut or a keps nut carries its own bearing surface and that is wider.
+    bearing_od_in: float = 0.0   # 0 -> use across_flats_in
+    note: str = ""
+
+    @property
+    def height(self) -> float:
+        return self.height_in * MM_PER_INCH
+
+    @property
+    def bearing_od(self) -> float:
+        return (self.bearing_od_in or self.across_flats_in) * MM_PER_INCH
+
+
+NUTS: tuple[Nut, ...] = (
+    Nut("nyloc_thin", "THIN nylon-insert locknut", 1 / 4, "mechanical",
+        "90101A237", "90101A122", note="half height; McMaster also sells it as a jam nut"),
+    Nut("distorted_center", "distorted-thread locknut (centre-lock)", 17 / 64, "mechanical",
+        "90047A115", None, note="all-metal, reversible, NOT reusable"),
+    Nut("distorted_top", "distorted-thread locknut (top-lock)", 17 / 64, "mechanical",
+        "90045A453", None, note="all-metal, NOT reusable"),
+    Nut("hex_jam", "JAM nut (half height)", 3 / 16, "none",
+        "91847A030", "98514A035", note="thinnest nut of any kind"),
+    Nut("hex_std", "standard hex nut", 17 / 64, "none",
+        "91841A030", "97149A150"),
+    Nut("keps", "locknut with external-tooth lock washer (keps)", 21 / 64, "mechanical",
+        "96278A519", None, bearing_od_in=0.578, note="captive washer; teeth can mar the plate"),
+    Nut("nyloc_std", "nylon-insert locknut", 11 / 32, "mechanical",
+        "91831A030", "94407A105"),
+    Nut("nyloc_flange", "nylon-insert FLANGE nut", 11 / 32, "mechanical",
+        "94238A102", "94238A330", bearing_od_in=0.68,
+        note="flange spreads load — no separate washer wanted"),
+    Nut("nyloc_thin_heavy", "THIN-HEAVY nylon-insert locknut", 5 / 16, "mechanical",
+        "90098A115", None, across_flats_in=0.5625, note="10% wider across the flats"),
+    Nut("flex_top", "flex-top locknut", 23 / 64, "mechanical",
+        "91839A127", None, note="for constant heavy vibration"),
+    Nut("nyloc_heavy", "HEAVY nylon-insert locknut", 7 / 16, "mechanical",
+        "90099A030", None, across_flats_in=0.5625),
+)
+
+
+@dataclass(frozen=True)
+class Washer:
+    key: str
+    name: str
+    od_in: float
+    id_in: float
+    t_max_in: float          # ALWAYS the design value — McMaster sells these to a range
+    t_min_in: float
+    part_plain: str | None
+    part_black: str | None
+
+    @property
+    def od(self) -> float:
+        return self.od_in * MM_PER_INCH
+
+    @property
+    def bore(self) -> float:
+        return self.id_in * MM_PER_INCH
+
+    @property
+    def t(self) -> float:
+        return self.t_max_in * MM_PER_INCH
+
+    @property
+    def t_min(self) -> float:
+        return self.t_min_in * MM_PER_INCH
+
+
+WASHERS: tuple[Washer, ...] = (
+    Washer("none", "no washer", 0.0, 0.0, 0.0, 0.0, None, None),
+    # 96765A150 is the 3/8 in row — an earlier revision had it here by mis-reading the table.
+    Washer("standard", "flat washer O0.750", 0.750, 0.344, 0.060, 0.040,
+           "92141A030", "96765A145"),
+    # Same thickness, 10x the bearing area. Thickness is what runs out in this stack, not
+    # diameter, so the oversized one costs nothing extra to fit.
+    Washer("oversized", "OVERSIZED washer O1.250", 1.250, 0.344, 0.060, 0.040,
+           "90313A111", "90377A164"),
+)
+
+# A threadlocker adds ZERO height. It is the only way to lock a joint that has run out of room
+# for a locking nut, so it is a real permutation, not a footnote.
+LOCKERS: tuple[tuple[str, str], ...] = (("dry", "as-assembled"), ("threadlocker", "+ threadlocker"))
+
+NUTS_BY_KEY = {n.key: n for n in NUTS}
+WASHERS_BY_KEY = {w.key: w for w in WASHERS}
+
+SPECIFIED_NUT = "nyloc_thin"
+SPECIFIED_WASHER = "none"
+SPECIFIED_LOCKER = "dry"
+
+
+@dataclass(frozen=True)
+class StackOption:
+    """One fully-costed permutation of the fastener stack behind the plate."""
+    nut: Nut
+    washer: Washer
+    locker: str
+    plate: float
+    stud: float
+    hole_dia: float
+
+    @property
+    def needed(self) -> float:
+        return self.plate + self.washer.t + self.nut.height
+
+    @property
+    def slack(self) -> float:
+        return self.stud - self.needed
+
+    @property
+    def state(self) -> str:
+        return "ok" if self.slack >= 0.5 else ("marginal" if self.slack >= -0.5 else "bad")
+
+    @property
+    def locking(self) -> str:
+        """What actually stops this joint backing off."""
+        if self.nut.locking == "mechanical":
+            return "chemical + mechanical" if self.locker == "threadlocker" else "mechanical"
+        return "chemical" if self.locker == "threadlocker" else "NONE"
+
+    @property
+    def bearing_area(self) -> float:
+        """Annulus the outermost part presses onto the plate with."""
+        if self.washer.key != "none":
+            return math.pi / 4.0 * (self.washer.od ** 2 - self.washer.bore ** 2)
+        return math.pi / 4.0 * (self.nut.bearing_od ** 2 - self.hole_dia ** 2)
+
+    def bearing_psi(self, clamp_lbf: float) -> float:
+        return clamp_lbf / (self.bearing_area / MM_PER_INCH ** 2)
+
+    @property
+    def label(self) -> str:
+        bits = [self.nut.name]
+        if self.washer.key != "none":
+            bits.append(self.washer.name)
+        if self.locker == "threadlocker":
+            bits.append("threadlocker")
+        return " + ".join(bits)
+
+
+def stack_permutations(params: "BracketParams") -> list[StackOption]:
+    """Every nut x washer x threadlocker combination, in the order a reader should meet them.
+
+    A threadlocker on a nut that ALREADY locks mechanically is not an interesting row, so it is
+    generated only for the nuts that have no locking feature of their own.
+    """
+    out: list[StackOption] = []
+    for nut in NUTS:
+        lockers = LOCKERS if nut.locking == "none" else (LOCKERS[0],)
+        for washer in WASHERS:
+            for lk, _ in lockers:
+                out.append(StackOption(nut, washer, lk, MATERIAL.thickness,
+                                       params.magnet_stud_len, params.magnet_hole_dia))
+    # Best first: fits, then the QUALITY of the locking (a nylon insert or a distorted thread is
+    # a better answer than a chemical that has to be cleaned off to service the joint), then the
+    # most thread to spare, then the most bearing area.
+    rank = {"chemical + mechanical": 0, "mechanical": 1, "chemical": 2, "NONE": 3}
+    out.sort(key=lambda o: (o.state != "ok", rank[o.locking], -o.slack, -o.bearing_area))
+    return out
+
+
 # Sourced on mcmaster.com 2026-08-27 by reading the product tables directly. A value of None
 # means NOT SOURCED — drawings must say so rather than print a plausible-looking number.
 # Black oxide is the SPECIFIED finish: only the arm fasteners are visible, they face up against a
@@ -1504,17 +1653,10 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
 FINISH = "black"
 
 PART_NOS: dict[str, dict[str, str | None]] = {
-    #                       plain 18-8     black-oxide 18-8
-    "magnet":       {"plain": "3506K67",   "black": None},       # zinc case; no black option
-    # 96765A150 is the 3/8 in row — an earlier revision of this file had it here by
-    # mis-reading the table. The 5/16 in black-oxide washer is 96765A145.
-    "washer":       {"plain": "92141A030", "black": "96765A145"},
-    "washer_oversize": {"plain": "90313A111", "black": "90377A164"},
-    "nut_hex":      {"plain": "91841A030", "black": "97149A150"},
-    "nut_jam":      {"plain": "91847A030", "black": "98514A035"},
-    "nut_nyloc":    {"plain": "91831A030", "black": "94407A105"},
-    "nut_nyloc_thin": {"plain": "90101A237", "black": "90101A122"},
-    "nut_distorted":  {"plain": "90047A115", "black": None},      # not stocked in black oxide
+    "magnet": {"plain": "3506K67", "black": None},   # zinc case; a black option never existed
+    **{f"nut_{n.key}": {"plain": n.part_plain, "black": n.part_black} for n in NUTS},
+    **{f"washer_{w.key}": {"plain": w.part_plain, "black": w.part_black}
+       for w in WASHERS if w.part_plain},
 }
 
 
@@ -1624,8 +1766,11 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
 
     magnet_bearing_mm2 = _annulus(params.magnet_disc_dia)
     # A washer's own bore is larger than the plate hole, so IT is what bounds the inner edge.
-    washer_bearing_mm2 = math.pi / 4.0 * (params.washer_od ** 2 - params.washer_id ** 2)
-    nut_bearing_mm2 = _annulus(params.nut_across_flats)
+    _w = WASHERS_BY_KEY["standard"]
+    _wo = WASHERS_BY_KEY["oversized"]
+    washer_bearing_mm2 = math.pi / 4.0 * (_w.od ** 2 - _w.bore ** 2)
+    washer_oversize_bearing_mm2 = math.pi / 4.0 * (_wo.od ** 2 - _wo.bore ** 2)
+    nut_bearing_mm2 = _annulus(NUTS_BY_KEY[SPECIFIED_NUT].bearing_od)
     clamp_lbf = derated_pull        # the magnet's own pull is what preloads this joint
 
     report = {
@@ -1648,6 +1793,7 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "finish": FINISH,
         "magnet_bearing_area_mm2": magnet_bearing_mm2,
         "washer_bearing_area_mm2": washer_bearing_mm2,
+        "washer_oversize_bearing_area_mm2": washer_oversize_bearing_mm2,
         "nut_bearing_area_mm2": nut_bearing_mm2,
         "washer_bearing_gain": washer_bearing_mm2 / nut_bearing_mm2,
         "nut_bearing_psi": clamp_lbf / (nut_bearing_mm2 / MM_PER_INCH ** 2),

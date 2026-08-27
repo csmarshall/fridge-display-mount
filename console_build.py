@@ -67,8 +67,11 @@ DIAGRAM_INFO = {
     # among real deliverables. It is a TEST harness — a tool for judging a validator refusal —
     # not a cable harness, and not a fabrication drawing.
     "stack_detail.svg": ("Fastener sandwich at one magnet",
-                        "magnet | plate | washer | nut in section — and whether the fixed 1/2 in "
-                        "stud still reaches.", "key"),
+                        "Every stack shape that fits, in true section — magnet | plate | washer | "
+                        "nut, and whether the fixed 1/2 in stud still reaches.", "key"),
+    "fastener_matrix.svg": ("Every fastener permutation",
+                           "All 39 nut x washer x threadlocker combinations with the arithmetic "
+                           "shown: plate + washer + nut vs stud.", "key"),
     "force_table.svg": ("Force by direction and magnet count",
                        "What it takes to shift or unseat it, 6 to 15 magnets, in lbf and newtons.",
                        "key"),
