@@ -4,7 +4,7 @@
 <text x="508.00" y="22.00" font-family="Helvetica,Arial,sans-serif" font-size="14" text-anchor="middle" fill="#fff" font-weight="bold">REFERENCE ONLY — thickness study, not a fabrication drawing</text>
 <text x="40.00" y="58.00" font-family="Helvetica,Arial,sans-serif" font-size="16" text-anchor="start" fill="#111" font-weight="bold">How much the screen edge moves when you press it</text>
 <text x="40.00" y="78.00" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#555" font-weight="normal">5052-H32. Strength is never the limit — safety factors stay above 15x across the whole range. Stiffness is what you feel, and it scales as 1/t³.</text>
-<text x="40.00" y="95.00" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#555" font-weight="normal">Load case: 5 lbf pressed at the outer screen edge, 162 mm off centre. Cantilever model from the VESA screw to the magnet — conservative; the real plate is stiffer.</text>
+<text x="40.00" y="95.00" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="start" fill="#555" font-weight="normal">Load case: 5 lb pressed at the outer screen edge, 162 mm off centre. Cantilever model from the VESA screw to the magnet — conservative; the real plate is stiffer.</text>
 <rect x="96.00" y="319.22" width="620.00" height="112.78" fill="#2e9e5b" fill-opacity="0.10"/>
 <text x="710.00" y="335.22" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="end" fill="#2e9e5b" font-weight="bold">feels rigid  (&lt; 0.2 mm)</text>
 <line x1="96.00" y1="432.00" x2="716.00" y2="432.00" stroke="#333" stroke-width="1.2"/>
