@@ -138,8 +138,8 @@
 <rect x="872.10" y="327.74" width="6.33" height="26.41" fill="#c0169a" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.8"/>
 <rect x="872.10" y="463.04" width="6.33" height="26.41" fill="#c0169a" fill-opacity="0.30" stroke="#c0169a" stroke-width="0.8"/>
 <rect x="872.10" y="471.85" width="6.33" height="22.00" fill="#f2c14e" fill-opacity="0.9" stroke="#a8830f" stroke-width="0.7"/>
-<rect x="872.10" y="182.00" width="6.33" height="141.35" fill="url(#foam)" fill-opacity="0.5" stroke="#8a9199" stroke-width="0.7" stroke-dasharray="4 3"/>
-<rect x="911.49" y="239.24" width="117.89" height="9.03" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="970.43" y="245.61" font-family="Helvetica,Arial,sans-serif" font-size="7.4" text-anchor="middle" fill="#5c6b77" font-weight="normal">foam 72 mm x2 down the neck</text>
+<rect x="872.10" y="182.00" width="6.33" height="141.35" fill="#f2c14e" fill-opacity="0.8" stroke="#a8830f" stroke-width="0.7"/>
+<rect x="905.31" y="239.24" width="138.24" height="9.03" fill="#efefe9" fill-opacity="0.92" rx="2"/><text x="974.43" y="245.61" font-family="Helvetica,Arial,sans-serif" font-size="7.4" text-anchor="middle" fill="#8a6a10" font-weight="normal">same pad, 72 mm x2 down the neck</text>
 <rect x="880.09" y="371.75" width="13.75" height="73.70" fill="#3c3c3c" stroke="#000" stroke-width="0.8"/>
 <rect x="893.84" y="255.91" width="9.90" height="305.38" fill="#2b2b2b" stroke="#000" stroke-width="0.8"/>
 <line x1="882.84" y1="381.65" x2="891.64" y2="381.65" stroke="#8a9199" stroke-width="0.7"/>
@@ -159,9 +159,9 @@
 <circle cx="896.29" cy="408.60" r="4.5" fill="#fbfbf9" stroke="#b00020" stroke-width="1.5"/>
 <text x="923.24" y="421.60" font-family="Helvetica,Arial,sans-serif" font-size="8" text-anchor="start" fill="#b00020" font-weight="normal">display CG — d = 44.0 mm</text>
 <rect x="729.10" y="595.35" width="9" height="9" fill="#8a6a10"/>
-<text x="744.10" y="602.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">closed-cell sponge arm pad 11.50 mm (0.453 in) — conforms to the top corner radius</text>
-<rect x="729.10" y="609.35" width="9" height="9" fill="#9aa6ae"/>
-<text x="744.10" y="616.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">foam strips 72 mm x2 down the neck, 45 mm channel between them for the straps</text>
+<text x="744.10" y="602.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">ONE pad stock, 11.50 mm (0.453 in), everywhere the bracket meets the fridge — arm, neck and bottom. Matched to the 11.51 mm magnet so the magnets bear, not the pad.</text>
+<rect x="729.10" y="609.35" width="9" height="9" fill="#8a6a10"/>
+<text x="744.10" y="616.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">on the NECK it is two strips 72 mm wide with a 45 mm channel between them for the straps</text>
 <rect x="729.10" y="623.35" width="9" height="9" fill="#c0169a"/>
 <text x="744.10" y="630.35" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#333" font-weight="normal">4 x O48 x 12 mm top-lip magnets, same SKU as the body — zero VERTICAL load, but they do resist peel</text>
 <rect x="729.10" y="637.35" width="9" height="9" fill="#c0169a"/>

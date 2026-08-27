@@ -154,14 +154,27 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     flat = derive_flat(p)
     geom = build_geometry(p, flat)
     rep = G.engineering_report(p, geom)
-    n_body = len([h for h in geom.magnet_discs if h.region == "body"])
-    n_arm = len([h for h in geom.magnet_discs if h.region == "arm"])
+    # FITTED only. Giving the optional positions discs made these count holes as magnets, which
+    # is how the page came to claim 293 lbf of pull-off from a 4+4 build. Third instance of this
+    # exact bug today (approval_sheet, assembly_drawing, here) — same cause each time.
+    n_body = len([h for h in geom.magnet_discs
+                  if h.region == "body" and not h.tag.startswith("spare")])
+    n_arm = len([h for h in geom.magnet_discs
+                 if h.region == "arm" and not h.tag.startswith("spare")])
+    n_body_opt = len([h for h in geom.magnet_discs
+                      if h.region == "body" and h.tag.startswith("spare")])
+    n_arm_opt = len([h for h in geom.magnet_discs
+                     if h.region == "arm" and h.tag.startswith("spare")])
 
     import approval_sheet as A
     world = A.World(p, G.DISPLAY, "left")
     rows = A.magnet_rows(geom)
     arm_offs = A.arm_magnet_offsets(p)
     let_go = A.let_go_lbf(p, world, rows, arm_offs, rep["magnet_derated_pull_lbf"])
+    # ONE model for "how hard to pull off". let_go_lbf said 178 while force_table
+    # said 146 for the same grab, and the page was showing both.
+    import force_table as _ft
+    weakest = _ft.forces(n_body, n_arm, p, rep)["grab the BOTTOM edge and pull"]
     # Force-by-direction, computed rather than transcribed: these figures moved by more than 2x
     # when the magnet SKU changed, and the page carried the old ones for a while without noticing.
     detach_modes, _detach_meta = detach_study.modes(p)
@@ -285,13 +298,15 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
          f"bend deduction {mm_in(flat.bend_deduction, 2)}"),
         ("Bracket mass", kg_lb(rep['bracket_mass_kg']),
          f"total hanging {lbf_n(rep['total_hanging_lbf'])}"),
-        ("Magnets", f"{n_body} body + {n_arm} top lip",
+        ("Magnets", f"{n_body} body + {n_arm} arm FITTED "
+                    f"(+{n_body_opt + n_arm_opt} optional positions cut)",
          f"Ø{mm_in(p.magnet_disc_dia)} × {mm_in(p.magnet_standoff, 2)} bare nickel"),
         ("Magnet spacing", mm_in(rep['magnet_spacing_mm']),
          f"load-bearing floor {mm_in(p.min_magnet_spacing)}"),
         ("Torsion margin", f"{rep['magnet_tension_sf']:.1f}×",
          f"{lbf_n(rep['torsion_force_per_magnet_lbf'], 2)} per magnet"),
-        ("Pull-off force", lbf_n(let_go, 0), "straight out at the screen bottom"),
+        ("Pull-off force", lbf_n(weakest, 0),
+         "grabbing the screen's BOTTOM edge — the easiest place, so the honest figure"),
         ("Screen centre", mm_in(rep['screen_centre_height_mm']),
          f"top {mm_in(rep['screen_top_portrait_mm'])} / bottom {mm_in(rep['screen_bottom_portrait_mm'])}"),
         ("Stands off", mm_in(world.standoff),
@@ -357,6 +372,12 @@ section>.blurb{color:var(--muted);font-size:12.5px;margin:0 0 12px}
 .pill{font-size:10px;text-transform:uppercase;letter-spacing:.8px;padding:2px 7px;border-radius:20px;
  border:1px solid currentColor;white-space:nowrap;font-weight:700}
 .pill.open{color:var(--warn)} .pill.blocked{color:var(--stop)} .pill.settled{color:var(--ok)}
+.collapsed-line{display:none;font-size:12.5px;color:var(--muted);gap:8px;align-items:baseline}
+.collapsed-line .pill{flex:none}
+body.hide-done .card.done>*:not(.collapsed-line){display:none}
+body.hide-done .card.done{padding:9px 15px;background:transparent;box-shadow:none;
+  border-style:dashed;align-self:start}
+body.hide-done .card.done .collapsed-line{display:flex}
 .chk{display:flex;gap:10px;align-items:flex-start}
 .chk input{margin-top:3px;width:16px;height:16px;accent-color:var(--ok);flex:0 0 auto}
 .chk.done h3,.chk.done p{opacity:.45;text-decoration:line-through}
@@ -398,7 +419,8 @@ kbd{border:1px solid var(--rule);border-bottom-width:2px;border-radius:4px;paddi
 JS = """
 const KEY='chore-console-v1';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const st=Object.assign({notes:{},done:{},off:{},cols:2,zoom:'fit',theme:'light'},load());
+const st=Object.assign({notes:{},done:{},off:{},cols:2,zoom:'fit',theme:'light',
+                        hideDone:true},load());
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');
@@ -406,13 +428,19 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');
 
 function apply(){
   document.documentElement.dataset.theme=st.theme;
+  // Collapse anything settled or ticked down to a one-line summary. It stays on the page —
+  // hiding a decision outright would lose the record of why it was made.
+  document.body.classList.toggle('hide-done', st.hideDone!==false);
+  const hb=$('[data-act="hidedone"]');
+  if(hb){hb.setAttribute('aria-pressed', st.hideDone!==false?'true':'false');
+         hb.textContent = st.hideDone!==false ? 'Show settled' : 'Hide settled';}
   const g=$('#grid');
   if(g){g.style.gridTemplateColumns=`repeat(${st.cols},minmax(0,1fr))`;g.classList.toggle('fit',st.zoom==='fit');
     $$('#grid .frame img').forEach(i=>i.style.width=st.zoom==='fit'?'100%':st.zoom+'%');}
   $$('figure').forEach(f=>{const on=st.off[f.dataset.file]!==true;f.hidden=!on;
     const c=$(`.chip[data-file="${CSS.escape(f.dataset.file)}"]`);
     if(c){c.dataset.on=on?'1':'0';c.querySelector('input').checked=on}});
-  $$('.chk').forEach(c=>{const d=!!st.done[c.dataset.id];c.classList.toggle('done',d);
+  $$('.chk').forEach(c=>{const d=!!st.done[c.dataset.id]||c.dataset.state==='settled';c.classList.toggle('done',d);
     c.querySelector('input').checked=d});
   $$('.note').forEach(n=>{const v=st.notes[n.dataset.id]||'';const ta=n.querySelector('textarea');
     if(ta.value!==v)ta.value=v;n.dataset.has=v.trim()?'1':'0';
@@ -442,6 +470,7 @@ document.addEventListener('click',e=>{
   if(b){st[b.parentElement.dataset.key]=b.dataset.val;apply();return}
   const a=e.target.closest('[data-act]'); if(!a)return;
   const act=a.dataset.act;
+  if(act==='hidedone'){st.hideDone=!st.hideDone;apply();return}
   if(act==='all'||act==='none'){$$('figure').forEach(f=>st.off[f.dataset.file]=(act==='none'));apply()}
   if(act==='only'){const g=a.dataset.grp.split('|');
     $$('figure').forEach(f=>st.off[f.dataset.file]=!g.includes(f.dataset.file));apply()}
@@ -484,11 +513,17 @@ def render_cards(sec: Section, checklist: bool = False) -> str:
                  + (f'<p>{esc(it.body)}</p>' if it.body else "")
                  + (f'<div class="meta">{esc(it.meta)}</div>' if it.meta else "")
                  + (note_box(it.id, it.title) if it.note else ""))
+        done = it.state == "settled"
+        cls = "card done" if done else "card"
+        summary = (f'<div class="collapsed-line"><span class="pill {it.state}">'
+                   f'{esc(it.state)}</span> {esc(it.title)}</div>') if done else ""
         if checklist:
-            out.append(f'<div class="card chk" data-id="{esc(it.id)}" data-title="{esc(it.title)}">'
-                       f'<input type="checkbox"><div>{inner}</div></div>')
+            out.append(f'<div class="{cls} chk" data-id="{esc(it.id)}" '
+                       f'data-state="{esc(it.state)}" data-title="{esc(it.title)}">{summary}'
+                       f'<input type="checkbox"{" checked" if done else ""}>'
+                       f'<div>{inner}</div></div>')
         else:
-            out.append(f'<div class="card">{inner}</div>')
+            out.append(f'<div class="{cls}">{summary}{inner}</div>')
     out.append("</div>")
     return "".join(out)
 
@@ -565,6 +600,7 @@ def build(root: Path, out: Path) -> int:
   <nav>{nav}</nav>
   <span class="spacer"></span>
   <span class="sub" id="ncount">no notes yet</span>
+  <button class="b pri" data-act="hidedone" aria-pressed="true">Hide settled</button>
   <button class="b pri" data-act="copy">Copy notes for Claude</button>
   <button class="b" data-act="clear">Clear</button>
   <span class="seg" data-key="theme"><button data-val="light">Light</button><button data-val="dark">Dark</button></span>

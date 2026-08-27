@@ -25,7 +25,7 @@ from generate_bracket import BracketParams
 LOG = logging.getLogger("views")
 
 INK, MUTED, RULE = "#14181c", "#6b757e", "#c9d1d8"
-PLATE, FOAM = "#e7ebee", "#9aa6ae"
+PLATE, FOAM = "#e7ebee", "#c9962a"
 MAG, VESA, STRAP = "#c0169a", "#1a5fb4", "#2b3036"
 
 
@@ -122,10 +122,10 @@ def render(path: Path, p: BracketParams) -> None:
                        f'fill="url(#fm)" stroke="{FOAM}" stroke-width="1" '
                        f'stroke-dasharray="5 3"/>')
         my = (p.body_h + flat.height) / 2
-        out.append(_t(X(cxm - chan/2 - strip/2), Y(my), f"FOAM", 9, fill="#4a5560", weight="bold"))
-        out.append(_t(X(cxm - chan/2 - strip/2), Y(my) + 12, f"{strip:.0f} mm", 8, fill="#4a5560"))
-        out.append(_t(X(cxm + chan/2 + strip/2), Y(my), f"FOAM", 9, fill="#4a5560", weight="bold"))
-        out.append(_t(X(cxm + chan/2 + strip/2), Y(my) + 12, f"{strip:.0f} mm", 8, fill="#4a5560"))
+        out.append(_t(X(cxm - chan/2 - strip/2), Y(my), f"PAD", 9, fill="#8a6a10", weight="bold"))
+        out.append(_t(X(cxm - chan/2 - strip/2), Y(my) + 12, f"{strip:.0f} mm", 8, fill="#8a6a10"))
+        out.append(_t(X(cxm + chan/2 + strip/2), Y(my), f"PAD", 9, fill="#8a6a10", weight="bold"))
+        out.append(_t(X(cxm + chan/2 + strip/2), Y(my) + 12, f"{strip:.0f} mm", 8, fill="#8a6a10"))
         # Vertical, but placed in the largest CLEAR RUN between strap-slot pairs rather than
         # straight down the middle — the slots live on this centreline, so a full-length label
         # lies on top of the very features it is describing.
@@ -174,7 +174,8 @@ def render(path: Path, p: BracketParams) -> None:
                   "each mid-side addition covers ~11.5 mm of a vent window — accepted",
                   8.4, fill=MUTED))
     out.append(_t(bx + pw/2, oy + ph + 66,
-                  f"pads {p.bottom_pad_thickness:.1f} mm — matched to the magnet, biased UNDER",
+                  f"ONE pad stock {p.bottom_pad_thickness:.1f} mm ({p.bottom_pad_thickness/25.4:.3f} in) "
+                  f"— arm, neck and bottom alike, matched to the magnet",
                   9.0, fill=MUTED))
 
     # ---------------- FRONT: faces the display -----------------------------------------------

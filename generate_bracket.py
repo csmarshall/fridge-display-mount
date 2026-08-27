@@ -2048,11 +2048,10 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
         # Drawing it from neck_len put the foam over the BODY, where the magnets already are.
         out.append(f'<rect x="{sx(0):.2f}" y="{sy(0):.2f}" '
                    f'width="{standoff * scale:.2f}" height="{params.neck_len * scale:.2f}" '
-                   f'fill="url(#foam)" fill-opacity="0.5" stroke="#8a9199" stroke-width="0.7" '
-                   f'stroke-dasharray="4 3"/>')
-        out.append(_svg_text_masked(sx(standoff) + 92, sy(params.neck_len * 0.45),
-                                    f"foam {params.foam_strip_w:.0f} mm x2 down the neck",
-                                    size=7.4, fill="#5c6b77"))
+                   f'fill="#f2c14e" fill-opacity="0.8" stroke="#a8830f" stroke-width="0.7"/>')
+        out.append(_svg_text_masked(sx(standoff) + 96, sy(params.neck_len * 0.45),
+                                    f"same pad, {params.foam_strip_w:.0f} mm x2 down the neck",
+                                    size=7.4, fill="#8a6a10"))
 
     # The display is not a slab: the bracket lands on a raised rear box and the panel stands
     # rear_box_depth further out again.
@@ -2093,9 +2092,10 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
     callouts = [
         # "(1/4 in)" used to be hardcoded here. 1/4 in is 6.35 mm; the pad is now 11.50 mm, so
         # the label was flatly wrong. Derive the imperial figure from the value itself.
-        ("#8a6a10", f"closed-cell sponge arm pad {pad:.2f} mm ({pad/MM_PER_INCH:.3f} in) — "
-                    f"conforms to the top corner radius"),
-        ("#9aa6ae", f"foam strips {params.foam_strip_w:.0f} mm x2 down the neck, "
+        ("#8a6a10", f"ONE pad stock, {pad:.2f} mm ({pad/MM_PER_INCH:.3f} in), everywhere the "
+                    f"bracket meets the fridge — arm, neck and bottom. Matched to the "
+                    f"{params.magnet_standoff:.2f} mm magnet so the magnets bear, not the pad."),
+        ("#8a6a10", f"on the NECK it is two strips {params.foam_strip_w:.0f} mm wide with a "
                     f"{params.foam_channel_w:.0f} mm channel between them for the straps"),
         ("#c0169a", f"{len(sorted({params.arm_magnet_offset, *params.extra_arm_magnet_offsets})) * 2} x "
                     f"O{params.arm_magnet_disc_dia:.0f} x {params.arm_magnet_standoff:.0f} mm top-lip "
