@@ -14,7 +14,7 @@
 <rect x="297.00" y="159.47" width="258.54" height="15.53" fill="#f2c14e" fill-opacity="0.55" stroke="#a8830f" stroke-width="0.8"/>
 <rect x="555.54" y="438.25" width="15.54" height="263.25" fill="#f2c14e" fill-opacity="0.40" stroke="#a8830f" stroke-width="0.6"/>
 <rect x="555.54" y="250.61" width="15.54" height="64.83" fill="#e7b6dd" stroke="#c0169a" stroke-width="0.8"/>
-<text x="541.54" y="319.79" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="end" fill="#5c6368" font-weight="normal">magnets + pad hold the spine off</text>
+<text x="541.54" y="319.79" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="end" fill="#b0b6b9" font-weight="normal">magnets + pad hold the spine off</text>
 <rect x="297.00" y="149.06" width="67.50" height="29.94" fill="#b00020" fill-opacity="0.16" stroke="#b00020" stroke-width="1" stroke-dasharray="4 3"/>
 <line x1="330.75" y1="145.06" x2="330.75" y2="123.06" stroke="#b00020" stroke-width="1"/>
 <text x="330.75" y="117.06" font-family="Helvetica,Arial,sans-serif" font-size="11.5" text-anchor="middle" fill="#b00020" font-weight="bold">this 50 mm is the whole difference</text>

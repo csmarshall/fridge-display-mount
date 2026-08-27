@@ -142,7 +142,10 @@ def render(path: Path, p: BracketParams) -> None:
              f'font-size="12" font-weight="bold" fill="{INK}">MAGNETS →</text>')
 
     tables = [forces(np_, na, p, rep) for np_, na in LADDER]
-    _as_built_tag = (f'<text x="{as_built_x:.1f}" y="{y0-9:.1f}" '
+    # y0-9 sat inside row 1 and overprinted its "146 lb" cell. The header band above is full
+    # (count, then the plate/reach breakdown), so the only clear space in this column is under
+    # the last rule — which still reads as belonging to the column it sits beneath.
+    _as_built_tag = (f'<text x="{as_built_x:.1f}" y="{y0 + rowh*len(dirs) + 12:.1f}" '
                      f'font-family="Helvetica,Arial,sans-serif" font-size="9.5" '
                      f'text-anchor="middle" font-weight="bold" fill="{OK}">AS BUILT</text>')
     for r, name in enumerate(dirs):

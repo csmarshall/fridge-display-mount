@@ -122,7 +122,13 @@ def draw(path: Path, p: BracketParams) -> dict:
     # verdict block
     vx = X(flat.width)+40
     o.append(T(vx, Tp+20, "VALIDATOR", 12, anchor="start", weight="bold"))
-    yy = Tp+42
+    # Say it on the SHEET, not just in the page caption. A reviewer had to ask whether the FAIL
+    # was the point or a stale parameter set; a drawing that raises that question should answer it.
+    o.append(T(vx, Tp+34, "This sheet is SUPPOSED to fail.", 9.5, anchor="start", fill=BAD,
+               weight="bold"))
+    o.append(T(vx, Tp+46, "It renders a rejected layout so the", 8.5, anchor="start", fill=MUTED))
+    o.append(T(vx, Tp+56, "refusal can be judged by eye.", 8.5, anchor="start", fill=MUTED))
+    yy = Tp+76
     if errs:
         for e in errs[:4]:
             o.append(T(vx, yy, "FAIL  "+e.code, 11, anchor="start", fill=BAD, weight="bold"))

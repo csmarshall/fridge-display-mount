@@ -199,12 +199,15 @@ def plate_panel(ox, oy, s, plate: Plate, extras: Sequence[Pt], key: str, title: 
     p = plate.p
     def X(v): return ox + v * s
     def Y(v): return oy + (p.body_h - v) * s
-    o = [T(ox, oy - 30, title, 13, anchor="start", weight="bold", fill=COLS[key]),
+    # The title was at a fixed oy-30 while the subtitle block grew upward from oy-15, so a
+    # two-line subtitle put its first line 4 px under the title. Derive the title from the block.
+    _subs = _sub_lines(subtitle, s, p)
+    o = [T(ox, oy - 15 - len(_subs) * 11 - 8, title, 13, anchor="start", weight="bold",
+           fill=COLS[key]),
          # Subtitles are longer than the panel is wide and ran into the NEXT panel's subtitle.
          # Wrap to the panel width instead of overflowing it.
-         *[T(ox, oy - 15 - (len(_sub_lines(subtitle, s, p)) - 1 - _i) * 11, _ln, 9.5,
-             anchor="start", fill=MUTED)
-           for _i, _ln in enumerate(_sub_lines(subtitle, s, p))],
+         *[T(ox, oy - 15 - (len(_subs) - 1 - _i) * 11, _ln, 9.5, anchor="start", fill=MUTED)
+           for _i, _ln in enumerate(_subs)],
          f'<rect x="{X(0):.1f}" y="{Y(p.body_h):.1f}" width="{p.body_w*s:.1f}" '
          f'height="{p.body_h*s:.1f}" rx="{p.outer_fillet*s:.1f}" fill="#f4f6f8" '
          f'stroke="{INK}" stroke-width="1.4"/>']

@@ -134,3 +134,12 @@ PAD_FILL = "#f2c14e"        # closed-cell sponge pad
 PAD_EDGE = "#a8830f"
 MAGNET_FILL = "#e7b6dd"     # neodymium pot magnet
 MAGNET_EDGE = "#c0169a"
+
+
+# Semantic colours for text drawn ON the charcoal fridge. The normal ink palette is dark, which
+# was fine when the appliance was pale; since it was corrected to its real near-black these are
+# the versions that survive on it. If a label sits on the fridge, it MUST come from here — this
+# has caused the same regression three times in different sheets.
+ON_FRIDGE_BAD = "#ff8a8a"     # warnings / keep-outs
+ON_FRIDGE_OK = "#7fe0b0"      # confirmations
+ON_FRIDGE_WARN = "#ffd27a"    # the arm, foam, anything currently drawn in dark browns

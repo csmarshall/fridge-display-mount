@@ -98,9 +98,6 @@ DIAGRAM_INFO = {
     "harness_view.svg": ("Magnet placement validator — deliberate FAIL",
                         "Shows a configuration the validator REFUSES, on purpose, so a refusal "
                         "can be judged rather than obeyed. NOT the built part.", "study"),
-    "_harness_unused.svg": ("Magnet placement validator",
-                         "Diagnostic: draws a candidate the validator REFUSES, so a refusal can "
-                         "be judged rather than obeyed. Not a cut file.", "study"),
 }
 GROUP_ORDER = [("key", "Key drawings"), ("detail", "Assembly detail"), ("study", "Background studies")]
 

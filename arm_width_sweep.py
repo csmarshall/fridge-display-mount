@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_BAD
 from generate_bracket import (
     DISPLAY,
     LBF_PER_KG,
@@ -129,7 +129,7 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
                    f'y2="{arm_y0 + width * scale:.2f}" stroke="#b00020" stroke-width="3"/>')
         if index == 0:
             out.append(_text(px + params.arm_len * scale + 8, margin_t + depth_px / 2 + 3,
-                             "red = bend line on the top edge", size=8, anchor="start", fill="#b00020"))
+                             "red = bend line on the top edge", size=8, anchor="start", fill=ON_FRIDGE_BAD))
 
         out.append(_text(px + (panel_w - 40) / 2, margin_t - 34, f"arm width {width:.0f} mm",
                          size=13, weight="bold"))

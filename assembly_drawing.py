@@ -144,16 +144,6 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     _ly = Y(cy + d.rear_face_feature_radius)
     out.append(f'<line x1="{X(cx) + d.rear_face_feature_dia/2*sc:.1f}" y1="{_ly:.1f}" '
                f'x2="{_lx - 4:.1f}" y2="{_ly:.1f}" stroke="#a8630f" stroke-width="0.8"/>')
-    # Moving it outboard cleared the dashed box but it still crosses the REAR BOX dimension, the
-    # plate edge and the display outline. Nothing here can be moved clear of all three, so give it
-    # a panel and let it sit on top of them.
-    out.append(f'<rect x="{_lx - 5:.1f}" y="{_ly - 16:.1f}" width="152" height="26" rx="3" '
-               f'fill="#fbfbf9" fill-opacity="0.92"/>')
-    out.append(_t(_lx, _ly - 6, "Pi fan / GPIO opening", 9, anchor="start", fill="#a8630f",
-                  weight="bold"))
-    out.append(_t(_lx, _ly + 6, "sits inside the vent window", 8.5, anchor="start",
-                  fill="#a8630f"))
-
     # neck stub, so the plate does not read as a floating rectangle
     out.append(f'<rect x="{X(cx-params.neck_w/2):.1f}" y="{Y(params.body_h)-52:.1f}" '
                f'width="{params.neck_w*sc:.1f}" height="52" fill="#8a9199" fill-opacity="0.22" '
@@ -167,6 +157,19 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     out.append(_dim_h(X(cx-bw/2), X(cx+bw/2), Y(cy+bh/2) - 14, f"REAR BOX {bw:.0f}", colour="#c0169a"))
     out.append(_dim_v(Y(params.body_h), Y(0), X(0) - 34, f"PLATE {params.body_h:.0f}"))
     out.append(_dim_v(Y(cy+dh/2), Y(cy-dh/2), X(0) - 76, f"DISPLAY {dh:.2f}", colour="#1a5fb4"))
+
+    # Emitted HERE, after the dimensions, not with the rear-box geometry. A panel behind text is
+    # worthless if later drawing paints over it — the REAR BOX dimension, the plate edge and the
+    # plate edge and the display outline. Nothing here can be moved clear of all three, so give it
+    # a panel and let it sit on top of them.
+    out.append(f'<rect x="{_lx - 5:.1f}" y="{_ly - 16:.1f}" width="152" height="26" rx="3" '
+               f'fill="#fbfbf9" fill-opacity="0.92"/>')
+    out.append(_t(_lx, _ly - 6, "Pi fan / GPIO opening", 9, anchor="start", fill="#a8630f",
+                  weight="bold"))
+    out.append(_t(_lx, _ly + 6, "sits inside the vent window", 8.5, anchor="start",
+                  fill="#a8630f"))
+
+
     out.append(_dim_v(Y(cy+bh/2), Y(cy-bh/2), X(cx+bw/2) + 26, f"REAR BOX {bh:.0f}", colour="#c0169a"))
     out.append(_dim_h(X(cx-params.vesa/2), X(cx+params.vesa/2), Y(cy) + 4, f"VESA {params.vesa:.0f}",
                       colour="#1a5fb4"))

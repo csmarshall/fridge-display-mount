@@ -310,8 +310,9 @@ def render(path: Path, p: BracketParams) -> None:
     # fridge box, where the panel is empty.
     # End-anchored at spine_out it ran off the LEFT edge of the canvas. Start-anchored from the
     # card's own left margin instead, above the arm, where the panel is empty.
-    o.append(_t(66, arm_bot - 16, "sponge pad + arm magnet — the arm never touches bare steel",
-                9.0, anchor="start", fill=MUTED))
+    # Twice now this has collided with something on the diagram — first the facts column, then
+    # the green bearing callout. It is a statement, not a callout, so it belongs in the prose
+    # column with the other statements rather than floating over the drawing.
     o.append(_arrow(spine_out + 4, gy + 130, spine_out + 4, gy + 172, INK))
     o.append(_t(spine_out + 16, gy + 162, f"all {lbf_n(hanging, 1)} of it", 10.5, weight="bold"))
     o.append(_arrow(gx + 40, gy - 40, gx + 40, gy - 16, OK))
@@ -323,7 +324,8 @@ def render(path: Path, p: BracketParams) -> None:
     tx5, ty5 = 470.0, y5 + 56
     facts = [
         ("The arm rests ON the fridge top. The vertical load goes into bearing at the corner — "
-         "compression on painted steel over a sponge pad.", INK, "normal"),
+         "compression on painted steel over a sponge pad. It never touches bare steel: the pad "
+         "and the arm magnets, both about 11.5 mm, hold it clear.", INK, "normal"),
         ("The magnets carry ZERO vertical load. They only stop swing and rattle, and that duty "
          "is TENSION — their strong direction.", OK, "bold"),
         (f"Demand on a magnet: {lbf_n(rep['torsion_force_per_magnet_lbf'], 1)} from a firm "

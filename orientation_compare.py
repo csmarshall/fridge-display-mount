@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_BAD, ON_FRIDGE_OK, ON_FRIDGE_WARN
 from generate_bracket import DISPLAY, MM_PER_INCH, BracketParams
 
 LOG = logging.getLogger("orient")
@@ -93,7 +93,7 @@ def render(path: Path, p: BracketParams) -> None:
         out.append(f'<rect x="{X(0):.1f}" y="{Y(height):.1f}" width="{door*sc:.1f}" '
                    f'height="{height*sc:.1f}" fill="#b00020" fill-opacity="0.15" '
                    f'stroke="#b00020" stroke-width="1" stroke-dasharray="4 3"/>')
-        out.append(_t(X(door/2), Y(height*0.55), f"door sweep {door:.0f}", 8.5, fill="#b00020",
+        out.append(_t(X(door/2), Y(height*0.55), f"door sweep {door:.0f}", 8.5, fill=ON_FRIDGE_BAD,
                       weight="bold", rotate=-90))
 
         # hinge cover, top front
@@ -112,7 +112,7 @@ def render(path: Path, p: BracketParams) -> None:
                    f'width="{p.neck_w*sc:.1f}" height="4" fill="#9a5b00"/>')
         # Was at Y(height) - 18, the same band as the hinge-cover callout, so the two stacked.
         # The arm label belongs BELOW its own bar, where nothing else is drawn.
-        out.append(_t(X(centre), Y(height) + 13, f"arm {p.neck_w:.0f} mm", 8.5, fill="#5d3600",
+        out.append(_t(X(centre), Y(height) + 13, f"arm {p.neck_w:.0f} mm", 8.5, fill=ON_FRIDGE_WARN,
                       weight="bold"))
 
         body_top = height - p.neck_len
@@ -136,9 +136,9 @@ def render(path: Path, p: BracketParams) -> None:
             # Right-anchored at the door edge, this ran left into the comfort-band pill that
             # sits at X(0) - 42. Anchor it INSIDE the red overhang instead, which is its subject.
             out.append(_t(X(centre - dw/2) + 6, Y(screen_c), "into the", 9, anchor="start",
-                          fill="#b00020", weight="bold"))
+                          fill=ON_FRIDGE_BAD, weight="bold"))
             out.append(_t(X(centre - dw/2) + 6, Y(screen_c) + 12, "door's path", 9, anchor="start",
-                          fill="#b00020", weight="bold"))
+                          fill=ON_FRIDGE_BAD, weight="bold"))
 
         # comfort band
         out.append(f'<rect x="{X(0) - 42:.1f}" y="{Y(COMFORT_HIGH):.1f}" width="34" '

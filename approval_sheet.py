@@ -816,11 +816,31 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
         ("Comes off", "attached with magnets and pads", "no adhesive, no holes in the fridge"),
     ]
     colw = (SW - 2 * ax - 32) / len(facts)
+
+    def _fit(txt: str, px_per_char: float, width: float) -> list[str]:
+        """Wrap to the COLUMN, not to the page. A note longer than its column used to run on
+        into the next column's note and the two read as one run-on sentence."""
+        limit = max(12, int((width - 14) / px_per_char))
+        out, cur = [], ""
+        for w in txt.split():
+            trial = f"{cur} {w}".strip()
+            if len(trial) <= limit:
+                cur = trial
+            else:
+                out.append(cur)
+                cur = w
+        if cur:
+            out.append(cur)
+        return out
+
     for i, (k, v, note) in enumerate(facts):
         fx = ax + 18 + i * colw
         o.append(T(fx, by + 22, k.upper(), 8.0, anchor="start", fill=MUTED, spacing="0.9"))
-        o.append(T(fx, by + 40, v, 11.5, anchor="start", fill=INK, weight="bold"))
-        o.append(T(fx, by + 55, note, 9.0, anchor="start", fill=MUTED))
+        for j, ln in enumerate(_fit(v, 6.1, colw)):
+            o.append(T(fx, by + 40 + j * 13, ln, 11.5, anchor="start", fill=INK, weight="bold"))
+        vlines = len(_fit(v, 6.1, colw))
+        for j, ln in enumerate(_fit(note, 4.7, colw)):
+            o.append(T(fx, by + 42 + vlines * 13 + j * 11, ln, 9.0, anchor="start", fill=MUTED))
     o.append("</svg>")
 
     return "\n".join(o), {"issues": issues, "rep": rep, "rows": rows,

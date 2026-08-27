@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, MAGNET_EDGE, MAGNET_FILL, PAD_EDGE, PAD_FILL, ON_FRIDGE_MUTED
 from generate_bracket import MATERIAL, BracketParams, flat_gap
 
 LOG = logging.getLogger("variants")
@@ -125,7 +125,7 @@ def render(path: Path, params: BracketParams) -> None:
     # Grey on the near-black panel, with its tail crossing the fridge edge. Lightened, and
     # anchored outboard of the bracket where it sits on paper.
     out.append(_text(sx(-st) - 14, sy(side_span * 0.55), "magnets + pad hold the spine off",
-                     size=8.5, anchor="end", fill="#5c6368"))
+                     size=8.5, anchor="end", fill=ON_FRIDGE_MUTED))
 
     # --- the extra 50 mm, called out -------------------------------------------------
     out.append(f'<rect x="{sx(REACH_B):.2f}" y="{sy(-pad - t) - 4:.2f}" '

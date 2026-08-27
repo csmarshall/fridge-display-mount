@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE
+from bracket_common import LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE, ON_FRIDGE_BAD, ON_FRIDGE_WARN
 from generate_bracket import DISPLAYS, MM_PER_INCH, BracketParams, set_display
 import generate_bracket as G
 
@@ -85,7 +85,7 @@ def render(path: Path, p: BracketParams, neck: float) -> None:
         out.append(f'<rect x="{X(0):.1f}" y="{Y(height):.1f}" width="{door*sc:.1f}" '
                    f'height="{height*sc:.1f}" fill="#b00020" fill-opacity="0.15" '
                    f'stroke="#b00020" stroke-width="1" stroke-dasharray="4 3"/>')
-        out.append(_t(X(door/2), Y(height*0.62), f"door sweep {door:.0f}", 8.5, fill="#b00020",
+        out.append(_t(X(door/2), Y(height*0.62), f"door sweep {door:.0f}", 8.5, fill=ON_FRIDGE_BAD,
                       weight="bold", rotate=-90))
 
         out.append(f'<rect x="{X(0):.1f}" y="{Y(height) - p.hinge_cover_proud*sc:.1f}" '
@@ -96,7 +96,7 @@ def render(path: Path, p: BracketParams, neck: float) -> None:
         out.append(f'<rect x="{X(centre - p.neck_w/2):.1f}" '
                    f'y="{Y(height) - p.arm_pad*sc - 4:.1f}" '
                    f'width="{p.neck_w*sc:.1f}" height="4" fill="#9a5b00"/>')
-        out.append(_t(X(centre), Y(height) - 18, f"arm {p.neck_w:.0f}", 8.5, fill="#5d3600", weight="bold"))
+        out.append(_t(X(centre), Y(height) - 18, f"arm {p.neck_w:.0f}", 8.5, fill=ON_FRIDGE_WARN, weight="bold"))
         out.append(f'<rect x="{X(centre - p.body_w/2):.1f}" y="{Y(height - neck):.1f}" '
                    f'width="{p.body_w*sc:.1f}" height="{p.body_h*sc:.1f}" fill="#9a5b00" '
                    f'fill-opacity="0.45" stroke="#5d3600" stroke-width="1"/>')
@@ -122,7 +122,7 @@ def render(path: Path, p: BracketParams, neck: float) -> None:
         out.append(_t(rx, Y(height) + 4, f"{clear_top:.0f} mm below the fridge top", 8.5,
                       anchor="start", fill="#8a9199"))
         out.append(_t(rx, Y(bot) + 20, f"plate hidden by {body_hide:.0f} mm/side", 8.5,
-                      anchor="start", fill="#5d3600"))
+                      anchor="start", fill=ON_FRIDGE_WARN))
         LOG.info("%s in portrait: %.1f wide (%.0f spare), top %.0f, bottom %.0f, plate hidden %.1f/side",
                  key, dw, usable - dw, top, bot, body_hide)
 
