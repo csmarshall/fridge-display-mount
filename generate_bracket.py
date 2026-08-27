@@ -314,6 +314,27 @@ class BracketParams:
     fridge_height: float = 68.625 * MM_PER_INCH  # 1743.1 mm, top of case
     # Hinge covers stand this far above the case top (70 1/16" - 68 5/8"). The arm lands behind them.
     hinge_cover_proud: float = (70.0625 - 68.625) * MM_PER_INCH  # 36.5 mm
+
+    # Hinge cover footprint, MEASURED from the 2026-08-27 photo — which is a view of the LEFT
+    # SIDE PANEL, the face the display hangs on. The ruler therefore runs FRONT-TO-BACK along the
+    # top of that panel, not across the width. Datum is the REAR edge of the top.
+    #
+    # Sanity check that settles the reading: the photo shows the fridge edge at ruler ~27.5 in.
+    # Case depth 24 in + doors projecting 4.6 in = 28.6 in. A FRONT view would have had to read
+    # 35.9 in. The side reading needs no fudge; the front reading did.
+    #
+    # CONSEQUENCE: the cover constrains ARM WIDTH (which runs front-to-back), not arm reach.
+    # This is the "clear window on the fridge top, front to back" that the pre-order checklist
+    # calls the likeliest recut risk. It is now measured, and it passes.
+    hinge_cover_from_rear: float = 16.0 * MM_PER_INCH    # 406 mm — cover's rear-most edge
+    # Charles reports the cover LIFTS slightly, so thin material can be slipped under it. Not
+    # relied on: the arm clears it by 216 mm, so this is a fallback, not part of the design.
+    hinge_cover_lifts: bool = True
+
+    @property
+    def top_clear_window(self) -> float:
+        """Usable front-to-back top depth: rear edge to the hinge cover."""
+        return self.hinge_cover_from_rear
     fridge_top_width: float = 35.875 * MM_PER_INCH  # 911.2 mm, side to side across the top
     # COUNTER-DEPTH: the cabinet is only 24" deep. This is the front-to-back size of the top
     # surface the arm lands on, and of the side panel the body hangs against — 240 mm shallower
@@ -1225,6 +1246,17 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
     # proud means the plate lands on the pad, the magnets never reach the panel, and the mount is
     # both spongier and weaker. A little UNDER is correct — the rigid magnets bear and the pad
     # protects paint across a hair of gap the paint stack closes.
+    # Arm WIDTH runs front-to-back, and the hinge cover eats the front of the top. This is the
+    # constraint the checklist called the likeliest recut risk.
+    window_gap = params.top_clear_window - params.neck_w
+    _check(
+        issues, window_gap >= 0.0, "ERROR", "arm_width_vs_hinge_cover",
+        f"arm is {params.neck_w:.0f} mm wide front-to-back but the clear window from the rear "
+        f"edge to the hinge cover is only {params.top_clear_window:.0f} mm: short by "
+        f"{-window_gap:.0f} mm. The cover lifts slightly, so this is recoverable, but it is not "
+        f"designed for.",
+    )
+
     bottom_excess = params.bottom_pad_thickness - params.magnet_standoff
     _check(
         issues, -PAD_UNDERSIZE_ALLOWANCE_MM <= bottom_excess <= 0.30, "ERROR", "bottom_pad",

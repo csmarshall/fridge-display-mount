@@ -13,6 +13,8 @@
     "neck_len": 257.0,
     "fridge_height": 1743.0749999999998,
     "hinge_cover_proud": 36.512499999999996,
+    "hinge_cover_from_rear": 406.4,
+    "hinge_cover_lifts": true,
     "fridge_top_width": 911.2249999999999,
     "fridge_depth": 609.5999999999999,
     "fridge_depth_with_doors": 727.0749999999999,

@@ -414,7 +414,15 @@ def front_elevation(x0, y0, w, h, W: World, rows) -> str:
     o.append(rect(0, W.FD, 0, W.FH, fill="#eef2f5", stroke=STEEL_DARK, stroke_width="1.3"))
     o.append(rect(-W.door_proj, 0, 62, W.FH, fill="#e3e9ee", stroke=STEEL_DARK, stroke_width="1.1"))
     o.append(T(X(-W.door_proj/2), Y(300), "door", 7.5, fill=MUTED, rot=-90))
-    o.append(rect(0, 104, W.FH, W.FH + W.hinge, fill="#cfd8de", stroke=STEEL_DARK, stroke_width="1"))
+    # The hinge cover, MEASURED. This view runs front-to-back, which is the direction the cover
+    # actually constrains — it eats the FRONT of the top, and the arm's WIDTH has to fit behind it.
+    hc = p.hinge_cover_from_rear
+    o.append(rect(hc, W.FD, W.FH, W.FH + W.hinge, fill="#cfd8de", stroke=STEEL_DARK,
+                  stroke_width="1"))
+    o.append(T(X((hc + W.FD) / 2), Y(W.FH + W.hinge) - 7, "hinge cover", 7.0, fill=MUTED))
+    o.append(T(X((hc + W.FD) / 2), Y(W.FH + W.hinge) + 3, "lifts off", 6.4, fill=MUTED))
+    o.append(dim_h(min(X(0), X(hc)), max(X(0), X(hc)), Y(W.FH) - 54,
+                   f"clear window {hc:.0f} — arm needs {p.neck_w:.0f}"))
     o.append(rect(W.neck_y0, W.neck_y1, W.FH, W.arm_z1, fill=BRACKET))
     # The neck from the display's top edge up to the fridge top is VISIBLE painted steel,
     # not hidden behind the panel — draw it solid. Only the part behind the display is ghosted.
@@ -549,9 +557,11 @@ def side_elevation(x0, y0, w, h, W: World, rows, arm_offsets, s) -> str:
     for hx in (W.FW*0.505 - 96, W.FW*0.505 + 40):
         o.append(rect(hx, hx + 34, 620, 1400, rx="3", fill="#b7c0c7", stroke=STEEL_DARK,
                       stroke_width="0.9"))
-    for hx in (0.0, W.FW - 96):
-        o.append(rect(hx, hx + 96, W.FH, W.FH + W.hinge, fill="#cfd8de", stroke=STEEL_DARK,
-                      stroke_width="1"))
+    # The hinge cover runs front-to-back, so in THIS frontal view it is edge-on at the door
+    # line, not a block along the top. Drawing it here would misrepresent it — the clearance it
+    # governs is arm WIDTH, which is shown in the side elevation instead.
+    o.append(rect(W.FW - 104, W.FW, W.FH, W.FH + W.hinge, fill="#cfd8de", stroke=STEEL_DARK,
+                  stroke_width="1"))
     o.append(rect(W.arm_tip, W.plate_out, W.arm_z0, W.arm_z1, fill=BRACKET))
     o.append(rect(W.plate_in, W.plate_out, W.body_z0, W.arm_z1, fill=BRACKET))
     o.append(rect(W.arm_tip + W.dir*6, W.plate_out, W.FH, W.FH + W.pad, fill="#8d949b"))

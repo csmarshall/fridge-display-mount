@@ -156,11 +156,22 @@ cap. Until measured, treat as UNKNOWN:
   is now evidence-backed rather than an unmeasured default. CAVEAT: a photo at this angle would
   not resolve 1-2 mm of gentle dome, and it says nothing about the FRONT-TO-BACK direction. Treat
   as "no gross crown", not as a measurement.
-- **Hinge cover, from the same photo:** a separate grey plastic moulding whose left edge sits about
-  **16.5 in (419 mm) from the left edge of the top**. Charles reports it **lifts slightly**, so thin
-  material can be slipped underneath. Since the arm reaches only 180 mm from the left edge, the
-  hinge cover is **~239 mm clear of the arm tip** and is probably a non-issue for a LEFT mount.
-  UNVERIFIED: which door's hinge this is, and whether a second cover sits nearer the left edge.
+- **Hinge cover and the front-to-back clear window — MEASURED 2026-08-27.** The photo is a view
+  of the **LEFT SIDE PANEL**, the face the display hangs on, so the ruler runs **front-to-back**
+  along the top of that panel with its zero at the **REAR** edge.
+  **How to know that reading is right:** the fridge edge reads ruler ~27.5 in. Case depth 24 in
+  plus doors projecting 4.6 in = 28.6 in — it matches. Read as a FRONT view it would have had to
+  span 35.9 in. Two earlier readings of this same photo treated it as a frontal view and invented
+  a 213 mm ruler offset to reconcile the 8-inch gap. **The gap was the tell.** If a datum needs a
+  fudge factor to work, question the framing, not the ruler.
+  - hinge cover occupies the **front 203 mm** of the top (ruler 16-24 in)
+  - **clear window, rear edge to cover: 406 mm**
+  - arm WIDTH is 190 mm front-to-back -> **fits with 216 mm to spare (2.14x)**
+  This closes "clear window on the fridge top, front to back", which the pre-order checklist
+  called the likeliest recut risk. Modelled as `hinge_cover_from_rear` with a validator check on
+  `neck_w`, so widening the arm cannot silently run into it.
+  **The cover is also removable/adjustable** (Charles) — it lifts for installation or comes off
+  entirely. Recorded as a fallback; the design does not need it.
 - ~~whether the side panel is magnetic~~ — **MEASURED 2026-08-26: the top AND the sides are both
   magnetic.** Charles checked the actual unit with a magnet. This promotes two things that were
   previously hedged: (a) the arm retention magnets will actually work, so they are worth fitting

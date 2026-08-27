@@ -228,9 +228,13 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
 
     S.append(Section("checklist", "Before ordering", "Four measurements gate the order. Nothing else does.",
                      "checklist", items=[
-        Item("m-window", "Clear window on the fridge top, front to back",
-             f"Must exceed the {p.neck_w:.0f} mm arm width, measured between the hinge covers and any "
-             "rear step-down. This is the likeliest recut risk.", "", "blocked"),
+        Item("m-window", "Clear window on the fridge top, front to back — MEASURED 2026-08-27",
+             f"{p.top_clear_window:.0f} mm clear from the rear edge to the hinge cover, against a "
+             f"{p.neck_w:.0f} mm arm width — fits with {p.top_clear_window - p.neck_w:.0f} mm to "
+             f"spare ({p.top_clear_window / p.neck_w:.2f}x). The hinge cover occupies the front "
+             f"{609.6 - p.top_clear_window:.0f} mm and is removable/adjustable, so even a clash "
+             f"would be recoverable. This was the likeliest recut risk; it is now closed.",
+             "", "settled"),
         Item("m-height", "Height to the TOP OF THE CASE, not the hinges",
              f"Design assumes Samsung's published {p.fridge_height:.0f} mm. Sets the neck length and "
              "therefore the screen height.", "", "blocked"),
