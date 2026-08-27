@@ -1763,8 +1763,8 @@ def _preview_legend_entries(params: BracketParams, geom: Geometry) -> list[tuple
     box_w, box_h = rear_box_footprint(params.orientation)
     return [
         ("circle", "#c0169a", 6.0, [
-            f"O{params.magnet_disc_dia:.0f} x {params.magnet_standoff:.0f} body / "
-            f"O{params.arm_magnet_disc_dia:.0f} x {params.arm_magnet_standoff:.0f} arm",
+            f"O{params.magnet_disc_dia:.1f} x {params.magnet_standoff:.2f} mm body / "
+            f"O{params.arm_magnet_disc_dia:.1f} x {params.arm_magnet_standoff:.2f} mm arm",
             "pot-magnet footprints (hardware, not cut)"]),
         ("circle", "#1a5fb4", 2.25, [
             f"O{params.vesa_hole_dia:.1f} VESA {params.vesa:.0f} x {params.vesa:.0f} + "
@@ -2040,6 +2040,20 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
     out.append(f'<rect x="{sx(0):.2f}" y="{sy(body_bottom - 40.0):.2f}" width="{standoff * scale:.2f}" '
                f'height="{40.0 * scale:.2f}" fill="#f2c14e" fill-opacity="0.9" stroke="#a8830f" stroke-width="0.7"/>')
 
+    # The foam down the NECK. Without it this elevation showed an open air gap between the plate
+    # and the fridge, which is exactly the space the strips exist to fill — the drawing implied
+    # the mount floats on four magnets and nothing else.
+    if params.foam_strips:
+        # NB: this elevation measures DOWN from the fridge top, so the neck is 0..neck_len.
+        # Drawing it from neck_len put the foam over the BODY, where the magnets already are.
+        out.append(f'<rect x="{sx(0):.2f}" y="{sy(0):.2f}" '
+                   f'width="{standoff * scale:.2f}" height="{params.neck_len * scale:.2f}" '
+                   f'fill="url(#foam)" fill-opacity="0.5" stroke="#8a9199" stroke-width="0.7" '
+                   f'stroke-dasharray="4 3"/>')
+        out.append(_svg_text_masked(sx(standoff) + 92, sy(params.neck_len * 0.45),
+                                    f"foam {params.foam_strip_w:.0f} mm x2 down the neck",
+                                    size=7.4, fill="#5c6b77"))
+
     # The display is not a slab: the bracket lands on a raised rear box and the panel stands
     # rear_box_depth further out again.
     display_x = standoff + MATERIAL.thickness + params.spacer_len
@@ -2077,7 +2091,12 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
 
     # Elevation callouts, stacked in one column so nothing overlaps the drawing.
     callouts = [
-        ("#8a6a10", f"closed-cell sponge arm pad {pad:.2f} mm (1/4 in) — conforms to the top corner radius"),
+        # "(1/4 in)" used to be hardcoded here. 1/4 in is 6.35 mm; the pad is now 11.50 mm, so
+        # the label was flatly wrong. Derive the imperial figure from the value itself.
+        ("#8a6a10", f"closed-cell sponge arm pad {pad:.2f} mm ({pad/MM_PER_INCH:.3f} in) — "
+                    f"conforms to the top corner radius"),
+        ("#9aa6ae", f"foam strips {params.foam_strip_w:.0f} mm x2 down the neck, "
+                    f"{params.foam_channel_w:.0f} mm channel between them for the straps"),
         ("#c0169a", f"{len(sorted({params.arm_magnet_offset, *params.extra_arm_magnet_offsets})) * 2} x "
                     f"O{params.arm_magnet_disc_dia:.0f} x {params.arm_magnet_standoff:.0f} mm top-lip "
                     f"magnets, same SKU as the body — zero VERTICAL load, but they do resist peel"),

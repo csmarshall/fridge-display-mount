@@ -126,12 +126,26 @@ def render(path: Path, p: BracketParams) -> None:
         out.append(_t(X(cxm - chan/2 - strip/2), Y(my) + 12, f"{strip:.0f} mm", 8, fill="#4a5560"))
         out.append(_t(X(cxm + chan/2 + strip/2), Y(my), f"FOAM", 9, fill="#4a5560", weight="bold"))
         out.append(_t(X(cxm + chan/2 + strip/2), Y(my) + 12, f"{strip:.0f} mm", 8, fill="#4a5560"))
-        # Vertical, running the length of the channel. Font is sized off the channel WIDTH so
-        # it can never grow wider than the gap it is describing.
-        label = f"{chan:.0f} mm CLEAR — straps feed here"
-        fs = min(11.0, chan * s * 0.62)
-        neck_mid = (p.body_h + flat.bend_line_y) / 2.0
-        out.append(_t(X(cxm), Y(neck_mid), label, fs, fill="#4a5560", weight="bold", rot=-90))
+        # Vertical, but placed in the largest CLEAR RUN between strap-slot pairs rather than
+        # straight down the middle — the slots live on this centreline, so a full-length label
+        # lies on top of the very features it is describing.
+        neck_rows = sorted({round(w.cy, 1) for w in geom.windows if w.region == "neck"})
+        sh = next((w.h for w in geom.windows if w.region == "neck"), 0.0)
+        edges = ([p.body_h] + [v for y in neck_rows for v in (y - sh/2, y + sh/2)]
+                 + [flat.bend_line_y])
+        runs = [(edges[i+1] - edges[i], (edges[i] + edges[i+1]) / 2.0)
+                for i in range(0, len(edges) - 1, 2)]
+        run_len, run_mid = max(runs)
+        # Size to fit BOTH the channel width and the run it sits in.
+        label = f"{chan:.0f} mm CLEAR"
+        fs = min(9.0, chan * s * 0.46, run_len * s / (len(label) * 0.52))
+        # Rotation swaps the axes: a SECOND line has to step in X, not Y, or it lands on top of
+        # the first. Keep both inside the channel, so step by less than half its width.
+        step = min(fs + 1.5, chan * s * 0.34)
+        out.append(_t(X(cxm) - step / 2.0, Y(run_mid), label, fs,
+                      fill="#4a5560", weight="bold", rot=-90))
+        out.append(_t(X(cxm) + step / 2.0, Y(run_mid), "straps feed here", fs * 0.84,
+                      fill="#6b757e", rot=-90))
 
     n_fit = n_spare = 0
     for h in geom.holes:

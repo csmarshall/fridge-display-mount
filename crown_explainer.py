@@ -125,7 +125,8 @@ def render(path: Path, p: BracketParams) -> None:
                   f"They STACK: {crown_at_tip:.2f} + {gap_corner:.2f} = "
                   f"{crown_at_tip + gap_corner:.2f} mm, against a {pad:.2f} mm pad. "
                   f"That is the whole budget.", 11.5, anchor="start", fill="#111", weight="bold"))
-    out.append(_t(40, 470, f"Crown is currently modelled as {p.crown_rise:.2f} mm — "
+    # y=470 sat directly on the section-2 heading. Move it up under panel 1 where it belongs.
+    out.append(_t(40, 442, f"Crown is currently modelled as {p.crown_rise:.2f} mm — "
                   f"ASSUMED, not measured on the Samsung. Measure before trusting this sum.",
                   10.5, anchor="start", fill="#b00020", weight="bold"))
 
@@ -158,7 +159,7 @@ def render(path: Path, p: BracketParams) -> None:
         # magnet block
         out.append(f'<rect x="{bx + 165:.1f}" y="{base - magh*s2:.1f}" width="70" '
                    f'height="{magh*s2:.1f}" fill="#c0169a" fill-opacity="0.35" stroke="#c0169a"/>')
-        out.append(_t(bx + 200, base - magh*s2/2 + 4, f"magnet {magh:.0f}", 9, fill="#8c1070", weight="bold"))
+        out.append(_t(bx + 200, base - magh*s2/2 + 4, f"magnet {magh:.2f}", 9, fill="#8c1070", weight="bold"))
         # arm plate across the top
         out.append(f'<rect x="{bx + 10:.1f}" y="{army:.1f}" width="240" height="10" fill="#5d3600"/>')
         out.append(_t(bx + 130, army - 6, "arm", 8.5, fill="#5d3600"))

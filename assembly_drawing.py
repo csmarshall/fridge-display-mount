@@ -109,7 +109,12 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     co = geom.center_opening
     out.append(f'<circle cx="{X(co.x):.1f}" cy="{Y(co.y):.1f}" r="{co.radius*sc:.1f}" fill="#fff" '
                f'stroke="#333" stroke-width="1.2"/>')
-    for disc in (h for h in geom.magnet_discs if h.region == "body"):
+    n_body_fitted = len([h for h in geom.magnet_discs
+                         if h.region == "body" and not h.tag.startswith("spare")])
+    n_body_opt = len([h for h in geom.magnet_discs
+                      if h.region == "body" and h.tag.startswith("spare")])
+    for disc in (h for h in geom.magnet_discs
+                 if h.region == "body" and not h.tag.startswith("spare")):
         out.append(f'<circle cx="{X(disc.x):.1f}" cy="{Y(disc.y):.1f}" r="{disc.radius*sc:.1f}" '
                    f'fill="#2e9e5b" fill-opacity="0.22" stroke="#2e9e5b" stroke-width="1.2"/>')
     for h in geom.holes:
@@ -192,8 +197,10 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
             ("#1a5fb4", 0.10, f"DISPLAY {display_key} in — {dw:.1f} x {dh:.1f} mm, transparent"),
             ("#c0169a", 0.13, f"REAR BOX bump-out — {bw:.0f} x {bh:.0f} x {d.rear_box_depth:.0f} mm"),
             ("#e8a33d", 0.55, f"rear-face opening, R{d.rear_face_feature_radius:.0f} from VESA centre"),
-            ("#2e9e5b", 0.22, f"{len([h for h in geom.magnet_discs if h.region == 'body'])} body "
-                              f"magnets O{params.magnet_disc_dia:.0f}"),
+            ("#2e9e5b", 0.22, f"{n_body_fitted} body magnets "
+                              f"O{params.magnet_disc_dia:.2f} mm "
+                              f"({params.magnet_disc_dia/25.4:.2f} in) — FITTED"),
+            ("#c0169a", 0.10, f"{n_body_opt} more body positions cut but NOT fitted"),
             ("#a8630f", 1.0, f"strap slots {params.strap_slot_thickness:.0f} x "
                               f"{params.strap_slot_length:.0f} mm (on the neck, not shown here)")]):
         yy = ly + i * 20

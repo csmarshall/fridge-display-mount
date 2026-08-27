@@ -49,9 +49,16 @@ DIAGRAM_INFO = {
     "spacing_explainer.svg": ("Magnet spacing floor", "Why a bigger disc runs out of plate.", "key"),
     "assembly_drawing.svg": ("Assembly, 23.8in", "Display and rear box as transparent overlays.", "detail"),
     "assembly_drawing_27in.svg": ("Assembly, 27in", "Same bracket, larger panel.", "detail"),
-    "ergonomics_sweep.svg": ("Ergonomics sweep", "Neck length vs the 5ft1-6ft4 comfort band.", "study"),
-    "arm_width_sweep.svg": ("Arm width sweep", "Hold-down if the panel is NOT magnetic.", "study"),
-    "thickness_study.svg": ("Thickness study", "Stiffness and price across thicknesses.", "study"),
+    "ergonomics_sweep.svg": ("Ergonomics sweep — SUPERSEDED",
+                            "Built on the RETRACTED LG fridge (1791 mm). Samsung is 1743 mm and "
+                            "the built neck (257) is not among its panels.", "study"),
+    "arm_width_sweep.svg": ("Arm width sweep — SUPERSEDED",
+                           "Assumes the LG 851 mm-deep top and a 4.6 lbf arm magnet. Samsung is "
+                           "610 mm with a 406 mm window; magnets derate to 61.25 lbf.", "study"),
+    "thickness_study.svg": ("Thickness study — SUPERSEDED",
+                           "ALUMINIUM-era: highlights 0.187 in 5052 at 5.89 kg. The build is "
+                           "A36 steel 0.119 in at 3.71 kg. See docs/PRICE-STUDY.md instead.",
+                           "study"),
     "variant_compare.svg": ("Variant comparison", "The reach variants side by side.", "study"),
     "crown_explainer.svg": ("Crown explainer", "Why the pad budget is a sum.", "study"),
     "orientation_compare.svg": ("Orientation", "Portrait vs landscape, counter-depth.", "study"),
@@ -68,7 +75,10 @@ DIAGRAM_INFO = {
     "hinge_clearance.svg": ("Hinge cover clearance",
                             "Plan view: where the arm and the hinge cover meet, or miss. The one "
                             "view that dimensions it.", "key"),
-    "harness_view.svg": ("Magnet placement validator",
+    "harness_view.svg": ("Magnet placement validator — deliberate FAIL",
+                        "Shows a configuration the validator REFUSES, on purpose, so a refusal "
+                        "can be judged rather than obeyed. NOT the built part.", "study"),
+    "_harness_unused.svg": ("Magnet placement validator",
                          "Diagnostic: draws a candidate the validator REFUSES, so a refusal can "
                          "be judged rather than obeyed. Not a cut file.", "study"),
 }

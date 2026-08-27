@@ -686,6 +686,12 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
     pull = rep["magnet_derated_pull_lbf"]
     base_rows = [r for r in rows if r in (params.magnet_inset, params.body_h - params.magnet_inset)]
     go_now = let_go_lbf(params, W, rows, arm_offs, pull)
+    # ONE model for "how hard is it to pull off". This sheet used to quote let_go_lbf (178 lbf)
+    # while force_table quoted 146 lbf for the same grab — same question, two answers. Defer to
+    # force_table, and name the DIRECTION, since where you grab is what decides the number.
+    import force_table as _ft
+    weakest_lbf = _ft.forces(len(rows) * 2, len(arm_offs) * 2, params, rep)[
+        "grab the BOTTOM edge and pull"]
     go_base = let_go_lbf(params, W, base_rows, [params.arm_magnet_offset], pull)
 
     # Sized to be screenshotted and sent, not printed: one tight block, minimal gutters.
@@ -753,7 +759,8 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
                  ax + 18, PY + 400,
                  f"{n_mag} magnets",
                  [f"{n_body} hold the screen flat, {n_arm} steady the arm",
-                  f"needs {go_now:.0f} lb of pull to come off"], anchor="start"))
+                  f"{weakest_lbf:.0f} lb ({weakest_lbf*4.4482216:.0f} N) to pull off at the "
+                 f"screen's bottom edge — the easiest place to grab"], anchor="start"))
     o.append(ann((W.plate_out, W.yc + 8, W.body_z1 + 120), ax + 18, PY + 690,
                  "Cable runs up the back", ["cleanly strapped down, not hidden"], anchor="start"))
     o.append("</g>")

@@ -124,7 +124,7 @@ def render(path: Path, p: BracketParams) -> dict:
         o.append(f'<rect x="{X(arm_front):.1f}" y="{Y(0):.1f}" width="{max(gap,0.6)*s:.1f}" '
                  f'height="{shared_inboard*s:.1f}" fill="{OK}" fill-opacity="0.22" '
                  f'stroke="{OK}" stroke-width="1.8" stroke-dasharray="7 4"/>')
-        verdict = f"NO INTERSECTION — {gap:.0f} mm of clear air between them"
+        verdict = f"NO INTERSECTION — {gap:.1f} mm of clear air between them"
 
     # dashed guides down both faces of the meeting
     # NB: named guide_c, not col — `col` is the third-of-the-panel width and this loop used to
@@ -153,10 +153,10 @@ def render(path: Path, p: BracketParams) -> dict:
         return "".join(out)
 
     yb = Y(inboard_shown) + 46
-    o.append(dim(0, arm_rear, yb, f"plate set back {arm_rear:.0f}"))
+    o.append(dim(0, arm_rear, yb, f"ARM set back {arm_rear:.0f}"))
     o.append(dim(arm_rear, arm_front, yb, f"arm width {p.neck_w:.0f}", INK))
     o.append(dim(arm_front, cover_rear, yb + 34,
-                 (f"OVERLAP {overlap:.0f}" if overlap > 0 else f"gap {gap:.0f}"), band_c))
+                 (f"OVERLAP {overlap:.0f}" if overlap > 0 else f"gap {gap:.1f}"), band_c))
     o.append(dim(0, cover_rear, yb + 68, f"clear window {cover_rear:.0f}"))
     o.append(dim(0, CASE_D, yb + 102, f"case depth {CASE_D:.0f} / 24 in"))
     o.append(_t(ox, yb + 140,
