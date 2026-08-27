@@ -1725,6 +1725,20 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
     # the 4 M4 spacers, the 4 VESA screws, and the display's own cable. Together well under 0.1 kg
     # against 11 kg, i.e. inside the error on the magnet estimate above.
     bracket_mass_kg = plate_mass_kg + magnet_mass_kg + fastener_mass_kg + foam_mass_kg
+
+    # What a MAGNET-ONLY mount would weigh. Sizing magnets against the mass above is circular:
+    # most of that steel is the neck and arm, and you do not need an arm if you are not hooking.
+    # The fair comparison is the body plate alone, with only its four magnets.
+    body_windows = [w for w in geom.windows if w.region == "body"]
+    body_area_mm2 = (params.body_w * params.body_h
+                     - math.pi * geom.center_opening.radius ** 2
+                     - sum(w.w * w.h for w in body_windows))
+    body_plate_kg = body_area_mm2 * MATERIAL.thickness * MATERIAL.density_g_cc / 1e6
+    n_body_mag = len([h for h in geom.holes if h.tag == "magnet"])
+    body_foam_kg = (2.0 * params.foam_strip_w * params.body_h * params.bottom_pad_thickness
+                    / 1000.0 * FOAM_G_CC / 1000.0)
+    magnet_only_kg = (DISPLAY.mass_kg + body_plate_kg + n_body_mag * one_magnet_kg
+                      + body_foam_kg + n_body_mag * 0.012)
     bracket_lbf = bracket_mass_kg * LBF_PER_KG
     total_lbf = weight_lbf + bracket_lbf
 
@@ -1824,6 +1838,10 @@ def engineering_report(params: BracketParams, geom: Geometry) -> dict:
         "magnet_count_fitted": n_fitted,
         "fastener_mass_kg": fastener_mass_kg,
         "foam_mass_kg": foam_mass_kg,
+        "magnet_only_hanging_kg": magnet_only_kg,
+        "magnet_only_hanging_lbf": magnet_only_kg * LBF_PER_KG,
+        "magnet_only_body_plate_kg": body_plate_kg,
+        "magnet_only_magnets": n_body_mag,
         "bracket_mass_kg": bracket_mass_kg,
         "bracket_weight_lbf": bracket_lbf,
         "total_hanging_lbf": total_lbf,

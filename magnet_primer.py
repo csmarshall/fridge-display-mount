@@ -116,7 +116,8 @@ def render(path: Path, p: BracketParams) -> None:
     weight = rep["display_weight_lbf"]
     hanging = rep["total_hanging_lbf"]
     mult = 1.0 / (p.magnet_derate * p.mu_magnet_face)          # rated lb needed per lb held
-    rated_needed = hanging * mult
+    # Against the MAGNET-ONLY load, not the hook design's — see the panel below.
+    rated_needed = rep["magnet_only_hanging_lbf"] * mult
     vendor_pct = TOTALELEMENT_HORIZONTAL_LBF / TOTALELEMENT_PULL_LBF * 100.0
 
     W = 1180.0
@@ -341,18 +342,27 @@ def render(path: Path, p: BracketParams) -> None:
     # hook exists — 8 of the specified magnets clear it comfortably. Saying otherwise would be
     # overstating the case, and the real reasons are better ones.
     y6 = y5 + ch5 + 24
-    ch6 = 250.0
+    ch6 = 286.0
     o += _card(40, y6, W - 80, ch6,
                "SO HOW STRONG WOULD THEY HAVE TO BE? — the fair answer", INK)
     f_shear = p.magnet_derate * p.mu_magnet_face
     rated = p.magnet_rated_pull_lbf
     ry = y6 + 52
-    o.append(_t(66, ry, f"To hold {lbf_n(hanging, 1)} by friction alone, TOTAL rated pull across "
-                        f"all magnets (divide by {f_shear:.3f}):", 11.5, fill=MUTED))
+    # Size against the MAGNET-ONLY mass, not the hook design's. Comparing to 24.9 lb would be
+    # circular: most of that steel is the neck and arm, and there is no arm without a hook.
+    mo = rep["magnet_only_hanging_lbf"]
+    o.append(_t(66, ry, f"A magnet-only mount needs no arm, so it is lighter: screen "
+                        f"{rep['display_mass_kg']:.2f} kg + body plate "
+                        f"{rep['magnet_only_body_plate_kg']:.2f} kg + "
+                        f"{rep['magnet_only_magnets']} magnets = {lbf_n(mo, 1)}, not "
+                        f"{lbf_n(hanging, 1)}.", 11, fill=MUTED))
+    ry += 18
+    o.append(_t(66, ry, f"To hold THAT by friction alone, TOTAL rated pull across all magnets "
+                        f"(divide by {f_shear:.3f}):", 11.5, fill=MUTED))
     ry += 24
     for sf, lab in ((1.0, "on the edge of sliding"), (2.5, "project standard"),
                     (4.0, "overhead glass")):
-        tot = hanging * sf / f_shear
+        tot = mo * sf / f_shear
         o.append(_t(90, ry, f"SF {sf:.1f}", 11.5, weight="bold",
                     fill=BAD if sf >= 4 else INK))
         o.append(_t(150, ry, lab, 10.5, fill=MUTED))
@@ -362,7 +372,7 @@ def render(path: Path, p: BracketParams) -> None:
     ry += 12
     got = 8 * rated * f_shear
     o.append(_t(66, ry, f"The magnets already specified are {rated:.0f} lb each. Eight of them "
-                        f"give {lbf_n(got, 1)} of shear — SF {got/hanging:.1f}.", 11.5,
+                        f"give {lbf_n(got, 1)} of shear — SF {got/mo:.1f} on that load.", 11.5,
                weight="bold", fill=OK))
     ry += 20
     o.append(_t(66, ry, "So shear is NOT the reason for the hook. Magnets can carry this weight. "
@@ -372,8 +382,9 @@ def render(path: Path, p: BracketParams) -> None:
                  "unzip after it.",
                  "A NON-MAGNETIC panel makes every one of those numbers zero. This one measured "
                  "magnetic; the design still must not depend on it.",
-                 "CREEP — magnets under sustained shear on painted steel slide slowly. An SF that "
-                 "holds today need not hold in a year.",
+                 "CREEP — the paint is a polymer and it flows under sustained shear, while the "
+                 "compressor vibrates the panel around the clock. Every cycle lets the magnet "
+                 "micro-slip, always downhill. An SF that holds today need not hold in a year.",
                  "The failure mode is bonded glass onto a kitchen floor, with no warning."):
         for ln in _wrap(line, 116):
             o.append(_t(84, ry, ln, 10.5, fill=MUTED))
@@ -386,8 +397,9 @@ def render(path: Path, p: BracketParams) -> None:
               f'<rect width="{W:.0f}" height="{H:.0f}" fill="{PAPER}"/>')
     path.write_text(header + "".join(o), encoding="utf-8")
     LOG.info("Wrote %s — derate chain %.0f -> %.1f -> %.1f lb (%.0f%% of rated); "
-             "magnet-only would need ~%.0f lb rated for the %.1f lb hanging load",
-             path, rated, derated, shear, shear_pct, rated_needed, hanging)
+             "magnet-only would need ~%.0f lb rated for its own %.1f lb load",
+             path, rated, derated, shear, shear_pct, rated_needed,
+             rep["magnet_only_hanging_lbf"])
     LOG.debug("Vendor citation: totalElement %.1f lb pull vs %.1f lb horizontal (%.0f%%)",
               TOTALELEMENT_PULL_LBF, TOTALELEMENT_HORIZONTAL_LBF, vendor_pct)
 
