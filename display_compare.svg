@@ -6,7 +6,7 @@
 <text x="40.0" y="82.0" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="start" fill="#555" font-weight="normal">Same view as before: horizontal axis is the fridge's depth. In portrait the display's WIDTH runs front-to-back, so both fit the 546 mm window easily.</text>
 <text x="40.0" y="99.0" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="start" fill="#555" font-weight="normal">Neck 262 mm puts the screen centre at 1326 mm for either panel — the VESA centre does not move.</text>
 <text x="159.9" y="153.0" font-family="Helvetica,Arial,sans-serif" font-size="16" text-anchor="middle" fill="#1a5fb4" font-weight="bold">23.8 in</text>
-<text x="159.9" y="171.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#555" font-weight="normal">324.6 wide x 555.2 tall, 3.94 kg</text>
+<text x="159.9" y="171.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#555" font-weight="normal">324.6 wide x 555.2 tall, 3.94 kg — SCREEN ONLY</text>
 <text x="159.9" y="187.0" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#2e9e5b" font-weight="bold">221 mm spare in the window</text>
 <rect x="70.0" y="215.0" width="179.8" height="514.2" fill="#3a3734" stroke="#1f1d1b" stroke-width="1.4"/>
 <text x="159.9" y="682.9" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#6a737b" font-weight="normal">SIDE PANEL</text>
@@ -29,7 +29,7 @@
 <text x="261.8" y="219.0" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#8a9199" font-weight="normal">139 mm below the fridge top</text>
 <text x="261.8" y="439.9" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#5d3600" font-weight="normal">plate hidden by 7 mm/side</text>
 <text x="639.7" y="153.0" font-family="Helvetica,Arial,sans-serif" font-size="16" text-anchor="middle" fill="#1a5fb4" font-weight="bold">27 in</text>
-<text x="639.7" y="171.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#555" font-weight="normal">367.4 wide x 629.6 tall, 4.92 kg</text>
+<text x="639.7" y="171.0" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#555" font-weight="normal">367.4 wide x 629.6 tall, 4.92 kg — SCREEN ONLY</text>
 <text x="639.7" y="187.0" font-family="Helvetica,Arial,sans-serif" font-size="11" text-anchor="middle" fill="#2e9e5b" font-weight="bold">179 mm spare in the window</text>
 <rect x="549.8" y="215.0" width="179.8" height="514.2" fill="#3a3734" stroke="#1f1d1b" stroke-width="1.4"/>
 <text x="639.7" y="682.9" font-family="Helvetica,Arial,sans-serif" font-size="10.5" text-anchor="middle" fill="#6a737b" font-weight="normal">SIDE PANEL</text>
