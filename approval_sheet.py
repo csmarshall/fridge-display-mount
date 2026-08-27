@@ -438,7 +438,10 @@ def front_elevation(x0, y0, w, h, W: World, rows) -> str:
                fill=MUTED))
     # -54 put this above the depth dimension and jammed it under the panel header. Moved INSIDE
     # the cabinet, just below the top line, where nothing else is drawn.
-    o.append(dim_h(min(X(cover_depth), X(W.FD)), max(X(cover_depth), X(W.FD)), Y(W.FH) + 30,
+    # +30 put it straight through the black neck rectangle. The dimension SPANS the window, so
+    # it has to stay at that x — move it up into the band between the fridge top and the depth
+    # dimension, which is the only clear horizontal run on this panel.
+    o.append(dim_h(min(X(cover_depth), X(W.FD)), max(X(cover_depth), X(W.FD)), Y(W.FH) - 42,
                    f"clear window {p.hinge_cover_from_rear:.0f} — arm needs {p.neck_w:.0f}"))
     # Say which way is which. Without it the reader has to infer orientation from the door.
     # Placed against the GROUND LINE, not the fridge top — the top is above the panel's drawing
@@ -759,7 +762,9 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
         # The pad the docstring promises was never actually emitted, so these captions were
         # grey-on-grey over the fridge solid and unreadable — and worse now the side panel is
         # drawn in its true near-black. Measure the block and lay a panel under it.
-        widest = max([len(text) * 5.9] + [len(l) * 4.6 for l in sub_])
+        # 4.6 px/char underestimated the 8.8 px sub-caption font, so the panel was
+        # narrower than the text and the tail bled onto the dark fridge.
+        widest = max([len(text) * 6.2] + [len(l) * 5.2 for l in sub_])
         blk_h = 16 + 10 * len(sub_)
         bx0 = lx - 8 if anchor == "start" else lx - widest - 8
         a = [f'<rect x="{bx0:.1f}" y="{ly - 15:.1f}" width="{widest + 16:.1f}" '

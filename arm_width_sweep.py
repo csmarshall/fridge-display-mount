@@ -112,11 +112,13 @@ def render(path: Path, widths: Sequence[float], params: BracketParams, arm_magne
                                 (REAR_STEPDOWN_ZONE_MM, "cable / waterline step-down",
                                  FRIDGE_DEPTH_MM - REAR_STEPDOWN_ZONE_MM)):
             out.append(f'<rect x="{px:.2f}" y="{margin_t + y0 * scale:.2f}" width="{panel_w - 40:.2f}" '
-                       f'height="{zone * scale:.2f}" fill="#b00020" fill-opacity="0.10" '
-                       f'stroke="#b00020" stroke-width="0.6" stroke-dasharray="4 3"/>')
+                       # 10% red over the near-black panel was invisible. The panel went dark
+                       # when the fridge palette was corrected; these needed to follow.
+                       f'height="{zone * scale:.2f}" fill="#ff6b6b" fill-opacity="0.22" '
+                       f'stroke="#ff8a8a" stroke-width="0.8" stroke-dasharray="4 3"/>')
             if index == 0:
                 out.append(_text(px + 6, margin_t + (y0 + zone / 2) * scale, label, size=8,
-                                 anchor="start", fill="#b00020"))
+                                 anchor="start", fill="#ffb3b3"))
 
         # The arm: reaches params.arm_len inboard from the side edge (left of each panel).
         arm_y0 = margin_t + (FRIDGE_DEPTH_MM - width) / 2.0 * scale

@@ -122,8 +122,10 @@ def render(path: Path, params: BracketParams) -> None:
                    f'width="{st * scale:.2f}" '
                    f'height="{params.magnet_disc_dia * scale:.2f}" '
                    f'fill="{MAGNET_FILL}" stroke="{MAGNET_EDGE}" stroke-width="0.8"/>')
-    out.append(_text(sx(-st) - 6, sy(side_span * 0.55), "magnets + pad hold the spine off",
-                     size=8.5, anchor="end", fill="#8a9199"))
+    # Grey on the near-black panel, with its tail crossing the fridge edge. Lightened, and
+    # anchored outboard of the bracket where it sits on paper.
+    out.append(_text(sx(-st) - 14, sy(side_span * 0.55), "magnets + pad hold the spine off",
+                     size=8.5, anchor="end", fill="#5c6368"))
 
     # --- the extra 50 mm, called out -------------------------------------------------
     out.append(f'<rect x="{sx(REACH_B):.2f}" y="{sy(-pad - t) - 4:.2f}" '

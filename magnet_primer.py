@@ -308,10 +308,10 @@ def render(path: Path, p: BracketParams) -> None:
              f'fill="{C_FOAM}" stroke="#a8830f" stroke-width="0.9"/>')
     # Ran right, straight into the facts column of the same card. Two short lines, left of the
     # fridge box, where the panel is empty.
-    o.append(_t(spine_out - 6, arm_bot - 6, "sponge pad + arm magnet:", 9.0, anchor="end",
-                fill=MUTED))
-    o.append(_t(spine_out - 6, arm_bot + 5, "the arm never touches bare steel", 9.0, anchor="end",
-                fill=MUTED))
+    # End-anchored at spine_out it ran off the LEFT edge of the canvas. Start-anchored from the
+    # card's own left margin instead, above the arm, where the panel is empty.
+    o.append(_t(66, arm_bot - 16, "sponge pad + arm magnet — the arm never touches bare steel",
+                9.0, anchor="start", fill=MUTED))
     o.append(_arrow(spine_out + 4, gy + 130, spine_out + 4, gy + 172, INK))
     o.append(_t(spine_out + 16, gy + 162, f"all {lbf_n(hanging, 1)} of it", 10.5, weight="bold"))
     o.append(_arrow(gx + 40, gy - 40, gx + 40, gy - 16, OK))

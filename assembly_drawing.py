@@ -144,6 +144,11 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
     _ly = Y(cy + d.rear_face_feature_radius)
     out.append(f'<line x1="{X(cx) + d.rear_face_feature_dia/2*sc:.1f}" y1="{_ly:.1f}" '
                f'x2="{_lx - 4:.1f}" y2="{_ly:.1f}" stroke="#a8630f" stroke-width="0.8"/>')
+    # Moving it outboard cleared the dashed box but it still crosses the REAR BOX dimension, the
+    # plate edge and the display outline. Nothing here can be moved clear of all three, so give it
+    # a panel and let it sit on top of them.
+    out.append(f'<rect x="{_lx - 5:.1f}" y="{_ly - 16:.1f}" width="152" height="26" rx="3" '
+               f'fill="#fbfbf9" fill-opacity="0.92"/>')
     out.append(_t(_lx, _ly - 6, "Pi fan / GPIO opening", 9, anchor="start", fill="#a8630f",
                   weight="bold"))
     out.append(_t(_lx, _ly + 6, "sits inside the vent window", 8.5, anchor="start",

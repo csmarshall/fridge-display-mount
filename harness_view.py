@@ -57,16 +57,17 @@ def draw(path: Path, p: BracketParams) -> dict:
              f'y2="{Y(flat.bend_line_y):.1f}" stroke="#b00020" stroke-width="1.4" '
              f'stroke-dasharray="10 6"/>')
     o.append(T(X(p.body_w)+8, Y(flat.bend_line_y)+4, "bend", 9.5, anchor="start", fill="#b00020"))
+    _region_labels: list[str] = []
     # These sit on the plate's centreline, which is exactly where the strap slots and the centre
     # vent are, so the geometry drew straight through the letters. A panel behind each label makes
     # them legible wherever they land, rather than hunting for a clear spot per region.
     for lbl, yy in (("ARM", (flat.bend_line_y+flat.height)/2), ("NECK", (p.body_h+flat.bend_line_y)/2),
                     ("BODY (the plate)", p.body_h/2)):
         lx, ly = X(p.body_w/2), Y(yy)
-        o.append(f'<rect x="{lx - len(lbl)*3.4 - 6:.1f}" y="{ly - 11:.1f}" '
+        _region_labels.append(f'<rect x="{lx - len(lbl)*3.4 - 6:.1f}" y="{ly - 11:.1f}" '
                  f'width="{len(lbl)*6.8 + 12:.1f}" height="16" rx="3" fill="#fbfcfd" '
                  f'fill-opacity="0.88"/>')
-        o.append(T(lx, ly, lbl, 11, fill=MUTED))
+        _region_labels.append(T(lx, ly, lbl, 11, fill=MUTED))
     # features
     co = geom.center_opening
     o.append(f'<circle cx="{X(co.x):.1f}" cy="{Y(co.y):.1f}" r="{co.radius*s:.1f}" fill="#fff" '
@@ -113,6 +114,11 @@ def draw(path: Path, p: BracketParams) -> dict:
     o.append(T(X(0)-14, Y(i)-10, f"{mg:.2f} mm of plate", 10.5, anchor="end",
                fill=BAD if mg<8 else OK, weight="bold"))
     o.append(T(X(0)-14, Y(i)+14, "outside the disc", 9.5, anchor="end", fill=MUTED))
+    # Region labels LAST. Drawn inline they were painted over by the features that
+    # come after them — the strap slots ran through NECK, and the O90 vent hid BODY
+    # completely. A halo cannot help when the geometry is drawn on top of it.
+    o.extend(_region_labels)
+
     # verdict block
     vx = X(flat.width)+40
     o.append(T(vx, Tp+20, "VALIDATOR", 12, anchor="start", weight="bold"))

@@ -284,7 +284,7 @@ def render(path: Path, p: BracketParams) -> None:
     fits = [r for r in allperm if r.state == "ok"]
     best_area = max(fits, key=lambda r: r.bearing_area)
     fy = 190 + rows * ch + 30
-    o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="134" fill="#fff" '
+    o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="152" fill="#fff" '
              f'stroke="{OK}" stroke-width="1.6" rx="4"/>')
     o.append(_t(56, fy, f"USE: {spec.label}", 13.5, anchor="start", weight="bold", fill=OK))
     o.append(_t(56, fy + 22,
@@ -307,7 +307,7 @@ def render(path: Path, p: BracketParams) -> None:
     o.append(_t(56, fy + 80,
                 "It survives being taken apart, and bears on only 70 mm2 — which is harmless. So "
                 "this is a preference, not a correctness call.", 11.5, anchor="start", fill=MUTED))
-    o.append(_t(56, fy + 82, f"Fasteners are {FINISH.upper()} OXIDE where stocked - only the ARM "
+    o.append(_t(56, fy + 100, f"Fasteners are {FINISH.upper()} OXIDE where stocked - only the ARM "
                 f"nuts are visible, facing up against a textured-black arm.", 11.0, anchor="start",
                 fill=MUTED))
     o.append("</svg>")

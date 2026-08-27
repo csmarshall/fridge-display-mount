@@ -127,7 +127,7 @@ def render(path: Path, p: BracketParams) -> None:
             o.append(f'<rect x="{x0 + colw*i:.1f}" y="{y0 - 56:.1f}" width="{colw:.1f}" '
                      # len(dirs)+1 counted a row that is not drawn, so the highlight ran ~90 px
                      # past the last row as an empty green block.
-                     f'height="{rowh*len(dirs) + 56:.1f}" fill="#e8f4ee"/>')
+                     f'height="{rowh*len(dirs) + 37:.1f}" fill="#e8f4ee"/>')
         o.append(f'<text x="{cx:.1f}" y="{y0-38:.1f}" font-family="Helvetica,Arial,sans-serif" '
                  f'font-size="15" font-weight="bold" text-anchor="middle" '
                  f'fill="{INK}">{np_ + na}</text>')
@@ -135,13 +135,16 @@ def render(path: Path, p: BracketParams) -> None:
                  f'font-size="10.5" text-anchor="middle" fill="{MUTED}">'
                  f'{np_} plate · {na} reach</text>')
         if built:
-            o.append(f'<text x="{cx:.1f}" y="{y0-9:.1f}" font-family="Helvetica,Arial,sans-serif" '
-                     f'font-size="9.5" text-anchor="middle" font-weight="bold" '
-                     f'fill="{OK}">AS BUILT</text>')
+            # Emitted LAST, not here. The first row's zebra band is drawn after the header loop
+            # and covers y0-9, so this tag was painted over and never appeared in the render.
+            as_built_x = cx
     o.append(f'<text x="40" y="{y0-38:.1f}" font-family="Helvetica,Arial,sans-serif" '
              f'font-size="12" font-weight="bold" fill="{INK}">MAGNETS →</text>')
 
     tables = [forces(np_, na, p, rep) for np_, na in LADDER]
+    _as_built_tag = (f'<text x="{as_built_x:.1f}" y="{y0-9:.1f}" '
+                     f'font-family="Helvetica,Arial,sans-serif" font-size="9.5" '
+                     f'text-anchor="middle" font-weight="bold" fill="{OK}">AS BUILT</text>')
     for r, name in enumerate(dirs):
         ry = y0 + rowh * r
         if r % 2 == 0:
@@ -161,6 +164,8 @@ def render(path: Path, p: BracketParams) -> None:
                      f'text-anchor="middle" fill="{MUTED}">{v*N_PER_LBF:.0f} N</text>')
         o.append(f'<line x1="36" y1="{ry+11:.1f}" x2="{W-40:.1f}" y2="{ry+11:.1f}" '
                  f'stroke="{RULE}" stroke-width="0.8"/>')
+
+    o.append(_as_built_tag)          # after the zebra bands, so it is actually visible
 
     fy = y0 + rowh * len(dirs) + 34
     notes = [
