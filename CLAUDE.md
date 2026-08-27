@@ -1,0 +1,282 @@
+# CLAUDE.md — Fridge-Side Display Mount
+
+Magnetic-assisted **hook** bracket that hangs a Waveshare 23.8" FHD touch monitor on the
+side panel of a **Samsung RS23A500ASR** counter-depth side-by-side refrigerator. This repo produces the parametric
+flat-pattern generator and the fabrication package.
+
+Original brief: `docs/BRIEF.md`. Live session state: `session-state.md`.
+
+---
+
+## 1. Design invariants — SETTLED, do not re-litigate
+
+### 1.1 The load path is a hook, not friction
+One-piece bent bracket. `ARM` (horizontal) reaches over the fridge top and rests on it;
+the entire vertical load transfers into **bearing at the top corner**. `NECK` + `BODY`
+(the vertical spine) drop down the side panel. **Magnets carry zero vertical load.**
+
+Rationale: magnets are rated for pull on thick steel at zero gap; neither condition holds
+on 0.6–0.9 mm painted appliance sheet. Derate to **~35 % of rated** pull, then multiply by
+μ (**0.7** rubber-faced, **0.2** bare nickel) for shear. Vendor confirmation: totalElement
+rates a 43 mm rubber pot magnet at 33.5 lb vertical pull but only 7 lb horizontal.
+Magnet-only mounting would need ~15× the display weight in rated pull. The hook removes
+that failure mode entirely and survives a **non-magnetic** (304 stainless) panel.
+
+### 1.2 Touch input is the governing magnet load
+Pressing near the outer screen edge applies torsion about the vertical spine axis:
+
+```
+M_torsion  = F_press x (screen_width / 2)
+F_per_side = M_torsion / magnet_spacing
+```
+
+**Magnet spacing is a load-bearing dimension.** Hard floor: **240 mm**. The generator must
+refuse to write files and warn loudly if any parameter change shrinks it.
+
+### 1.3 Peel is negligible — compute and report it anyway
+```
+T_peel = W x d / H      d = CG offset from fridge face, H = magnet-to-bottom-pad distance
+```
+`d` is **derived from the mounting stack** (magnet + plate + spacer + half display depth),
+never hardcoded. Report it; do not design around it.
+
+### 1.3b Arm width vs arm reach — bounded by different things
+They are **not proportional**. Arm WIDTH runs front-to-back, where the fridge top is straight; it
+costs no sheet (the body already sets the bounding box) and its only limit is the clear window
+between the hinge caps and the rear step-down. Arm REACH runs across the *crowned* direction, costs
+sheet length one-for-one, and is bounded by the arm pad budget.
+
+Arm width is the fallback structural dimension: under a touch press the hook sees a couple across
+the arm width, `F = M_torsion / arm_width`, which is what holds the arm down if the panel turns out
+to be **non-magnetic**. 130 mm gives 1.01x margin there; 190 mm gives 1.52x.
+
+### 1.4 Corner-radius mismatch: size the pad, do not chase the radius
+`R_f` = fridge top corner radius (unpublished, unknown). `R_b` = bracket inside bend radius.
+
+- `R_f < R_b` — bracket flats seat on fridge flats, air void at corner. Ideal. Sponge fills it.
+- `R_f > R_b` — bracket rides the corner and its flats lift by
+  `flat_gap = (R_f - R_b) x (1 - 1/sqrt(2)) ~= 0.293 x (R_f - R_b)`
+
+At `R_f = 12 mm` that is 1.65 mm; at an implausible 20 mm, 4.0 mm. A 10 mm closed-cell
+sponge pad absorbs the whole plausible range. `flat_gap()` is implemented in the generator,
+reported across `R_f = 3–20 mm`, and asserted against the specified pad thickness.
+
+**The pad budget is a sum, not a single term:** corner-radius lift-off and the crown rising under
+the arm STACK. `pad >= (flat_gap(R_f_envelope) + crown_rise_at(reach)) x 1.2`. The envelope is
+`R_f = 15 mm`, the top of the range an LG formed wrapper plausibly produces; coverage beyond it is
+REPORTED as sensitivity (the 1/4 in pad actually covers a measured R_f up to 19 mm at 130 mm reach)
+rather than designed to, because designing to R_f = 20 would force a pad thickness that no stocked
+magnet height matches.
+**Do not add a second bend or a joggle.**
+
+### 1.5 Other invariants
+- Bottom pad thickness **matches the magnet standoff, biased UNDER not over** — REVISED
+  2026-08-27. The old rule allowed up to +2.5 mm proud and rejected anything under; that is
+  backwards. Proud means the plate lands on the pad, the magnets never reach the panel, and the
+  mount is both spongier and weaker — the single soft element in an otherwise rigid stack. A
+  little under lets the rigid magnets bear while the pad still protects paint. Stock now includes
+  METRIC sizes because **11.5 mm sits 0.01 mm from the 11.51 mm magnet** and no imperial size is
+  close. Validator bound is now **-0.60 to +0.30 mm**.
+  *Implementation note:* the functional requirement is that the pad must never be THINNER than the
+  magnet — a rigid magnet proud of a thin pad holds the plate off. Being slightly proud is harmless
+  because the pad is compressible sponge. This matters because closed-cell sponge is sold in
+  imperial thicknesses and there is no 6.00 mm stock: 1/4 in is 6.35 mm. The validator therefore
+  accepts 0 to +1.0 mm of pad excess and rejects anything negative.
+- Arm pad is **closed-cell sponge**, thick enough to conform to the top corner radius. A
+  rigid bracket landing on folded appliance sheet will line-load and crease it.
+- **Do not blank off the display's rear vents** with solid plate — a Pi 5 behind an
+  unvented slab throttles. *Concretely:* the display's raised rear box carries the Pi's fan and GPIO
+  in its FACE, ~82 mm from the VESA centre. The vent windows are therefore placed on a **radius of
+  87.5 mm** rather than a margin from the plate edge, so one covers the opening in **every 90 deg
+  rotation**. The M4 spacers are also load-bearing on this invariant: without them the plate bolts
+  flat onto the Pi's cooling.
+- A flat plate against a wall is loaded in its **weak bending axis**. Check it; add ribs or
+  thickness rather than assuming.
+
+---
+
+## 2. Hardware
+
+**Display — Waveshare 23.8" FHD Monitor (SKU 34025)** — verified against
+<https://docs.waveshare.com/23.8inch_FHD_Monitor> and, for anything dimensional, the dimension
+drawing at
+<https://www.waveshare.com/img/devkit/LCD/27inch-FHD-Monitor/23.8inch-FHD-Monitor-details-size.jpg>
+(2026-08-24). **The spec table's "18.00(D)" is the panel section only; overall depth is 43 mm.**
+
+| Property | Value | Verified |
+|---|---|---|
+| Outer dimensions | 555.23 (H) x 324.65 (V) x 18.00 (D) mm | yes |
+| Weight | 3.94 kg | yes |
+| Input voltage | 11.5–12.5 V, **>= 3 A to boot** | yes |
+| Typical power | 36 W | yes |
+| Touch | 10-point capacitive, optically bonded, 6H toughened glass | yes |
+| Overall depth | **43.00 mm** = 18.00 panel + **25.00 raised rear box** | dimension drawing |
+| Rear box footprint | 260 x 134 mm, centred | dimension drawing |
+| VESA | 100 x 100, **on the raised rear box face** | **CONFIRMED** on the dimension drawing |
+| Active area / bezel | 528.04 x 297.46 mm / 13.60 mm | dimension drawing |
+| Panel corner radius | R10.00 | dimension drawing |
+| Pi 5 fan / GPIO opening | in the rear box FACE, **87.5 mm** from the VESA centre (+/- 5, scaled against the dimensioned 260 mm box width) | dimension drawing |
+| Enclosure material / Pi 5 bay | not stated | measure |
+| Bundled PSU | not stated on the spec page (brief says 12 V 5 A / 60 W) | confirm in box |
+
+Anything marked "measure" is a **pre-order checklist item**, not an assumption to build on.
+
+**The 27in panel shares the bracket.** Waveshare's 27in FHD Monitor (SKU 33975 US) has the SAME
+rear box (260 x 134 x 25), the SAME VESA 100 on that box, the SAME 43 mm depth profile and the fan
+at the SAME 87.4 mm radius — only the panel size (629.62 x 367.40) and mass (4.92 kg) differ.
+`--display 27` restates the load case; the generated DXF is geometrically identical, verified by
+hashing the entity geometry. Drawing saved in `docs/reference/`. Upsizing does not mean recutting.
+
+**Mounting surface — Samsung RS23A500ASR**, 23 cu ft **counter-depth** side-by-side.
+Published dimensions (`docs/reference/samsung-RS23A500ASR-specsheet.pdf`), verified 2026-08-25:
+
+| | |
+|---|---|
+| Case, without hinges or doors | 35 7/8" x **68 5/8"** x **24"**  =  911.2 x **1743.1** x **609.6 mm** |
+| With hinges, handles and doors | 35 7/8" x 70 1/16" x 28 5/8"  =  911.2 x 1779.6 x 727.1 mm |
+| Height that matters (arm rests on the CASE) | **1743.1 mm** |
+| Hinge covers stand proud of the case top by | **36.5 mm** — the arm lands behind them |
+| Doors project forward of the cabinet by | 117.5 mm |
+| Weight | 229 lbs |
+
+**COUNTER-DEPTH is the consequential fact.** The cabinet is only **610 mm** deep, so:
+- the top surface the arm lands on is 610 mm front-to-back, not the ~850 mm of a standard-depth box
+- the side panel the body hangs on is 610 mm deep, and a **555 mm landscape display leaves only
+  27 mm front and back if centred**. Portrait (324.65 mm) is roomy by comparison.
+
+**RETRACTED — these were LG-specific and do not carry over.** The original brief described an LG:
+a single formed steel wrapper for both sides and the top, hence a real sheet-metal bend at the top
+edge with R_f in the 6-15 mm range, and a crown from wrapper doming. **None of that is established
+for Samsung.** Samsung may use a separate top panel, a different corner radius, or a plastic top
+cap. Until measured, treat as UNKNOWN:
+- top corner radius `R_f` — the `R_f = 15 mm` design envelope came from LG wrapper reasoning
+- whether the top is crowned at all, and by how much
+- ~~whether the top is crowned~~ — **PHOTOGRAPHED 2026-08-27: the top is FLAT.** A yardstick laid
+  across roughly 28 in of the top front edge shows no daylight at either end, so `crown_rise = 0`
+  is now evidence-backed rather than an unmeasured default. CAVEAT: a photo at this angle would
+  not resolve 1-2 mm of gentle dome, and it says nothing about the FRONT-TO-BACK direction. Treat
+  as "no gross crown", not as a measurement.
+- **Hinge cover, from the same photo:** a separate grey plastic moulding whose left edge sits about
+  **16.5 in (419 mm) from the left edge of the top**. Charles reports it **lifts slightly**, so thin
+  material can be slipped underneath. Since the arm reaches only 180 mm from the left edge, the
+  hinge cover is **~239 mm clear of the arm tip** and is probably a non-issue for a LEFT mount.
+  UNVERIFIED: which door's hinge this is, and whether a second cover sits nearer the left edge.
+- ~~whether the side panel is magnetic~~ — **MEASURED 2026-08-26: the top AND the sides are both
+  magnetic.** Charles checked the actual unit with a magnet. This promotes two things that were
+  previously hedged: (a) the arm retention magnets will actually work, so they are worth fitting
+  in the first order; (b) the non-magnetic-panel fallback in section 1.3b is no longer the
+  governing case for arm WIDTH. Keep the 190 mm width and its 1.52x margin anyway — it costs no
+  sheet and the fallback margin is now free insurance, not a design driver
+- hinge cover footprint and any rear cable/waterline step-down
+
+Samsung's own side elevation draws the top as a flat straight line, but that is an idealised
+drawing and cannot rule out a few mm of crown.
+
+
+---
+
+## 3. Manufacturing target — SendCutSend
+
+Verified 2026-08-24 against sendcutsend.com. Re-verify before ordering; these change.
+
+| Constraint | Value | Source |
+|---|---|---|
+| Material | **A36/1008 mild steel, 0.119" (3.023 mm) CRS** — as built | /materials/mild-steel/ |
+| Why steel, not the brief's aluminium | The price study killed 0.187" 5052: it sits past a cost cliff at **$131.49** qty 1, while 0.119" steel is **$87.39** and stiffer per unit price. Steel is also what the magnets want. `--material 5052` still generates a valid part; the bend table differs (steel's effective bend radius is much tighter) so the flat pattern is NOT interchangeable. See `docs/PRICE-STUDY.md` | price study 2026-08-25 |
+| Superseded alloy note | The brief specified 5052, **not 6061-T6** (cracks on tight bends). That reasoning still holds *if* aluminium is ever revisited | brief |
+| Effective bend radius after bend | **0.250" (6.35 mm)** | material bending specs |
+| Bend relief depth (if used) | 0.270" | material bending specs |
+| Min flange length | **~1.150" (29.21 mm)**, required **both sides** of the bend line for material >= 0.187" | published for 0.250"; **not directly confirmed for 0.187"** — treated as conservative. Our flanges are 130 mm / 400 mm, so this is not close to binding |
+| Die width range | **0.472"–1.575"** | /guidelines/bend-deformation/ |
+| Feature clearance from bend centerline | **>= 1/2 die width** -> worst case **0.7875" (20.0 mm)** | /guidelines/bend-deformation/ |
+| Min hole diameter | ~50 % of thickness -> 2.38 mm | small-geometry guidance |
+| Hole-to-edge spacing | **>= 2 x thickness (9.53 mm)** — stricter than the brief's 1x; enforce 2x | small-geometry guidance |
+| Max flat size (instant pricing) | 30" x 44" (762 x 1118 mm) | /materials/5052-aluminum/ |
+| Bend deduction | from **their bending calculator**, not an invented formula. Our default is an estimate — see §4 | /faq/what-are-your-material-bending-specifications/ |
+| 2D upload | one layer, no open contours, floating interiors bridged | brief |
+
+**Bend lines in the DXF — SETTLED 2026-08-25 by testing against their live app.** The brief said no
+bend line in the DXF. That is WRONG for their current flow. A geometry-only upload greys out Bending
+and the app reports *"No bend lines detected"*, with a format table specifying **.dxf -> dashed line
+(not hidden)**. The DXF therefore carries **one dashed `LINE`** at the bend centre spanning exactly
+the bend length. It is a marker, not a cut path: it does not affect extents or price, and with it the
+app reports "1 Bend". `audit_dxf.py` verifies its count, position, span and `DASHED` linetype — a
+SOLID line would be read as a cut and would slice the part in half.
+
+---
+
+## 4. Parameters still to be measured (clearly-marked CLI defaults)
+
+| Parameter | Default | How to resolve |
+|---|---|---|
+| Neck length | **310 mm** | Derived, not hardcoded: `neck = fridge_height - screen_centre - body_h/2`. Screen centre 1331 mm is mid-band for 5'1"-6'4" on a 1791 mm LG. The brief's "- 12 mm" is not magic either: it is `(display_height - body_height)/2`, 12.3 mm landscape and 127.6 mm portrait. Use `--fridge-height` + `--screen-centre-height` |
+| Fridge crown rise | **3.0 mm** | straightedge across the top; feeds the arm pad budget |
+| Bend deduction | **derived estimate**, `BD = 2(R+T)tan(45) - (pi/2)(R + K*T)` with **K = 0.42** | replace with SendCutSend's bending calculator value |
+| Orientation | **landscape** | portrait is reachable by parameter and is mechanically better (torsion arm 278 -> 162 mm) |
+| Fridge top corner radius `R_f` | **12 mm** | affects **pad sizing only**, never cut geometry. Straightedge on the side, another on the top; they meet at the theoretical sharp corner; measure from that intersection along the top to the tangent point — for a 90 deg corner that distance is the radius. Cross-check down the side face. Quick screen: a US quarter is O 24.26 mm (R = 12.13 mm) — if it rocks and will not seat, `R_f` < 12 mm |
+
+---
+
+## 4b. Settled geometry (as built)
+Body **310 x 300** (hides behind the display in BOTH orientations; portrait is only 324.65 mm wide),
+magnet spacing **250 x 240 mm** against the 240 mm floor. Neck/arm width **190 mm**. Neck **310 mm**.
+Arm reach **180 mm** — SETTLED 2026-08-26 and promoted to the generator default. It is the
+shortest reach that lands the outermost full O48 disc on metal (needs 168 mm; 180 gives 12 mm
+beyond). Costs **$8.85** more than the old 130 mm variant A. Live quote 2026-08-26 on the as-built
+file: cut $103.47, +1 bend $115.24, +matte black **$185.85**. Blank grows 692 -> **742 mm**.
+**Arm retention magnets:** 4 off in TWO rows, same SKU as the body magnets, at **90 and 144 mm**
+from the bend apex, 120 mm apart across the arm. Anti-jostle only — **zero credit in the load
+path**. The 54 mm row pitch is a hard floor (O48 disc + 6 mm); rows cannot sit closer.
+**Cable retention is SLOTS, not round holes** — 5 pairs of 4.0 x 18.0 mm slots (R1.40 ends),
+16.0 mm centre-to-centre so the bridge between a pair is 12.0 mm. Sized for a 1/2 in VELCRO ONE-WRAP
+(12.7 mm) with 2.65 mm clearance per side, which also passes a 5/8 in strap. A flat hook-and-loop
+band cannot thread a 5 mm hole; that hole size only ever suited a zip tie. Slots are `WindowRect`s,
+so they are LWPOLYLINEs in the DXF, and the outermost pair sits at bend **+105** not +115 — an
+18 mm slot at +115 lands 3.5 mm from the arm tip, inside the 2x-thickness edge rule.
+
+**Countersinks: the 4 VESA holes only, 90 deg M4, fridge-facing face — which is the CONCAVE
+(inside) face of the bend**, because the fridge sits in the inside corner of the L. Use that rule
+rather than the app's "up/down" bend direction, which only describes screen orientation. Their M4
+profile is 0.315"/0.164"/90 deg; our holes are O4.5 against their 4.17 mm minor, which the app
+accepts and which seats the head ~0.17 mm deeper than nominal. Left at O4.5 deliberately.** Those screw heads are the
+only ones that land near painted steel; the magnet screw heads face the display with 10 mm of
+spacer clearance. Per SendCutSend only the minor hole is drawn, so the DXF is unchanged.
+
+## 5. BOM constraints
+- Magnets: **O 43 x 6 mm rubber-coated neodymium pot magnets, M4 female thread.** Not
+  male-stud — a stud needs a nut on the display-facing side and breaks the flat mounting plane.
+- **M4 spacers** between plate and display: clear the magnet screw heads and open an air channel.
+- Power: 36 W (display) + up to 27 W (Pi 5) = **63 W against a 60 W bundled brick.** Flag the upgrade.
+- **Magnet pull ratings are not trustworthy across vendors.** AMF rates the O43 x 6 rubber pot at
+  9 kg (19.8 lbf); totalElement rates a 43 mm rubber pot at 33.5 lbf. Design against the
+  conservative figure: SF 2.5x rather than 4.2x. Both pass.
+
+---
+
+## 6. Deliverables
+| File | Purpose |
+|---|---|
+| `generate_bracket.py` | parametric flat-pattern generator (ezdxf). Formed dimensions in, flat derived by subtracting bend deduction. Validates, then writes; **exits non-zero and writes nothing on failure** |
+| `bracket_flat.dxf` | the upload file. mm (`$INSUNITS = 4`), layer 0 only, every contour closed |
+| `bracket_preview.svg` | annotated visual check — bend line, magnet footprints, key dims. **Reference only, never upload** |
+| `bracket_params.json` | machine-readable expected geometry, consumed by the audit |
+| `audit_dxf.py` | acceptance test: single layer, zero open contours, correct units, expected extents, expected hole diameters. Run after every generation |
+| `SENDCUTSEND-ORDER.md` | order config, bend setup, countersink spec, hole schedule, compliance table, sourced BOM, assembly sequence, fridge measurement checklist |
+| `build_variants.sh` | builds and audits both arm-reach variants into `variants/`, with a comparison table |
+| `render3d.py` | tiny painter's-algorithm 3D projector — perspective, backface culling, Lambert shading. No renderer is installed on toad; this is NOT a photograph and must not be captioned as one |
+| `approval_sheet.py` / `approval_sheet.svg` | partner-facing sheet: front elevation, side elevation, shaded 3D view, plain-language fact band. Reads the same params as the DXF, and refuses to draw a part that does not validate |
+| `ergonomics_sweep.py` / `.svg` | mounting-height study: neck length vs the band comfortable for 5'1"-6'4" |
+| `arm_width_sweep.py` / `.svg` | arm width study in plan view: lift demand vs hold-down in the non-magnetic fallback |
+
+## 7. Code style
+- Timestamped logging on every operation; INFO for major steps, DEBUG for per-feature detail
+  (per-corner fillet math, hole positions, validation results). Level configurable via CLI.
+  Consistent format across modules. DEBUG lines carry relevant variable state.
+- Self-documenting names; inline comments only where the logic is non-obvious (bulge math,
+  bend-deduction derivation).
+- **No drifting constants** — derive anything derivable. No dead code, no stubs.
+- Type hints and dataclasses where they earn their keep. `unset TMOUT` in any shell script.
+
+## 8. Environment
+`python3 -m venv .venv && .venv/bin/pip install ezdxf` — ezdxf 1.4.2. Run everything with
+`.venv/bin/python`.

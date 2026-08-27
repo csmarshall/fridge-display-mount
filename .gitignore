@@ -1,0 +1,14 @@
+# Python venv — recreate with: python3 -m venv .venv && .venv/bin/pip install ezdxf
+.venv/
+
+# Personal session state, per the project's own state-file hierarchy. Not committed.
+session-state.md
+CLAUDE.local.md
+
+# Generated artefacts. Every one of these is reproducible from the .py sources, and
+# committing them means every rebuild shows as a diff in binary-ish files.
+png/
+variants/
+*.pyc
+__pycache__/
+.DS_Store

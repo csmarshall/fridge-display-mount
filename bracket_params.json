@@ -1,0 +1,499 @@
+{
+  "material": {
+    "name": "A36/1008 mild steel",
+    "thickness_mm": 3.0225999999999997,
+    "bend_radius_mm": 1.6001999999999998,
+    "k_factor": 0.38
+  },
+  "params": {
+    "orientation": "portrait",
+    "body_w": 310.0,
+    "body_h": 310.0,
+    "neck_w": 190.0,
+    "neck_len": 257.0,
+    "fridge_height": 1743.0749999999998,
+    "hinge_cover_proud": 36.512499999999996,
+    "fridge_top_width": 911.2249999999999,
+    "fridge_depth": 609.5999999999999,
+    "fridge_depth_with_doors": 727.0749999999999,
+    "crown_rise": 0.0,
+    "arm_len": 180.0,
+    "bend_angle_deg": 90.0,
+    "bend_deduction": 0.0,
+    "vesa": 100.0,
+    "extra_vesa": [
+      [
+        200.0,
+        100.0,
+        4.4
+      ],
+      [
+        100.0,
+        200.0,
+        4.4
+      ],
+      [
+        200.0,
+        200.0,
+        6.5
+      ]
+    ],
+    "vesa_hole_dia": 4.4,
+    "countersink_vesa": false,
+    "countersink_major": 8.001,
+    "magnet_hole_dia": 8.5,
+    "magnet_inset": 32.0,
+    "extra_magnet_rows": [],
+    "spare_mid_holes": true,
+    "spare_arm_holes": false,
+    "magnet_disc_dia": 48.021874999999994,
+    "magnet_standoff": 11.509374999999999,
+    "center_open_dia": 90.0,
+    "window_long": 80.0,
+    "window_short": 46.0,
+    "window_radius": 87.5,
+    "vent_windows": true,
+    "outer_fillet": 8.0,
+    "reflex_fillet": 6.0,
+    "window_fillet": 5.0,
+    "arm_pad_override": 0.0,
+    "bend_line": true,
+    "cable_ties": true,
+    "cable_tie_neck_pairs": 3,
+    "cable_tie_arm_pairs": 2,
+    "cable_tie_pair_gap": 16.0,
+    "strap_width": 12.7,
+    "strap_clearance": 2.65,
+    "strap_slot_thickness": 4.0,
+    "arm_magnets": true,
+    "arm_magnet_disc_dia": 48.021874999999994,
+    "arm_magnet_standoff": 11.509374999999999,
+    "arm_magnet_offset": 90.0,
+    "extra_arm_magnet_offsets": [
+      36.0,
+      144.0
+    ],
+    "arm_magnet_spacing": 120.0,
+    "fridge_corner_radius": 12.0,
+    "fridge_corner_radius_max": 15.0,
+    "spacer_len": 0.0,
+    "screw_head_height": 4.0,
+    "press_force_lbf": 5.0,
+    "magnet_rated_pull_lbf": 175.0,
+    "magnet_derate": 0.35,
+    "mu_rubber": 0.2,
+    "mu_bare_nickel": 0.2,
+    "min_magnet_spacing": 240.0,
+    "bottom_pad_thickness_override": 0.0
+  },
+  "flat": {
+    "width_mm": 310.0,
+    "height_mm": 742.0343,
+    "arm_flat_mm": 177.51715,
+    "neck_flat_mm": 254.51715,
+    "bend_line_y_mm": 564.51715,
+    "bend_deduction_mm": 4.9657
+  },
+  "expected_dxf": {
+    "insunits": 4,
+    "layers": [
+      "0"
+    ],
+    "extents_mm": [
+      0.0,
+      0.0,
+      310.0,
+      742.0343
+    ],
+    "bend_line_count": 1,
+    "bend_line_y_mm": 564.51715,
+    "bend_line_x_range_mm": [
+      60.0,
+      250.0
+    ],
+    "lwpolyline_count": 15,
+    "circle_count": 31,
+    "hole_diameters_mm": [
+      4.4,
+      6.5,
+      8.5,
+      90.0
+    ]
+  },
+  "holes": [
+    {
+      "tag": "vesa",
+      "x": 105.0,
+      "y": 105.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa",
+      "x": 105.0,
+      "y": 205.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa",
+      "x": 205.0,
+      "y": 105.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa",
+      "x": 205.0,
+      "y": 205.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa200x100",
+      "x": 55.0,
+      "y": 105.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa200x100",
+      "x": 55.0,
+      "y": 205.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa200x100",
+      "x": 255.0,
+      "y": 105.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa200x100",
+      "x": 255.0,
+      "y": 205.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa100x200",
+      "x": 105.0,
+      "y": 55.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa100x200",
+      "x": 105.0,
+      "y": 255.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa100x200",
+      "x": 205.0,
+      "y": 55.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa100x200",
+      "x": 205.0,
+      "y": 255.0,
+      "dia": 4.4
+    },
+    {
+      "tag": "vesa200x200",
+      "x": 55.0,
+      "y": 55.0,
+      "dia": 6.5
+    },
+    {
+      "tag": "vesa200x200",
+      "x": 55.0,
+      "y": 255.0,
+      "dia": 6.5
+    },
+    {
+      "tag": "vesa200x200",
+      "x": 255.0,
+      "y": 55.0,
+      "dia": 6.5
+    },
+    {
+      "tag": "vesa200x200",
+      "x": 255.0,
+      "y": 255.0,
+      "dia": 6.5
+    },
+    {
+      "tag": "magnet",
+      "x": 32.0,
+      "y": 32.0,
+      "dia": 8.5
+    },
+    {
+      "tag": "magnet",
+      "x": 32.0,
+      "y": 278.0,
+      "dia": 8.5
+    },
+    {
+      "tag": "magnet",
+      "x": 278.0,
+      "y": 32.0,
+      "dia": 8.5
+    },
+    {
+      "tag": "magnet",
+      "x": 278.0,
+      "y": 278.0,
+      "dia": 8.5
+    },
+    {
+      "tag": "arm_magnet",
+      "x": 95.0,
+      "y": 652.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "arm_magnet",
+      "x": 215.0,
+      "y": 652.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "arm_magnet",
+      "x": 95.0,
+      "y": 598.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "arm_magnet",
+      "x": 215.0,
+      "y": 598.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "arm_magnet",
+      "x": 95.0,
+      "y": 706.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "arm_magnet",
+      "x": 215.0,
+      "y": 706.0343,
+      "dia": 8.5
+    },
+    {
+      "tag": "spare_magnet",
+      "x": 155.0,
+      "y": 32.0,
+      "dia": 8.5
+    },
+    {
+      "tag": "spare_magnet",
+      "x": 155.0,
+      "y": 278.0,
+      "dia": 8.5
+    },
+    {
+      "tag": "spare_magnet",
+      "x": 32.0,
+      "y": 155.0,
+      "dia": 8.5
+    },
+    {
+      "tag": "spare_magnet",
+      "x": 278.0,
+      "y": 155.0,
+      "dia": 8.5
+    }
+  ],
+  "windows": [
+    {
+      "tag": "vent_top",
+      "cx": 155.0,
+      "cy": 242.5,
+      "w": 80.0,
+      "h": 46.0,
+      "r": 5.0
+    },
+    {
+      "tag": "vent_bottom",
+      "cx": 155.0,
+      "cy": 67.5,
+      "w": 80.0,
+      "h": 46.0,
+      "r": 5.0
+    },
+    {
+      "tag": "vent_left",
+      "cx": 67.5,
+      "cy": 155.0,
+      "w": 46.0,
+      "h": 80.0,
+      "r": 5.0
+    },
+    {
+      "tag": "vent_right",
+      "cx": 242.5,
+      "cy": 155.0,
+      "w": 46.0,
+      "h": 80.0,
+      "r": 5.0
+    },
+    {
+      "tag": "strap_-217l",
+      "cx": 147.0,
+      "cy": 347.292295,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_-217r",
+      "cx": 163.0,
+      "cy": 347.292295,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_-128l",
+      "cx": 147.0,
+      "cy": 436.280675,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_-128r",
+      "cx": 163.0,
+      "cy": 436.280675,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_-39l",
+      "cx": 147.0,
+      "cy": 525.269055,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_-39r",
+      "cx": 163.0,
+      "cy": 525.269055,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_+32l",
+      "cx": 147.0,
+      "cy": 596.065245,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_+32r",
+      "cx": 163.0,
+      "cy": 596.065245,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_+148l",
+      "cx": 147.0,
+      "cy": 712.442005,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    },
+    {
+      "tag": "strap_+148r",
+      "cx": 163.0,
+      "cy": 712.442005,
+      "w": 4.0,
+      "h": 18.0,
+      "r": 1.4
+    }
+  ],
+  "engineering": {
+    "display_weight_lbf": 8.686213129892,
+    "bracket_mass_kg": 3.7106060746179255,
+    "bracket_weight_lbf": 8.180486092691178,
+    "total_hanging_lbf": 16.86669922258318,
+    "overturning_moment_in_lbf": 19.234296790148957,
+    "torsion_arm_mm": 162.325,
+    "torsion_moment_in_lbf": 31.953740157480315,
+    "magnet_spacing_mm": 246.0,
+    "torsion_force_per_side_lbf": 3.2992886178861784,
+    "torsion_force_per_magnet_lbf": 1.6496443089430892,
+    "cg_offset_mm": 43.981845943904645,
+    "peel_lever_mm": 278.0,
+    "peel_lbf": 1.757378195934473,
+    "magnet_derated_pull_lbf": 61.24999999999999,
+    "magnet_shear_rubber_lbf": 12.25,
+    "magnet_shear_bare_nickel_lbf": 12.25,
+    "magnet_tension_sf": 37.12921607885415,
+    "neck_stress_psi": 1089.4661880177587,
+    "neck_sf": 33.043705620181385,
+    "body_weak_axis_stress_psi": 1062.5059918728848,
+    "body_weak_axis_sf": 33.88216186578168,
+    "flat_gap_by_fridge_radius_mm": {
+      "3": 0.4099919276950709,
+      "4": 0.7028851465085234,
+      "5": 0.995778365321976,
+      "6": 1.2886715841354284,
+      "7": 1.581564802948881,
+      "8": 1.8744580217623334,
+      "9": 2.167351240575786,
+      "10": 2.460244459389239,
+      "11": 2.7531376782026915,
+      "12": 3.046030897016144,
+      "13": 3.3389241158295966,
+      "14": 3.631817334643049,
+      "15": 3.9247105534565017,
+      "16": 4.217603772269954,
+      "17": 4.510496991083406,
+      "18": 4.803390209896858,
+      "19": 5.096283428710311,
+      "20": 5.3891766475237635
+    },
+    "worst_flat_gap_mm": 5.3891766475237635,
+    "arm_pad_thickness_mm": 11.5,
+    "crown_rise_under_arm_mm": 0.0,
+    "arm_pad_budget_mm": 3.9247105534565017,
+    "fridge_corner_radius_envelope_mm": 15.0,
+    "max_arm_reach_mm": 454.0,
+    "max_fridge_corner_radius_covered_mm": 34.0,
+    "bottom_pad_thickness_mm": 11.5,
+    "power_budget_w": 63.0,
+    "fridge_height_mm": 1743.0749999999998,
+    "screen_centre_height_mm": 1331.0749999999998,
+    "display_overhang_mm": 122.61500000000001,
+    "screen_top_landscape_mm": 1493.3999999999999,
+    "screen_bottom_landscape_mm": 1168.7499999999998,
+    "screen_top_portrait_mm": 1608.6899999999998,
+    "screen_bottom_portrait_mm": 1053.4599999999998,
+    "arm_magnets": true,
+    "material": "A36/1008 mild steel",
+    "thickness_in": 0.119,
+    "countersink_depth_mm": 1.8004999999999995,
+    "countersink_limit_mm": 1.8135599999999998,
+    "display_mass_kg": 3.94,
+    "display_wh_mm": [
+      555.23,
+      324.65
+    ],
+    "display_overall_depth_mm": 43.0,
+    "display_centroid_from_box_face_mm": 29.449870943904642,
+    "rear_box_mm": [
+      260.0,
+      134.0,
+      25.0
+    ],
+    "rear_face_feature_radius_mm": 87.5,
+    "cut_length_mm": 4372.087318215281,
+    "plate_area_mm2": 156384.79187648065,
+    "bounding_area_mm2": 230030.633
+  }
+}
