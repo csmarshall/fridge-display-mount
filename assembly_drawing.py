@@ -163,7 +163,9 @@ def render(path: Path, params: BracketParams, display_key: str) -> None:
                       colour="#1a5fb4"))
     out.append(_dim_h(X(params.magnet_inset), X(params.body_w-params.magnet_inset),
                       Y(0) + 40, f"MAGNET SPACING {params.body_w-2*params.magnet_inset:.0f}",
-                      colour=MAGNET_FILL))
+                      # MAGNET_FILL is the pale disc pink and vanishes on the pale blue display
+                      # fill. Use the darker magnet EDGE colour, which is the same colour code.
+                      colour=MAGNET_EDGE))
 
     # overhang callouts — how far the display covers the plate edge
     over_x = (dw - params.body_w) / 2

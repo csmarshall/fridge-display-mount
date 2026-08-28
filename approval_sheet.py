@@ -755,8 +755,11 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
         """Callout with a leader that starts BELOW its own text block.
 
         Starting the leader at the label baseline drew the line straight through the words —
-        the sub-caption came out struck through. Anchor it under both lines instead, and put a
-        translucent white pad behind the text so a leader passing nearby cannot compete with it.
+        the sub-caption came out struck through. Anchor it under ALL the sub-lines.
+
+        The +15 that used to be here cleared a ONE-line sub-caption and nothing more; with two
+        lines the leader still ran through both. Derive the start from the block height instead,
+        so it cannot go stale the next time a caption grows.
         """
         px, py, _ = cam.project(world_pt)
         # The pad the docstring promises was never actually emitted, so these captions were
@@ -767,27 +770,35 @@ def build_sheet(params: BracketParams, display_key: str, mount_side: str = "left
         widest = max([len(text) * 6.2] + [len(l) * 5.2 for l in sub_])
         blk_h = 16 + 10 * len(sub_)
         bx0 = lx - 8 if anchor == "start" else lx - widest - 8
+        leader_y = ly - 15 + blk_h + 2          # just below the pad, whatever its height
+        leader = (f'<line x1="{lx:.1f}" y1="{leader_y:.1f}" x2="{px:.1f}" y2="{py:.1f}" '
+                  f'stroke="{INK}" stroke-width="0.9" opacity="0.45"/>'
+                  f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3" fill="{INK}"/>')
         a = [f'<rect x="{bx0:.1f}" y="{ly - 15:.1f}" width="{widest + 16:.1f}" '
              f'height="{blk_h:.1f}" rx="4" fill="#fbfcfd" fill-opacity="0.90"/>',
-             f'<line x1="{lx:.1f}" y1="{ly + 15:.1f}" x2="{px:.1f}" y2="{py:.1f}" stroke="{INK}" '
-             f'stroke-width="0.9" opacity="0.45"/>',
-             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3" fill="{INK}"/>',
              T(lx, ly - 4, text, 10.5, anchor=anchor, fill=INK, weight="bold")]
         # Long captions wrap rather than running a single 300 px line across the render.
         for i, line in enumerate(sub_):
             a.append(T(lx, ly + 9 + i * 10, line, 8.8, anchor=anchor, fill=MUTED))
-        return "".join(a)
+        # Returned SEPARATELY. Clearing this callout's own leader is not enough: the next
+        # callout's leader is drawn later and runs straight across this one's text. Every leader
+        # has to be laid down before any label.
+        return leader, "".join(a)
 
-    o.append(ann((W.arm_tip - W.dir * 45, W.yc, W.arm_z1), ax + 18, PY + 62,
-                 "Hooks over the top", ["the fridge takes the weight"], anchor="start"))
-    o.append(ann((W.plate_in, W.body_y1 - params.magnet_inset, W.body_z0 + rows[0]),
-                 ax + 18, PY + 400,
-                 f"{n_mag} magnets",
-                 [f"{n_body} hold the screen flat, {n_arm} steady the arm",
-                  f"{weakest_lbf:.0f} lb ({weakest_lbf*4.4482216:.0f} N) to pull off at the "
-                 f"screen's bottom edge — the easiest place to grab"], anchor="start"))
-    o.append(ann((W.plate_out, W.yc + 8, W.body_z1 + 120), ax + 18, PY + 690,
-                 "Cable runs up the back", ["cleanly strapped down, not hidden"], anchor="start"))
+    _calls = [
+        ann((W.arm_tip - W.dir * 45, W.yc, W.arm_z1), ax + 18, PY + 62,
+            "Hooks over the top", ["the fridge takes the weight"], anchor="start"),
+        ann((W.plate_in, W.body_y1 - params.magnet_inset, W.body_z0 + rows[0]),
+            ax + 18, PY + 400,
+            f"{n_mag} magnets",
+            [f"{n_body} hold the screen flat, {n_arm} steady the arm",
+             f"{weakest_lbf:.0f} lb ({weakest_lbf*4.4482216:.0f} N) to pull off at the "
+             f"screen's bottom edge — the easiest place to grab"], anchor="start"),
+        ann((W.plate_out, W.yc + 8, W.body_z1 + 120), ax + 18, PY + 690,
+            "Cable runs up the back", ["cleanly strapped down, not hidden"], anchor="start"),
+    ]
+    o.extend(leader for leader, _ in _calls)
+    o.extend(label for _, label in _calls)
     o.append("</g>")
 
     # ---- bottom band ---------------------------------------------------------------------------
