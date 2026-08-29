@@ -2,3 +2,8 @@
 __pycache__/
 session-state.md
 CLAUDE.local.md
+
+# editor swap files
+*.swp
+*.swo
+*~
