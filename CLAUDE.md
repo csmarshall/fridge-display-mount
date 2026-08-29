@@ -33,11 +33,21 @@ on the channel, and it gives a wide flat bearing that will not dent appliance sh
 consequence is that the channel's WEAK bending axis faces the pull direction. Accept it — the
 magnets carry that load, not the strut.
 
-### 1.3 The wedge is BACKUP, never the primary load path
-The foot slides under the fridge and is wedged so appliance weight bears on it. That is a real and
-useful anchor, but **how hard someone drove a wedge is not a designable quantity**. Size everything
-so the magnets alone carry the case; treat the wedge as redundancy. Report what the wedge
-contributes; never depend on it.
+### 1.3 The wedge CAPTURES the tail; it does not transfer load
+The foot slides under the fridge and is wedged **snug only** — enough to take out the slack, never
+enough to lift weight off the appliance's levelling legs or press hard on its base pan.
+
+The anti-tip mechanism is therefore **geometric, not frictional**: with the slack gone, the tail
+can only rise by the wedge clearance before it bears on the underside of the cabinet. Tipping is
+stopped by a positive stop you can design and inspect.
+
+Do NOT reintroduce a design that depends on how hard someone drove a wedge. Size everything so the
+magnets carry the working case on their own; the captured tail is what stops a lurch becoming a
+topple.
+
+**Corollary — state the failure mode honestly.** If every magnet released, the hook design's screen
+would sag but stay hung. This one would rotate on the captured tail. That is a real difference and
+the package must say so rather than bury it.
 
 ### 1.4 Do not blank off the display's rear vents
 The rear box carries the Pi 5's fan and GPIO in its FACE, at an **87.5 mm radius** from the VESA
@@ -59,6 +69,10 @@ already carries — point at it.
 
 - **Display** — Waveshare 23.8 in FHD (SKU 34025). 555.23 × 324.65 × 18 mm panel + 25 mm rear box
   = 43 mm overall, 3.94 kg, VESA 100 on the rear box face.
+- **Floor** — wood, flat enough to need no levelling adjustment. The foot gets non-marking pads
+  and stays a simple bent part.
+- **Servicing** — the fridge is pulled out rarely; moving it is treated as a teardown. The wedge
+  may therefore be fitted to the gap rather than designed to slide in and out.
 - **Fridge** — Samsung RS23A500ASR. Case **1743.1 mm** tall, **609.6 mm** deep, 229 lb.
   **Top and sides both measured MAGNETIC** (2026-08-26). The top is measured FLAT — but this
   design does not touch it, so that no longer matters.

@@ -72,22 +72,42 @@ on it. What that has to achieve:
 | **200 mm** | **33.3 lb** | **15 %** |
 | 250 mm | 26.6 lb | 12 % |
 
-It is a modest fraction, and further inboard is cheaper. But **how hard someone drove a wedge is
-not a designable quantity**, so treat the wedge as BACKUP. The magnets carry the case on their
-own at roughly 49×, in pull.
+It is a modest fraction, and further inboard is cheaper.
+
+**DECIDED 2026-08-29: do not chase that load transfer.** The wedge is driven SNUG only — enough to
+close the gap, no more. Nothing is taken off the fridge's levelling legs and nothing presses hard
+on a base pan that was not designed for a point load.
+
+**This changes what the foot is for, and it is a better answer.** A snug wedge does not anchor by
+weight; it removes the slack so the tail is CAPTURED. If the frame tries to tip, the tail can only
+rise by the wedge clearance before it bears on the underside of the appliance — tipping is arrested
+**geometrically**, by a positive stop, not by friction or by transferred weight. That is a
+mechanism you can design and inspect, where "how hard someone drove a wedge" is not.
+
+The magnets still carry the working case on their own, in pull, at roughly 49×. The captured tail
+is what stops a lurch becoming a topple.
 
 ---
 
 ## 3. Open — must be resolved on the actual appliance
 
-1. **How high the cabinet base sits off the floor.** This is the entire budget for foot thickness
-   plus wedge. If it is less than about 10 mm the foot has to get thinner or the design changes.
-2. **What the underside is like 100–250 mm in** — flat pan, ribs, a rail, or a void. It sets the
-   wedge position and whether anything can be positively hooked instead of merely wedged.
-3. **Whether wedging ~15 % of the appliance onto the foot rocks it or dents the base pan.** A
-   fridge sits on levelling legs; taking load off them is not automatically harmless.
-4. **Floor flatness and finish** where the foot lands. It is a wood floor.
-5. **Whether the fridge gets pulled out to clean**, and how the foot behaves when it does.
+**Still open — need the appliance:**
+
+1. **How high the cabinet base sits off the floor, at the side.** The entire budget for foot
+   thickness plus wedge. Under about 10 mm and the 0.187 in foot plus a shim will not fit.
+2. **What the underside is like 100–250 mm in** — flat pan, ribs, a rail, or a void. Sets where
+   the wedge goes, how much the tail can rise before it stops, and whether anything can be
+   positively HOOKED, which would beat wedging outright.
+
+**Answered 2026-08-29:**
+
+3. **Wedge pressure — SNUG ONLY.** See above. The foot captures the tail; it does not transfer
+   load. Nothing comes off the levelling legs.
+4. **Floor — wood, flat enough.** Non-marking pads on the foot, but **no levelling adjustment**:
+   the foot stays a simple bent part.
+5. **Pull-out — rare, treat it as a teardown.** Moving the fridge means unwedging and re-seating.
+   That permits a deeper tail and a properly fitted wedge rather than something designed to slide
+   in and out, and it means the wedge can be shaped for the gap rather than generic.
 
 ---
 
