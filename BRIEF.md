@@ -91,13 +91,16 @@ is what stops a lurch becoming a topple.
 
 ## 3. Open — must be resolved on the actual appliance
 
+**Measured 2026-08-29, roughly:** the gap under the side is **10–20 mm**, and **the underside is
+NOT flat**. Both change the design — see §3b.
+
 **Still open — need the appliance:**
 
-1. **How high the cabinet base sits off the floor, at the side.** The entire budget for foot
-   thickness plus wedge. Under about 10 mm and the 0.187 in foot plus a shim will not fit.
-2. **What the underside is like 100–250 mm in** — flat pan, ribs, a rail, or a void. Sets where
-   the wedge goes, how much the tail can rise before it stops, and whether anything can be
-   positively HOOKED, which would beat wedging outright.
+1. **Whether a 150–250 mm tail fouls anything.** The irregular underside that gives the pad
+   something to bear on also gives the tail something to hit: compressor, tubing, insulation,
+   cross-members. This sets the tail depth and nothing else can.
+2. **Whether there is a downward-facing rib or lip within reach.** If there is, HOOKING it beats
+   bearing on it, because a hook has no compliance at all.
 
 **Answered 2026-08-29:**
 
@@ -108,6 +111,57 @@ is what stops a lurch becoming a topple.
 5. **Pull-out — rare, treat it as a teardown.** Moving the fridge means unwedging and re-seating.
    That permits a deeper tail and a properly fitted wedge rather than something designed to slide
    in and out, and it means the wedge can be shaped for the gap rather than generic.
+
+---
+
+## 3b. The foot, after the gap was measured
+
+**10–20 mm, and not flat.** Two consequences.
+
+### The wedge is the wrong device — use a conforming pad
+
+A wedge bears on unknown high points of an irregular surface, and at the tight end of the range a
+0.187 in foot leaves only 5.25 mm for it, which is a fragile shim needing per-location fitting.
+
+**Use a foam pad on top of the tail instead.** It conforms to whatever is up there, which is
+precisely the problem, and it needs no fitting. The obvious objection — that foam is a spring and
+therefore not a stop — does not survive the arithmetic. The force is small and the area is large:
+
+| pad | thickness | squash under a tip load | screen movement |
+|---|---|---|---|
+| 60 × 200 mm | 10 mm | 0.37 mm | **2.5 mm** |
+| 80 × 250 mm | 10 mm | 0.22 mm | 1.5 mm |
+
+At design loads it barely moves. It behaves as a stop.
+
+### The one real trap is PRELOAD, and it is a big one
+
+Area multiplies pressure. On a 60 × 200 mm pad of the project's 12-psi-at-25 % neoprene:
+
+| compressed | force pushing UP on the fridge |
+|---|---|
+| 2 % | 18 lb |
+| 10 % | 89 lb |
+| 25 % | **223 lb — half the appliance** |
+| 50 % | 446 lb — you are lifting it |
+
+**Size the pad to JUST TOUCH.** Do not squeeze it in. Fit it by building up layers until contact,
+which is acceptable because moving the fridge is a teardown anyway. Half a percent of strain is
+0.3 mm of screen movement — the job needs nothing more than contact.
+
+### Foot thickness: go thinner than the hook's
+
+The foot only sees the full moment as a BACKSTOP, so it does not need SF 10.
+
+| | | |
+|---|---|---|
+| 0.187 in | SF 9.8 | only 5.25 mm of pad room in a 10 mm gap |
+| **0.119 in** | **SF 4.0** | **6.98 mm of pad room** |
+| 0.075 in | SF 1.6 | too thin |
+
+**0.119 in** is the balance. Threaded jacking screws were considered and rejected: precise and
+adjustable, but they bear on a point of an irregular surface, and conformity is worth more here
+than adjustability. Keep them in mind only if a genuinely rigid stop is ever wanted.
 
 ---
 

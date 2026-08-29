@@ -33,9 +33,17 @@ on the channel, and it gives a wide flat bearing that will not dent appliance sh
 consequence is that the channel's WEAK bending axis faces the pull direction. Accept it — the
 magnets carry that load, not the strut.
 
-### 1.3 The wedge CAPTURES the tail; it does not transfer load
-The foot slides under the fridge and is wedged **snug only** — enough to take out the slack, never
-enough to lift weight off the appliance's levelling legs or press hard on its base pan.
+### 1.3 The pad CAPTURES the tail; it does not transfer load
+The foot slides under the fridge and a **conforming foam pad** on the tail takes out the slack —
+never enough to lift weight off the appliance's levelling legs or press on its base pan.
+
+The gap is **10–20 mm and the underside is NOT flat** (2026-08-29), which is why it is a pad and
+not a wedge or a jacking screw: conformity is worth more than adjustability against a surface
+whose shape is unknown.
+
+**PRELOAD IS THE TRAP.** Area multiplies pressure — a 60 × 200 mm pad compressed 25 % pushes
+223 lb upward, half the appliance. Size it to JUST TOUCH and fit it by building up layers.
+Half a percent of strain is 0.3 mm of screen movement, and contact is all the job needs.
 
 The anti-tip mechanism is therefore **geometric, not frictional**: with the slack gone, the tail
 can only rise by the wedge clearance before it bears on the underside of the cabinet. Tipping is
