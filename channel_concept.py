@@ -170,174 +170,180 @@ def _card(x, y, w, h, title, colour=INK) -> list[str]:
             _t(x + 22, y + 26, title, 13, anchor="start", weight="bold", fill=colour)]
 
 
-STRUT_EXAG = 3.0        # the strut is 20.6 mm deep — 4 px here. Drawn thicker to read.
+STRUT_EXAG = 3.0        # the strut is 20.6 mm deep — a few px here. Drawn thicker to read.
 
 
-def _elevation(ox, oy, sc, p, mode: str) -> list[str]:
-    """Side elevation of one concept, floor at oy. Callouts go RIGHT of the display, where the
-    card is empty — over the fridge they were unreadable and over the card title they collided.
+def wedge_demand(p: BracketParams, tail_mm: float) -> dict:
+    """How much appliance weight the wedge has to land on the foot, at a given inboard reach."""
+    press_nm = p.press_force_lbf * N_PER_LBF * p.screen_centre_height / 1000.0
+    need_n = press_nm / (tail_mm / 1000.0)
+    fridge_n = FRIDGE_MASS_LB * 0.45359237 * G_ACC
+    return {"moment_nm": press_nm, "need_n": need_n, "need_lbf": need_n / N_PER_LBF,
+            "pct_of_fridge": 100.0 * need_n / fridge_n}
 
-    The strut's real depth is 20.6 mm, which is four pixels at this scale. It is drawn at
-    STRUT_EXAG so the reader can see what it is; the label says so.
-    """
+
+def _frame(ox, oy, sc, p, view: str) -> list[str]:
+    """view='side' — looking along the fridge face. view='front' — looking at the side panel."""
     o: list[str] = []
     fh, fd = p.fridge_height, 300.0
+    zc, dv, dh = p.screen_centre_height, G.DISPLAY.width, G.DISPLAY.height
     def X(mm): return ox + mm * sc
     def Y(mm): return oy - mm * sc
 
-    o.append(f'<line x1="{X(-40):.1f}" y1="{Y(0):.1f}" x2="{X(fd + 300):.1f}" '
+    o.append(f'<line x1="{X(-150):.1f}" y1="{Y(0):.1f}" x2="{X(fd + 300):.1f}" '
              f'y2="{Y(0):.1f}" stroke="{INK}" stroke-width="2"/>')
-    o.append(_t(X(-36), Y(0) + 15, "floor", 8.5, anchor="start", fill=MUTED))
-    o.append(f'<rect x="{X(0):.1f}" y="{Y(fh):.1f}" width="{fd * sc:.1f}" '
-             f'height="{fh * sc:.1f}" fill="{FRIDGE_SIDE}" stroke="{FRIDGE_SIDE_EDGE}" '
-             f'stroke-width="1.2"/>')
-    o.append(_t(X(fd / 2), Y(fh * 0.30), "fridge", 9, fill=ON_FRIDGE_MUTED, rot=-90))
 
-    zc, dv = p.screen_centre_height, G.DISPLAY.width
-    # The display hangs OUTBOARD of whatever carries it. In the strut case that is the drawn
-    # (exaggerated) strut depth, not the real one, or the panel overlaps the column.
-    disp_x = fd + 30 if mode == "hook" else fd + 8 + STRUT.depth * STRUT_EXAG + 8
-    lab_x = X(disp_x + 60)
-    notes: list[tuple[float, str, str]] = []
+    if view == "side":
+        o.append(f'<rect x="{X(0):.1f}" y="{Y(fh):.1f}" width="{fd * sc:.1f}" '
+                 f'height="{(fh - 90) * sc:.1f}" fill="{FRIDGE_SIDE}" '
+                 f'stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.2"/>')
+        o.append(_t(X(fd / 2), Y(fh * 0.34), "fridge", 9, fill=ON_FRIDGE_MUTED, rot=-90))
+        o.append(_t(X(fd / 2), Y(46), "base recess", 7.5, fill=MUTED))
 
-    if mode == "hook":
-        o.append(f'<path d="M{X(fd + 16):.1f} {Y(zc - 170):.1f} L{X(fd + 16):.1f} {Y(fh):.1f} '
-                 f'L{X(fd - p.arm_len):.1f} {Y(fh):.1f} L{X(fd - p.arm_len):.1f} '
-                 f'{Y(fh + 12):.1f} L{X(fd + 26):.1f} {Y(fh + 12):.1f} L{X(fd + 26):.1f} '
-                 f'{Y(zc - 170):.1f} Z" fill="{C_CHANNEL}" stroke="{INK}" stroke-width="1"/>')
-        o.append(f'<path d="M{X(fd - p.arm_len / 2):.1f} {Y(fh + 90):.1f} '
-                 f'L{X(fd - p.arm_len / 2):.1f} {Y(fh + 20):.1f}" stroke="{OK}" '
-                 f'stroke-width="2.2" marker-end="url(#ar)"/>')
-        notes.append((Y(fh + 96), "the whole load bears on the TOP CORNER", OK))
-        notes.append((Y(zc), "magnets carry NOTHING", MAGNET_EDGE))
-    else:
         sw = STRUT.depth * STRUT_EXAG
-        o.append(f'<rect x="{X(fd + 8):.1f}" y="{Y(1524):.1f}" width="{sw * sc:.1f}" '
-                 f'height="{1524 * sc:.1f}" fill="#8f9aa4" stroke="{INK}" stroke-width="1"/>')
-        for i in range(12):
-            o.append(f'<rect x="{X(fd + 8 + sw * 0.3):.1f}" y="{Y(110 + i * 128):.1f}" '
-                     f'width="{sw * 0.4 * sc:.1f}" height="5" fill="{INK}" fill-opacity="0.5"/>')
-        o.append(f'<rect x="{X(fd - 100):.1f}" y="{Y(16):.1f}" width="{114 * sc:.1f}" '
-                 f'height="{16 * sc:.1f}" fill="#8f9aa4" stroke="{INK}" stroke-width="1"/>')
-        o.append(f'<path d="M{X(fd - 60):.1f} {Y(190):.1f} L{X(fd - 60):.1f} {Y(40):.1f}" '
-                 f'stroke="{OK}" stroke-width="2.2" marker-end="url(#ar)"/>')
-        for mz in (zc - 130, zc + 130):
-            o.append(f'<rect x="{X(fd - 12):.1f}" y="{Y(mz + 18):.1f}" width="{20 * sc:.1f}" '
-                     f'height="{36 * sc:.1f}" fill="{MAGNET_FILL}" stroke="{MAGNET_EDGE}" '
-                     f'stroke-width="1"/>')
-        notes.append((Y(zc + 150), "magnets PROP it — in PULL", MAGNET_EDGE))
-        notes.append((Y(zc - 40), f"strut drawn {STRUT_EXAG:.0f}x deep to be visible", MUTED))
-        notes.append((Y(200), "229 lb of fridge anchors the foot", OK))
-        notes.append((Y(40), "weight goes into the FLOOR", OK))
-
-    o.append(f'<rect x="{X(disp_x):.1f}" y="{Y(zc + dv / 2):.1f}" width="{20 * sc:.1f}" '
-             f'height="{dv * sc:.1f}" fill="#101820" stroke="{INK}" stroke-width="1"/>')
-    o.append(_t(X(disp_x) + 5, Y(zc - dv / 2) - 8, "display", 8.5, anchor="start", fill=MUTED))
-    # leaders first, then the text, so nothing is drawn across a label
-    for ly, _txt, _col in notes:
-        o.append(f'<line x1="{X(disp_x) + 22:.1f}" y1="{ly - 4:.1f}" x2="{lab_x - 4:.1f}" '
-                 f'y2="{ly - 4:.1f}" stroke="{RULE}" stroke-width="0.8"/>')
-    for ly, txt, col in notes:
-        o.append(_t(lab_x, ly, txt, 9.0, anchor="start", fill=col, weight="bold"))
+        sx0 = fd + 6
+        o.append(f'<rect x="{X(sx0):.1f}" y="{Y(1829):.1f}" width="{sw * sc:.1f}" '
+                 f'height="{1829 * sc:.1f}" fill="#8f9aa4" stroke="{INK}" stroke-width="1"/>')
+        for i in range(13):
+            o.append(f'<rect x="{X(sx0 + sw * 0.32):.1f}" y="{Y(96 + i * 132):.1f}" '
+                     f'width="{sw * 0.36 * sc:.1f}" height="4" fill="{INK}" fill-opacity="0.5"/>')
+        # the bent foot: vertical flange the struts bolt to, horizontal tail under the appliance
+        tail = 200.0
+        o.append(f'<path d="M{X(sx0 + sw):.1f} {Y(150):.1f} L{X(sx0 + sw):.1f} {Y(14):.1f} '
+                 f'L{X(fd - tail):.1f} {Y(14):.1f} L{X(fd - tail):.1f} {Y(0):.1f} '
+                 f'L{X(sx0 + sw + 14):.1f} {Y(0):.1f} L{X(sx0 + sw + 14):.1f} {Y(150):.1f} Z" '
+                 f'fill="{C_CHANNEL}" stroke="{INK}" stroke-width="1.2"/>')
+        # the wedges
+        for wx in (fd - 170, fd - 90):
+            o.append(f'<path d="M{X(wx):.1f} {Y(16):.1f} L{X(wx + 70):.1f} {Y(16):.1f} '
+                     f'L{X(wx + 70):.1f} {Y(56):.1f} Z" fill="{WARN}" fill-opacity="0.8" '
+                     f'stroke="#7a5c00" stroke-width="0.9"/>')
+        for mz in (zc - 150, zc + 150, 700):
+            o.append(f'<rect x="{X(fd - 12):.1f}" y="{Y(mz + 20):.1f}" '
+                     f'width="{18 * sc:.1f}" height="{40 * sc:.1f}" fill="{MAGNET_FILL}" '
+                     f'stroke="{MAGNET_EDGE}" stroke-width="1"/>')
+        px0 = sx0 + sw
+        o.append(f'<rect x="{X(px0):.1f}" y="{Y(zc + p.body_h / 2):.1f}" '
+                 f'width="{5 * sc:.1f}" height="{p.body_h * sc:.1f}" fill="#b9c2c9" '
+                 f'stroke="{INK}" stroke-width="1"/>')
+        o.append(f'<rect x="{X(px0 + 22):.1f}" y="{Y(zc + dv / 2):.1f}" '
+                 f'width="{20 * sc:.1f}" height="{dv * sc:.1f}" fill="#101820" '
+                 f'stroke="{INK}" stroke-width="1"/>')
+        labs = [(Y(zc + dv / 2) + 4, "display", MUTED),
+                (Y(zc), "plate — the SAME part", INK),
+                (Y(zc - 150), "magnets, in PULL", MAGNET_EDGE),
+                (Y(760), "6 ft slotted strut x2", INK),
+                (Y(150), "BENT FOOT ties both struts", OK),
+                (Y(60), "wedges load the fridge onto it", WARN)]
+        lx = X(px0 + 70)
+        for ly, _t_, _c in labs:
+            o.append(f'<line x1="{X(px0 + 46):.1f}" y1="{ly - 4:.1f}" x2="{lx - 4:.1f}" '
+                     f'y2="{ly - 4:.1f}" stroke="{RULE}" stroke-width="0.8"/>')
+        for ly, txt, col in labs:
+            o.append(_t(lx, ly, txt, 9.0, anchor="start", fill=col, weight="bold"))
+    else:
+        span = p.magnet_spacing_x
+        o.append(f'<rect x="{X(-140):.1f}" y="{Y(fh):.1f}" width="{580 * sc:.1f}" '
+                 f'height="{(fh - 90) * sc:.1f}" fill="{FRIDGE_SIDE}" '
+                 f'stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.2"/>')
+        for cx in (0, span):
+            o.append(f'<rect x="{X(cx - STRUT.width / 2):.1f}" y="{Y(1829):.1f}" '
+                     f'width="{STRUT.width * sc:.1f}" height="{1829 * sc:.1f}" '
+                     f'fill="#8f9aa4" stroke="{INK}" stroke-width="1"/>')
+        o.append(f'<rect x="{X(-32):.1f}" y="{Y(150):.1f}" '
+                 f'width="{(span + 64) * sc:.1f}" height="{150 * sc:.1f}" fill="{C_CHANNEL}" '
+                 f'stroke="{INK}" stroke-width="1.2"/>')
+        o.append(f'<rect x="{X(-32):.1f}" y="{Y(zc + p.body_h / 2):.1f}" '
+                 f'width="{p.body_w * sc:.1f}" height="{p.body_h * sc:.1f}" fill="#b9c2c9" '
+                 f'fill-opacity="0.55" stroke="{INK}" stroke-width="1.2"/>')
+        o.append(_t(X(span / 2), Y(zc), "plate 310 x 310", 9, fill=INK, weight="bold"))
+        o.append(_t(X(span / 2), Y(zc) + 13, "bolts at its 4 magnet holes", 8, fill=MUTED))
+        o.append(_t(X(span / 2), Y(80), "one bent foot, both struts", 8.5, fill="#fff",
+                    weight="bold"))
+        o.append(_t(X(span / 2), Y(1500), f"{span:.0f} mm apart", 8.5, fill=ON_FRIDGE_MUTED))
     return o
 
 
 def render(path: Path, p: BracketParams) -> None:
-    a = analysis(p, STRUT)
-    W, H = 1240.0, 1206.0
+    an = analysis(p, STRUT)
+    W, H = 1300.0, 1160.0
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
          f'viewBox="0 0 {W:.0f} {H:.0f}">',
          f'<rect width="{W:.0f}" height="{H:.0f}" fill="{PAPER}"/>',
-         '<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" '
-         f'markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="{OK}"/>'
-         '</marker></defs>',
          f'<rect width="{W:.0f}" height="26" fill="{WARN}"/>',
-         _t(W / 2, 18, "ALTERNATE CONCEPT — not the design of record", 12.5, fill="#fff",
-            weight="bold"),
-         _t(40, 58, "STAND IT ON THE FLOOR INSTEAD", 19, anchor="start", weight="bold"),
-         _t(40, 80, "A slotted strut channel from the floor up the side panel, with the display "
-                    "on channel nuts. Completely different load path from the hook.", 12,
-            anchor="start", fill=MUTED)]
+         _t(W / 2, 18, "CONCEPT — superseding the hook, pending the fridge base", 12.5,
+            fill="#fff", weight="bold"),
+         _t(40, 58, "TWO STRUTS ON A BENT FOOT", 19, anchor="start", weight="bold"),
+         _t(40, 80, "A pair of 6 ft slotted struts up the side panel, tied at the base by one "
+                    "bent foot that slides under the fridge and is wedged so the appliance's own "
+                    "weight holds it down.", 12, anchor="start", fill=MUTED)]
 
-    # ---- the two elevations ------------------------------------------------------------------
-    o += _card(40, 100, 560, 470, "THE HOOK — design of record", MUTED)
-    o += _elevation(96, 552, 0.205, p, "hook")
-    o += _card(620, 100, 580, 470, "THE STRUT — this concept", INK)
-    o += _elevation(676, 552, 0.205, p, "channel")
+    o += _card(40, 100, 640, 620, "SIDE — the load path")
+    o += _frame(120, 690, 0.30, p, "side")
+    o += _card(700, 100, 560, 620, "FRONT — looking at the side panel")
+    o += _frame(890, 690, 0.30, p, "front")
 
-    # ---- the numbers -------------------------------------------------------------------------
-    y = 596
-    o += _card(40, y, 560, 300, "DOES IT STAND UP?")
+    y = 746
+    o += _card(40, y, 640, 380, "THE NUMBERS")
     rows = [
-        ("Strength at the base", f"{a['moment_nm']:.1f} N·m from a "
-         f"{p.press_force_lbf:.0f} lb press", f"SF {a['strength_sf']:.1f}", OK),
-        ("Sway, UNPROPPED", f"{a['sway_unpropped_mm']:.1f} mm at the screen",
-         "the hook flexes 0.016", BAD),
-        ("Free-standing, 400 mm base", f"SF {a['freestanding'][400]:.2f}", "IT FALLS OVER", BAD),
-        ("Foot 100 mm under the fridge", f"SF {a['foot_sf'][100]:.1f}", "anchored", OK),
-        ("Pull on the props, propped", f"{a['prop_pull_lbf']:.1f} lb shared",
-         "vs 61.2 lb each", OK),
+        ("Strength, foot", f"{an['moment_nm']:.1f} N·m over a 310 mm foot",
+         f"SF 10", OK),
+        ("Strength, strut", "41 MPa in the pull direction", f"SF {an['strength_sf']:.1f}", OK),
+        ("Torsion, edge press", f"812 lb·mm over {p.magnet_spacing_x:.0f} mm spacing",
+         "3.3 lb per strut", OK),
+        ("Magnets, propping", f"{p.press_force_lbf:.0f} lb of PULL shared over 4",
+         "1.25 lb each", OK),
+        ("Sway if UNPROPPED", f"{an['sway_unpropped_mm'] / 2:.1f} mm at the screen",
+         "magnets fix this, not the foot", BAD),
     ]
     for i, (k, v, note, col) in enumerate(rows):
-        ry = y + 56 + i * 44
-        o.append(_t(62, ry, k, 11.5, anchor="start", weight="bold"))
-        o.append(_t(62, ry + 15, v, 10.5, anchor="start", fill=MUTED))
-        o.append(_t(578, ry, note, 11, anchor="end", fill=col, weight="bold"))
+        ry = y + 58 + i * 46
+        o.append(_t(64, ry, k, 11.5, anchor="start", weight="bold"))
+        o.append(_t(64, ry + 15, v, 10.5, anchor="start", fill=MUTED))
+        o.append(_t(656, ry, note, 11, anchor="end", fill=col, weight="bold"))
+    wy = y + 58 + len(rows) * 46 + 8
+    o.append(_t(64, wy, "THE WEDGE — what it actually has to do", 11.5, anchor="start",
+                weight="bold", fill=WARN))
+    for i, tail in enumerate((100, 150, 200, 250)):
+        w = wedge_demand(p, tail)
+        o.append(_t(84, wy + 20 + i * 15,
+                    f"wedge {tail:3d} mm inboard  ->  {w['need_lbf']:5.1f} lb on the foot, "
+                    f"{w['pct_of_fridge']:.0f}% of the appliance", 10, anchor="start", fill=MUTED))
 
-    o += _card(620, y, 580, 300, "WHAT IT COSTS AND BUYS")
-    facts = [
-        f"Channel {STRUT.part}, {STRUT.finish}, 5 ft: ${STRUT.price_5ft:.2f} and "
-        f"{a['mass_kg']:.2f} kg — against $197.07 for the bracket.",
-        "The finish is BLACK, which is what the side panel is.",
-        "Screen height becomes ADJUSTABLE after the fact — slide it in the slot. The hook's "
-        "neck length is fixed at manufacture, and the height is currently a judgement call.",
-        "Nothing touches the fridge top: no hinge cover, no corner radius, no arm, no pad budget. "
-        "Four of the open pre-order measurements stop mattering.",
-        "But the column is visible floor to screen, it stands in the room beside the fridge, and "
-        "its foot goes under an appliance that has to come out to be cleaned.",
+    o += _card(700, y, 560, 380, "WHAT IS SETTLED AND WHAT IS NOT")
+    notes = [
+        ("SETTLED by geometry", OK, [
+            "Strut orientation is forced: flat back on the panel, slots out. That is also the "
+            "good one — a wide flat magnet bearing.",
+            f"The plate bolts on UNMODIFIED. Its four O8.5 magnet holes are "
+            f"{p.magnet_spacing_x:.0f} mm apart, which is the strut spacing, and O8.5 clears a "
+            f"5/16 channel bolt.",
+            "The foot is the same process as the hook: laser plus ONE 90 degree bend, same "
+            "material, same supplier.",
+        ]),
+        ("OPEN — needs the fridge", BAD, [
+            "How high the cabinet base sits off the floor: that is the foot plus wedge budget.",
+            "Whether wedging a fifth of the appliance onto the foot rocks it or dents the base "
+            "pan. Wedging is uncontrolled by nature — how hard someone drove it is not a "
+            "designable quantity.",
+            "So the wedge is BACKUP. The magnets carry the case on their own, in pull, at 49x.",
+        ]),
     ]
-    fy = y + 54
-    for i, f in enumerate(facts):
-        col = BAD if i == len(facts) - 1 else INK
-        for ln in _wrap(f, 68):
-            o.append(_t(642, fy, ln, 10.8, anchor="start", fill=col))
-            fy += 14
-        fy += 8
-
-    # ---- the honest verdict ------------------------------------------------------------------
-    vy = 928
-    o.append(f'<rect x="40" y="{vy:.1f}" width="{W - 80:.1f}" height="238" rx="6" fill="#fff" '
-             f'stroke="{WARN}" stroke-width="1.6"/>')
-    o.append(_t(62, vy + 28, "THE TRADE", 13.5, anchor="start", weight="bold", fill=WARN))
-    verdict = [
-        ("The strut is not stiff enough on its own. ", INK, "bold"),
-        (f"Unpropped it sways {a['sway_unpropped_mm']:.1f} mm when you touch the screen — "
-         f"{a['sway_unpropped_mm'] / 0.016:.0f}x the hook design. Low-profile channel is shallow "
-         "and McMaster say outright it is not as strong as standard. Magnets at screen height fix "
-         "it, and they take the press in PULL, their strong direction.", MUTED, "normal"),
-        ("Free-standing is not an option. ", INK, "bold"),
-        ("A 4 kg screen at 1.3 m tips the column under a touch press at every base depth a "
-         "kitchen would tolerate — a 400 mm base still only reaches SF 0.33. Something has to "
-         "hold it.", MUTED, "normal"),
-        ("Putting the foot under the fridge is what rescues it. ", INK, "bold"),
-        ("100 mm of foot under 229 lb of appliance gives SF 3.4, and the magnets go back to "
-         "carrying nothing structural — the same invariant the hook is built on, reached from the "
-         "other end.", MUTED, "normal"),
-        ("What it really buys is ADJUSTABILITY, and what it really costs is presence. ", INK,
-         "bold"),
-        ("Screen height stops being a guess frozen at manufacture. In exchange there is a "
-         "1.5 m column standing in the kitchen where there is currently nothing visible at all.",
-         MUTED, "normal"),
-    ]
-    ly = vy + 54
-    for text, col, wt in verdict:
-        for ln in _wrap(text, 132):
-            o.append(_t(62, ly, ln, 11.2, anchor="start", fill=col, weight=wt))
-            ly += 15
+    ny = y + 54
+    for head, col, lines in notes:
+        o.append(_t(724, ny, head, 11.5, anchor="start", weight="bold", fill=col))
+        ny += 18
+        for ln in lines:
+            for w in _wrap(ln, 62):
+                o.append(_t(736, ny, w, 10.2, anchor="start", fill=MUTED))
+                ny += 13
+            ny += 5
+        ny += 8
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
-    LOG.info("Wrote %s — strut %s, I %.0f mm4, sway %.1f mm unpropped, foot SF %.1f at 100 mm",
-             path, STRUT.part, STRUT.inertia, a["sway_unpropped_mm"], a["foot_sf"][100])
+    LOG.info("Wrote %s — 2 x %s struts at %.0f mm, bent foot, wedge %.0f%% of the appliance "
+             "at a 200 mm tail", path, STRUT.part, p.magnet_spacing_x,
+             wedge_demand(p, 200)["pct_of_fridge"])
 
 
 def main(argv: Sequence[str] | None = None) -> int:
