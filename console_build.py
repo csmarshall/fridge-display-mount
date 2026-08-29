@@ -80,6 +80,10 @@ DIAGRAM_INFO = {
     "stack_detail.svg": ("Fastener sandwich at one magnet",
                         "Every stack shape that fits, in true section — magnet | plate | washer | "
                         "nut, and whether the fixed 1/2 in stud still reaches.", "key"),
+    "channel_concept.svg": ("ALTERNATE — stand it on the floor",
+                           "A slotted strut from the floor instead of a hook over the top. "
+                           "Cheaper and height-adjustable; needs the fridge to anchor its foot.",
+                           "study"),
     "magnet_primer.svg": ("Why not just magnets?",
                          "Pull vs shear vs peel, and why a 175 lb magnet delivers 12 lb where "
                          "it counts. Start here if the hook looks like overkill.", "key"),
