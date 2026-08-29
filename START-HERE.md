@@ -1,9 +1,9 @@
 # Prompt to start the new session
 
-Paste everything below the line into a fresh Claude Code session run from
-`~/work/claude/fridge-strut-mount`.
+Copy everything between the two markers into a fresh Claude Code session, run from
+`~/work/claude/fridge-strut-mount`. Do not include the marker lines themselves.
 
----
+<<<BEGIN>>>
 
 I'm designing a floor-standing mount that carries a Waveshare 23.8" touch monitor on the side
 panel of my fridge, for a household chore board. Read `CLAUDE.md` for the invariants, `BRIEF.md`
@@ -40,3 +40,5 @@ Then the work, roughly in this order:
 Two things about how I work: show me pictures rather than describing them, and if you're unsure
 between options, build a sweep and let me pick by eye. And when something is an estimate, say so —
 I would much rather have "derived, assumes a 6 mm lip" than a confident number.
+
+<<<END>>>
