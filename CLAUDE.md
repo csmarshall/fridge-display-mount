@@ -14,6 +14,18 @@ it is a deliberate change, not an oversight.
 
 ## 1. Design invariants — SETTLED, do not re-litigate
 
+### 1.0 Anti-tip is a CLAMP, not the magnets
+Two adjustable L brackets, top and bottom of the struts, foam-faced where they touch the
+appliance, slid along the strut slots until engaged and locked. That clamps the struts to the side
+panel positively.
+
+The top bracket carries NO weight — the foot does — so it holds about **3.8 lb**, and its reach
+only has to be enough not to slip. It is not a hook; do not size it like one.
+
+**Consequence: the magnets are no longer structural.** They drop to anti-rattle, or go entirely.
+If a future revision removes the clamp, the magnets have to come back to structural duty and every
+number in §1.1 changes with them.
+
 ### 1.1 The load path is the FLOOR, and the magnets are for STIFFNESS
 Vertical load goes display → plate → struts → bent foot → floor. Compression into a floor is
 unarguable and needs no justification.

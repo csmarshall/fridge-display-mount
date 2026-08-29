@@ -114,6 +114,57 @@ NOT flat**. Both change the design — see §3b.
 
 ---
 
+## 3a. CLAMP the struts to the fridge — decided 2026-08-29
+
+Two adjustable L brackets, one near the top of the struts and one near the bottom, each reaching
+from the strut onto the fridge with **foam on the face that touches the appliance**. Slide them
+along the strut slots until both are engaged, then lock. The struts are then positively clamped
+against the side panel.
+
+**This is the strongest version of the design so far, and it is mostly free.**
+
+### What the top bracket actually has to do
+
+It is a RETENTION bracket, not a hook. The foot already carries the weight.
+
+| clamp height | force to hold the top in |
+|---|---|
+| at the fridge top (1743 mm) | **3.8 lb** |
+| lower, at 1500 mm | 4.4 lb |
+| lower still, 1200 mm | 5.5 lb |
+
+Compare the hook design's arm, which carried the **entire 24.9 lb** hanging weight, bore on a
+sponge pad, and needed a **180 mm reach** purely to land magnets on metal. This bracket carries
+nothing. Its reach only has to be enough not to slip off — tens of millimetres.
+
+### What that buys
+
+- **Anti-tip becomes positive and mechanical.** No longer a magnetic duty. The "what if a magnet
+  peels" failure mode goes away.
+- **The magnets drop to anti-rattle, or go entirely.** They were carrying 5 lb of pull; the clamp
+  now does that. At $23.92 each that is **up to $191 off the BOM** — the largest line in it.
+- **The hinge cover stops mattering.** A tens-of-mm reach at the rear of a 406 mm clear window is
+  not a clearance problem the way a 180 mm arm was.
+- **The slots ARE the adjustment.** A 6 ft strut is 1829 mm against a 1743 mm fridge, so it
+  already stands 86 mm proud — the top bracket has somewhere to live without extending anything,
+  and the clamp is made by sliding the lower bracket up until snug and locking it.
+
+### What it costs
+
+It reintroduces a fridge-top interface, which §1 had listed as something this design escaped.
+That is a real give-back — but a light retention bracket with a short reach is a much smaller
+commitment than an arm carrying the whole load, and the clear-window measurement that made the
+hook work is already in hand.
+
+### Open on this
+
+- **How the two brackets generate clamp force.** Sliding the lower one up the slot until snug is
+  the obvious mechanism and needs no extra parts, but it wants drawing before it is believed.
+- **What the bottom bracket engages.** It faces the same 10–20 mm irregular gap as the foot, so it
+  may end up being the same conforming-pad problem in a different place.
+
+---
+
 ## 3b. The foot, after the gap was measured
 
 **10–20 mm, and not flat.** Two consequences.
