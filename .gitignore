@@ -12,3 +12,4 @@ variants/
 *.pyc
 __pycache__/
 .DS_Store
+_fullpage.html
