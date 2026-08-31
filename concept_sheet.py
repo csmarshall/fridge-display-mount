@@ -12,6 +12,8 @@ Self-contained: no ezdxf, no generator. It is a drawing, not a deliverable.
 """
 from __future__ import annotations
 
+import math
+
 import argparse
 import logging
 import sys
@@ -56,7 +58,7 @@ class Assembly:
     display_h: float = 555.23             # portrait: long side vertical
     rear_box: float = 25.0
     panel_d: float = 18.0
-    clear_window: float = 406.0           # measured, rear edge to hinge cover
+    clear_window_measured: float = 406.0  # tape reading 2026-08-27, cross-check only
     # The side panel's underside sits this far off the floor. MEASURED as 10-20 mm;
     # 15 is the middle. Everything the lower clamp does has to happen inside it.
     base_gap: float = 15.0
@@ -66,6 +68,65 @@ class Assembly:
     # protect but it would also let the assembly slide, which is the one thing it must not do.
     floor_pad: float = 3.0
     hinge_cover: float = 203.0
+    # --- the two bent parts. Named here because the elevation, the part drawings and the
+    # --- clearance check all need them and must never disagree.
+    clamp_leg: float = 150.0              # long leg, lies on the fridge top / under its base
+    clamp_short: float = 44.0             # short leg, down the side alongside the strut
+    foot_leg: float = 150.0               # horizontal, turns OUTBOARD
+    foot_rise: float = 120.0              # vertical leg carrying the elongated slot
+    slot_len: float = 28.6                # strut slot, long axis
+    bend_radius: float = 3.02             # ESTIMATE ~1T; replace with SendCutSend's calculator
+    k_factor: float = 0.42
+
+    @property
+    def part_width(self) -> float:
+        """Across the clamp and the foot, front-to-back. DERIVED, not chosen.
+
+        The floor is set by the horizontal leg, which the strut stands on: it has to be at least
+        as wide as the strut plus SendCutSend's hole-to-edge margin of 2T each side. Rounded UP to
+        the next 5 mm so the part has a tidy dimension — that rounding is the only judgement in it.
+
+        Width is nearly free here, the same way arm width was on the magnet design: it runs
+        front-to-back ALONG the fridge face, so it adds nothing to how far the display stands off
+        the panel and nothing to the sheet's bounding box. Only the foot's outboard LEG is in the
+        room.
+        """
+        floor = self.strut_width + 4.0 * self.bracket_t
+        return math.ceil(floor / 5.0) * 5.0
+
+    @property
+    def clamp_width(self) -> float:
+        return self.part_width
+
+    @property
+    def foot_width(self) -> float:
+        return self.part_width
+
+    @property
+    def clear_window(self) -> float:
+        """Rear edge to the hinge cover. DERIVED; the 406 tape reading agrees to 0.6 mm."""
+        return self.fridge_d - self.hinge_cover
+
+    @property
+    def strut_centre(self) -> float:
+        """Front-to-back centre of the strut pair, measured from the REAR edge.
+
+        Centred on the clear WINDOW, not on the case depth. Centring on the case looks like the
+        obvious choice and is wrong: it drives the front clamp 51.2 mm INTO the hinge cover. The
+        window is the only space that actually exists, so it is the datum.
+        """
+        return self.clear_window / 2.0
+
+    @property
+    def display_bias_rearward(self) -> float:
+        """How far behind the case centre the screen ends up as a result. Cosmetic, not structural."""
+        return self.fridge_d / 2.0 - self.strut_centre
+
+    @property
+    def hinge_margin(self) -> float:
+        """Front clamp edge to the hinge cover. Negative means a collision."""
+        return self.clear_window - (self.strut_centre + self.strut_spacing / 2.0
+                                    + self.clamp_width / 2.0)
 
     @property
     def gap(self) -> float:
@@ -125,43 +186,55 @@ def _card(x, y, w, h, title, colour=INK) -> list[str]:
             _t(x + 20, y + 25, title, 12.5, anchor="start", weight="bold", fill=colour)]
 
 
+# The elevation is BROKEN between these heights: a 20.64 mm strut against a 1743 mm fridge is
+# 1:84, so at true scale the strut can only ever be a line. Removing a dead stretch of the middle
+# lets the whole thing be drawn 1.8x bigger in the same space. The break is marked, and the region
+# removed carries nothing — no clamp, no plate, no display.
+BREAK_LO, BREAK_HI = 250.0, 980.0
+
+
 def _elevation(ox, oy, sc, a: Assembly) -> list[str]:
-    """Side elevation: fridge left, assembly hanging off its right-hand face."""
+    """Side elevation, BROKEN vertically. Horizontal thin layers are separately exaggerated."""
     o: list[str] = []
-    def X(mm): return ox + mm * sc
-    def Y(mm): return oy - mm * sc
-    fd = 260.0                                   # only part of the depth is drawn
+    cut = BREAK_HI - BREAK_LO
+
+    def Y(mm):
+        """Height in mm -> y. Anything above the break is pulled down by the removed stretch."""
+        return oy - (mm if mm <= BREAK_LO else mm - cut) * sc
+
+    def X(mm):
+        return ox + mm * sc
+    fd = 260.0
 
     o.append(f'<line x1="{X(-120):.1f}" y1="{Y(0):.1f}" x2="{X(fd + 340):.1f}" '
              f'y2="{Y(0):.1f}" stroke="{INK}" stroke-width="2"/>')
     o.append(f'<rect x="{X(0):.1f}" y="{Y(a.fridge_h):.1f}" width="{fd * sc:.1f}" '
-             f'height="{(a.fridge_h - a.base_gap) * sc:.1f}" fill="{FRIDGE_SIDE}" '
+             f'height="{(Y(a.base_gap) - Y(a.fridge_h)):.1f}" fill="{FRIDGE_SIDE}" '
              f'stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.2"/>')
+    o.append(_t(X(fd / 2), Y(1500), "fridge", 9, fill=ON_FRIDGE_MUTED, rot=-90))
     o.append(f'<line x1="{X(-40):.1f}" y1="{Y(a.base_gap):.1f}" x2="{X(fd + 30):.1f}" '
              f'y2="{Y(a.base_gap):.1f}" stroke="{BAD}" stroke-width="0.9" '
              f'stroke-dasharray="4 3"/>')
     o.append(_t(X(-44), Y(a.base_gap) + 3, f"underside {a.base_gap:.0f}", 8.0, anchor="end",
                 fill=BAD, weight="bold"))
-    o.append(_t(X(fd / 2), Y(a.fridge_h * 0.35), "fridge", 9, fill=ON_FRIDGE_MUTED, rot=-90))
 
-    # exaggerate the thin layers so the stack is legible; the sheet says so
     EX = 4.0
     gap_px = a.gap * sc * EX
     strut_x = X(fd) + gap_px
     strut_w = a.strut_depth * sc * EX
 
-    # the strut, with its slots
     o.append(f'<rect x="{strut_x:.1f}" y="{Y(a.strut_len + 6):.1f}" width="{strut_w:.1f}" '
-             f'height="{a.strut_len * sc:.1f}" fill="{C_STRUT}" stroke="{INK}" '
+             f'height="{(Y(0) - Y(a.strut_len)):.1f}" fill="{C_STRUT}" stroke="{INK}" '
              f'stroke-width="1"/>')
     n = int(a.strut_len / a.slot_pitch)
     for i in range(n):
         sy = 25.4 + i * a.slot_pitch
+        if BREAK_LO < sy < BREAK_HI:
+            continue
         o.append(f'<rect x="{strut_x + strut_w * 0.3:.1f}" y="{Y(sy + 14):.1f}" '
                  f'width="{strut_w * 0.4:.1f}" height="{28.6 * sc:.1f}" fill="{INK}" '
                  f'fill-opacity="0.45"/>')
 
-    # foot: vertical leg in the stack, horizontal leg OUTBOARD, strut stands on it
     foot_t = a.bracket_t * sc * EX
     o.append(f'<path d="M{strut_x - foot_t:.1f} {Y(300):.1f} '
              f'L{strut_x - foot_t:.1f} {Y(a.bracket_t):.1f} '
@@ -170,61 +243,71 @@ def _elevation(ox, oy, sc, a: Assembly) -> list[str]:
              f'L{strut_x - foot_t:.1f} {Y(0):.1f} Z" fill="{C_STEEL}" stroke="{INK}" '
              f'stroke-width="1.1"/>')
 
-    # the two clamps: long leg onto the fridge, short leg down/up the side, stud outward
     def clamp(y_corner, flip):
-        s = -1 if flip else 1
-        leg = 150.0
-        short = 44.0
-        c = []
-        c.append(f'<path d="M{X(fd):.1f} {Y(y_corner):.1f} '
-                 f'L{X(fd - leg):.1f} {Y(y_corner):.1f} '
-                 f'L{X(fd - leg):.1f} {Y(y_corner + s * a.bracket_t):.1f} '
-                 f'L{strut_x - foot_t:.1f} {Y(y_corner + s * a.bracket_t):.1f} '
-                 f'L{strut_x - foot_t:.1f} {Y(y_corner - s * short):.1f} '
-                 f'L{X(fd):.1f} {Y(y_corner - s * short):.1f} Z" '
-                 f'fill="{C_STEEL}" stroke="{INK}" stroke-width="1.1"/>')
-        # foam inside the L
-        c.append(f'<rect x="{X(fd - leg):.1f}" '
-                 f'y="{Y(y_corner + (a.foam if not flip else 0)):.1f}" '
-                 f'width="{leg * sc:.1f}" height="{a.foam * sc * EX:.1f}" fill="{PAD_FILL}" '
-                 f'stroke="{PAD_EDGE}" stroke-width="0.7"/>')
-        # the carriage-bolt stud, horizontal, through the stack
-        sy = y_corner - s * short * 0.55
+        sgn = -1 if flip else 1
+        leg, short = a.clamp_leg, a.clamp_short
+        c = [f'<path d="M{X(fd):.1f} {Y(y_corner):.1f} L{X(fd - leg):.1f} {Y(y_corner):.1f} '
+             f'L{X(fd - leg):.1f} {Y(y_corner + sgn * a.bracket_t):.1f} '
+             f'L{strut_x - foot_t:.1f} {Y(y_corner + sgn * a.bracket_t):.1f} '
+             f'L{strut_x - foot_t:.1f} {Y(y_corner - sgn * short):.1f} '
+             f'L{X(fd):.1f} {Y(y_corner - sgn * short):.1f} Z" '
+             f'fill="{C_STEEL}" stroke="{INK}" stroke-width="1.1"/>']
+        fy = y_corner + (a.foam if not flip else 0)
+        c.append(f'<rect x="{X(fd - leg):.1f}" y="{Y(fy):.1f}" width="{leg * sc:.1f}" '
+                 f'height="{a.foam * sc * EX:.1f}" fill="#f8e2a4" stroke="{PAD_EDGE}" '
+                 f'stroke-width="0.7"/>')
+        sy = y_corner - sgn * short * 0.55
         c.append(f'<rect x="{strut_x - foot_t - 3:.1f}" y="{Y(sy + 5):.1f}" '
                  f'width="{strut_w + foot_t + 14:.1f}" height="{10 * sc:.1f}" '
-                 f'fill="{WARN}" stroke="#6d5300" stroke-width="0.9"/>')
+                 f'fill="#8a6a10" stroke="#6d5300" stroke-width="0.9"/>')
         return c
 
     o += clamp(a.fridge_h, flip=False)
-    # Corner AT the underside, so the long leg tucks beneath the cabinet and the
-    # short leg rises outside it. It was at 120 mm, which drove it through the
-    # fridge's base rather than under it.
     o += clamp(a.base_gap, flip=True)
 
-    # plate and display, outboard of the strut
     px = strut_x + strut_w
     o.append(f'<rect x="{px:.1f}" y="{Y(a.screen_centre + a.plate_h / 2):.1f}" '
              f'width="{a.plate_t * sc * EX:.1f}" height="{a.plate_h * sc:.1f}" '
              f'fill="{C_PLATE}" stroke="{INK}" stroke-width="1"/>')
     dx = px + a.plate_t * sc * EX
+    # The DISPLAY, dashed and to true scale — the only object on the sheet whose size the reader
+    # already knows, so it is what makes the strut's slenderness legible.
     o.append(f'<rect x="{dx:.1f}" y="{Y(a.screen_centre + a.display_h / 2):.1f}" '
              f'width="{(a.rear_box + a.panel_d) * sc:.1f}" '
-             f'height="{a.display_h * sc:.1f}" fill="#101820" stroke="{INK}" stroke-width="1"/>')
+             f'height="{a.display_h * sc:.1f}" fill="#101820" fill-opacity="0.12" '
+             f'stroke="{INK}" stroke-width="1.4" stroke-dasharray="7 4"/>')
+    cap_y = Y(a.screen_centre - a.display_h / 2) + 14
+    o.append(_t(dx, cap_y, "23.8 in display — TRUE SCALE", 8.6, anchor="start", weight="bold"))
+    o.append(_t(dx, cap_y + 11, f"{a.display_h:.0f} tall x 43 deep. Drawn dashed purely so the",
+                8.0, anchor="start", fill=MUTED))
+    o.append(_t(dx, cap_y + 21, "strut beside it has something familiar for scale.", 8.0,
+                anchor="start", fill=MUTED))
+
+    # the break itself, drawn across everything it crosses
+    by = Y(BREAK_LO) - 3
+    for x0, x1 in ((X(-20), X(fd + 20)), (strut_x - foot_t - 10, strut_x + strut_w + 12)):
+        o.append(f'<path d="M{x0:.1f} {by + 7:.1f} L{(x0 + x1) / 2:.1f} {by - 5:.1f} '
+                 f'L{x1:.1f} {by + 7:.1f}" fill="none" stroke="{PAPER}" stroke-width="7"/>')
+        o.append(f'<path d="M{x0:.1f} {by + 7:.1f} L{(x0 + x1) / 2:.1f} {by - 5:.1f} '
+                 f'L{x1:.1f} {by + 7:.1f}" fill="none" stroke="{BAD}" stroke-width="1.4"/>')
+    o.append(_t(strut_x + strut_w + 22, by + 2, f"BREAK — {cut:.0f} mm removed", 8.2,
+                anchor="start", fill=BAD, weight="bold"))
 
     labs = [(Y(a.fridge_h) - 10, "TOP CLAMP — hooks the top, holds 3.8 lb", OK),
-            (Y(a.screen_centre + a.display_h / 2) - 6, "display", MUTED),
-            (Y(a.screen_centre), "plate — the SAME part, 246 mm centres", INK),
-            (Y(760), "2 x 6 ft low-profile strut", INK),
-            (Y(160), "LOWER CLAMP — slides up to grip", OK),
+            (Y(a.screen_centre + a.display_h / 2) - 14, "plate — the SAME part, 246 mm centres",
+             INK),
+            (Y(1120), "2 x 6 ft low-profile strut — 20.64 mm deep", INK),
+            (Y(a.base_gap + 90), "LOWER CLAMP — slides up to grip", OK),
             (Y(30), "FOOT — outboard, strut stands on it", OK)]
-    lx = dx + (a.rear_box + a.panel_d) * sc + 26
+    lx = dx + (a.rear_box + a.panel_d) * sc + 150
     for ly, _x, _c in labs:
         o.append(f'<line x1="{dx + (a.rear_box + a.panel_d) * sc + 4:.1f}" y1="{ly - 4:.1f}" '
                  f'x2="{lx - 4:.1f}" y2="{ly - 4:.1f}" stroke="{RULE}" stroke-width="0.8"/>')
     for ly, txt, col in labs:
         o.append(_t(lx, ly, txt, 9.0, anchor="start", fill=col, weight="bold"))
-    o.append(_t(X(-116), Y(a.fridge_h) - 8, f"thin layers {EX:.0f}x",
-                8.5, anchor="start", fill=MUTED))
+    o.append(_t(X(-116), Y(a.fridge_h) - 8,
+                f"vertical BROKEN; horizontal thin layers {EX:.0f}x", 8.5, anchor="start",
+                fill=MUTED))
     return o
 
 
@@ -438,7 +521,7 @@ def render(path: Path, a: Assembly) -> None:
             fill=MUTED)]
 
     o += _card(40, 100, 700, 500, "SIDE ELEVATION")
-    o += _elevation(112, 566, 0.235, a)
+    o += _elevation(112, 566, 0.40, a)
 
     o += _card(760, 100, 500, 330, "WHAT HOLDS IT")
     rows = [("Weight", "into the FLOOR through the foot", "154 N", OK),
