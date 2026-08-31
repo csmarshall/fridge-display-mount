@@ -43,6 +43,11 @@ would make the bracket a two-operation part.
 inside the 3 mm foam; a carriage bolt's 5.08 mm dome stands proud of the same foam and presses a
 hard point onto appliance sheet. It also bears over 715 mm² instead of 308.
 
+**The nut goes INSIDE the channel**, bearing on the strut's back web — the slots are in that web.
+The bolt only spans 7.83 mm of material, so 3/4-1 in is plenty. Do NOT run it through the channel
+and nut it outside: that is where the PLATE's channel nuts have to go, and the open face must
+stay clear.
+
 **The foot slot must clear the 8.38 mm square NECK, not the 7.94 mm shank.** The neck is 4.83 mm
 long against a 3.02 mm clamp leg, so it passes 1.80 mm through into the foot. Easy to get wrong by
 sizing off the thread.

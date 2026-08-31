@@ -222,7 +222,15 @@ the head **hides inside the 3 mm foam and never touches the panel**; a carriage 
 over 715 mm2 instead of 308 — 2.3x the bearing.
 
 The square neck is 8.38 mm across x 4.83 mm long, so it passes **1.80 mm beyond** a 3.02 mm clamp
-leg: **the foot's slot has to clear 8.38 mm, not just the 7.94 mm shank.** Foam lines the inside of the L; no steel touches the appliance
+leg: **the foot's slot has to clear 8.38 mm, not just the 7.94 mm shank.**
+
+**The nut goes INSIDE the channel, bearing on the strut's back web.** The slots are in that web,
+so the bolt passes clamp 3.02 + foot 3.02 + web 1.78 = **7.83 mm of material**, plus the nut. A
+3/4 in bolt would do; 1 in is comfortable.
+
+Running the bolt clean through the channel and nutting it outside the open face would be a much
+longer bolt for no reason, and it would put the nut exactly where the **plate's channel nuts have
+to live**. The open face stays clear. Foam lines the inside of the L; no steel touches the appliance
 anywhere.
 
 **Part B — the slotted foot (×2, one per strut).** Vertical leg carrying an elongated slot for the

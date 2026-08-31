@@ -249,9 +249,15 @@ def _stack_detail(ox, oy, w, a: Assembly) -> list[str]:
 
 
 def _joint_detail(ox, oy, a: Assembly) -> list[str]:
-    """The base joint at 4.5x. The elevation cannot resolve this, and it is where the design is."""
+    """The base joint at 4.5x. The elevation cannot resolve this, and it is where the design is.
+
+    CORRECTED: the slots are in the strut's BACK WEB, so the nut goes INSIDE the channel and bears
+    on that web. An earlier version ran the bolt clean through the channel and nutted it outside
+    the open face — which is both a longer bolt than needed and exactly where the PLATE's channel
+    nuts have to live.
+    """
     o: list[str] = []
-    K, h = 4.5, 150.0
+    K, h = 4.5, 148.0
     def W(mm): return mm * K
     o.append(_t(ox, oy - 42, "THE BASE JOINT — 4.5x", 11.5, anchor="start", weight="bold"))
     o.append(_t(ox, oy - 27, "section through one stud, looking along the fridge face", 9,
@@ -260,18 +266,24 @@ def _joint_detail(ox, oy, a: Assembly) -> list[str]:
     x, xs = ox, {}
     for name, t, fill in (("fridge", 7.0, FRIDGE_SIDE), ("foam", a.foam, "#f8e2a4"),
                           ("clamp", a.bracket_t, C_STEEL), ("foot", a.bracket_t, C_STEEL),
-                          ("wall", 1.78, C_STRUT)):
+                          ("web", 1.78, C_STRUT)):
         xs[name] = x
         o.append(f'<rect x="{x:.1f}" y="{oy:.1f}" width="{W(t):.1f}" height="{h:.1f}" '
                  f'fill="{fill}" stroke="{INK}" stroke-width="1"/>')
         x += W(t)
+    web_end = x
     inner = W(a.strut_depth - 2 * 1.78)
     o.append(f'<rect x="{x:.1f}" y="{oy:.1f}" width="{inner:.1f}" height="{h:.1f}" fill="#fff" '
              f'stroke="{INK}" stroke-width="0.8" stroke-dasharray="3 3"/>')
     x += inner
-    o.append(f'<rect x="{x:.1f}" y="{oy:.1f}" width="{W(1.78):.1f}" height="{h:.1f}" '
-             f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1"/>')
-    far = x + W(1.78)
+    # the return lips: the OPEN face, left clear for the plate's channel nuts
+    lip = W(1.78)
+    for ly in (oy, oy + h - W(9.0)):
+        o.append(f'<rect x="{x:.1f}" y="{ly:.1f}" width="{lip:.1f}" height="{W(9.0):.1f}" '
+                 f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1"/>')
+    # clear of the nut, in the empty part of the void, and short enough to stay inside it
+    o.append(_t(x - 15, oy + h / 2 + 26, "OPEN face — plate bolts here", 8.0, fill=MUTED,
+                rot=-90))
 
     cy = oy + h / 2
     hx = xs["foam"] + W(a.foam) - W(a.bolt_head_h)
@@ -281,46 +293,51 @@ def _joint_detail(ox, oy, a: Assembly) -> list[str]:
     o.append(f'<rect x="{xs["clamp"]:.1f}" y="{cy - W(a.bolt_neck_w) / 2:.1f}" '
              f'width="{W(a.bolt_neck_l):.1f}" height="{W(a.bolt_neck_w):.1f}" fill="#a37f14" '
              f'stroke="#6d5300" stroke-width="1.2"/>')
+    # shank stops just past the nut, INSIDE the channel
+    nut_x = web_end + 4
+    nut_w = W((17 / 64) * 25.4)
     o.append(f'<rect x="{xs["clamp"] + W(a.bolt_neck_l):.1f}" y="{cy - W(a.bolt_dia) / 2:.1f}" '
-             f'width="{far + 52 - xs["clamp"] - W(a.bolt_neck_l):.1f}" '
+             f'width="{nut_x + nut_w + 10 - xs["clamp"] - W(a.bolt_neck_l):.1f}" '
              f'height="{W(a.bolt_dia):.1f}" fill="#8a6a10" fill-opacity="0.9" '
              f'stroke="#6d5300" stroke-width="1"/>')
-    o.append(f'<rect x="{far + 8:.1f}" y="{cy - W(12.7) / 2:.1f}" width="{W(6.75):.1f}" '
+    o.append(f'<rect x="{nut_x:.1f}" y="{cy - W(12.7) / 2:.1f}" width="{nut_w:.1f}" '
              f'height="{W(12.7):.1f}" fill="{C_STEEL}" stroke="{INK}" stroke-width="1.2"/>')
 
-    # layer labels BELOW, staggered so they never touch
     below = [(xs["fridge"] + W(3.5), "fridge", MUTED, 0),
              (xs["foam"] + W(a.foam / 2), f"foam {a.foam:.0f}", PAD_EDGE, 1),
              (xs["clamp"] + W(a.bracket_t / 2), f"clamp {a.bracket_t:.2f}", INK, 2),
              (xs["foot"] + W(a.bracket_t / 2), f"foot {a.bracket_t:.2f}", INK, 3),
-             (far + 8 + W(3.4), "nut", INK, 0)]
+             (xs["web"] + W(0.9), f"strut WEB {1.78:.2f}", INK, 4),
+             (nut_x + nut_w / 2, "nut INSIDE the channel", OK, 5)]
     for lx, _t_, _c, row in below:
         o.append(f'<line x1="{lx:.1f}" y1="{oy + h + 2:.1f}" x2="{lx:.1f}" '
                  f'y2="{oy + h + 12 + row * 14:.1f}" stroke="{MUTED}" stroke-width="0.7"/>')
     for lx, txt, col, row in below:
         o.append(_t(lx, oy + h + 22 + row * 14, txt, 8.6, fill=col, weight="bold"))
 
-    # notes to the RIGHT, where there is room, rather than below where there is not
-    nx = far + W(12.7) + 40
-    o.append(_t(nx, oy + 16, "ELEVATOR bolt, 5/16-18", 10, anchor="start", weight="bold",
+    nx = ox + W(46)
+    o.append(_t(nx, oy + 16, "ELEVATOR bolt, 5/16-18 x 1 in", 10, anchor="start", weight="bold",
                 fill=WARN))
+    grip = 2 * a.bracket_t + 1.78
     for i, ln in enumerate([
-            f"head {a.bolt_head_d:.1f} dia x {a.bolt_head_h:.2f} thick, FLAT",
-            f"it hides inside the {a.foam:.0f} mm foam and never",
-            "touches the panel. A carriage bolt's dome",
-            "would stand 2.08 mm proud of the same foam.",
+            f"head {a.bolt_head_d:.1f} dia x {a.bolt_head_h:.2f} thick, FLAT — it hides inside",
+            f"the {a.foam:.0f} mm foam and never touches the panel. A carriage",
+            "bolt's dome would stand 2.08 mm proud of the same foam.",
             "",
-            f"square neck {a.bolt_neck_w:.2f} across x {a.bolt_neck_l:.2f} long",
-            f"locks in a square hole in the CLAMP only.",
-            f"It passes {a.bolt_neck_l - a.bracket_t:.2f} mm beyond, so the FOOT",
-            f"slot must clear {a.bolt_neck_w:.2f} mm, not just the shank."]):
-        col = BAD if i >= 7 else MUTED
+            f"The slots are in the strut's BACK WEB, so the bolt only has",
+            f"to reach {grip:.2f} mm of material plus a nut — 3/4 in would do,",
+            f"1 in is comfortable. The nut sits INSIDE the channel.",
+            "",
+            f"square neck {a.bolt_neck_w:.2f} across x {a.bolt_neck_l:.2f} long locks in the",
+            f"CLAMP's square hole and passes {a.bolt_neck_l - a.bracket_t:.2f} mm beyond, so the",
+            f"FOOT slot must clear {a.bolt_neck_w:.2f} mm, not just the shank."]):
+        col = BAD if i >= 8 else MUTED
         o.append(_t(nx, oy + 36 + i * 13, ln, 9, anchor="start", fill=col))
     return o
 
 
 def render(path: Path, a: Assembly) -> None:
-    W, H = 1300.0, 1326.0
+    W, H = 1300.0, 1350.0
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
          f'viewBox="0 0 {W:.0f} {H:.0f}">',
          f'<rect width="{W:.0f}" height="{H:.0f}" fill="{PAPER}"/>',
@@ -369,19 +386,19 @@ def render(path: Path, a: Assembly) -> None:
             py += 13
         py += 12
 
-    o += _card(40, 616, 700, 296, "")
-    o += _joint_detail(76, 690, a)
-    o += _card(40, 934, 1220, 200, "")
-    o += _stack_detail(72, 970, 700, a)
-    o.append(_t(800, 996, "Assembly", 11.5, anchor="start", weight="bold"))
+    o += _card(40, 616, 700, 320, "")
+    o += _joint_detail(76, 688, a)
+    o += _card(40, 958, 1220, 200, "")
+    o += _stack_detail(72, 994, 700, a)
+    o.append(_t(800, 1020, "Assembly", 11.5, anchor="start", weight="bold"))
     for i, step in enumerate([
             "1. Stand the struts on the feet; stud through foot slot and strut slot, nut loose.",
             "2. Hook the top clamps over the fridge top; washers behind the strut; nut loose.",
             "3. Slide the lower clamps UP their slots until they engage under the appliance.",
             "4. Lock everything. The struts go into tension and the fridge is gripped."]):
-        o.append(_t(812, 1014 + i * 14, step, 9.5, anchor="start", fill=MUTED))
+        o.append(_t(812, 1038 + i * 14, step, 9.5, anchor="start", fill=MUTED))
 
-    o += _card(40, 1150, 1220, 152, "STILL OPEN — both need a torch under the fridge", BAD)
+    o += _card(40, 1174, 1220, 152, "STILL OPEN — both need a torch under the fridge", BAD)
     for i, q in enumerate([
             "Does a 150-250 mm clamp reach foul anything under there? Compressor, tubing, "
             "insulation, cross-members. It sets how far the lower clamp can go in, and nothing "
@@ -391,7 +408,7 @@ def render(path: Path, a: Assembly) -> None:
             f"The gap under the side measured 10-20 mm and the underside is NOT flat, so the "
             f"lower clamp's short leg plus its foam has to live inside that, at its tightest."]):
         for j, ln in enumerate(_wrap(q, 128)):
-            o.append(_t(64, 1190 + i * 34 + j * 13, ("- " if j == 0 else "  ") + ln, 10,
+            o.append(_t(64, 1214 + i * 34 + j * 13, ("- " if j == 0 else "  ") + ln, 10,
                         anchor="start", fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
