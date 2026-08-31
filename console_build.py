@@ -62,6 +62,10 @@ DIAGRAM_INFO = {
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
+    "clamp_depth.svg": ("Struts BEHIND the box, or BESIDE it?",
+                       "Plan view. Nesting the box between the struts would put the screen "
+                       "20.6 mm closer to the fridge — but moves the plate somewhere awkward. "
+                       "OPEN.", "current"),
     "clamp_plate.svg": ("What holds the monitor — the plate",
                        "Part C. The display bolts to it, it bolts to the struts, the struts "
                        "stand on the floor. Carries the vent windows the Pi needs.", "current"),
@@ -359,24 +363,32 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"than cold-rolled, which is why .188 HRPO undercuts .135 CRS despite being thicker.",
              "+$11.21 over the 0.119 build. Commercial TV mounts run 1.8-2.7 mm; this is 4.75 mm.",
              "settled"),
-        Item("d-orient", "[BOTH] Orientation is FORCED to portrait — not a preference",
-             "Portrait spans 74 to 398 mm on a 609.6 mm counter-depth case and fits. Landscape "
-             "would hang off the REAR edge and cannot be slid forward to fix it: the clamp bar "
-             "must stay inside the 406.6 mm window. Centring landscape needs a strut centre of "
-             "304.8, which is 48.7 mm INTO the hinge cover.",
-             "This is a constraint of the cabinet, not a preference. It was already the "
-             "generator's default for other reasons — torsion arm, and a 555 mm landscape "
-             "display nearly filling a 610 mm counter-depth cabinet.",
+        Item("d-orient", "[BOTH] Portrait — on practical grounds, CORRECTED from \"impossible\"",
+             "At the old 246 mm strut spacing landscape overhung the cabinet's REAR edge and was "
+             "geometrically impossible. Narrowing the struts to 160 moved them forward, and "
+             "landscape now technically fits — by 1.5 mm at the rear against 52.9 at the front.",
+             "That is flush with the back of the cabinet and wildly off centre, so portrait "
+             "remains the choice. But the honest reason is now practical, not geometric, and the "
+             "earlier claim on this page overstated it.",
              "settled"),
-        Item("d-datum", "[BOTH] Struts sit as far FORWARD as the hinge cover allows — SETTLED",
-             "Three datums were possible. Centring on the CASE drives the clamp bar 48.7 mm into "
-             "the cover — blocked. Centring on the WINDOW is safe but leaves the screen 101.5 mm "
-             "behind the case centre, pushed away from where anyone stands. Hard forward centres "
-             "best but leaves ZERO tolerance against a cover position read off a photograph.",
-             "Chosen: forward, holding cover_margin (20 mm) back from the limit. The screen is "
-             "68.7 mm rearward instead of 101.5, with 20 mm of clearance kept in hand. That "
-             "margin is the whole decision, and it is the number to change if the cover is ever "
-             "measured properly or removed.",
+        Item("d-datum", "[BOTH] Struts as far FORWARD as the hinge cover allows — SETTLED",
+             "Centring on the CASE drives the clamp bar into the cover. Centring on the WINDOW is "
+             "safe but pushes the screen 101.5 mm behind the case centre, away from where anyone "
+             "stands. Hard forward centres best but leaves zero tolerance against a cover "
+             "position read off a photograph.",
+             "Chosen: forward, holding cover_margin (20 mm) back. With the struts narrowed to "
+             "160 the bar is shorter and can sit further forward still, so the screen is now "
+             "25.7 mm rearward — down from 68.7 at the old spacing, and 101.5 window-centred.",
+             "settled"),
+        Item("d-spacing", "[BOTH] Strut spacing 160, re-derived — was an inherited 246",
+             "246 was the MAGNET-HOLE spacing from the hook design, carried over verbatim when "
+             "the load path changed and never re-derived. What actually bounds it: the plate "
+             "bolts should clear the 134 mm rear box without leaning on spacer height (floor "
+             "~155), and touch-press wobble at the screen edge grows as 1/spacing squared.",
+             "160 keeps wobble at 0.72 mm under a firm 5 lbf press — under a millimetre, and the "
+             "model overstates it by putting the load at mid-span. It makes the plate 29% "
+             "narrower (297 to 211), the clamp bar 215 instead of 301, and cuts the screen's "
+             "rearward bias from 68.7 to 25.7 mm. Bolts still clear the box by 13 mm each side.",
              "settled"),
         Item("d-coat",
              "[BOTH] Powder coat at SendCutSend, or spray it yourself",
