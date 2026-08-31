@@ -503,7 +503,190 @@ def sheet_approval(path: Path, a: Assembly) -> None:
     LOG.info("Wrote %s — display face %.1f mm", path, a.display_face)
 
 
-SHEETS = {"clamp_approval": sheet_approval, "clamp_parts": sheet_parts,
+# --------------------------------------------------------------------------------------------
+def sheet_frame(path: Path, a: Assembly) -> None:
+    """FRONT elevation — the view that shows the thing is a ladder, not two separate legs.
+
+    Every other sheet is a side view, a plan, or a flat pattern. A side view shows ONE strut, so
+    none of them can show the two struts tied together by identical bars. This is that view.
+    """
+    W, H = 1420, 940
+    o = _frame(W, H, "THE FRAME, SEEN FROM THE FRONT",
+               "Looking straight at the fridge's side panel. Two struts, tied top and bottom by "
+               "IDENTICAL bars. This is the only view that shows it as one frame.",
+               "FRONT ELEVATION — the assembly as a whole")
+
+    o += _panel(40, 100, 620, 800, "LOOKING AT THE SIDE PANEL")
+    # BROKEN vertically, like the side elevation and for the same reason: the frame is 610 wide
+    # by 1829 tall, so a whole-height drawing is a narrow ribbon and the bars — the point of the
+    # view — come out too small to read. The removed stretch carries nothing but strut slots.
+    F_LO, F_HI = 200.0, 950.0
+    cut = F_HI - F_LO
+    sc = 0.60
+    ox, oy = 150.0, 800.0                       # rear edge of the panel, and the floor
+
+    def X(mm):
+        return ox + mm * sc                     # mm measured from the fridge's REAR edge
+
+    def Y(mm):
+        return oy - (mm if mm <= F_LO else mm - cut) * sc
+
+    o.append(f'<line x1="{X(-70):.1f}" y1="{oy:.1f}" x2="{X(690):.1f}" y2="{oy:.1f}" '
+             f'stroke="{INK}" stroke-width="2.5"/>')
+    o.append(f'<rect x="{X(0):.1f}" y="{Y(a.fridge_h):.1f}" width="{a.fridge_d * sc:.1f}" '
+             f'height="{(Y(a.base_gap) - Y(a.fridge_h)):.1f}" fill="{FRIDGE_SIDE}" '
+             f'stroke="{FRIDGE_EDGE}" stroke-width="1.2"/>')
+    hc = a.fridge_d - a.hinge_cover
+    o.append(f'<rect x="{X(hc):.1f}" y="{Y(a.fridge_h) - 36 * sc:.1f}" '
+             f'width="{a.hinge_cover * sc:.1f}" height="{36 * sc:.1f}" fill="#5c574f" '
+             f'stroke="{FRIDGE_EDGE}" stroke-width="0.9"/>')
+    o.append(_t(X(hc + a.hinge_cover / 2), Y(a.fridge_h) - 16, "hinge cover", 7.6,
+                fill="#bdb6ab"))
+    o.append(_t(X(30), Y(1500), "FRIDGE SIDE PANEL", 9.5, fill="#8d867d", rot=-90))
+
+    # the display and its plate, drawn BEHIND the frame so the frame reads on top
+    dc = a.strut_centre
+    o.append(f'<rect x="{X(dc - a.plate_h / 2):.1f}" y="{Y(a.screen_centre + a.plate_h / 2):.1f}" '
+             f'width="{a.plate_h * sc:.1f}" height="{a.plate_h * sc:.1f}" fill="{C_PLATE}" '
+             f'fill-opacity="0.9" stroke="{INK}" stroke-width="1.1"/>')
+    o.append(_t(X(dc), Y(a.screen_centre + 96), f"PLATE {a.plate_h:.0f} x {a.plate_h:.0f}", 9.2,
+                weight="bold"))
+
+    strut_half = a.strut_width / 2.0
+    for s in (dc - a.strut_spacing / 2.0, dc + a.strut_spacing / 2.0):
+        o.append(f'<rect x="{X(s - strut_half):.1f}" y="{Y(a.strut_len):.1f}" '
+                 f'width="{a.strut_width * sc:.1f}" '
+                 f'height="{(Y(0.0) - Y(a.strut_len)):.1f}" '
+                 f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1.2"/>')
+        for i in range(int(a.strut_len / a.slot_pitch)):
+            sy = 25.4 + i * a.slot_pitch
+            if F_LO < sy < F_HI:
+                continue
+            o.append(f'<rect x="{X(s) - 2.6:.1f}" y="{Y(sy + a.slot_len / 2):.1f}" width="5.2" '
+                     f'height="{a.slot_len * sc:.1f}" fill="{INK}" fill-opacity="0.4"/>')
+        o.append(f'<rect x="{X(s - strut_half) - 1:.1f}" y="{oy - 7:.1f}" '
+                 f'width="{a.strut_width * sc + 2:.1f}" height="7" fill="{C_STEEL}" '
+                 f'stroke="{INK}" stroke-width="1"/>')
+
+    # the two IDENTICAL bars — the whole point of the view
+    bar_x0, bar_w = X(dc - a.clamp_outer_half), a.clamp_width * sc
+    for hgt, nm in ((a.fridge_h, "TOP BAR"), (a.base_gap, "BOTTOM BAR")):
+        o.append(f'<rect x="{bar_x0:.1f}" y="{Y(hgt) - 7:.1f}" width="{bar_w:.1f}" height="14" '
+                 f'rx="2" fill="{C_STEEL}" stroke="{INK}" stroke-width="1.3"/>')
+        o.append(_t(bar_x0 + bar_w / 2, Y(hgt) + 4, nm, 8.4, fill="#fff", weight="bold"))
+        for s in (dc - a.strut_spacing / 2.0, dc + a.strut_spacing / 2.0):
+            o.append(f'<circle cx="{X(s):.1f}" cy="{Y(hgt):.1f}" r="3.1" fill="{PAPER}" '
+                     f'stroke="{INK}" stroke-width="1"/>')
+
+    o += _display_ghost(X(dc - 324.65 / 2), Y(a.screen_centre + a.display_h / 2), 324.65 * sc,
+                        a.display_h * sc, "")
+    o.append(_t(X(a.fridge_d) + 14, Y(a.screen_centre - a.display_h / 2) + 4,
+                "display 324.65 wide", 8.6, anchor="start", fill=MUTED))
+    o.append(_t(X(a.fridge_d) + 14, Y(a.screen_centre - a.display_h / 2) + 15,
+                "dashed, true scale", 8.2, anchor="start", fill=MUTED))
+
+    by_ = Y(F_LO) - 2
+    o.append(f'<path d="M{X(-40):.1f} {by_ + 8:.1f} L{X(a.fridge_d / 2):.1f} {by_ - 6:.1f} '
+             f'L{X(a.fridge_d + 40):.1f} {by_ + 8:.1f}" fill="none" stroke="{PAPER}" '
+             f'stroke-width="9"/>')
+    o.append(f'<path d="M{X(-40):.1f} {by_ + 8:.1f} L{X(a.fridge_d / 2):.1f} {by_ - 6:.1f} '
+             f'L{X(a.fridge_d + 40):.1f} {by_ + 8:.1f}" fill="none" stroke="{BAD}" '
+             f'stroke-width="1.5"/>')
+    o.append(_t(X(a.fridge_d + 48), by_ + 4, f"BREAK — {cut:.0f} mm", 8.2, anchor="start",
+                fill=BAD, weight="bold"))
+
+    # dimensions, all below the drawing so nothing lands on the geometry
+    def hdim(y, x0, x1, txt, col=OK):
+        o.append(f'<line x1="{X(x0):.1f}" y1="{y:.1f}" x2="{X(x1):.1f}" y2="{y:.1f}" '
+                 f'stroke="{col}" stroke-width="1.1"/>')
+        for xx in (x0, x1):
+            o.append(f'<line x1="{X(xx):.1f}" y1="{y - 4:.1f}" x2="{X(xx):.1f}" '
+                     f'y2="{y + 4:.1f}" stroke="{col}" stroke-width="1.1"/>')
+        o.append(_t(X((x0 + x1) / 2), y - 6, txt, 9.0, fill=col, weight="bold"))
+
+    hdim(oy + 34, dc - a.strut_spacing / 2, dc + a.strut_spacing / 2,
+         f"{a.strut_spacing:.0f} strut centres")
+    hdim(oy + 66, dc - a.clamp_outer_half, dc + a.clamp_outer_half,
+         f"{a.clamp_width:.0f} bar", INK)
+    o.append(_t(X(dc), oy + 88, "both bars are the SAME part — the lower one is flipped", 8.8,
+                fill=MUTED))
+
+    # --- TRUE SCALE, UNBROKEN. The broken drawing beside it cannot answer "is the strut taller
+    # --- than the fridge", so this strip answers it with nothing removed.
+    o += _panel(690, 100, 240, 800, "TRUE SCALE", WARN)
+    o += _para(706, 146, f"The strut IS taller. It stands {a.proud:.1f} mm above the case and "
+               f"{a.proud_of_covers:.1f} mm above the hinge covers — about "
+               f"{a.proud_of_covers / IN:.1f} in of channel showing over the top.", 31,
+               size=9.4, lead=11.5)
+    tsc = 610.0 / a.strut_len
+    tox, toy = 745.0, 866.0
+
+    def TY(mm):
+        return toy - mm * tsc
+    o.append(f'<line x1="{tox - 22:.1f}" y1="{toy:.1f}" x2="{tox + 150:.1f}" y2="{toy:.1f}" '
+             f'stroke="{INK}" stroke-width="2"/>')
+    o.append(f'<rect x="{tox:.1f}" y="{TY(a.fridge_h):.1f}" width="58" '
+             f'height="{(toy - TY(a.fridge_h)):.1f}" fill="{FRIDGE_SIDE}" '
+             f'stroke="{FRIDGE_EDGE}"/>')
+    o.append(f'<rect x="{tox + 6:.1f}" y="{TY(a.fridge_h + a.hinge_proud):.1f}" width="26" '
+             f'height="{a.hinge_proud * tsc:.1f}" fill="#5c574f" stroke="{FRIDGE_EDGE}"/>')
+    o.append(_t(tox + 29, toy - 14, "FRIDGE", 8.4, fill="#e8e2d8", weight="bold"))
+    o.append(f'<rect x="{tox + 74:.1f}" y="{TY(a.strut_len):.1f}" width="15" '
+             f'height="{a.strut_len * tsc:.1f}" fill="{C_STRUT}" stroke="{INK}"/>')
+    o.append(_t(tox + 81, toy - 14, "STRUT", 8.0, fill=INK, weight="bold", rot=-90))
+    for hgt, col, lab in ((a.fridge_h, FRIDGE_EDGE, "case 1743.1"),
+                          (a.fridge_h + a.hinge_proud, "#5c574f", "covers 1779.6"),
+                          (a.strut_len, OK, "strut 1828.8")):
+        o.append(f'<line x1="{tox - 20:.1f}" y1="{TY(hgt):.1f}" x2="{tox + 96:.1f}" '
+                 f'y2="{TY(hgt):.1f}" stroke="{col}" stroke-width="1" stroke-dasharray="4 3"/>')
+        o.append(_t(tox + 100, TY(hgt) + 3, lab, 8.2, anchor="start", fill=col, weight="bold"))
+    o.append(f'<line x1="{tox + 70:.1f}" y1="{TY(a.fridge_h):.1f}" x2="{tox + 70:.1f}" '
+             f'y2="{TY(a.strut_len):.1f}" stroke="{OK}" stroke-width="2"/>')
+
+
+    o += _panel(945, 100, 435, 390, "WHY THIS VIEW EXISTS", OK)
+    o += _para(961, 146,
+               "Every other sheet is a side elevation, a plan or a flat pattern. A side view "
+               "shows ONE strut, so none of them can show the two struts tied together — which "
+               "is the whole structural idea. This is that view.", 54)
+    o += _para(961, 226,
+               f"The two bars are the SAME part, {a.clamp_width:.0f} mm across, reaching past "
+               f"both struts by {a.part_width / 2.0:.1f} mm each side for edge margin. That is "
+               f"what turns two independent legs into a frame. Widening the individual parts "
+               f"instead would add steel that is not joined to anything at its far end, and the "
+               f"couple arm would stay the strut spacing regardless.", 54)
+    o += _para(961, 350,
+               f"The plate is {a.plate_h:.0f} mm square and reaches {(a.plate_h - a.strut_spacing) / 2.0:.0f} mm "
+               f"past each strut, so the strut spacing is set by what the PLATE can span, not by "
+               f"what the fridge top allows.", 54)
+
+    o += _panel(945, 510, 435, 390, "THE NUMBERS IN THIS VIEW", INK)
+    rows = [("strut centres", f"{a.strut_spacing:.0f} mm"),
+            ("bar across", f"{a.clamp_width:.0f} mm"),
+            ("bar overhang past each strut", f"{a.part_width / 2.0:.1f} mm"),
+            ("plate", f"{a.plate_h:.0f} x {a.plate_h:.0f} mm"),
+            ("plate past each strut", f"{(a.plate_h - a.strut_spacing) / 2.0:.0f} mm"),
+            ("display, portrait", f"324.65 x {a.display_h:.0f} mm"),
+            ("bars (identical parts)", f"{a.n_clamps}"),
+            ("feet", f"{a.n_feet}"),
+            ("strut proud of the case", f"{a.proud:.1f} mm"),
+            ("strut proud of the covers", f"{a.proud_of_covers:.1f} mm"),
+            ("clear window on the top", f"{a.clear_window:.1f} mm"),
+            ("bar to hinge cover", f"{a.hinge_margin:.1f} mm")]
+    for i, (k, v) in enumerate(rows):
+        ry = 548 + i * 29
+        if i % 2 == 0:
+            o.append(f'<rect x="957" y="{ry - 15:.1f}" width="411" height="26" fill="#f2f5f7"/>')
+        o.append(_t(969, ry + 2, k, 10.2, anchor="start"))
+        o.append(_t(1356, ry + 2, v, 10.6, anchor="end", weight="bold"))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — %d struts at %.0f, %d identical bars %.0f across",
+             path, a.n_struts, a.strut_spacing, a.n_clamps, a.clamp_width)
+
+
+SHEETS = {"clamp_frame": sheet_frame,
+          "clamp_approval": sheet_approval, "clamp_parts": sheet_parts,
           "clamp_assembly": sheet_assembly, "clamp_clearance": sheet_clearance,
           "clamp_loadpath": sheet_loadpath, "clamp_height_check": sheet_height_check}
 

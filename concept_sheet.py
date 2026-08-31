@@ -71,6 +71,7 @@ class Assembly:
     # and because this thing sits unmoved for years. Wants GRIP as well as protection — felt would
     # protect but it would also let the assembly slide, which is the one thing it must not do.
     floor_pad: float = 3.0
+    hinge_proud: float = 36.5              # covers stand this far above the CASE top (spec sheet)
     hinge_cover: float = 203.0
     # --- the two bent parts. Named here because the elevation, the part drawings and the
     # --- clearance check all need them and must never disagree.
@@ -135,6 +136,11 @@ class Assembly:
     @property
     def foot_width(self) -> float:
         return self.part_width
+
+    @property
+    def proud_of_covers(self) -> float:
+        """Strut top above the HINGE COVER tops, not just the case. The covers are what you see."""
+        return self.strut_len - (self.fridge_h + self.hinge_proud)
 
     @property
     def clear_window(self) -> float:
