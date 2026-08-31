@@ -685,7 +685,143 @@ def sheet_frame(path: Path, a: Assembly) -> None:
              path, a.n_struts, a.strut_spacing, a.n_clamps, a.clamp_width)
 
 
+# --------------------------------------------------------------------------------------------
+def sheet_plate(path: Path, a: Assembly) -> None:
+    """Part C, and the answer to "what holds the monitor".
+
+    The plate was a DIMENSION and not a part: it appeared in the stack and in the elevation, but
+    had no flat pattern, no VESA holes, no strut bolts and no vent windows. It is the link in the
+    middle of the load path, so leaving it undrawn left the chain broken exactly where it carries
+    the screen.
+    """
+    W, H = 1420, 940
+    o = _frame(W, H, "WHAT HOLDS THE MONITOR",
+               "Part C, the plate. The display bolts to it, it bolts to the struts, and the "
+               "struts stand on the floor. The fridge carries none of the weight.",
+               "PLATE — the link that was dimensioned but never drawn")
+
+    o += _panel(40, 100, 600, 800, f"PLATE — {a.plate_h:.0f} x {a.plate_h:.0f} x "
+                f"{a.bracket_t:.2f}, x{a.n_plates}", OK)
+    sc = 1.62
+    cx, cy = 340.0, 530.0
+    hp = a.plate_h / 2.0 * sc
+    o.append(f'<rect x="{cx - hp:.1f}" y="{cy - hp:.1f}" width="{2 * hp:.1f}" '
+             f'height="{2 * hp:.1f}" rx="4" fill="{C_PLATE}" stroke="{INK}" stroke-width="1.5"/>')
+
+    # vent windows on a RADIUS, not a margin — so one covers the Pi opening in every 90 deg turn
+    for ang in (0, 90, 180, 270):
+        rad = math.radians(ang)
+        vx = cx + a.pi_fan_radius * sc * math.cos(rad)
+        vy = cy - a.pi_fan_radius * sc * math.sin(rad)
+        w_, h_ = (62 * sc, 22 * sc) if ang % 180 == 0 else (22 * sc, 62 * sc)
+        o.append(f'<rect x="{vx - w_ / 2:.1f}" y="{vy - h_ / 2:.1f}" width="{w_:.1f}" '
+                 f'height="{h_:.1f}" rx="{min(w_, h_) / 2:.1f}" fill="{PAPER}" stroke="{INK}" '
+                 f'stroke-width="1.2"/>')
+    o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{a.pi_fan_radius * sc:.1f}" fill="none" '
+             f'stroke="{WARN}" stroke-width="0.9" stroke-dasharray="5 4"/>')
+    o.append(_t(cx, cy - a.pi_fan_radius * sc - 8, f"vents on R{a.pi_fan_radius:.1f}", 8.6,
+                fill=WARN, weight="bold"))
+
+    v = a.vesa / 2.0 * sc
+    for sx_ in (-1, 1):
+        for sy_ in (-1, 1):
+            o.append(f'<circle cx="{cx + sx_ * v:.1f}" cy="{cy + sy_ * v:.1f}" '
+                     f'r="{a.vesa_hole_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{INK}" '
+                     f'stroke-width="1.2"/>')
+    o.append(f'<rect x="{cx - v:.1f}" y="{cy - v:.1f}" width="{2 * v:.1f}" height="{2 * v:.1f}" '
+             f'fill="none" stroke="{OK}" stroke-width="0.9" stroke-dasharray="4 3"/>')
+    o.append(_t(cx, cy + 5, f"VESA {a.vesa:.0f}", 9.4, fill=OK, weight="bold"))
+
+    bx_, by_ = a.plate_bolt_dx / 2.0 * sc, a.plate_bolt_dy / 2.0 * sc
+    for sx_ in (-1, 1):
+        for sy_ in (-1, 1):
+            o.append(f'<circle cx="{cx + sx_ * bx_:.1f}" cy="{cy + sy_ * by_:.1f}" '
+                     f'r="{a.plate_bolt_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{BAD}" '
+                     f'stroke-width="1.4"/>')
+    for sx_ in (-1, 1):
+        o.append(f'<line x1="{cx + sx_ * bx_:.1f}" y1="{cy - hp - 14:.1f}" '
+                 f'x2="{cx + sx_ * bx_:.1f}" y2="{cy + hp + 14:.1f}" stroke="{BAD}" '
+                 f'stroke-width="0.7" stroke-dasharray="3 4"/>')
+    o.append(_t(cx, cy - hp - 22, f"strut centres {a.plate_bolt_dx:.0f}", 9.0, fill=BAD,
+                weight="bold"))
+    o.append(_t(cx + hp - 10, cy - 4, f"{a.plate_bolt_dy:.1f} apart", 9.0, anchor="end",
+                fill=BAD, weight="bold"))
+    o.append(_t(cx + hp - 10, cy + 8, "= 3 slot pitches", 8.2, anchor="end", fill=BAD))
+    o.append(_t(cx, cy + hp + 26, f"{a.plate_h:.0f} square — hides behind the display in BOTH "
+                f"orientations", 9.0, fill=MUTED))
+
+    o += _panel(660, 100, 340, 800, "THE CHAIN", INK)
+    steps = [("THE DISPLAY", "3.94 kg", C_PLATE, "4 x M4 into the VESA inserts, on SPACERS"),
+             ("THE PLATE", f"{a.plate_h:.0f} sq", C_PLATE, f"4 bolts at {a.plate_bolt_dx:.0f} x "
+              f"{a.plate_bolt_dy:.1f} into the strut slots"),
+             ("THE STRUTS", "x2", C_STRUT, "stand on"),
+             ("THE FEET", "x2", C_STEEL, "rest on"),
+             ("THE FLOOR", "154 N", "#2f6f4f", "")]
+    yy = 150
+    for i, (nm, sub, col, link) in enumerate(steps):
+        o.append(f'<rect x="682" y="{yy:.1f}" width="296" height="46" rx="6" fill="{col}" '
+                 f'fill-opacity="0.9" stroke="{INK}" stroke-width="1.1"/>')
+        o.append(_t(700, yy + 21, nm, 11.5, anchor="start", weight="bold",
+                    fill="#fff" if i >= 2 else INK))
+        o.append(_t(960, yy + 21, sub, 10.2, anchor="end",
+                    fill="#fff" if i >= 2 else MUTED))
+        yy += 46
+        if link:
+            o.append(f'<line x1="830" y1="{yy:.1f}" x2="830" y2="{yy + 22:.1f}" stroke="{INK}" '
+                     f'stroke-width="2"/>')
+            o.append(f'<path d="M825 {yy + 16:.1f} L830 {yy + 24:.1f} L835 {yy + 16:.1f}" '
+                     f'fill="{INK}"/>')
+            for j, ln in enumerate(_wrap(link, 40)):
+                o.append(_t(844, yy + 12 + j * 11, ln, 8.4, anchor="start", fill=MUTED))
+            yy += 30 + 11 * (len(_wrap(link, 40)) - 1)
+
+    o.append(f'<rect x="682" y="{yy + 24:.1f}" width="296" height="112" rx="6" fill="#fff" '
+             f'stroke="{WARN}" stroke-width="1.4"/>')
+    o.append(_t(700, yy + 46, f"THE CLAMP BARS x{a.n_clamps}", 11, anchor="start", fill=WARN,
+                weight="bold"))
+    for j, ln in enumerate(_wrap("Grip the fridge top and its underside. They carry ZERO weight "
+                                 "— they only stop the frame falling away from the panel.", 38)):
+        o.append(_t(700, yy + 64 + j * 12, ln, 8.8, anchor="start", fill=MUTED))
+
+    o += _panel(1020, 100, 360, 800, "SO, WHAT HOLDS IT?", OK)
+    o += _para(1036, 146,
+               "Nothing holds it TO the fridge. The FLOOR holds it up, the way a bookcase stands "
+               "on the floor and leans on a wall. The fridge only stops it tipping away.", 42,
+               size=10.6)
+    o += _para(1036, 226,
+               "That is the whole point of the change. The magnet design really did hang off the "
+               "fridge, so every question was about how hard it gripped. Here the grip carries "
+               "nothing, so a non-magnetic panel, paint creep and peel all stop mattering.", 42,
+               size=10.6)
+    o += _para(1036, 340,
+               f"The vent windows are not decoration. They sit on R{a.pi_fan_radius:.1f} rather "
+               f"than a margin from the edge, so one lands over the Pi's fan and GPIO opening in "
+               f"EVERY 90 degree rotation of the plate. A solid plate there cooks the Pi.", 42,
+               size=10.6)
+    o += _para(1036, 460,
+               f"The bolt rows are {a.plate_bolt_dy:.1f} apart because that is exactly three slot "
+               f"pitches. Both rows then sit identically in their slots; a round 150 would put one "
+               f"row mid-slot and the other near its end, and the plate would only mount at "
+               f"certain heights.", 42, size=10.6)
+    o += _para(1036, 590,
+               f"ORIENTATION IS FORCED. Portrait spans 41 to 366 on a {a.fridge_d:.0f} deep case "
+               f"and fits. LANDSCAPE would hang {74.3:.1f} mm off the REAR edge, and cannot be "
+               f"slid forward to fix it: the clamp has to stay inside the window, so the strut "
+               f"centre is pinned to 150.5-256.1. Centring landscape needs 304.8, which is "
+               f"48.7 mm into the hinge cover.", 42, size=10.6, fill=WARN)
+    o += _para(1036, 700,
+               "STILL OPEN: the bolt heads sit between the plate and the strut, so they must "
+               "clear the display's rear box. The box is 260 x 134 and the bolts are 246 apart, "
+               "so they fall just outside it — worth confirming against the real panel.", 42,
+               size=10.6, fill=BAD)
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — plate %.0f sq, bolts %.0f x %.1f, vents on R%.1f",
+             path, a.plate_h, a.plate_bolt_dx, a.plate_bolt_dy, a.pi_fan_radius)
+
+
 SHEETS = {"clamp_frame": sheet_frame,
+          "clamp_plate": sheet_plate,
           "clamp_approval": sheet_approval, "clamp_parts": sheet_parts,
           "clamp_assembly": sheet_assembly, "clamp_clearance": sheet_clearance,
           "clamp_loadpath": sheet_loadpath, "clamp_height_check": sheet_height_check}

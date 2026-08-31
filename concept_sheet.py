@@ -80,6 +80,11 @@ class Assembly:
     foot_leg: float = 150.0               # horizontal, turns OUTBOARD
     foot_rise: float = 120.0              # vertical leg carrying the elongated slot
     slot_len: float = 28.6                # strut slot, long axis
+    n_plates: int = 1
+    vesa: float = 100.0                   # VESA 100 on the display's raised rear box
+    vesa_hole_dia: float = 4.5            # M4 clearance
+    pi_fan_radius: float = 87.5           # Pi 5 fan/GPIO opening, from the dimension drawing
+    plate_bolt_dia: float = 8.5           # clearance for the 5/16 strut hardware
     bend_radius: float = 3.02             # ESTIMATE ~1T; replace with SendCutSend's calculator
     k_factor: float = 0.42
 
@@ -106,6 +111,20 @@ class Assembly:
     @property
     def n_feet(self) -> int:
         return self.n_struts
+
+    @property
+    def plate_bolt_dy(self) -> float:
+        """Vertical spacing of the plate-to-strut bolts. A WHOLE NUMBER OF SLOT PITCHES.
+
+        Three pitches, not a round 150, so both bolt rows sit identically in their slots. Any
+        other spacing puts one row near the middle of a slot and the other near its end, and the
+        plate then only mounts at certain heights.
+        """
+        return 3.0 * self.slot_pitch
+
+    @property
+    def plate_bolt_dx(self) -> float:
+        return self.strut_spacing
 
     @property
     def part_width(self) -> float:
