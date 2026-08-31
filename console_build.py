@@ -53,6 +53,11 @@ PRICES_SUPERSEDED_119 = [
 ]
 
 DIAGRAM_INFO = {
+    # The CURRENT design. It lives in csmarshall/fridge-strut-mount; the sheet is copied here so
+    # one page can carry both designs. Regenerate it there, then re-copy.
+    "strut_concept.svg": ("Clamped strut — THE CURRENT DESIGN",
+                         "Two low-profile struts clamped to the side panel top and bottom, "
+                         "standing on the floor. No magnets at all.", "current"),
     "approval_sheet.svg": ("Approval sheet", "For significant-other review. Three views plus plain-language facts.", "key"),
     "bracket_preview.svg": ("Technical flat pattern", "The cut file, annotated. Reference only.", "key"),
     "magnet_pattern_study.svg": ("Magnet layout study", "Does staggering help? Closed-form comparison.", "key"),
@@ -103,7 +108,10 @@ DIAGRAM_INFO = {
                         "Shows a configuration the validator REFUSES, on purpose, so a refusal "
                         "can be judged rather than obeyed. NOT the built part.", "study"),
 }
-GROUP_ORDER = [("key", "Key drawings"), ("detail", "Assembly detail"), ("study", "Background studies")]
+GROUP_ORDER = [("current", "CURRENT DESIGN — clamped strut"),
+               ("key", "PREVIOUS DESIGN — key drawings"),
+               ("detail", "PREVIOUS DESIGN — assembly detail"),
+               ("study", "PREVIOUS DESIGN — background studies")]
 
 
 @dataclass
@@ -215,6 +223,33 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     _detach_meta = None
 
     S: list[Section] = []
+
+    S.append(Section("status", "Two designs", "This project changed load path once. Both are here, "
+                     "and the difference is not a detail.", "decisions", items=[
+        Item("st-current",
+             "CURRENT — a clamped strut standing on the floor",
+             "Two 6 ft low-profile slotted struts up the side panel, clamped top and bottom by a "
+             "pair of identical L brackets, standing on the floor through an outboard foot. The "
+             "clamps hold it in; the floor carries the weight. The display height becomes "
+             "adjustable after the fact, nothing depends on the fridge top's geometry, and there "
+             "are NO MAGNETS — which removes the derate chain, the fastener stack, the peel "
+             "failure mode and the dependency on the panel being magnetic at all.",
+             "Work continues in csmarshall/fridge-strut-mount. Two questions remain and both need "
+             "a torch under the appliance: whether the lower clamp's reach fouls anything, and "
+             "whether there is a rib worth hooking rather than bearing on. See the clamped-strut "
+             "sheet under Diagrams.",
+             "open"),
+        Item("st-previous",
+             "PREVIOUS — a hook over the top, held flat by magnets",
+             "One bent plate: an arm reaching over the fridge top carrying the entire load into "
+             "bearing at the corner, a neck down the side, and 8 magnets holding the plate flat. "
+             "It is FINISHED — validated, audited 15/15, and quoted at $197.07. It is superseded "
+             "for adjustability and floor loading, NOT for being wrong.",
+             "Everything below this section documents that design. Tagged hook-final in this "
+             "repo if it is ever needed. Its magnet primer is worth reading whichever design "
+             "wins — the physics of why magnet ratings mislead does not change.",
+             "settled"),
+    ]))
 
     S.append(Section("decisions", "Open decisions", "Things waiting on you. Everything else is settled.",
                      "decisions", items=[
@@ -647,10 +682,10 @@ def build(root: Path, out: Path) -> int:
     doc = f"""<!doctype html>
 <html lang="en" data-theme="light"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fridge mount — project console</title><style>{CSS}</style></head><body>
+<title>Fridge display mount — project console</title><style>{CSS}</style></head><body>
 <header><div class="bar">
   <h1>FRIDGE-SIDE CHORE DISPLAY</h1>
-  <span class="sub">built {time.strftime('%d %b %H:%M')}</span>
+  <span class="sub">clamped strut &middot; magnet hook superseded &middot; built {time.strftime('%d %b %H:%M')}</span>
   <nav>{nav}</nav>
   <span class="spacer"></span>
   <span class="sub" id="ncount">no notes yet</span>
