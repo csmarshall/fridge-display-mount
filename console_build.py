@@ -55,9 +55,13 @@ PRICES_SUPERSEDED_119 = [
 DIAGRAM_INFO = {
     # The CURRENT design. It lives in csmarshall/fridge-strut-mount; the sheet is copied here so
     # one page can carry both designs. Regenerate it there, then re-copy.
-    "strut_concept.svg": ("Clamped strut — THE CURRENT DESIGN",
-                         "Two low-profile struts clamped to the side panel top and bottom, "
-                         "standing on the floor. No magnets at all.", "current"),
+    "strut_concept.svg": ("Concept sheet — the whole assembly",
+                         "Side elevation, the base joint at 4.5x, and the panel-to-screen "
+                         "stack. The sheet the design was decided from.", "current"),
+    "clamp_frame.svg": ("The frame, from the front",
+                       "Two struts tied top and bottom by IDENTICAL bars. The only view that "
+                       "shows it as one frame — and a true-scale strip answering whether the "
+                       "strut stands proud of the fridge.", "current"),
     "clamp_approval.svg": ("Approval sheet — clamped strut",
                           "Partner-facing. What it is, what it sticks out into the room, what is "
                           "not settled.", "current"),
@@ -121,7 +125,7 @@ DIAGRAM_INFO = {
                         "Shows a configuration the validator REFUSES, on purpose, so a refusal "
                         "can be judged rather than obeyed. NOT the built part.", "prev"),
 }
-GROUP_ORDER = [("current", "CURRENT DESIGN — clamped strut"),
+GROUP_ORDER_ALL = [("current", "CURRENT DESIGN — clamped strut"),
                ("shared", "APPLIES TO BOTH DESIGNS"),
                ("prev", "PREVIOUS DESIGN — magnet hook, superseded")]
 
@@ -252,7 +256,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "sheet under Diagrams.",
              "open"),
         Item("st-previous",
-             "PREVIOUS — a hook over the top, held flat by magnets",
+             "[MAGNET HOOK] PREVIOUS — a hook over the top, held flat by magnets",
              "One bent plate: an arm reaching over the fridge top carrying the entire load into "
              "bearing at the corner, a neck down the side, and 8 magnets holding the plate flat. "
              "It is FINISHED — validated, audited 15/15, and quoted at $197.07. It is superseded "
@@ -460,7 +464,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
 
     found = sorted(root.glob("*.svg"))
     S.append(Section("diagrams", "Diagrams",
-                     f"{len(found)} drawings, all generated from the same parameters as the cut file.",
+                     "DIAGRAM_COUNT drawings, all generated from the same parameters as the cut file.",
                      "diagrams", items=[Item(f.name, *DIAGRAM_INFO.get(f.name, (f.stem, "", "prev"))[:2],
                                              meta=DIAGRAM_INFO.get(f.name, ("", "", "prev"))[2])
                                         for f in found]))
@@ -668,6 +672,79 @@ def render_table(sec: Section) -> str:
               f'<div class="card">{note_box("n-" + sec.id, sec.title)}</div></div>')
 
 
+GROUP_ORDER = GROUP_ORDER_ALL
+OTHER_LABEL = {"clamp": "Archived magnet-hook design",
+               "hook": "Back to the current design"}
+TITLES = {"clamp": "FRIDGE-SIDE CHORE DISPLAY",
+          "hook": "ARCHIVE — MAGNET HOOK DESIGN"}
+SUBS = {"clamp": "clamped strut, standing on the floor",
+        "hook": "SUPERSEDED by the clamped strut — kept for the record"}
+PAGE_TITLES = {"clamp": "Fridge display mount — clamped strut",
+               "hook": "Archive — magnet hook design"}
+
+
+# Which groups and which items belong on each page. The hook design is ARCHIVED, not deleted:
+# it is finished, quoted and audited, and its reasoning still explains why the strut design won.
+VARIANTS = {
+    "clamp": {"groups": [("current", "The clamped strut"),
+                         ("shared", "Background — applies to any mount")],
+              "drop_sections": {"parity", "numbers", "prices"},
+              "keep": lambda t: not t.startswith("[MAGNET HOOK]")},
+    "hook":  {"groups": [("prev", "Magnet hook — the archived design"),
+                         ("shared", "Background — applies to any mount")],
+              "drop_sections": set(),
+              "keep": lambda t: t.startswith("[MAGNET HOOK]") or t.startswith("[BOTH]")},
+}
+
+
+def filter_sections(sections: list[Section], variant: str) -> list[Section]:
+    """Split the one model into the two pages without duplicating any content."""
+    from dataclasses import replace
+    cfg = VARIANTS[variant]
+    want = {k for k, _ in cfg["groups"]}
+    RETITLE = {
+        "clamp": {"status": ("What is being built",
+                             "One design. The magnet hook that came before it is archived on its "
+                             "own page — see the link in the header."),
+                  "decisions": ("Open decisions",
+                                "Things waiting on you for the clamped strut."),
+                  "checklist": ("Before ordering",
+                                "Measurements that gate an order for this design.")},
+        "hook": {"status": ("Why this was superseded",
+                            "Finished, audited and quoted. Replaced for adjustability and floor "
+                            "loading, NOT for being wrong."),
+                 "decisions": ("Decisions, as they stood",
+                               "Frozen. These belonged to the hook and are kept for the record."),
+                 "checklist": ("Measurements it needed",
+                               "Two of these stopped mattering the moment the design stopped "
+                               "depending on magnets and on the fridge top's geometry.")},
+    }[variant]
+    out: list[Section] = []
+    for sec in sections:
+        if sec.id in cfg["drop_sections"]:
+            continue
+        if sec.kind == "diagrams":
+            items = [i for i in sec.items if (i.meta or "study") in want]
+        elif sec.kind == "table":
+            out.append(sec)
+            continue
+        else:
+            # The tags did their job while both designs shared a page. Now that each page IS one
+            # design, they are noise — strip them rather than leave a label nothing contrasts with.
+            items = [replace(i, title=i.title.replace("[MAGNET HOOK] ", "")
+                                             .replace("[BOTH] ", ""))
+                     for i in sec.items if cfg["keep"](i.title)]
+        if items:
+            sec = replace(sec, items=items)
+            if sec.kind == "diagrams":
+                sec = replace(sec, blurb=sec.blurb.replace("DIAGRAM_COUNT", str(len(items))))
+            if sec.id in RETITLE:
+                t, b = RETITLE[sec.id]
+                sec = replace(sec, title=t, blurb=b)
+            out.append(sec)
+    return out
+
+
 def render_diagrams(sec: Section, ctx: dict) -> str:
     groups: dict[str, list[Item]] = {}
     for it in sec.items:
@@ -706,9 +783,21 @@ def render_diagrams(sec: Section, ctx: dict) -> str:
             f'<div id="grid">{"".join(figs)}</div>')
 
 
-def build(root: Path, out: Path) -> int:
+ARCHIVE_BANNER = ('<div style="background:#b00020;color:#fff;padding:9px 16px;font:600 13px/1.4 '
+                  'system-ui,sans-serif">ARCHIVED DESIGN &mdash; this is the magnet hook, which '
+                  'is finished and quoted but NOT what is being built. It is kept because its '
+                  'reasoning is what led to the clamped strut.</div>')
+
+
+def build(root: Path, out: Path, variant: str = "clamp", other: str = "") -> int:
+    global GROUP_ORDER
     sections, ctx = build_sections(root)
+    sections = filter_sections(sections, variant)
+    GROUP_ORDER = VARIANTS[variant]["groups"]
     nav = " ".join(f'<a href="#{s.id}">{esc(s.title)}</a>' for s in sections)
+    if other:
+        nav += f' <a href="{esc(other)}" class="xpage">{esc(OTHER_LABEL[variant])} \u2192</a>'
+
     body = []
     for s in sections:
         if s.kind == "decisions":
@@ -725,10 +814,10 @@ def build(root: Path, out: Path) -> int:
     doc = f"""<!doctype html>
 <html lang="en" data-theme="light"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fridge display mount — project console</title><style>{CSS}</style></head><body>
-<header><div class="bar">
-  <h1>FRIDGE-SIDE CHORE DISPLAY</h1>
-  <span class="sub">clamped strut &middot; magnet hook superseded &middot; built {time.strftime('%d %b %H:%M')}</span>
+<title>{PAGE_TITLES[variant]}</title><style>{CSS}</style></head><body>
+{ARCHIVE_BANNER if variant == 'hook' else ''}<header><div class="bar">
+  <h1>{TITLES[variant]}</h1>
+  <span class="sub">{SUBS[variant]} &middot; built {time.strftime('%d %b %H:%M')}</span>
   <nav>{nav}</nav>
   <span class="spacer"></span>
   <span class="sub" id="ncount">no notes yet</span>
@@ -758,7 +847,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--log-level", choices=LOG_LEVELS, default="INFO")
     a = ap.parse_args(argv)
     configure_logging(a.log_level)
-    rc = build(a.root, a.out)
+    # Two pages from one model: the live design, and the archive it replaced.
+    rc = build(a.root, a.out, variant="clamp", other="archive.html")
+    rc |= build(a.root, a.out.parent / "archive.html", variant="hook",
+                other=a.out.name)
     if a.png:
         LOG.info("Rasterising for Preview / sending (%dx):", a.png_scale)
         LOG.info("Wrote %d PNGs", len(export_pngs(a.root, a.png_dir, a.png_scale)))
