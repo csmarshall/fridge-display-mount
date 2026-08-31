@@ -62,6 +62,9 @@ DIAGRAM_INFO = {
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
+    "clamp_dims.svg": ("The mount, dimensioned",
+                      "Front and side elevation with 32 TAGGED lengths — V up, H across, D into "
+                      "the room — and a register saying what sets each one.", "current"),
     "clamp_orientation.svg": ("Why portrait fits and landscape does not",
                              "Every dimension that decides it on one depth axis — case, doors, "
                              "hinge cover, window, bar, struts, box, and both orientations.",
