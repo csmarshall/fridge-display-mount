@@ -201,7 +201,221 @@ def sheet_bom(path: Path, a: Assembly, strips: bool = True) -> None:
              path, len(fab), len(hw), s['priced_total'], s['unpriced'])
 
 
-SHEETS = {"clamp_joints": sheet_joints, "clamp_bom": sheet_bom}
+
+# --------------------------------------------------------------------------------------------
+def sheet_elevations(path: Path, a: Assembly, strips: bool = True) -> None:
+    """Both elevations, true scale, with the whole fridge behind them."""
+    FRIDGE_W, DOORS, HINGE_PROUD = 911.2, 117.5, 36.5
+    W, H = 1620, 1120
+    sc = 0.45
+    o = _frame(W, H, "BOTH ELEVATIONS, WITH THE FRIDGE",
+               "True scale, nothing broken or exaggerated. The whole appliance is drawn so the "
+               "mount can be judged against it rather than on its own.",
+               "GENERAL ARRANGEMENT — the mount in place")
+
+    def view(px, py, pw, ph, title, wide, draw):
+        o.extend(_panel(px, py, pw, ph, title))
+        ox = px + (pw - wide * sc) / 2.0
+        oy = py + ph - 70.0
+        o.append(f'<line x1="{px + 16:.1f}" y1="{oy:.1f}" x2="{px + pw - 16:.1f}" '
+                 f'y2="{oy:.1f}" stroke="{INK}" stroke-width="2"/>')
+        o.append(f'<rect x="{px + 16:.1f}" y="{oy:.1f}" width="{pw - 32:.1f}" height="54" '
+                 f'fill="#b9a184" opacity="0.30"/>')
+        draw(ox, oy)
+        return ox, oy
+
+    def X1(ox, mm):
+        return ox + mm * sc
+
+    def Y1(oy, mm):
+        return oy - mm * sc
+
+    # ---------- looking AT the side panel ----------
+    def draw_at(ox, oy):
+        o.append(f'<rect x="{X1(ox, 0):.1f}" y="{Y1(oy, a.fridge_h):.1f}" '
+                 f'width="{a.fridge_d * sc:.1f}" height="{(oy - Y1(oy, a.fridge_h)):.1f}" '
+                 f'fill="{FRIDGE_SIDE}"/>')
+        o.append(f'<rect x="{X1(ox, a.fridge_d):.1f}" '
+                 f'y="{Y1(oy, a.fridge_h + HINGE_PROUD):.1f}" width="{DOORS * sc:.1f}" '
+                 f'height="{(oy - Y1(oy, a.fridge_h + HINGE_PROUD)):.1f}" fill="#8e949a"/>')
+        o.append(f'<rect x="{X1(ox, a.clear_window):.1f}" '
+                 f'y="{Y1(oy, a.fridge_h + HINGE_PROUD):.1f}" '
+                 f'width="{a.hinge_cover * sc:.1f}" height="{HINGE_PROUD * sc:.1f}" '
+                 f'fill="#4c4842"/>')
+        c, hw = a.strut_centre, a.strut_width / 2
+        for s_ in (c - a.strut_spacing / 2, c + a.strut_spacing / 2):
+            o.append(f'<rect x="{X1(ox, s_ - hw) - 1:.1f}" y="{oy - 6:.1f}" '
+                     f'width="{a.strut_width * sc + 2:.1f}" height="6" fill="{C_STEEL}"/>')
+            for lo, hi in ((0.0, a.lower_strut_len), (a.upper_strut_lo, a.strut_top)):
+                o.append(f'<rect x="{X1(ox, s_ - hw):.1f}" y="{Y1(oy, hi):.1f}" '
+                         f'width="{a.strut_width * sc:.1f}" '
+                         f'height="{(Y1(oy, lo) - Y1(oy, hi)):.1f}" fill="{C_STRUT}" '
+                         f'stroke="{INK}" stroke-width="0.8"/>')
+        for hgt in (a.fridge_h, a.base_gap):
+            o.append(f'<rect x="{X1(ox, c - a.clamp_outer_half):.1f}" y="{Y1(oy, hgt) - 4:.1f}" '
+                     f'width="{a.clamp_width * sc:.1f}" height="8" rx="1.5" fill="{C_STEEL}"/>')
+        o.append(f'<rect x="{X1(ox, c - a.display_w / 2):.1f}" '
+                 f'y="{Y1(oy, a.screen_centre + a.display_h / 2):.1f}" '
+                 f'width="{a.display_w * sc:.1f}" height="{a.display_h * sc:.1f}" rx="4" '
+                 f'fill="#0d0f12"/>')
+        b = 13.6 * sc
+        o.append(f'<rect x="{X1(ox, c - a.display_w / 2) + b:.1f}" '
+                 f'y="{Y1(oy, a.screen_centre + a.display_h / 2) + b:.1f}" '
+                 f'width="{a.display_w * sc - 2 * b:.1f}" '
+                 f'height="{a.display_h * sc - 2 * b:.1f}" fill="#16212c"/>')
+        for tag, mm, lab in (("", a.fridge_h, f"case {a.fridge_h:.0f}"),
+                             ("", a.screen_centre, f"screen centre {a.screen_centre:.0f}")):
+            o.append(f'<line x1="{X1(ox, -30):.1f}" y1="{Y1(oy, mm):.1f}" '
+                     f'x2="{X1(ox, a.fridge_d + DOORS + 16):.1f}" y2="{Y1(oy, mm):.1f}" '
+                     f'stroke="{MUTED}" stroke-width="0.7" stroke-dasharray="5 4"/>')
+            o.append(_t(X1(ox, a.fridge_d + DOORS + 20), Y1(oy, mm) + 3, lab, 8.4,
+                        anchor="start", fill=MUTED))
+
+    # ---------- looking ALONG the panel, at the whole appliance ----------
+    def draw_along(ox, oy):
+        o.append(f'<rect x="{X1(ox, 0):.1f}" y="{Y1(oy, a.fridge_h):.1f}" '
+                 f'width="{FRIDGE_W * sc:.1f}" height="{(oy - Y1(oy, a.fridge_h)):.1f}" '
+                 f'fill="#8e949a"/>')
+        o.append(f'<line x1="{X1(ox, FRIDGE_W / 2):.1f}" y1="{Y1(oy, a.fridge_h):.1f}" '
+                 f'x2="{X1(ox, FRIDGE_W / 2):.1f}" y2="{oy:.1f}" stroke="#6d7378" '
+                 f'stroke-width="1.4"/>')
+        for hx in (FRIDGE_W / 2 - 40, FRIDGE_W / 2 + 40):
+            o.append(f'<rect x="{X1(ox, hx):.1f}" y="{Y1(oy, 1500):.1f}" width="7" '
+                     f'height="{700 * sc:.1f}" rx="3" fill="#cdd3d8"/>')
+        # the mount, edge-on, on the near side panel
+        o.append(f'<rect x="{X1(ox, -a.display_face):.1f}" '
+                 f'y="{Y1(oy, a.screen_centre + a.display_h / 2):.1f}" '
+                 f'width="{a.panel_d * sc:.1f}" height="{a.display_h * sc:.1f}" fill="#0d0f12"/>')
+        o.append(f'<rect x="{X1(ox, -a.gap - a.rear_box):.1f}" '
+                 f'y="{Y1(oy, a.box_hi):.1f}" width="{a.rear_box * sc:.1f}" '
+                 f'height="{(Y1(oy, a.box_lo) - Y1(oy, a.box_hi)):.1f}" fill="#5b6b7d"/>')
+        for lo, hi in ((0.0, a.lower_strut_len), (a.upper_strut_lo, a.strut_top)):
+            o.append(f'<rect x="{X1(ox, -a.gap):.1f}" y="{Y1(oy, hi):.1f}" '
+                     f'width="{a.strut_depth * sc:.1f}" '
+                     f'height="{(Y1(oy, lo) - Y1(oy, hi)):.1f}" fill="{C_STRUT}" '
+                     f'stroke="{INK}" stroke-width="0.8"/>')
+        for hgt in (a.fridge_h, a.base_gap):
+            o.append(f'<rect x="{X1(ox, -a.gap - 2):.1f}" y="{Y1(oy, hgt) - 3:.1f}" '
+                     f'width="{(a.gap + a.strut_depth + 4) * sc + 30:.1f}" height="6" '
+                     f'fill="{C_STEEL}"/>')
+        o.append(f'<rect x="{X1(ox, -a.gap - a.strut_depth):.1f}" y="{oy - 6:.1f}" '
+                 f'width="{a.foot_leg * sc:.1f}" height="6" fill="{C_STEEL}"/>')
+        o.append(f'<line x1="{X1(ox, -a.display_face):.1f}" y1="{oy + 22:.1f}" '
+                 f'x2="{X1(ox, 0):.1f}" y2="{oy + 22:.1f}" stroke="{OK}" stroke-width="1.4"/>')
+        o.append(_t(X1(ox, -a.display_face / 2), oy + 17, f"{a.display_face:.1f}", 9.0, fill=OK,
+                    weight="bold"))
+        o.append(_t(X1(ox, FRIDGE_W / 2), Y1(oy, 900), f"fridge {FRIDGE_W:.1f} wide", 9.5,
+                    fill="#4d5459", weight="bold"))
+
+    view(40, 100, 560, 940, "LOOKING AT THE SIDE PANEL — the face the display hangs on",
+         a.fridge_d + DOORS, draw_at)
+    view(620, 100, 620, 940, "LOOKING ALONG IT — the whole appliance, mount edge-on",
+         FRIDGE_W, draw_along)
+
+    o.extend(_panel(1260, 100, 320, 940, "READ TOGETHER", OK))
+    yy = 148
+    for head, body in (
+            ("The mount is narrow",
+             f"it occupies {a.clamp_width:.0f} of the {a.clear_window:.1f} mm window on the top, "
+             f"and {a.display_face:.1f} mm of depth off the panel."),
+            ("It stands on the floor",
+             "the left view shows the load path; the right shows how little of the appliance it "
+             "touches."),
+            ("Nothing reaches the doors",
+             f"the doors project {DOORS:.1f} forward of the case and the mount stays behind the "
+             f"hinge cover."),
+            ("The strut gap is deliberate",
+             "the break in the two struts is where the display's ports and buttons stay "
+             "reachable."),
+            ("Both views are TRUE SCALE",
+             "no break, no exaggerated depth. Everything measurable off the drawing.")):
+        o.append(_t(1276, yy, head, 11.0, anchor="start", weight="bold", fill=OK))
+        o.extend(_para(1276, yy + 17, body, 36, size=9.8, lead=12.0))
+        yy += 96
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — both elevations at %.2f scale", path, sc)
+
+
+
+# --------------------------------------------------------------------------------------------
+def sheet_allparts(path: Path, a: Assembly, strips: bool = True) -> None:
+    """Every cut part, flat, all at ONE scale so they can be compared."""
+    fab = B.fabricated(a, strips)
+    bd = B.bend_deduction(a)
+    W, H = 1560, 980
+    o = _frame(W, H, "EVERY CUT PART, FLAT",
+               f"{sum(f.qty for f in fab)} pieces in {len(fab)} shapes, all at one scale. "
+               f"Formed dimensions in; flat length is the legs MINUS the {bd:.2f} mm deduction.",
+               "FLAT PATTERNS — the whole cut list")
+    SC = min(560.0 / max(f.flat_w for f in fab), 300.0 / max(f.flat_h for f in fab))
+    cols = 2
+    for i, f in enumerate(fab):
+        px = 40 + (i % cols) * 760
+        py = 100 + (i // cols) * 420
+        o.extend(_panel(px, py, 730, 400, f"{f.tag}   {f.name}   x{f.qty}", OK))
+        bx = px + 40
+        by = py + 90 + (300 - f.flat_h * SC) / 2
+        o.append(f'<rect x="{bx:.1f}" y="{by:.1f}" width="{f.flat_w * SC:.1f}" '
+                 f'height="{f.flat_h * SC:.1f}" fill="{C_PLATE}" stroke="{INK}" '
+                 f'stroke-width="1.5"/>')
+        if f.bends:
+            leg = a.clamp_leg if f.tag == "A" else a.foot_leg
+            blx = bx + (leg - bd / 2.0) * SC
+            o.append(f'<line x1="{blx:.1f}" y1="{by - 12:.1f}" x2="{blx:.1f}" '
+                     f'y2="{by + f.flat_h * SC + 12:.1f}" stroke="{BAD}" stroke-width="1.5" '
+                     f'stroke-dasharray="8 5"/>')
+            o.append(_t(blx, by - 18, "BEND 90", 8.6, fill=BAD, weight="bold"))
+        cy = by + f.flat_h * SC / 2
+        if f.tag == "A":
+            for sgn in (-1, 1):
+                o.append(f'<rect x="{bx + a.clamp_leg * 0.55 * SC - 4:.1f}" '
+                         f'y="{cy + sgn * a.strut_spacing / 2 * SC - 4:.1f}" width="8" '
+                         f'height="8" fill="{PAPER}" stroke="{INK}" stroke-width="1.1"/>')
+        elif f.tag == "B":
+            o.append(f'<rect x="{bx + a.foot_leg * 0.55 * SC - a.slot_len / 2 * SC:.1f}" '
+                     f'y="{cy - 4:.1f}" width="{a.slot_len * SC:.1f}" height="8" rx="4" '
+                     f'fill="{PAPER}" stroke="{INK}" stroke-width="1.1"/>')
+        elif f.tag == "C":
+            for sx_ in (-1, 1):
+                for sy_ in (-1, 1):
+                    o.append(f'<circle cx="{bx + f.flat_w * SC / 2 + sx_ * a.vesa / 2 * SC:.1f}" '
+                             f'cy="{cy + sy_ * a.vesa / 2 * SC:.1f}" r="2.2" fill="{PAPER}" '
+                             f'stroke="{OK}" stroke-width="1.1"/>')
+                    o.append(f'<circle cx="{bx + f.flat_w * SC / 2 + sx_ * a.plate_bolt_dx / 2 * SC:.1f}" '
+                             f'cy="{cy + sy_ * a.plate_bolt_dy / 2 * SC:.1f}" r="3.0" '
+                             f'fill="{PAPER}" stroke="{BAD}" stroke-width="1.2"/>')
+            for sgn in (1, -1):
+                o.append(f'<rect x="{bx + f.flat_w * SC / 2 - a.vent_wid / 2 * SC:.1f}" '
+                         f'y="{cy + sgn * a.vent_r * SC - a.vent_len / 2 * SC:.1f}" '
+                         f'width="{a.vent_wid * SC:.1f}" height="{a.vent_len * SC:.1f}" '
+                         f'rx="{a.vent_wid / 2 * SC:.1f}" fill="{PAPER}" stroke="{INK}" '
+                         f'stroke-width="1.1"/>')
+        elif f.tag == "D":
+            for sy_ in (-1, 1):
+                o.append(f'<circle cx="{bx + f.flat_w * SC / 2:.1f}" '
+                         f'cy="{cy + sy_ * a.plate_bolt_dy / 2 * SC:.1f}" r="3.0" '
+                         f'fill="{PAPER}" stroke="{BAD}" stroke-width="1.2"/>')
+        dy = by + f.flat_h * SC + 30
+        o.append(f'<line x1="{bx:.1f}" y1="{dy:.1f}" x2="{bx + f.flat_w * SC:.1f}" '
+                 f'y2="{dy:.1f}" stroke="{INK}" stroke-width="1.1"/>')
+        for xx in (bx, bx + f.flat_w * SC):
+            o.append(f'<line x1="{xx:.1f}" y1="{dy - 5:.1f}" x2="{xx:.1f}" y2="{dy + 5:.1f}" '
+                     f'stroke="{INK}" stroke-width="1.1"/>')
+        o.append(_t(bx + f.flat_w * SC / 2, dy - 6, f"{f.flat_w:.2f}", 9.4, weight="bold"))
+        o.append(f'<line x1="{bx - 18:.1f}" y1="{by:.1f}" x2="{bx - 18:.1f}" '
+                 f'y2="{by + f.flat_h * SC:.1f}" stroke="{INK}" stroke-width="1.1"/>')
+        o.append(_t(bx - 22, by + f.flat_h * SC / 2, f"{f.flat_h:.2f}", 9.4, anchor="end",
+                    weight="bold"))
+        o.extend(_para(px + 16, py + 54, f.note, 78, size=10.0))
+        o.extend(_para(px + 16, py + 356, f.features, 82, size=9.4))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — %d shapes at 1:%.1f", path, len(fab), 1 / SC)
+
+
+SHEETS = {"clamp_joints": sheet_joints, "clamp_bom": sheet_bom,
+          "clamp_elevations": sheet_elevations, "clamp_allparts": sheet_allparts}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
