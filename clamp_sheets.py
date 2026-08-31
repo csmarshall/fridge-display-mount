@@ -905,7 +905,7 @@ def sheet_depth(path: Path, a: Assembly) -> None:
                  f'height="{300 * SW:.1f}" fill="{FRIDGE_SIDE}"/>')
         o.append(_t(x - 24, oy, "FRIDGE", 8.4, anchor="end", fill=MUTED, rot=-90))
 
-        gap = a.gap + (a.plate_t if nested else 0.0)
+        gap = a.gap          # the clamps set this; the nested plate lives INSIDE it
         o.append(f'<rect x="{x:.1f}" y="{oy - 120 * SW / 2:.1f}" width="{gap * SD:.1f}" '
                  f'height="{120 * SW:.1f}" fill="#f8e2a4" stroke="{PAD_EDGE}" '
                  f'stroke-width="0.8"/>')
@@ -983,8 +983,12 @@ def sheet_depth(path: Path, a: Assembly) -> None:
          "VESA is inside the box footprint, so a plate clearing the box cannot reach it"),
         ("screen off case centre", "25.7 mm", f"{a.fridge_d / 2 - (a.clear_window - a.cover_margin - (nest_sp + a.part_width) / 2):.1f} mm",
          "wider spacing lengthens the clamp bar, pushing the struts back again"),
-        ("plate bolt heads", "on the display side, reachable before the display goes on",
-         "in the foam gap against the fridge", "UNREACHABLE once assembled — the real objection to B"),
+        ("hardware behind the plate", "n/a",
+         f"{a.gap - a.plate_t:.2f} mm of room",
+         "M4 button 2.2, pan 3.1, cap 4.0 and the 2.78 elevator head all FIT; only a hex nut does not"),
+        ("servicing", "display comes off in place",
+         "whole frame lifts off the clamps first",
+         "the display cannot be unbolted in situ — but the frame was always removable"),
     ]
     for i, (k, a_, b_, note) in enumerate(rows):
         yy = 640 + i * 40
