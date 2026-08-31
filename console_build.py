@@ -352,13 +352,23 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "+$11.21 over the 0.119 build. Commercial TV mounts run 1.8-2.7 mm; this is 4.75 mm.",
              "settled"),
         Item("d-orient", "[BOTH] Orientation is FORCED to portrait — not a preference",
-             "Portrait spans 41 to 366 mm on a 609.6 mm counter-depth case and fits. Landscape "
-             "would hang 74.3 mm off the REAR edge. It cannot be slid forward to fix: the clamp "
-             "bar must stay inside the 406.6 mm window, pinning the strut centre to 150.5-256.1, "
-             "and even the most forward position still overhangs by 21.5 mm. Centring landscape "
-             "needs a strut centre of 304.8, which is 48.7 mm INTO the hinge cover.",
-             "Portrait also sits 101.5 mm rearward of the case centre — a consequence of "
-             "datuming on the window rather than the case. Cosmetic, and unavoidable.",
+             "Portrait spans 74 to 398 mm on a 609.6 mm counter-depth case and fits. Landscape "
+             "would hang off the REAR edge and cannot be slid forward to fix it: the clamp bar "
+             "must stay inside the 406.6 mm window. Centring landscape needs a strut centre of "
+             "304.8, which is 48.7 mm INTO the hinge cover.",
+             "This is a constraint of the cabinet, not a preference. It was already the "
+             "generator's default for other reasons — torsion arm, and a 555 mm landscape "
+             "display nearly filling a 610 mm counter-depth cabinet.",
+             "settled"),
+        Item("d-datum", "[BOTH] Struts sit as far FORWARD as the hinge cover allows — SETTLED",
+             "Three datums were possible. Centring on the CASE drives the clamp bar 48.7 mm into "
+             "the cover — blocked. Centring on the WINDOW is safe but leaves the screen 101.5 mm "
+             "behind the case centre, pushed away from where anyone stands. Hard forward centres "
+             "best but leaves ZERO tolerance against a cover position read off a photograph.",
+             "Chosen: forward, holding cover_margin (20 mm) back from the limit. The screen is "
+             "68.7 mm rearward instead of 101.5, with 20 mm of clearance kept in hand. That "
+             "margin is the whole decision, and it is the number to change if the cover is ever "
+             "measured properly or removed.",
              "settled"),
         Item("d-coat",
              "[BOTH] Powder coat at SendCutSend, or spray it yourself",
