@@ -62,10 +62,12 @@ DIAGRAM_INFO = {
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
-    "clamp_depth.svg": ("Struts BEHIND the box, or BESIDE it?",
-                       "Plan view. Nesting the box between the struts would put the screen "
-                       "20.6 mm closer to the fridge — but moves the plate somewhere awkward. "
-                       "OPEN.", "current"),
+    "clamp_stack.svg": ("The stack, panel to screen",
+                       "Section at 7x, cut twice — through a strut and through the box, because "
+                       "the stack is not the same in both places. 52.05 mm total.", "current"),
+    "clamp_depth.svg": ("Why the struts sit BESIDE the box",
+                       "Plan view, the two arrangements compared. Nesting took 23.7 mm — 31% — "
+                       "off how far the screen stands out. ADOPTED.", "current"),
     "clamp_plate.svg": ("What holds the monitor — the plate",
                        "Part C. The display bolts to it, it bolts to the struts, the struts "
                        "stand on the floor. Carries the vent windows the Pi needs.", "current"),
