@@ -1371,7 +1371,7 @@ def sheet_dims(path: Path, a: Assembly) -> None:
         o.append(_t(x, y + 3.4, tag, 8.2, fill=col, weight="bold"))
 
     # ================= FRONT ELEVATION =================
-    o.extend(_panel(40, 100, 470, 700, "FRONT ELEVATION — looking at the side panel"))
+    o.extend(_panel(40, 100, 480, 700, "FRONT ELEVATION — the mount, with the plate's holes"))
     ox, oy = 300.0, 700.0
     hw = a.strut_width / 2.0
     o.append(f'<line x1="{ox - 150:.1f}" y1="{oy:.1f}" x2="{ox + 150:.1f}" y2="{oy:.1f}" '
@@ -1451,8 +1451,8 @@ def sheet_dims(path: Path, a: Assembly) -> None:
         balloon(ox + wid / 2 * sc + 16, yy, tag, WARN)
 
     # ================= WHAT THE MOUNT CARRIES =================
-    o.extend(_panel(580, 100, 640, 700, "THE FOUR DISPLAY OPTIONS, DASHED — all to one scale"))
-    dx0, dy0, ds = 900.0, 430.0, 0.80
+    o.extend(_panel(1300, 100, 560, 700, "THE SAME FOUR, LOOKED AT FROM THE FRONT"))
+    dx0, dy0, ds = 1580.0, 420.0, 0.70
     o.append(f'<rect x="{dx0 - a.plate_w / 2 * ds:.1f}" y="{dy0 - a.plate_h / 2 * ds:.1f}" '
              f'width="{a.plate_w * ds:.1f}" height="{a.plate_h * ds:.1f}" fill="{C_PLATE}" '
              f'stroke="{INK}" stroke-width="1.1"/>')
@@ -1470,16 +1470,16 @@ def sheet_dims(path: Path, a: Assembly) -> None:
                  f'width="{wmm * ds:.1f}" height="{hmm * ds:.1f}" fill="none" stroke="{col}" '
                  f'stroke-width="1.7" stroke-dasharray="{dash}"/>')
         ly = 706 + i * 18
-        o.append(f'<line x1="604" y1="{ly - 3:.1f}" x2="634" y2="{ly - 3:.1f}" stroke="{col}" '
+        o.append(f'<line x1="1322" y1="{ly - 3:.1f}" x2="1352" y2="{ly - 3:.1f}" stroke="{col}" '
                  f'stroke-width="1.7" stroke-dasharray="{dash}"/>')
-        o.append(_t(642, ly, f"{nm}   {wmm:.2f} x {hmm:.2f}", 8.6, anchor="start", fill=col,
+        o.append(_t(1360, ly, f"{nm}   {wmm:.2f} x {hmm:.2f}", 8.6, anchor="start", fill=col,
                     weight="bold"))
     o.append(_t(dx0, 146, "all four share the same 260 x 134 rear box and VESA 100 — "
                 "so the mount does not change", 8.4, fill=MUTED))
 
     # ================= SIDE ELEVATION =================
-    o.extend(_panel(1240, 100, 620, 700, "SIDE ELEVATION — depth exaggerated 2.6x against height"))
-    sx, soy = 1330.0, 700.0
+    o.extend(_panel(540, 100, 740, 700, "SIDE ELEVATION, WITH ALL FOUR DISPLAYS OVERLAID — depth exaggerated 2.6x"))
+    sx, soy = 700.0, 700.0
     # depth exaggerated against height: the whole stack is 52 mm against 1768 of height,
     # so at one scale the D-dimensions collapse into 29 px and cannot be read.
     DS = 1.45
@@ -1501,10 +1501,6 @@ def sheet_dims(path: Path, a: Assembly) -> None:
     o.append(f'<rect x="{zs:.1f}" y="{Y(a.box_hi, soy):.1f}" width="{a.rear_box * DS:.1f}" '
              f'height="{(Y(a.box_lo, soy) - Y(a.box_hi, soy)):.1f}" fill="#5b6b7d" '
              f'stroke="{INK}" stroke-width="1"/>')
-    dz = sx + (a.gap + a.rear_box) * DS
-    o.append(f'<rect x="{dz:.1f}" y="{Y(a.screen_centre + a.display_h / 2, soy):.1f}" '
-             f'width="{a.panel_d * DS:.1f}" height="{a.display_h * sc:.1f}" fill="#101820" '
-             f'stroke="{INK}" stroke-width="1"/>')
     o.append(f'<path d="M{sx - a.clamp_leg * DS:.1f} {Y(a.fridge_h, soy):.1f} '
              f'L{zs + a.strut_depth * DS:.1f} {Y(a.fridge_h, soy):.1f} '
              f'L{zs + a.strut_depth * DS:.1f} {Y(a.fridge_h, soy) + a.clamp_short * sc:.1f}" '
@@ -1515,6 +1511,39 @@ def sheet_dims(path: Path, a: Assembly) -> None:
     o.append(f'<path d="M{zs:.1f} {soy - a.foot_rise * sc:.1f} L{zs:.1f} {soy:.1f} '
              f'L{zs + a.foot_leg * DS:.1f} {soy:.1f}" fill="none" stroke="{C_STEEL}" '
              f'stroke-width="4"/>')
+    OPTS_S = [("23.8 PORTRAIT", a.display_h, OK, "6 4"),
+              ("23.8 LANDSCAPE", a.display_w, BAD, "3 3"),
+              ("27 PORTRAIT", a.display_27_h, "#1b6ea8", "9 5"),
+              ("27 LANDSCAPE", a.display_27_w, "#8a4fbf", "2 4")]
+    pz0 = sx + (a.gap + a.rear_box) * DS
+    for i, (nm, tall, col, dash) in enumerate(OPTS_S):
+        top_, bot_ = a.screen_centre + tall / 2, a.screen_centre - tall / 2
+        xoff = 0.0
+        o.append(f'<rect x="{pz0 + xoff:.1f}" y="{Y(top_, soy):.1f}" '
+                 f'width="{a.panel_d * DS:.1f}" height="{(Y(bot_, soy) - Y(top_, soy)):.1f}" '
+                 f'fill="none" stroke="{col}" stroke-width="1.7" stroke-dasharray="{dash}"/>')
+        o.append(f'<line x1="{pz0 + a.panel_d * DS:.1f}" y1="{Y(top_, soy):.1f}" '
+                 f'x2="{sx + 236 + i * 16:.1f}" y2="{Y(top_, soy):.1f}" stroke="{col}" '
+                 f'stroke-width="0.7" stroke-dasharray="3 3"/>')
+        o.append(f'<line x1="{sx + 236 + i * 16:.1f}" y1="{Y(top_, soy):.1f}" '
+                 f'x2="{sx + 236 + i * 16:.1f}" y2="{Y(bot_, soy):.1f}" stroke="{col}" '
+                 f'stroke-width="1.1"/>')
+        o.append(f'<line x1="{pz0 + a.panel_d * DS:.1f}" y1="{Y(bot_, soy):.1f}" '
+                 f'x2="{sx + 236 + i * 16:.1f}" y2="{Y(bot_, soy):.1f}" stroke="{col}" '
+                 f'stroke-width="0.7" stroke-dasharray="3 3"/>')
+        o.append(_t(sx + 300 + 3 * 16 + 10, Y(top_, soy) + 3,
+                    f"{nm}  {tall:.2f} tall", 8.2, anchor="start", fill=col,
+                    weight="bold"))
+    o.append(f'<line x1="{sx - 60:.1f}" y1="{Y(a.fridge_h, soy):.1f}" x2="{sx + 300:.1f}" '
+             f'y2="{Y(a.fridge_h, soy):.1f}" stroke="{INK}" stroke-width="1" '
+             f'stroke-dasharray="8 4"/>')
+    o.append(_t(sx + 364, Y(a.fridge_h, soy) + 3, f"fridge top {a.fridge_h:.0f}", 8.4,
+                anchor="start", fill=INK, weight="bold"))
+    o.append(_t(sx + 364, Y(a.screen_centre - a.display_27_h / 2, soy) - 16,
+                f"tallest option clears the fridge top by "
+                f"{a.fridge_h - (a.screen_centre + a.display_27_h / 2):.0f} mm", 8.2,
+                anchor="start", fill=MUTED))
+
     dseq = [("D1", 0.0, a.gap), ("D3", a.gap, a.gap + a.strut_depth),
             ("D4", a.gap, a.gap + a.rear_box),
             ("D5", a.gap + a.rear_box, a.gap + a.rear_box + a.panel_d),
