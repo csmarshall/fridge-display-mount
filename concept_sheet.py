@@ -45,7 +45,14 @@ class Assembly:
     clamped_surfaces: int = 2             # the fridge TOP and the fridge UNDERSIDE. Two planes.
     clamp_spans: bool = True              # ONE clamp reaching across BOTH struts, per surface
     lower_pad_inset: float = 40.0         # bearing pads inboard of each strut on the lower bar
-    strut_spacing: float = 246.0          # = the plate's magnet-hole spacing
+    # 246 used to live here, inherited verbatim from the magnet plate's MAGNET-HOLE spacing and
+    # never re-derived once the magnets went away — the drifting constant CLAUDE.md warns about.
+    # What actually bounds it: the bolts should clear the rear box (134 wide in portrait) without
+    # leaning on spacer height, which floors it near 155; and touch-press wobble at the screen
+    # edge grows as 1/spacing^2. 160 keeps that wobble under a millimetre while making the plate
+    # 29% narrower AND -- because the clamp bar shortens with it and can sit further forward in
+    # the hinge window -- cutting the screen's rearward bias from 68.7 mm to 25.7.
+    strut_spacing: float = 160.0
     bracket_t: float = 0.119 * IN         # 3.02 clamp and foot
     foam: float = 3.0
     plate_t: float = 0.119 * IN

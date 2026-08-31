@@ -848,9 +848,13 @@ def sheet_plate(path: Path, a: Assembly) -> None:
          f"pitches, so both sit identically in their slots. Putting them ABOVE and BELOW the box "
          f"instead needs 6 pitches and a plate 2.3x taller, whose edge would reach past the Pi "
          f"opening and bring the vent windows back.", MUTED),
-        (f"ORIENTATION IS FORCED. Landscape would hang "
-         f"{max(0.0, 555.23 / 2 - a.strut_centre):.1f} mm off the REAR edge and cannot be slid "
-         f"forward: the clamp must stay inside the {a.clear_window:.1f} mm window.", WARN),
+        (f"ORIENTATION — CORRECTED. At the old 246 spacing landscape overhung the rear edge and "
+         f"was impossible. Narrowing to {a.strut_spacing:.0f} moved the struts forward, and it now "
+         f"technically fits: it clears the rear by "
+         f"{a.strut_centre - 555.23 / 2:.1f} mm against {a.fridge_d - a.strut_centre - 555.23 / 2:.1f} "
+         f"at the front. That is flush with the back of the cabinet and wildly off centre, so "
+         f"portrait remains the choice — on practical grounds now, not geometric impossibility.",
+         WARN),
         (f"Heads sit on the DISPLAY side, so they must not fall under the Pi bump-out. In "
          f"portrait the box is {a.box_w_portrait:.0f} wide and the bolts {a.plate_bolt_dx:.0f} "
          f"apart, clearing by {a.bolt_clear_of_box:.0f} mm — because the STRUT SPACING is wider "
@@ -874,7 +878,130 @@ def sheet_plate(path: Path, a: Assembly) -> None:
              a.n_notches, a.fan_r, a.bolt_clear_of_box)
 
 
-SHEETS = {"clamp_frame": sheet_frame,
+# --------------------------------------------------------------------------------------------
+def sheet_depth(path: Path, a: Assembly) -> None:
+    """STACKED vs NESTED, in plan view. Looking straight down at the fridge from above.
+
+    The whole question is whether the strut sits BEHIND the display's rear box (so their depths
+    add) or BESIDE it (so they share the same band). Prose cannot show that; a plan view can.
+    """
+    W, H = 1420, 880
+    o = _frame(W, H, "COULD THE STRUTS SIT BESIDE THE BOX, NOT BEHIND IT?",
+               "Plan view — looking DOWN at the fridge from above. Depth runs left to right; "
+               "front-to-back along the fridge runs up the page.",
+               "DEPTH STUDY — the same parts, arranged two ways")
+
+    PANEL_W, BOX_W = 324.65, a.box_w_portrait
+    nest_sp = BOX_W + a.strut_width + 6.0                 # box must pass BETWEEN the struts
+    # DEPTH is the whole subject and is only 76 mm against 325 front-to-back, so at one scale it
+    # renders as a sliver. Exaggerate depth 4x, exactly as the side elevation does, and say so.
+    SD, SW = 4.0, 1.02
+
+    def draw(px, py, title, spacing, nested, colour):
+        oy = py + 232                                     # centreline, front-to-back
+        o.extend(_panel(px, py, 620, 480, title, colour))
+        x = px + 60                                       # fridge panel face
+        o.append(f'<rect x="{x - 16:.1f}" y="{oy - 300 * SW / 2:.1f}" width="16" '
+                 f'height="{300 * SW:.1f}" fill="{FRIDGE_SIDE}"/>')
+        o.append(_t(x - 24, oy, "FRIDGE", 8.4, anchor="end", fill=MUTED, rot=-90))
+
+        gap = a.gap + (a.plate_t if nested else 0.0)
+        o.append(f'<rect x="{x:.1f}" y="{oy - 120 * SW / 2:.1f}" width="{gap * SD:.1f}" '
+                 f'height="{120 * SW:.1f}" fill="#f8e2a4" stroke="{PAD_EDGE}" '
+                 f'stroke-width="0.8"/>')
+        z = x + gap * SD
+
+        if nested:
+            # plate BEHIND the struts, reaching VESA on the box face
+            o.append(f'<rect x="{z - a.plate_t * SD:.1f}" y="{oy - 236 * SW / 2:.1f}" '
+                     f'width="{a.plate_t * SD:.1f}" height="{236 * SW:.1f}" fill="{C_PLATE}" '
+                     f'stroke="{INK}" stroke-width="1"/>')
+            o.append(f'<line x1="{z - a.plate_t * SD / 2:.1f}" y1="{oy - 122 * SW:.1f}" '
+                     f'x2="{z - a.plate_t * SD / 2:.1f}" y2="{oy - 152:.1f}" stroke="{INK}" '
+                     f'stroke-width="0.7"/>')
+            o.append(_t(z, oy - 156, "PLATE — behind the struts", 8.2, fill=INK, weight="bold"))
+        for sgn in (1, -1):
+            cyy = oy + sgn * spacing / 2 * SW
+            o.append(f'<rect x="{z:.1f}" y="{cyy - a.strut_width * SW / 2:.1f}" '
+                     f'width="{a.strut_depth * SD:.1f}" height="{a.strut_width * SW:.1f}" '
+                     f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1.2"/>')
+        o.append(_t(z + a.strut_depth * SD / 2, oy - spacing / 2 * SW - 15, "STRUT", 8.2,
+                    fill=INK, weight="bold"))
+
+        if nested:
+            bz = z                                        # box shares the strut's band
+            o.append(f'<rect x="{bz:.1f}" y="{oy - BOX_W * SW / 2:.1f}" '
+                     f'width="{a.rear_box * SD:.1f}" height="{BOX_W * SW:.1f}" fill="#2b3440" '
+                     f'stroke="{INK}" stroke-width="1.2"/>')
+            pz = bz + a.rear_box * SD
+        else:
+            pz = z + a.strut_depth * SD
+            o.append(f'<rect x="{pz:.1f}" y="{oy - a.plate_w * SW / 2:.1f}" '
+                     f'width="{a.plate_t * SD:.1f}" height="{a.plate_w * SW:.1f}" '
+                     f'fill="{C_PLATE}" stroke="{INK}" stroke-width="1"/>')
+            o.append(f'<line x1="{pz + a.plate_t * SD / 2:.1f}" y1="{oy - a.plate_w * SW / 2:.1f}" '
+                     f'x2="{pz + a.plate_t * SD / 2:.1f}" y2="{oy - 152:.1f}" stroke="{INK}" '
+                     f'stroke-width="0.7"/>')
+            o.append(_t(pz + a.plate_t * SD / 2, oy - 156, "PLATE — in front of the struts", 8.2,
+                        fill=INK, weight="bold"))
+            pz += a.plate_t * SD
+            o.append(f'<rect x="{pz:.1f}" y="{oy - BOX_W * SW / 2:.1f}" '
+                     f'width="{a.rear_box * SD:.1f}" height="{BOX_W * SW:.1f}" fill="#2b3440" '
+                     f'stroke="{INK}" stroke-width="1.2"/>')
+            pz += a.rear_box * SD
+        o.append(_t(pz - a.rear_box * SD / 2, oy + 4, "BOX", 8.0, fill="#fff", weight="bold"))
+        o.append(f'<rect x="{pz:.1f}" y="{oy - PANEL_W * SW / 2:.1f}" '
+                 f'width="{a.panel_d * SD:.1f}" height="{PANEL_W * SW:.1f}" fill="#101820" '
+                 f'stroke="{INK}" stroke-width="1.2"/>')
+        o.append(_t(pz + a.panel_d * SD / 2, oy, "DISPLAY", 8.4, fill="#fff", weight="bold",
+                    rot=-90))
+        total = (pz + a.panel_d * SD - x) / SD
+
+        dy = oy + PANEL_W * SW / 2 + 30
+        o.append(f'<line x1="{x:.1f}" y1="{dy:.1f}" x2="{pz + a.panel_d * SD:.1f}" '
+                 f'y2="{dy:.1f}" stroke="{colour}" stroke-width="1.6"/>')
+        for xx in (x, pz + a.panel_d * SD):
+            o.append(f'<line x1="{xx:.1f}" y1="{dy - 5:.1f}" x2="{xx:.1f}" y2="{dy + 5:.1f}" '
+                     f'stroke="{colour}" stroke-width="1.6"/>')
+        o.append(_t((x + pz + a.panel_d * SD) / 2, dy - 9,
+                    f"{total:.1f} mm off the fridge", 11, fill=colour, weight="bold"))
+        o.append(_t(px + 310, py + 462, f"depth exaggerated {SD:.0f}x; front-to-back true scale", 8.4, fill=MUTED))
+        return total, spacing
+
+    cur, _ = draw(40, 100, "A — AS BUILT: strut BEHIND the box, depths ADD", a.strut_spacing,
+                  False, INK)
+    nst, _ = draw(700, 100, "B — NESTED: strut BESIDE the box, depths SHARE", nest_sp, True, OK)
+
+    o.extend(_panel(40, 600, 1340, 250, "WHAT THE TWO DRAWINGS DIFFER BY", OK))
+    rows = [
+        ("depth off the fridge", f"{cur:.1f} mm", f"{nst:.1f} mm",
+         f"{cur - nst:.1f} mm closer — exactly the strut depth: the strut leaves the stack"),
+        ("strut spacing", f"{a.strut_spacing:.0f} mm", f"{nest_sp:.1f} mm",
+         f"the {BOX_W:.0f} mm box must PASS BETWEEN the struts, so they open up"),
+        ("plate", f"{a.plate_w:.0f} wide, in front of the struts",
+         f"{nest_sp + 2 * (a.plate_edge + a.plate_margin):.0f} wide, BEHIND them",
+         "VESA is inside the box footprint, so a plate clearing the box cannot reach it"),
+        ("screen off case centre", "25.7 mm", f"{a.fridge_d / 2 - (a.clear_window - a.cover_margin - (nest_sp + a.part_width) / 2):.1f} mm",
+         "wider spacing lengthens the clamp bar, pushing the struts back again"),
+        ("plate bolt heads", "on the display side, reachable before the display goes on",
+         "in the foam gap against the fridge", "UNREACHABLE once assembled — the real objection to B"),
+    ]
+    for i, (k, a_, b_, note) in enumerate(rows):
+        yy = 640 + i * 40
+        if i % 2 == 0:
+            o.append(f'<rect x="52" y="{yy - 16:.1f}" width="1316" height="36" fill="#f2f5f7"/>')
+        o.append(_t(64, yy + 2, k, 10.2, anchor="start", weight="bold"))
+        o.append(_t(300, yy + 2, a_, 10.0, anchor="start", fill=MUTED))
+        o.append(_t(640, yy + 2, b_, 10.0, anchor="start", fill=OK))
+        o.append(_t(980, yy + 2, note, 9.2, anchor="start", fill=MUTED))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — stacked %.1f vs nested %.1f, saving %.1f mm; nested needs %.1f spacing",
+             path, cur, nst, cur - nst, nest_sp)
+
+
+SHEETS = {"clamp_depth": sheet_depth,
+          "clamp_frame": sheet_frame,
           "clamp_plate": sheet_plate,
           "clamp_approval": sheet_approval, "clamp_parts": sheet_parts,
           "clamp_assembly": sheet_assembly, "clamp_clearance": sheet_clearance,
