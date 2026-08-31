@@ -57,6 +57,9 @@ class Assembly:
     rear_box: float = 25.0
     panel_d: float = 18.0
     clear_window: float = 406.0           # measured, rear edge to hinge cover
+    # The side panel's underside sits this far off the floor. MEASURED as 10-20 mm;
+    # 15 is the middle. Everything the lower clamp does has to happen inside it.
+    base_gap: float = 15.0
     hinge_cover: float = 203.0
 
     @property
@@ -127,8 +130,13 @@ def _elevation(ox, oy, sc, a: Assembly) -> list[str]:
     o.append(f'<line x1="{X(-120):.1f}" y1="{Y(0):.1f}" x2="{X(fd + 340):.1f}" '
              f'y2="{Y(0):.1f}" stroke="{INK}" stroke-width="2"/>')
     o.append(f'<rect x="{X(0):.1f}" y="{Y(a.fridge_h):.1f}" width="{fd * sc:.1f}" '
-             f'height="{(a.fridge_h - 70) * sc:.1f}" fill="{FRIDGE_SIDE}" '
+             f'height="{(a.fridge_h - a.base_gap) * sc:.1f}" fill="{FRIDGE_SIDE}" '
              f'stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.2"/>')
+    o.append(f'<line x1="{X(-40):.1f}" y1="{Y(a.base_gap):.1f}" x2="{X(fd + 30):.1f}" '
+             f'y2="{Y(a.base_gap):.1f}" stroke="{BAD}" stroke-width="0.9" '
+             f'stroke-dasharray="4 3"/>')
+    o.append(_t(X(-44), Y(a.base_gap) + 3, f"underside {a.base_gap:.0f}", 8.0, anchor="end",
+                fill=BAD, weight="bold"))
     o.append(_t(X(fd / 2), Y(a.fridge_h * 0.35), "fridge", 9, fill=ON_FRIDGE_MUTED, rot=-90))
 
     # exaggerate the thin layers so the stack is legible; the sheet says so
@@ -183,7 +191,10 @@ def _elevation(ox, oy, sc, a: Assembly) -> list[str]:
         return c
 
     o += clamp(a.fridge_h, flip=False)
-    o += clamp(120.0, flip=True)
+    # Corner AT the underside, so the long leg tucks beneath the cabinet and the
+    # short leg rises outside it. It was at 120 mm, which drove it through the
+    # fridge's base rather than under it.
+    o += clamp(a.base_gap, flip=True)
 
     # plate and display, outboard of the strut
     px = strut_x + strut_w
@@ -207,7 +218,7 @@ def _elevation(ox, oy, sc, a: Assembly) -> list[str]:
                  f'x2="{lx - 4:.1f}" y2="{ly - 4:.1f}" stroke="{RULE}" stroke-width="0.8"/>')
     for ly, txt, col in labs:
         o.append(_t(lx, ly, txt, 9.0, anchor="start", fill=col, weight="bold"))
-    o.append(_t(X(-116), Y(a.fridge_h) - 8, f"thin layers drawn {EX:.0f}x to be visible",
+    o.append(_t(X(-116), Y(a.fridge_h) - 8, f"thin layers {EX:.0f}x",
                 8.5, anchor="start", fill=MUTED))
     return o
 
@@ -336,8 +347,71 @@ def _joint_detail(ox, oy, a: Assembly) -> list[str]:
     return o
 
 
+def _base_detail(ox, oy, a: Assembly) -> list[str]:
+    """The base at 3.1x, in elevation. The side view puts this whole arrangement inside 3 px."""
+    o: list[str] = []
+    K, rise, IN_L, OUT_L = 3.1, 40.0, 60.0, 66.0
+    t, foam, bg = a.bracket_t, a.foam, a.base_gap
+    def X(mm): return ox + (mm + IN_L) * K
+    def Y(mm): return oy - mm * K
+
+    o.append(_t(ox, oy - (bg + rise + 20) * K - 26, "THE BASE — 3.1x, in elevation", 11.5,
+                anchor="start", weight="bold"))
+    o.append(_t(ox, oy - (bg + rise + 20) * K - 12,
+                "at side-elevation scale this whole arrangement is 3 px", 9, anchor="start",
+                fill=MUTED))
+    o.append(f'<line x1="{X(-IN_L):.1f}" y1="{Y(0):.1f}" x2="{X(OUT_L):.1f}" y2="{Y(0):.1f}" '
+             f'stroke="{INK}" stroke-width="2"/>')
+    o.append(_t(X(-IN_L) + 2, Y(0) + 13, "floor", 8.5, anchor="start", fill=MUTED))
+
+    o.append(f'<rect x="{X(-IN_L):.1f}" y="{Y(bg + rise + 20):.1f}" '
+             f'width="{IN_L * K:.1f}" height="{(rise + 20) * K:.1f}" fill="{FRIDGE_SIDE}" '
+             f'stroke="{FRIDGE_SIDE_EDGE}" stroke-width="1.2"/>')
+    o.append(_t(X(-IN_L / 2), Y(bg + 26), "fridge", 9, fill=ON_FRIDGE_MUTED))
+    o.append(f'<line x1="{X(-IN_L):.1f}" y1="{Y(bg):.1f}" x2="{X(OUT_L):.1f}" y2="{Y(bg):.1f}" '
+             f'stroke="{BAD}" stroke-width="1" stroke-dasharray="4 3"/>')
+
+    # lower clamp: long leg UNDER the cabinet, short leg rising outside it
+    top_leg = bg - foam
+    o.append(f'<path d="M{X(foam + t):.1f} {Y(bg + rise):.1f} '
+             f'L{X(foam + t):.1f} {Y(top_leg - t):.1f} L{X(-IN_L + 6):.1f} {Y(top_leg - t):.1f} '
+             f'L{X(-IN_L + 6):.1f} {Y(top_leg):.1f} L{X(foam):.1f} {Y(top_leg):.1f} '
+             f'L{X(foam):.1f} {Y(bg + rise):.1f} Z" fill="{C_STEEL}" stroke="{INK}" '
+             f'stroke-width="1.2"/>')
+    o.append(f'<rect x="{X(-IN_L + 6):.1f}" y="{Y(bg):.1f}" '
+             f'width="{(IN_L - 6 + foam + t) * K:.1f}" height="{foam * K:.1f}" fill="#f8e2a4" '
+             f'stroke="{PAD_EDGE}" stroke-width="0.9"/>')
+    o.append(f'<rect x="{X(0):.1f}" y="{Y(bg + rise):.1f}" width="{foam * K:.1f}" '
+             f'height="{rise * K:.1f}" fill="#f8e2a4" stroke="{PAD_EDGE}" stroke-width="0.9"/>')
+
+    # foot: vertical leg in the stack, horizontal leg outboard on the floor
+    o.append(f'<path d="M{X(foam + t):.1f} {Y(bg + rise - 12):.1f} '
+             f'L{X(foam + t):.1f} {Y(t):.1f} L{X(OUT_L - 6):.1f} {Y(t):.1f} '
+             f'L{X(OUT_L - 6):.1f} {Y(0):.1f} L{X(foam + t):.1f} {Y(0):.1f} '
+             f'L{X(foam + 2 * t):.1f} {Y(0):.1f} '
+             f'L{X(foam + 2 * t):.1f} {Y(bg + rise - 12):.1f} Z" '
+             f'fill="{C_STEEL}" stroke="{INK}" stroke-width="1.2"/>')
+    o.append(f'<rect x="{X(foam + 2 * t):.1f}" y="{Y(bg + rise + 20):.1f}" '
+             f'width="{a.strut_depth * K:.1f}" height="{(bg + rise + 20 - t) * K:.1f}" '
+             f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1.1"/>')
+
+    o.append(_t(X(OUT_L) + 6, Y(bg) + 3, f"underside {bg:.0f}", 8.5, anchor="start", fill=BAD,
+                weight="bold"))
+    o.append(_t(X(OUT_L) + 6, Y(bg) + 14, "MEASURED 10-20", 7.8, anchor="start", fill=BAD))
+    # Below the clamp leg, in the clear run between it and the floor — it was on the dark fridge.
+    o.append(_t(X(-IN_L + 6), Y(4.0), "clamp long leg — UNDER the cabinet", 8.4,
+                anchor="start", fill=OK, weight="bold"))
+    o.append(_t(X(OUT_L) + 6, Y(bg + rise - 20), "clamp short leg", 8.4, anchor="start", fill=INK,
+                weight="bold"))
+    o.append(_t(X(OUT_L) + 6, Y(bg + rise - 20) + 11, "rises OUTSIDE", 8.4, anchor="start",
+                fill=INK))
+    o.append(_t(X(OUT_L - 6) + 6, Y(t) - 4, "foot on the floor", 8.4, anchor="start", fill=OK,
+                weight="bold"))
+    return o
+
+
 def render(path: Path, a: Assembly) -> None:
-    W, H = 1300.0, 1350.0
+    W, H = 1300.0, 1478.0
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
          f'viewBox="0 0 {W:.0f} {H:.0f}">',
          f'<rect width="{W:.0f}" height="{H:.0f}" fill="{PAPER}"/>',
@@ -365,13 +439,15 @@ def render(path: Path, a: Assembly) -> None:
         o.append(_t(784, ry + 15, v, 10, anchor="start", fill=MUTED))
         o.append(_t(1238, ry, n, 11, anchor="end", fill=c, weight="bold"))
 
-    o += _card(760, 450, 500, 420, "THE TWO PARTS")
+    o += _card(760, 450, 500, 300, "THE TWO PARTS")
+    o += _card(760, 766, 500, 300, "")
+    o += _base_detail(792, 1032, a)
     parts = [
         ("A — studded clamp  x2", INK,
-         "L bracket. Long leg on the fridge top, or under its base. Short leg down the side. A "
-         "CARRIAGE BOLT through a square laser-cut hole is the stud: the square shoulder stops it "
-         "spinning, so no welding and no second operation. Foam inside the L. The lower one is "
-         "the same part, flipped."),
+         "L bracket. Long leg on the fridge top, or under its base. Short leg down the side. An "
+         "ELEVATOR BOLT through a square laser-cut hole is the stud: a flat 2.78 mm head that "
+         "hides inside the foam, and a square shoulder that stops it spinning. No welding, no "
+         "second operation. The lower one is the same part, flipped."),
         ("B — slotted foot  x2", INK,
          "L bracket. Vertical leg carries the elongated slot the stud passes through; horizontal "
          "leg turns OUTBOARD and the strut stands on it, so the strut never touches the floor. "
@@ -388,17 +464,17 @@ def render(path: Path, a: Assembly) -> None:
 
     o += _card(40, 616, 700, 320, "")
     o += _joint_detail(76, 688, a)
-    o += _card(40, 958, 1220, 200, "")
-    o += _stack_detail(72, 994, 700, a)
-    o.append(_t(800, 1020, "Assembly", 11.5, anchor="start", weight="bold"))
+    o += _card(40, 1086, 1220, 200, "")
+    o += _stack_detail(72, 1122, 700, a)
+    o.append(_t(800, 1148, "Assembly", 11.5, anchor="start", weight="bold"))
     for i, step in enumerate([
             "1. Stand the struts on the feet; stud through foot slot and strut slot, nut loose.",
             "2. Hook the top clamps over the fridge top; washers behind the strut; nut loose.",
             "3. Slide the lower clamps UP their slots until they engage under the appliance.",
             "4. Lock everything. The struts go into tension and the fridge is gripped."]):
-        o.append(_t(812, 1038 + i * 14, step, 9.5, anchor="start", fill=MUTED))
+        o.append(_t(812, 1166 + i * 14, step, 9.5, anchor="start", fill=MUTED))
 
-    o += _card(40, 1174, 1220, 152, "STILL OPEN — both need a torch under the fridge", BAD)
+    o += _card(40, 1302, 1220, 152, "STILL OPEN — both need a torch under the fridge", BAD)
     for i, q in enumerate([
             "Does a 150-250 mm clamp reach foul anything under there? Compressor, tubing, "
             "insulation, cross-members. It sets how far the lower clamp can go in, and nothing "
@@ -408,7 +484,7 @@ def render(path: Path, a: Assembly) -> None:
             f"The gap under the side measured 10-20 mm and the underside is NOT flat, so the "
             f"lower clamp's short leg plus its foam has to live inside that, at its tightest."]):
         for j, ln in enumerate(_wrap(q, 128)):
-            o.append(_t(64, 1214 + i * 34 + j * 13, ("- " if j == 0 else "  ") + ln, 10,
+            o.append(_t(64, 1342 + i * 34 + j * 13, ("- " if j == 0 else "  ") + ln, 10,
                         anchor="start", fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
