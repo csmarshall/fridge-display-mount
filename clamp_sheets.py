@@ -1180,7 +1180,134 @@ def sheet_stack(path: Path, a: Assembly) -> None:
              path, a.display_face, a.fixed_part, a.display_face - a.fixed_part, a.strut_spacing)
 
 
-SHEETS = {"clamp_stack": sheet_stack,
+# --------------------------------------------------------------------------------------------
+def sheet_orientation(path: Path, a: Assembly) -> None:
+    """Every dimension on one depth axis: why portrait fits and landscape does not.
+
+    Plan view, looking DOWN. The horizontal axis is distance from the fridge's REAR edge, and
+    everything the question touches is drawn against it at the same scale — case, doors, hinge
+    cover, window, clamp bar, struts, rear box, and the display in both orientations.
+    """
+    DOORS = 117.5
+    W, H = 1500, 910
+    SC = 1.22
+    ox = 120.0
+    o = _frame(W, H, "WHY PORTRAIT FITS AND LANDSCAPE DOES NOT",
+               "Plan view, looking DOWN at the fridge. One horizontal axis: millimetres from the "
+               "REAR edge of the case. Everything drawn to the same scale.",
+               "ORIENTATION — every dimension that decides it, on one axis")
+
+    def X(mm):
+        return ox + mm * SC
+
+    c = a.strut_centre
+    o.extend(_panel(40, 100, 1420, 600, "ALL OF IT, AGAINST DEPTH FROM THE REAR EDGE"))
+
+    # tick rule along the top
+    for mm in range(0, 750, 50):
+        o.append(f'<line x1="{X(mm):.1f}" y1="152" x2="{X(mm):.1f}" y2="158" stroke="{RULE}" '
+                 f'stroke-width="1"/>')
+        o.append(_t(X(mm), 148, str(mm), 7.6, fill=MUTED))
+    o.append(_t(X(0), 134, "REAR", 8.4, fill=INK, weight="bold"))
+    o.append(_t(X(a.fridge_d), 134, "case front", 8.4, fill=INK, weight="bold"))
+
+    rows = []
+
+    def band(y, lo, hi, fill, label, note, colour=INK, h=40.0):
+        o.append(f'<rect x="{X(lo):.1f}" y="{y:.1f}" width="{(hi - lo) * SC:.1f}" '
+                 f'height="{h:.1f}" fill="{fill}" stroke="{INK}" stroke-width="1.1"/>')
+        o.append(_t(X((lo + hi) / 2), y + h / 2 + 4, label, 9.0,
+                    fill="#fff" if fill not in (PAPER, "#f8e2a4") else INK, weight="bold"))
+        o.append(_t(X(a.fridge_d + DOORS) + 18, y + h / 2 - 2, note, 8.8, anchor="start",
+                    fill=colour, weight="bold"))
+        o.append(_t(X(a.fridge_d + DOORS) + 18, y + h / 2 + 9,
+                    f"{lo:.1f} .. {hi:.1f}   ({hi - lo:.2f} wide)", 8.2, anchor="start",
+                    fill=MUTED))
+        rows.append((label, lo, hi))
+
+    y = 172.0
+    band(y, 0, a.fridge_d, FRIDGE_SIDE, f"FRIDGE CASE {a.fridge_d:.1f}", "the cabinet")
+    o.append(f'<rect x="{X(a.fridge_d):.1f}" y="{y:.1f}" width="{DOORS * SC:.1f}" height="40" '
+             f'fill="#8a8f94" stroke="{INK}" stroke-width="1"/>')
+    o.append(_t(X(a.fridge_d + DOORS / 2), y + 24, f"doors +{DOORS:.1f}", 8.2, fill="#fff"))
+    y += 56
+    band(y, a.clear_window, a.fridge_d, "#5c574f", f"HINGE COVER {a.hinge_cover:.0f}",
+         "owns the front of the top", BAD)
+    y += 56
+    band(y, 0, a.clear_window, "#c9a227", f"CLEAR WINDOW {a.clear_window:.1f}",
+         "all the mount may use", WARN)
+    y += 62
+    bh = a.clamp_outer_half
+    band(y, c - bh, c + bh, C_STEEL, f"CLAMP BAR {a.clamp_width:.1f}",
+         f"{a.hinge_margin:.0f} mm kept off the cover", OK)
+    o.append(f'<line x1="{X(c + bh):.1f}" y1="{y - 6:.1f}" x2="{X(a.clear_window):.1f}" '
+             f'y2="{y - 6:.1f}" stroke="{OK}" stroke-width="1.4"/>')
+    o.append(_t(X(c + bh + a.hinge_margin / 2), y - 10, f"{a.hinge_margin:.0f}", 8.2, fill=OK,
+                weight="bold"))
+    y += 56
+    for s in (c - a.strut_spacing / 2, c + a.strut_spacing / 2):
+        o.append(f'<rect x="{X(s - a.strut_width / 2):.1f}" y="{y:.1f}" '
+                 f'width="{a.strut_width * SC:.1f}" height="40" fill="{C_STRUT}" '
+                 f'stroke="{INK}" stroke-width="1.1"/>')
+    o.append(f'<line x1="{X(c - a.strut_spacing / 2):.1f}" y1="{y + 20:.1f}" '
+             f'x2="{X(c + a.strut_spacing / 2):.1f}" y2="{y + 20:.1f}" stroke="{INK}" '
+             f'stroke-width="1.2"/>')
+    o.append(_t(X(c), y + 15, f"STRUTS {a.strut_spacing:.2f} apart", 8.6, weight="bold"))
+    o.append(_t(X(a.fridge_d + DOORS) + 18, y + 18,
+                f"= box {a.box_w_portrait:.0f} + strut {a.strut_width:.2f} + 2x{a.box_clearance:.0f}",
+                8.8, anchor="start", fill=INK, weight="bold"))
+    o.append(_t(X(a.fridge_d + DOORS) + 18, y + 29,
+                "the box has to pass BETWEEN them", 8.2, anchor="start", fill=MUTED))
+    y += 56
+    band(y, c - a.box_w_portrait / 2, c + a.box_w_portrait / 2, "#2b3440",
+         f"REAR BOX {a.box_w_portrait:.0f}", "sits between the struts")
+    y += 62
+    band(y, c - a.display_w / 2, c + a.display_w / 2, "#1d6b4f",
+         f"PORTRAIT {a.display_w:.2f}", "FITS", OK)
+    y += 56
+    lo, hi = c - a.display_h / 2, c + a.display_h / 2
+    o.append(f'<rect x="{X(lo):.1f}" y="{y:.1f}" width="{(hi - lo) * SC:.1f}" height="40" '
+             f'fill="{BAD}" fill-opacity="0.30" stroke="{BAD}" stroke-width="1.4"/>')
+    o.append(f'<rect x="{X(lo):.1f}" y="{y:.1f}" width="{-lo * SC:.1f}" height="40" '
+             f'fill="{BAD}" fill-opacity="0.75"/>')
+    o.append(_t(X((lo + hi) / 2), y + 24, f"LANDSCAPE {a.display_h:.2f}", 9.0, fill=INK,
+                weight="bold"))
+    o.append(_t(X(a.fridge_d + DOORS) + 18, y + 18, f"OVERHANGS the rear by {-lo:.1f}", 8.8,
+                anchor="start", fill=BAD, weight="bold"))
+    o.append(_t(X(a.fridge_d + DOORS) + 18, y + 29,
+                f"{lo:.1f} .. {hi:.1f}  — starts BEHIND the fridge", 8.2, anchor="start",
+                fill=BAD))
+    o.append(f'<line x1="{X(0):.1f}" y1="{y - 8:.1f}" x2="{X(0):.1f}" y2="{y + 48:.1f}" '
+             f'stroke="{BAD}" stroke-width="1.6" stroke-dasharray="5 3"/>')
+
+    o.extend(_panel(40, 720, 1420, 160, "THE CHAIN, IN ORDER", BAD))
+    steps = [
+        f"the rear box is {a.box_w_portrait:.0f} wide and must pass BETWEEN the struts",
+        f"so the struts are {a.strut_spacing:.2f} apart — derived, not chosen",
+        f"so the clamp bar is {a.clamp_width:.2f} to span them",
+        f"a {a.clamp_width:.0f} bar in a {a.clear_window:.1f} window, holding {a.hinge_margin:.0f} "
+        f"off the cover, can sit no further forward than {c:.1f}",
+        f"landscape needs its centre at {a.display_h / 2:.1f} or more to clear the rear edge",
+        f"{c:.1f} is {a.display_h / 2 - c:.1f} mm short. PORTRAIT only needs "
+        f"{a.display_w / 2:.1f}, and has {c - a.display_w / 2:.1f} mm in hand.",
+    ]
+    for i, s_ in enumerate(steps):
+        xx = 60 + (i % 2) * 700
+        yy = 762 + (i // 2) * 34
+        o.append(f'<circle cx="{xx + 7:.1f}" cy="{yy - 4:.1f}" r="9" fill="{BAD}" '
+                 f'fill-opacity="0.15"/>')
+        o.append(_t(xx + 7, yy - 1, str(i + 1), 9.0, fill=BAD, weight="bold"))
+        o.append(_t(xx + 24, yy, s_, 10.0, anchor="start",
+                    fill=INK if i < 5 else BAD, weight="bold" if i == 5 else "normal"))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — portrait %.1f..%.1f FITS; landscape %.1f..%.1f overhangs %.1f",
+             path, c - a.display_w / 2, c + a.display_w / 2,
+             c - a.display_h / 2, c + a.display_h / 2, a.display_h / 2 - c)
+
+
+SHEETS = {"clamp_orientation": sheet_orientation,
+          "clamp_stack": sheet_stack,
           "clamp_depth": sheet_depth,
           "clamp_frame": sheet_frame,
           "clamp_plate": sheet_plate,
