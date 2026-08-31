@@ -87,7 +87,12 @@ class Assembly:
     bolt_neck_w: float = 0.33 * IN
     bolt_neck_l: float = 0.19 * IN
     bolt_dia: float = 0.3125 * IN
-    screen_centre: float = 1331.0
+    # The band the screen height is chosen for. Eye height is taken at 0.936 of stature, the
+    # standard anthropometric ratio — it is what decides whether someone looks up or down at it.
+    stature_short: float = 61.0 * 25.4    # 5'1"
+    stature_tall: float = 77.0 * 25.4     # 6'5"
+    eye_ratio: float = 0.936
+    screen_centre: float = 1331.0         # chosen for the band above
     # THE DISPLAY. 23.8 in as specified; the 27 in shares the same rear box, VESA and depth
     # profile, so `--display 27` only changes these two numbers and the mass.
     display_w: float = 324.65             # portrait: SHORT side horizontal (front-to-back)
@@ -176,9 +181,9 @@ class Assembly:
         need to reach in the first place. Dropping under it removes the windows entirely — the
         cheapest feature is the one not cut.
         """
-        h_bolt = self.plate_bolt_dy / 2.0 + self.plate_edge
+        reach = (self.plate_bolt_hi - self.plate_bolt_lo) / 2.0 + self.plate_edge
         h_vesa = self.vesa / 2.0 + self.vesa_hole_dia / 2.0 + 2.0 * self.bracket_t
-        return 2.0 * (max(h_bolt, h_vesa) + self.plate_margin)
+        return 2.0 * (max(reach, h_vesa) + self.plate_margin)
 
     @property
     def opening_near_edge(self) -> float:
@@ -293,22 +298,60 @@ class Assembly:
             n += 1
 
     @property
-    def plate_bolt_lo(self) -> float:
-        """Highest slot on the LOWER piece that is still below the box. A real slot, not a wish."""
+    def slot_lo(self) -> float:
+        """Centre of the slot the lower bolt uses: highest on the LOWER piece below the box."""
         cand = self._slots_between(0.0, self.lower_strut_len - 11.11, 0.0)
         return max(z for z in cand if z < self.box_lo + 30.0)
 
     @property
-    def plate_bolt_hi(self) -> float:
-        """Lowest slot on the UPPER piece above the box."""
+    def slot_hi(self) -> float:
+        """Centre of the slot the upper bolt uses: lowest on the UPPER piece above the box."""
         cand = self._slots_between(self.upper_strut_lo, self.strut_top - 11.11,
                                    self.upper_strut_lo)
         return min(z for z in cand if z > self.box_hi - 30.0)
 
     @property
+    def plate_bolt_lo(self) -> float:
+        """Lower HOLE in the plate. Symmetric about the screen, NOT on a slot centre.
+
+        The strut carries 28.6 mm SLOTS, not holes, so a bolt may sit anywhere within +/-14.3 of
+        a slot's centre. That freedom is what lets the plate be symmetric in every way — outline,
+        VESA and holes — while the two mismatched slot grids absorb the difference. Earlier
+        attempts at this made the PART lopsided, then moved the screen 10 mm; both were solving
+        the wrong thing.
+        """
+        return self.screen_centre - (self.slot_hi - self.slot_lo) / 2.0
+
+    @property
+    def plate_bolt_hi(self) -> float:
+        return self.screen_centre + (self.slot_hi - self.slot_lo) / 2.0
+
+    @property
+    def bolt_in_slot(self) -> float:
+        """How far each bolt sits from its slot's centre. Must stay inside half a slot length."""
+        return self.plate_bolt_lo - self.slot_lo
+
+    @property
+    def bolt_slot_margin(self) -> float:
+        """Spare travel left in the slot. Positive is buildable."""
+        return self.slot_len / 2.0 - abs(self.bolt_in_slot)
+
+    @property
+    def bolt_asymmetry(self) -> float:
+        """Should be 0: the holes ARE symmetric now, and the slots take up the difference."""
+        return (self.plate_bolt_hi + self.plate_bolt_lo) / 2.0 - self.screen_centre
+
+    @property
     def plate_centre(self) -> float:
-        """The plate is ASYMMETRIC about the VESA: its bolts are set by two different slot grids."""
-        return (self.plate_bolt_hi + self.plate_bolt_lo) / 2.0
+        """The plate is centred on the DISPLAY. Its HOLES are what come out asymmetric.
+
+        The two slot grids cannot put the bolts symmetrically about the screen centre — it would
+        need n+m = 22.589 — but that is no reason for the PART to be lopsided. A laser-cut plate
+        can have its outline centred and its holes wherever the struts demand. The alternative,
+        moving the screen 10 mm to meet the holes, spends an ergonomic datum on a cosmetic
+        problem, which is the wrong way round.
+        """
+        return self.screen_centre
 
     @property
     def vesa_offset_in_plate(self) -> float:

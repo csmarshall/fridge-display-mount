@@ -1624,7 +1624,184 @@ def sheet_dims(path: Path, a: Assembly) -> None:
     LOG.info("Wrote %s — %d tagged dimensions", path, len(REG))
 
 
-SHEETS = {"clamp_dims": sheet_dims,
+# --------------------------------------------------------------------------------------------
+def sheet_real(path: Path, a: Assembly) -> None:
+    """A realistic elevation — what it will actually look like against the fridge.
+
+    True scale, unbroken, shaded. Not a schematic: no balloons, no dimension chains, nothing
+    exaggerated. The one drawing meant to answer "what will this look like in the kitchen".
+    """
+    W, H = 1080, 980
+    sc = 0.435
+    ox, oy = 300.0, 880.0                      # rear edge of the case, and the floor
+    o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
+         f'viewBox="0 0 {W} {H}">',
+         '<defs>',
+         '<linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">'
+         '<stop offset="0" stop-color="#eceae6"/><stop offset="1" stop-color="#dcd8d2"/>'
+         '</linearGradient>',
+         '<linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">'
+         '<stop offset="0" stop-color="#b9a184"/><stop offset="1" stop-color="#9c8468"/>'
+         '</linearGradient>',
+         '<linearGradient id="panel" x1="0" y1="0" x2="1" y2="0">'
+         '<stop offset="0" stop-color="#2f2c29"/><stop offset="0.45" stop-color="#413d39"/>'
+         '<stop offset="1" stop-color="#33302c"/></linearGradient>',
+         '<linearGradient id="chan" x1="0" y1="0" x2="1" y2="0">'
+         '<stop offset="0" stop-color="#15171a"/><stop offset="0.35" stop-color="#2e3238"/>'
+         '<stop offset="1" stop-color="#16181b"/></linearGradient>',
+         '<linearGradient id="scr" x1="0" y1="0" x2="1" y2="1">'
+         '<stop offset="0" stop-color="#1b2733"/><stop offset="0.5" stop-color="#111a24"/>'
+         '<stop offset="1" stop-color="#0b1119"/></linearGradient>',
+         '<linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">'
+         '<stop offset="0" stop-color="#3a3f45"/><stop offset="1" stop-color="#1d2124"/>'
+         '</linearGradient>',
+         '<filter id="soft" x="-30%" y="-30%" width="160%" height="160%">'
+         '<feGaussianBlur stdDeviation="7"/></filter>',
+         '</defs>',
+         f'<rect width="{W}" height="{H}" fill="url(#wall)"/>',
+         f'<rect y="{oy:.0f}" width="{W}" height="{H - oy:.0f}" fill="url(#floor)"/>',
+         f'<line x1="0" y1="{oy:.0f}" x2="{W}" y2="{oy:.0f}" stroke="#6f5c46" '
+         f'stroke-width="1.6"/>']
+
+    def X(mm):
+        return ox + mm * sc
+
+    def Y(mm):
+        return oy - mm * sc
+
+    # soft contact shadow on the floor
+    o.append(f'<ellipse cx="{X(a.fridge_d / 2):.0f}" cy="{oy + 8:.0f}" '
+             f'rx="{a.fridge_d * sc / 2 + 30:.0f}" ry="14" fill="#000" opacity="0.30" '
+             f'filter="url(#soft)"/>')
+
+    # the fridge: side panel, with the door edge and hinge cover showing at the front
+    o.append(f'<rect x="{X(0):.1f}" y="{Y(a.fridge_h):.1f}" width="{a.fridge_d * sc:.1f}" '
+             f'height="{(oy - Y(a.fridge_h)):.1f}" fill="url(#panel)"/>')
+    o.append(f'<rect x="{X(a.fridge_d):.1f}" y="{Y(a.fridge_h + 36.5):.1f}" '
+             f'width="{117.5 * sc:.1f}" height="{(oy - Y(a.fridge_h + 36.5)):.1f}" '
+             f'fill="#8e949a"/>')
+    o.append(f'<rect x="{X(a.fridge_d):.1f}" y="{Y(a.fridge_h + 36.5):.1f}" width="4" '
+             f'height="{(oy - Y(a.fridge_h + 36.5)):.1f}" fill="#c8ced3" opacity="0.7"/>')
+    o.append(f'<rect x="{X(a.clear_window):.1f}" y="{Y(a.fridge_h + 36.5):.1f}" '
+             f'width="{a.hinge_cover * sc:.1f}" height="{36.5 * sc:.1f}" fill="#4c4842"/>')
+    o.append(f'<line x1="{X(0):.1f}" y1="{Y(a.fridge_h):.1f}" x2="{X(a.fridge_d):.1f}" '
+             f'y2="{Y(a.fridge_h):.1f}" stroke="#55504a" stroke-width="1.4"/>')
+
+    c = a.strut_centre
+    hw = a.strut_width / 2.0
+    # feet, then struts, then bars — back to front
+    for s in (c - a.strut_spacing / 2, c + a.strut_spacing / 2):
+        o.append(f'<rect x="{X(s - hw) - 2:.1f}" y="{oy - 7:.1f}" '
+                 f'width="{a.strut_width * sc + 4:.1f}" height="7" fill="url(#steel)"/>')
+        for lo, hi in ((0.0, a.lower_strut_len), (a.upper_strut_lo, a.strut_top)):
+            o.append(f'<rect x="{X(s - hw):.1f}" y="{Y(hi):.1f}" '
+                     f'width="{a.strut_width * sc:.1f}" height="{(Y(lo) - Y(hi)):.1f}" '
+                     f'fill="url(#chan)"/>')
+            n = 0
+            while True:
+                sy = lo + 25.4 + n * a.slot_pitch
+                n += 1
+                if sy > hi - 11.11:
+                    break
+                o.append(f'<rect x="{X(s) - 2.2:.1f}" y="{Y(sy + a.slot_len / 2):.1f}" '
+                         f'width="4.4" height="{a.slot_len * sc:.1f}" fill="#0a0c0e" '
+                         f'opacity="0.85"/>')
+    for hgt in (a.fridge_h, a.base_gap):
+        o.append(f'<rect x="{X(c - a.clamp_outer_half):.1f}" y="{Y(hgt) - 4:.1f}" '
+                 f'width="{a.clamp_width * sc:.1f}" height="8" rx="1.5" fill="url(#steel)"/>')
+
+    # the display: shadow, body, bezel, screen
+    dw, dh = a.display_w, a.display_h
+    o.append(f'<rect x="{X(c - dw / 2) + 7:.1f}" y="{Y(a.screen_centre + dh / 2) + 9:.1f}" '
+             f'width="{dw * sc:.1f}" height="{dh * sc:.1f}" rx="6" fill="#000" opacity="0.34" '
+             f'filter="url(#soft)"/>')
+    o.append(f'<rect x="{X(c - dw / 2):.1f}" y="{Y(a.screen_centre + dh / 2):.1f}" '
+             f'width="{dw * sc:.1f}" height="{dh * sc:.1f}" rx="5" fill="#0d0f12"/>')
+    bez = 13.6 * sc
+    o.append(f'<rect x="{X(c - dw / 2) + bez:.1f}" '
+             f'y="{Y(a.screen_centre + dh / 2) + bez:.1f}" '
+             f'width="{dw * sc - 2 * bez:.1f}" height="{dh * sc - 2 * bez:.1f}" rx="2" '
+             f'fill="url(#scr)"/>')
+    # a hint of a chore board, so the scale reads as a screen and not a black slab
+    ax0, ay0 = X(c - dw / 2) + bez + 7, Y(a.screen_centre + dh / 2) + bez + 9
+    aw = dw * sc - 2 * bez - 14
+    o.append(f'<rect x="{ax0:.1f}" y="{ay0:.1f}" width="{aw:.1f}" height="13" rx="2" '
+             f'fill="#3f7fbf" opacity="0.85"/>')
+    for i in range(9):
+        yy = ay0 + 22 + i * 24
+        o.append(f'<rect x="{ax0:.1f}" y="{yy:.1f}" width="{aw:.1f}" height="17" rx="2" '
+                 f'fill="#ffffff" opacity="{0.07 if i % 2 else 0.12}"/>')
+        o.append(f'<rect x="{ax0 + 5:.1f}" y="{yy + 4.5:.1f}" width="8" height="8" rx="2" '
+                 f'fill="#5fb98a" opacity="{0.9 if i % 3 else 0.35}"/>')
+        o.append(f'<rect x="{ax0 + 20:.1f}" y="{yy + 6:.1f}" '
+                 f'width="{aw * (0.34 + 0.07 * (i % 4)):.1f}" height="5" rx="2" fill="#fff" '
+                 f'opacity="0.45"/>')
+    o.append(f'<rect x="{X(c - dw / 2) + bez:.1f}" y="{Y(a.screen_centre + dh / 2) + bez:.1f}" '
+             f'width="{dw * sc - 2 * bez:.1f}" height="{(dh * sc - 2 * bez) * 0.42:.1f}" '
+             f'fill="#fff" opacity="0.045"/>')
+
+    # people, to scale. Proportions as fractions of stature, from standard anthropometry:
+    # head 13%, shoulder at 82%, hip 52%, knee 28%. Eye at 93.6%, which is what decides the
+    # sight line. Drawn as a plain silhouette — this is a scale reference, not an illustration.
+    def person(px, stature, label, flip=False):
+        S = stature * sc
+        col, op = "#454f58", 0.50
+        def P(fx, fy):
+            return px + fx * S, oy - fy * S
+        o.append(f'<ellipse cx="{px:.1f}" cy="{oy + 5:.0f}" rx="{S * 0.085:.0f}" ry="6" '
+                 f'fill="#000" opacity="0.20" filter="url(#soft)"/>')
+        hx, hy = P(0.0, 0.935)
+        o.append(f'<ellipse cx="{hx:.1f}" cy="{hy:.1f}" rx="{S * 0.042:.1f}" '
+                 f'ry="{S * 0.058:.1f}" fill="{col}" opacity="{op}"/>')
+        pts = [(0.021, 0.872), (0.030, 0.845), (0.098, 0.815), (0.108, 0.700),
+               (0.082, 0.610), (0.086, 0.520), (0.075, 0.300), (0.062, 0.030),
+               (0.020, 0.030), (0.014, 0.290), (0.000, 0.470)]
+        d = "M" + " L".join(f"{P(fx, fy)[0]:.1f} {P(fx, fy)[1]:.1f}" for fx, fy in pts)
+        d += " L" + " L".join(f"{P(-fx, fy)[0]:.1f} {P(-fx, fy)[1]:.1f}"
+                              for fx, fy in reversed(pts)) + " Z"
+        o.append(f'<path d="{d}" fill="{col}" opacity="{op}"/>')
+        for sgn in (-1, 1):
+            o.append(f'<path d="M{P(sgn * 0.092, 0.800)[0]:.1f} {P(0, 0.800)[1]:.1f} '
+                     f'L{P(sgn * 0.104, 0.640)[0]:.1f} {P(0, 0.640)[1]:.1f} '
+                     f'L{P(sgn * 0.098, 0.500)[0]:.1f} {P(0, 0.500)[1]:.1f}" '
+                     f'stroke="{col}" stroke-width="{S * 0.030:.1f}" opacity="{op}" fill="none" '
+                     f'stroke-linecap="round" stroke-linejoin="round"/>')
+        eye = stature * a.eye_ratio
+        o.append(f'<line x1="{px:.1f}" y1="{Y(eye):.1f}" x2="{X(c - a.display_w / 2):.1f}" '
+                 f'y2="{Y(a.screen_centre):.1f}" stroke="#b8860b" stroke-width="1" '
+                 f'stroke-dasharray="5 4" opacity="0.8"/>')
+        o.append(f'<line x1="{px - 34:.1f}" y1="{Y(eye):.1f}" x2="{px + 34:.1f}" '
+                 f'y2="{Y(eye):.1f}" stroke="#b8860b" stroke-width="1.1"/>')
+        tx = px - 40 if flip else px + 40
+        an = "end" if flip else "start"
+        ft, inch = int(stature / 25.4 // 12), round(stature / 25.4 % 12)
+        o.append(_t(tx, Y(eye) - 5, f"{ft}'{inch}\"  eye {eye:.0f}", 9.6, anchor=an,
+                    fill="#8a6a10", weight="bold"))
+        o.append(_t(tx, Y(eye) + 8, f"looks down {eye - a.screen_centre:.0f} mm", 8.8,
+                    anchor=an, fill="#8a6a10"))
+
+    person(155.0, a.stature_short, "short", flip=False)
+    person(870.0, a.stature_tall, "tall", flip=True)
+    o.append(f'<line x1="{X(0) - 20:.1f}" y1="{Y(a.screen_centre):.1f}" '
+             f'x2="{X(a.fridge_d) + 20:.1f}" y2="{Y(a.screen_centre):.1f}" stroke="#b8860b" '
+             f'stroke-width="0.9" stroke-dasharray="3 3" opacity="0.7"/>')
+
+    o.append(_t(40, 44, "WHAT IT WILL LOOK LIKE", 20, anchor="start", weight="bold",
+                fill="#14181c"))
+    o.append(_t(40, 66, f"True scale, nothing exaggerated. {a.display_w:.0f} x {a.display_h:.0f} "
+               f"portrait, screen centre {a.screen_centre:.0f} mm off the floor, standing "
+               f"{a.display_face:.1f} mm off the panel.", 11.5, anchor="start", fill="#6b757e"))
+    o.append(_t(40, 84, "The strut gap at the display's mid-height is where the ports and "
+               "buttons stay reachable.", 11.5, anchor="start", fill="#6b757e"))
+    o.append(_t(W - 40, H - 22, "not a photograph — a scale drawing", 9.5, anchor="end",
+                fill="#8b949c"))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — realistic elevation at %.3f scale", path, sc)
+
+
+SHEETS = {"clamp_real": sheet_real,
+          "clamp_dims": sheet_dims,
           "clamp_orientation": sheet_orientation,
           "clamp_stack": sheet_stack,
           "clamp_depth": sheet_depth,
