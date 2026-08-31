@@ -63,8 +63,9 @@ DIAGRAM_INFO = {
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
     "clamp_dims.svg": ("The mount, dimensioned",
-                      "Front and side elevation with 32 TAGGED lengths — V up, H across, D into "
-                      "the room — and a register saying what sets each one.", "current"),
+                      "Front and side elevation with 32 TAGGED lengths, the plate's hole pattern, "
+                      "and all four display options dashed over the mount at one scale.",
+                      "current"),
     "clamp_orientation.svg": ("Why portrait fits and landscape does not",
                              "Every dimension that decides it on one depth axis — case, doors, "
                              "hinge cover, window, bar, struts, box, and both orientations.",
