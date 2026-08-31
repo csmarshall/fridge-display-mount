@@ -62,6 +62,9 @@ DIAGRAM_INFO = {
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
+    "clamp_real.svg": ("What it will look like",
+                      "Realistic elevation, true scale and unbroken, with people at 5ft1 and "
+                      "6ft5 for reference and their eye lines to the screen.", "current"),
     "clamp_dims.svg": ("The mount, dimensioned",
                       "Front and side elevation with 32 TAGGED lengths, the plate's hole pattern, "
                       "and all four display options dashed over the mount at one scale.",
