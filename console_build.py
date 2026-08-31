@@ -180,10 +180,16 @@ def export_pngs(root: Path, out_dir: Path, scale: int = 2) -> list[Path]:
         LOG.error("Chrome not found at %s — cannot rasterise", CHROME)
         return []
     out_dir.mkdir(parents=True, exist_ok=True)
-    written = []
+    written, skipped = [], 0
     for svg in sorted(root.glob("*.svg")):
         w, h = svg_size(svg)
         png = out_dir / (svg.stem + ".png")
+        # Incremental: rasterising all 29 costs ~20 s, which is enough friction that the PNGs
+        # would quietly go stale. Only redo the ones whose SVG actually moved.
+        if png.exists() and png.stat().st_mtime >= svg.stat().st_mtime:
+            skipped += 1
+            written.append(png)
+            continue
         subprocess.run([CHROME, "--headless", "--disable-gpu", "--hide-scrollbars",
                         f"--force-device-scale-factor={scale}", "--virtual-time-budget=3000",
                         f"--screenshot={png}", f"--window-size={w},{h}", svg.resolve().as_uri()],
@@ -193,6 +199,8 @@ def export_pngs(root: Path, out_dir: Path, scale: int = 2) -> list[Path]:
             LOG.info("  %-28s -> %s (%dx%d @%dx)", svg.name, png.name, w, h, scale)
         else:
             LOG.error("  %-28s FAILED to rasterise", svg.name)
+    if skipped:
+        LOG.info("  %d already current", skipped)
     return written
 
 
@@ -862,7 +870,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Build the project console page.")
     ap.add_argument("--root", type=Path, default=Path("."))
     ap.add_argument("--out", type=Path, default=Path("index.html"))
-    ap.add_argument("--png", action="store_true", help="also rasterise every SVG into png/")
+    ap.add_argument("--no-png", action="store_true",
+                    help="skip the png/ export. Preview cannot open SVG, so the PNGs "
+                         "are the viewable copy — only skip when iterating fast.")
     ap.add_argument("--png-dir", type=Path, default=Path("png"))
     ap.add_argument("--png-scale", type=int, default=2)
     ap.add_argument("--open", action="store_true")
@@ -873,8 +883,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     rc = build(a.root, a.out, variant="clamp", other="archive.html")
     rc |= build(a.root, a.out.parent / "archive.html", variant="hook",
                 other=a.out.name)
-    if a.png:
-        LOG.info("Rasterising for Preview / sending (%dx):", a.png_scale)
+    if not a.no_png:
+        LOG.info("Rasterising for Preview (%dx) — Preview has no SVG support:", a.png_scale)
         LOG.info("Wrote %d PNGs", len(export_pngs(a.root, a.png_dir, a.png_scale)))
     if a.open:
         subprocess.run(["open", str(a.out)])
