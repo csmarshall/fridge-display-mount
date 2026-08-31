@@ -84,6 +84,9 @@ class Assembly:
     bolt_neck_l: float = 0.19 * IN
     bolt_dia: float = 0.3125 * IN
     screen_centre: float = 1331.0
+    # THE DISPLAY. 23.8 in as specified; the 27 in shares the same rear box, VESA and depth
+    # profile, so `--display 27` only changes these two numbers and the mass.
+    display_w: float = 324.65             # portrait: SHORT side horizontal (front-to-back)
     display_h: float = 555.23             # portrait: long side vertical
     rear_box: float = 25.0
     panel_d: float = 18.0

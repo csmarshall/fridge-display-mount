@@ -642,10 +642,11 @@ def sheet_frame(path: Path, a: Assembly) -> None:
             o.append(f'<circle cx="{X(s):.1f}" cy="{Y(hgt):.1f}" r="3.1" fill="{PAPER}" '
                      f'stroke="{INK}" stroke-width="1"/>')
 
-    o += _display_ghost(X(dc - 324.65 / 2), Y(a.screen_centre + a.display_h / 2), 324.65 * sc,
+    o += _display_ghost(X(dc - a.display_w / 2), Y(a.screen_centre + a.display_h / 2),
+                        a.display_w * sc,
                         a.display_h * sc, "")
     o.append(_t(X(a.fridge_d) + 14, Y(a.screen_centre - a.display_h / 2) + 4,
-                "display 324.65 wide", 8.6, anchor="start", fill=MUTED))
+                f"display {a.display_w:.2f} wide", 8.6, anchor="start", fill=MUTED))
     o.append(_t(X(a.fridge_d) + 14, Y(a.screen_centre - a.display_h / 2) + 15,
                 "dashed, true scale", 8.2, anchor="start", fill=MUTED))
 
@@ -731,7 +732,7 @@ def sheet_frame(path: Path, a: Assembly) -> None:
             ("bar overhang past each strut", f"{a.part_width / 2.0:.1f} mm"),
             ("plate", f"{a.plate_w:.0f} x {a.plate_h:.0f} mm"),
             ("plate past each strut", f"{(a.plate_w - a.strut_spacing) / 2.0:.1f} mm"),
-            ("display, portrait", f"324.65 x {a.display_h:.0f} mm"),
+            ("display, portrait", f"{a.display_w:.2f} x {a.display_h:.0f} mm"),
             ("bars (identical parts)", f"{a.n_clamps}"),
             ("feet", f"{a.n_feet}"),
             ("strut proud of the case", f"{a.proud:.1f} mm"),
@@ -886,7 +887,7 @@ def sheet_plate(path: Path, a: Assembly) -> None:
         (f"ORIENTATION — CORRECTED. At the old 246 spacing landscape overhung the rear edge and "
          f"was impossible. Narrowing to {a.strut_spacing:.0f} moved the struts forward, and it now "
          f"technically fits: it clears the rear by "
-         f"{a.strut_centre - 555.23 / 2:.1f} mm against {a.fridge_d - a.strut_centre - 555.23 / 2:.1f} "
+         f"{a.strut_centre - a.display_h / 2:.1f} mm against {a.fridge_d - a.strut_centre - a.display_h / 2:.1f} "
          f"at the front. That is flush with the back of the cabinet and wildly off centre, so "
          f"portrait remains the choice — on practical grounds now, not geometric impossibility.",
          WARN),
@@ -926,7 +927,7 @@ def sheet_depth(path: Path, a: Assembly) -> None:
                "front-to-back along the fridge runs up the page.",
                "DEPTH STUDY — the same parts, arranged two ways")
 
-    PANEL_W, BOX_W = 324.65, a.box_w_portrait
+    PANEL_W, BOX_W = a.display_w, a.box_w_portrait
     nest_sp = a.strut_spacing            # ask Assembly; do not re-derive it here
     # DEPTH is the whole subject and is only 76 mm against 325 front-to-back, so at one scale it
     # renders as a sliver. Exaggerate depth 4x, exactly as the side elevation does, and say so.
