@@ -33,7 +33,7 @@ clamp lifts the foot off the ground.
 If a future revision removes the clamp, the magnets have to come back to structural duty and every
 number in §1.1 changes with them.
 
-### 1.0b Two parts, two of each — and the stud is a CARRIAGE BOLT
+### 1.0b Two parts, two of each — and the stud is an ELEVATOR BOLT
 Part A is the studded clamp, Part B the slotted foot. The stud is an **ELEVATOR bolt** through a
 square laser-cut hole: the square shoulder stops it spinning, so the bracket needs no welding and
 stays a laser-plus-one-bend part. **Do not specify a welded stud** — SendCutSend cannot weld and it
