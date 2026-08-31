@@ -92,6 +92,9 @@ class Assembly:
     # profile, so `--display 27` only changes these two numbers and the mass.
     display_w: float = 324.65             # portrait: SHORT side horizontal (front-to-back)
     display_h: float = 555.23             # portrait: long side vertical
+    # The 27 in shares the rear box, the VESA and the depth profile — only the panel differs.
+    display_27_w: float = 367.40
+    display_27_h: float = 629.62
     rear_box: float = 25.0
     panel_d: float = 18.0
     clear_window_measured: float = 406.0  # tape reading 2026-08-27, cross-check only

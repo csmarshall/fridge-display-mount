@@ -1314,7 +1314,7 @@ def sheet_dims(path: Path, a: Assembly) -> None:
     the room. Every one is listed with where it comes from, so a dimension can be argued with by
     its source rather than by eye.
     """
-    W, H = 1620, 1180
+    W, H = 1900, 1180
     o = _frame(W, H, "THE MOUNT, DIMENSIONED",
                "Front and side elevation. Every length carries a tag — V up, H across, D into "
                "the room — and the table says what sets each one.",
@@ -1391,6 +1391,27 @@ def sheet_dims(path: Path, a: Assembly) -> None:
         o.append(f'<rect x="{ox - a.clamp_width / 2 * sc:.1f}" y="{Y(hgt, oy) - 5:.1f}" '
                  f'width="{a.clamp_width * sc:.1f}" height="10" rx="2" fill="{C_STEEL}" '
                  f'stroke="{INK}" stroke-width="1"/>')
+    pc = a.plate_centre
+    for sx_ in (-1, 1):
+        for sy_ in (-1, 1):
+            o.append(f'<circle cx="{ox + sx_ * a.vesa / 2 * sc:.1f}" '
+                     f'cy="{Y(a.screen_centre + sy_ * a.vesa / 2, oy):.1f}" '
+                     f'r="{max(1.6, a.vesa_hole_dia * sc / 2):.1f}" fill="{PAPER}" '
+                     f'stroke="{OK}" stroke-width="1.1"/>')
+    for sx_ in (-1, 1):
+        for b in (a.plate_bolt_lo, a.plate_bolt_hi):
+            o.append(f'<circle cx="{ox + sx_ * a.plate_bolt_dx / 2 * sc:.1f}" '
+                     f'cy="{Y(b, oy):.1f}" r="{max(2.0, a.plate_bolt_dia * sc / 2):.1f}" '
+                     f'fill="{PAPER}" stroke="{BAD}" stroke-width="1.2"/>')
+    for sgn in (1, -1):
+        vy = a.screen_centre + sgn * a.vent_r
+        o.append(f'<rect x="{ox - a.vent_wid / 2 * sc:.1f}" '
+                 f'y="{Y(vy + a.vent_len / 2, oy):.1f}" width="{a.vent_wid * sc:.1f}" '
+                 f'height="{a.vent_len * sc:.1f}" rx="{a.vent_wid / 2 * sc:.1f}" '
+                 f'fill="{PAPER}" stroke="{INK}" stroke-width="1"/>')
+    o.append(_t(ox, Y(a.plate_centre - a.plate_h / 2, oy) + 30,
+                "holes: VESA green, strut bolts red, vents open", 7.6, fill=MUTED))
+
     by = Y(F_LO, oy) - 2
     o.append(f'<path d="M{ox - 140:.1f} {by + 7:.1f} L{ox:.1f} {by - 5:.1f} '
              f'L{ox + 140:.1f} {by + 7:.1f}" fill="none" stroke="{PAPER}" stroke-width="8"/>')
@@ -1429,9 +1450,36 @@ def sheet_dims(path: Path, a: Assembly) -> None:
                      f'stroke-width="1.2"/>')
         balloon(ox + wid / 2 * sc + 16, yy, tag, WARN)
 
+    # ================= WHAT THE MOUNT CARRIES =================
+    o.extend(_panel(580, 100, 640, 700, "THE FOUR DISPLAY OPTIONS, DASHED — all to one scale"))
+    dx0, dy0, ds = 900.0, 430.0, 0.80
+    o.append(f'<rect x="{dx0 - a.plate_w / 2 * ds:.1f}" y="{dy0 - a.plate_h / 2 * ds:.1f}" '
+             f'width="{a.plate_w * ds:.1f}" height="{a.plate_h * ds:.1f}" fill="{C_PLATE}" '
+             f'stroke="{INK}" stroke-width="1.1"/>')
+    for s_ in (-a.strut_spacing / 2, a.strut_spacing / 2):
+        o.append(f'<rect x="{dx0 + (s_ - hw) * ds:.1f}" y="{dy0 - 300 * ds:.1f}" '
+                 f'width="{a.strut_width * ds:.1f}" height="{600 * ds:.1f}" fill="{C_STRUT}" '
+                 f'fill-opacity="0.55" stroke="{INK}" stroke-width="0.8"/>')
+    o.append(_t(dx0, dy0 + 4, "plate + struts", 8.0, fill=INK, weight="bold"))
+    OPTS = [("23.8 PORTRAIT", a.display_w, a.display_h, OK, "6 4"),
+            ("23.8 LANDSCAPE", a.display_h, a.display_w, BAD, "3 3"),
+            ("27 PORTRAIT", a.display_27_w, a.display_27_h, "#1b6ea8", "9 5"),
+            ("27 LANDSCAPE", a.display_27_h, a.display_27_w, "#8a4fbf", "2 4")]
+    for i, (nm, wmm, hmm, col, dash) in enumerate(OPTS):
+        o.append(f'<rect x="{dx0 - wmm / 2 * ds:.1f}" y="{dy0 - hmm / 2 * ds:.1f}" '
+                 f'width="{wmm * ds:.1f}" height="{hmm * ds:.1f}" fill="none" stroke="{col}" '
+                 f'stroke-width="1.7" stroke-dasharray="{dash}"/>')
+        ly = 706 + i * 18
+        o.append(f'<line x1="604" y1="{ly - 3:.1f}" x2="634" y2="{ly - 3:.1f}" stroke="{col}" '
+                 f'stroke-width="1.7" stroke-dasharray="{dash}"/>')
+        o.append(_t(642, ly, f"{nm}   {wmm:.2f} x {hmm:.2f}", 8.6, anchor="start", fill=col,
+                    weight="bold"))
+    o.append(_t(dx0, 146, "all four share the same 260 x 134 rear box and VESA 100 — "
+                "so the mount does not change", 8.4, fill=MUTED))
+
     # ================= SIDE ELEVATION =================
-    o.extend(_panel(530, 100, 470, 700, "SIDE ELEVATION — depth exaggerated 2.6x against height"))
-    sx, soy = 620.0, 700.0
+    o.extend(_panel(1240, 100, 620, 700, "SIDE ELEVATION — depth exaggerated 2.6x against height"))
+    sx, soy = 1330.0, 700.0
     # depth exaggerated against height: the whole stack is 52 mm against 1768 of height,
     # so at one scale the D-dimensions collapse into 29 px and cannot be read.
     DS = 1.45
@@ -1487,20 +1535,20 @@ def sheet_dims(path: Path, a: Assembly) -> None:
         balloon(x1 + 16, yy, tag, WARN)
 
     # ================= REGISTER =================
-    o.extend(_panel(40, 820, 1540, 320, "THE REGISTER — every tag, its value, and what sets it"))
+    o.extend(_panel(40, 820, 1820, 320, "THE REGISTER — every tag, its value, and what sets it"))
     per = (len(REG) + 2) // 3
     for i, (tag, val, what, src) in enumerate(REG):
         col, row = i // per, i % per
-        x = 62 + col * 512
+        x = 62 + col * 604
         y = 862 + row * 24
         if row % 2 == 0:
-            o.append(f'<rect x="{x - 10:.1f}" y="{y - 15:.1f}" width="500" height="22" '
+            o.append(f'<rect x="{x - 10:.1f}" y="{y - 15:.1f}" width="590" height="22" '
                      f'fill="#f2f5f7"/>')
         c = BAD if tag[0] == "V" else (WARN if tag[0] == "D" else OK)
         o.append(_t(x + 2, y, tag, 9.4, anchor="start", fill=c, weight="bold"))
         o.append(_t(x + 76, y, f"{val:.2f}", 9.6, anchor="end", weight="bold"))
         o.append(_t(x + 84, y, what, 8.8, anchor="start"))
-        o.append(_t(x + 486, y, src, 8.2, anchor="end", fill=MUTED))
+        o.append(_t(x + 576, y, src, 8.2, anchor="end", fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
     LOG.info("Wrote %s — %d tagged dimensions", path, len(REG))
