@@ -62,6 +62,10 @@ DIAGRAM_INFO = {
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
+    "clamp_orientation.svg": ("Why portrait fits and landscape does not",
+                             "Every dimension that decides it on one depth axis — case, doors, "
+                             "hinge cover, window, bar, struts, box, and both orientations.",
+                             "current"),
     "clamp_stack.svg": ("The stack, panel to screen",
                        "Section at 7x, cut twice — through a strut and through the box, because "
                        "the stack is not the same in both places. 52.05 mm total.", "current"),
