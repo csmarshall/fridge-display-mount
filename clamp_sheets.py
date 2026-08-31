@@ -371,14 +371,15 @@ def sheet_clearance(path: Path, a: Assembly) -> None:
 
     o += _panel(40, 450, 1100, 160, "READ THIS THE RIGHT WAY ROUND", WARN)
     o += _para(56, 500,
-               f"The window is {a.clear_window:.1f} mm and the two clamps span "
-               f"{a.strut_spacing + a.clamp_width:.0f} mm, leaving {margin:.1f} mm at each end. "
-               f"That only holds because the struts are centred on the WINDOW. Centring them on "
-               f"the case depth — the obvious choice, and what this drawing was first built with "
-               f"— drives the front clamp 51.2 mm INTO the hinge cover. The cost is cosmetic: the "
-               f"screen ends up {a.display_bias_rearward:.0f} mm behind the case centre, still "
-               f"comfortably within the panel. Quote {margin:.1f} mm when asking 'does it fit'.",
-               150)
+               f"The bar is placed as far FORWARD as the cover allows while holding "
+               f"{a.cover_margin:.0f} mm back from it, which leaves {a.strut_centre - a.clamp_outer_half:.1f} mm "
+               f"at the rear. Three datums were possible. Centring on the CASE drives the bar "
+               f"48.7 mm INTO the cover — blocked. Centring on the WINDOW is safe but leaves the "
+               f"screen 101.5 mm behind the case centre, pushed away from where anyone stands. "
+               f"Going hard forward centres best and leaves ZERO tolerance against a cover "
+               f"position read off a photograph. This sits between them: the screen is now "
+               f"{a.display_bias_rearward:.1f} mm rearward instead of 101.5, and "
+               f"{a.cover_margin:.0f} mm of clearance is deliberately kept in hand.", 150)
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
     LOG.info("Wrote %s — installed margin %.1f mm", path, margin)
@@ -804,11 +805,15 @@ def sheet_plate(path: Path, a: Assembly) -> None:
                f"row mid-slot and the other near its end, and the plate would only mount at "
                f"certain heights.", 42, size=10.6)
     o += _para(1036, 590,
-               f"ORIENTATION IS FORCED. Portrait spans 41 to 366 on a {a.fridge_d:.0f} deep case "
-               f"and fits. LANDSCAPE would hang {74.3:.1f} mm off the REAR edge, and cannot be "
-               f"slid forward to fix it: the clamp has to stay inside the window, so the strut "
-               f"centre is pinned to 150.5-256.1. Centring landscape needs 304.8, which is "
-               f"48.7 mm into the hinge cover.", 42, size=10.6, fill=WARN)
+               f"ORIENTATION IS FORCED. Portrait spans "
+               f"{a.strut_centre - 324.65 / 2:.0f} to {a.strut_centre + 324.65 / 2:.0f} on a "
+               f"{a.fridge_d:.0f} deep case and fits. LANDSCAPE would hang "
+               f"{max(0.0, 555.23 / 2 - a.strut_centre):.1f} mm off the REAR edge, and cannot be "
+               f"slid forward to fix it: the clamp must stay inside the "
+               f"{a.clear_window:.1f} mm window. Centring landscape needs a strut centre of "
+               f"{a.fridge_d / 2:.1f}, which is "
+               f"{a.fridge_d / 2 + a.clamp_outer_half - a.clear_window:.1f} mm into the cover.",
+               42, size=10.6, fill=WARN)
     o += _para(1036, 700,
                "STILL OPEN: the bolt heads sit between the plate and the strut, so they must "
                "clear the display's rear box. The box is 260 x 134 and the bolts are 246 apart, "

@@ -71,6 +71,7 @@ class Assembly:
     # and because this thing sits unmoved for years. Wants GRIP as well as protection — felt would
     # protect but it would also let the assembly slide, which is the one thing it must not do.
     floor_pad: float = 3.0
+    cover_margin: float = 20.0            # clamp-to-hinge-cover clearance DELIBERATELY kept back
     hinge_proud: float = 36.5              # covers stand this far above the CASE top (spec sheet)
     hinge_cover: float = 203.0
     # --- the two bent parts. Named here because the elevation, the part drawings and the
@@ -170,11 +171,20 @@ class Assembly:
     def strut_centre(self) -> float:
         """Front-to-back centre of the strut pair, measured from the REAR edge.
 
-        Centred on the clear WINDOW, not on the case depth. Centring on the case looks like the
-        obvious choice and is wrong: it drives the front clamp 51.2 mm INTO the hinge cover. The
-        window is the only space that actually exists, so it is the datum.
+        As far FORWARD as the hinge cover allows while keeping `cover_margin` in hand. Three
+        datums were possible and the other two are both wrong:
+
+          case centre (304.8)  drives the front clamp 48.7 mm INTO the cover. Blocked outright.
+          window centre (203.3) is safe but leaves the screen 101.5 mm behind the case centre,
+                                pushed away from where anyone actually stands.
+          hard forward (256.1)  centres best but leaves ZERO tolerance against a cover position
+                                that was read off a photograph.
+
+        So: forward, but holding `cover_margin` back from the limit. That margin is the entire
+        design decision here — it buys centring with clearance, and it is the number to change if
+        the cover is ever measured properly or removed.
         """
-        return self.clear_window / 2.0
+        return self.clear_window - self.cover_margin - self.clamp_outer_half
 
     @property
     def display_bias_rearward(self) -> float:
