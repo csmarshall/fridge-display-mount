@@ -41,6 +41,10 @@ class Assembly:
     strut_depth: float = (13 / 16) * IN   # 20.64 low-profile
     strut_width: float = (1 + 5 / 8) * IN
     slot_pitch: float = 2.0 * IN          # 50.8, CONFIRMED off McMaster's table
+    n_struts: int = 2
+    clamped_surfaces: int = 2             # the fridge TOP and the fridge UNDERSIDE. Two planes.
+    clamp_spans: bool = True              # ONE clamp reaching across BOTH struts, per surface
+    lower_pad_inset: float = 40.0         # bearing pads inboard of each strut on the lower bar
     strut_spacing: float = 246.0          # = the plate's magnet-hole spacing
     bracket_t: float = 0.119 * IN         # 3.02 clamp and foot
     foam: float = 3.0
@@ -79,6 +83,30 @@ class Assembly:
     k_factor: float = 0.42
 
     @property
+    def n_clamps(self) -> int:
+        """How many clamp PARTS. Not the same as how many surfaces are gripped.
+
+        Spanning: one bar per surface, reaching across both struts — 2 parts for 2 surfaces.
+        Separate: one clamp per strut per surface — 4 parts for the same 2 surfaces.
+
+        Written down because the parts sheet once said 2 while the design needed 4, conflating
+        surfaces gripped with parts that grip them. A wrong quantity on a fabrication drawing is
+        the expensive kind of wrong.
+        """
+        return self.clamped_surfaces if self.clamp_spans else (self.n_struts
+                                                               * self.clamped_surfaces)
+
+    @property
+    def clamp_outer_half(self) -> float:
+        """Half the front-to-back extent of the clamping at one surface. Same either way."""
+        return (self.clamp_width / 2.0 if self.clamp_spans
+                else self.strut_spacing / 2.0 + self.part_width / 2.0)
+
+    @property
+    def n_feet(self) -> int:
+        return self.n_struts
+
+    @property
     def part_width(self) -> float:
         """Across the clamp and the foot, front-to-back. DERIVED, not chosen.
 
@@ -96,7 +124,13 @@ class Assembly:
 
     @property
     def clamp_width(self) -> float:
-        return self.part_width
+        """Across the clamp. A spanning bar must reach both struts AND carry its own edge margin.
+
+        Tying the two struts into a frame is the only lever that changes rigidity in KIND rather
+        than degree: widening the individual parts adds steel that is not tied to anything at its
+        far end, and the couple arm stays the strut spacing regardless.
+        """
+        return self.strut_spacing + self.part_width if self.clamp_spans else self.part_width
 
     @property
     def foot_width(self) -> float:
@@ -125,8 +159,7 @@ class Assembly:
     @property
     def hinge_margin(self) -> float:
         """Front clamp edge to the hinge cover. Negative means a collision."""
-        return self.clear_window - (self.strut_centre + self.strut_spacing / 2.0
-                                    + self.clamp_width / 2.0)
+        return self.clear_window - (self.strut_centre + self.clamp_outer_half)
 
     @property
     def gap(self) -> float:
@@ -539,12 +572,15 @@ def render(path: Path, a: Assembly) -> None:
     o += _card(760, 766, 500, 300, "")
     o += _base_detail(792, 1032, a)
     parts = [
-        ("A — studded clamp  x2", INK,
-         "L bracket. Long leg on the fridge top, or under its base. Short leg down the side. An "
-         "ELEVATOR BOLT through a square laser-cut hole is the stud: a flat 2.78 mm head that "
-         "hides inside the foam, and a square shoulder that stops it spinning. No welding, no "
-         "second operation. The lower one is the same part, flipped."),
-        ("B — slotted foot  x2", INK,
+        (f"A — spanning clamp bar  x{a.n_clamps}", INK,
+         f"One bar per surface, reaching across BOTH struts — {a.clamp_width:.0f} mm "
+         f"front-to-back. That is what ties the two struts into a frame; widening the individual "
+         f"parts would only add steel that is not joined to anything at its far end. Long leg on "
+         f"the fridge top, or under its base. ELEVATOR BOLTS through square laser-cut holes are "
+         f"the studs: a flat 2.78 mm head that hides inside the foam, and a square shoulder that "
+         f"stops it spinning. No welding. The lower one is the same part, flipped, bearing on two "
+         f"pads because the underside is not flat."),
+        (f"B — slotted foot  x{a.n_feet}", INK,
          "L bracket. Vertical leg carries the elongated slot the stud passes through; horizontal "
          "leg turns OUTBOARD and the strut stands on it, so the strut never touches the floor. "
          "The inboard foot was deleted as redundant."),

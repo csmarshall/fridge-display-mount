@@ -84,25 +84,36 @@ def sheet_parts(path: Path, a: Assembly) -> None:
     W, H = 1180, 760
     bd = bend_deduction(a)
     o = _frame(W, H, "THE TWO PARTS, FLAT",
-               "Two bent parts, two of each. Formed dimensions in; flat length is the sum of the "
-               "legs MINUS the bend deduction.", "FLAT PATTERNS — dimensions derived, bend "
-               "deduction is an ESTIMATE until SendCutSend's calculator confirms it")
+               f"Two bent parts: {a.n_clamps} clamps and {a.n_feet} feet. TWO surfaces are "
+               f"gripped (the fridge top and its underside) but the clamps SPAN both struts, so "
+               f"that is {a.n_clamps} bars, not {a.n_struts * a.clamped_surfaces} tabs.",
+               "FLAT PATTERNS — dimensions derived, bend deduction is an ESTIMATE until "
+               "SendCutSend's calculator confirms it")
 
-    PARTS = [("A — CLAMP  x2", a.clamp_leg, a.clamp_short, a.clamp_width,
-              "Long leg lies on the fridge top (or under its base). Short leg drops beside the "
-              "strut. The SAME part is used at both ends — the lower one is simply flipped."),
-             ("B — FOOT  x2", a.foot_leg, a.foot_rise, a.foot_width,
-              "Vertical leg carries the elongated slot the stud passes through. Horizontal leg "
-              "turns OUTBOARD and the strut stands on it, so the strut never touches the floor.")]
-    # ONE scale for both parts. Scaling each to fit its own panel drew two 60 mm-wide parts at
-    # visibly different widths, which invites exactly the wrong conclusion.
-    sc = 400.0 / max(lg + sh - bd for _, lg, sh, _, _ in PARTS)
-    for idx, (nm, leg, short, wid, note) in enumerate(PARTS):
+    half = a.strut_spacing / 2.0
+    PARTS = [(f"A — CLAMP BAR  x{a.n_clamps}", a.clamp_leg, a.clamp_short, a.clamp_width,
+              [-half, half], "round",
+              "Spans BOTH struts, so the two legs are tied into a frame rather than standing "
+              "independently. Long leg lies on the fridge top, or under its base. The SAME part "
+              "does both ends — the lower one is flipped."),
+             (f"B — FOOT  x{a.n_feet}", a.foot_leg, a.foot_rise, a.foot_width,
+              [0.0], "slot",
+              "One per strut. Vertical leg carries the elongated slot the stud passes through; "
+              "horizontal leg turns OUTBOARD and the strut stands on it, so the strut never "
+              "touches the floor.")]
+
+    # ONE scale for both parts, fitted to whichever dimension binds. The clamp is now 5.5x the
+    # foot's width, so scaling each to its own panel would make them impossible to compare.
+    sc = min(390.0 / max(lg + sh - bd for _, lg, sh, _, _, _, _ in PARTS),
+             186.0 / max(wd for _, _, _, wd, _, _, _ in PARTS))
+
+    for idx, (nm, leg, short, wid, holes, hkind, note) in enumerate(PARTS):
         px, py = 40 + idx * 580, 100
         o += _panel(px, py, 545, 470, nm, OK)
         flat_len = leg + short - bd
-        bx, by = px + 40, py + 150
         fw = wid * sc
+        bx = px + 40
+        by = py + 142 + (186.0 - fw) / 2.0
         o.append(f'<rect x="{bx:.1f}" y="{by:.1f}" width="{flat_len * sc:.1f}" '
                  f'height="{fw:.1f}" fill="{C_PLATE}" stroke="{INK}" stroke-width="1.4"/>')
         blx = bx + (leg - bd / 2.0) * sc
@@ -112,42 +123,59 @@ def sheet_parts(path: Path, a: Assembly) -> None:
         o.append(_t(blx, by - 20, "BEND 90", 9.0, fill=BAD, weight="bold"))
 
         hx = bx + (leg * 0.55) * sc
-        o.append(f'<circle cx="{hx:.1f}" cy="{by + fw / 2:.1f}" r="{a.bolt_dia * sc / 2:.1f}" '
-                 f'fill="{PAPER}" stroke="{INK}" stroke-width="1.1"/>')
-        if idx == 0:
-            o.append(_t(hx, by + fw + 26, "square hole 8.38 — stops the stud spinning", 8.6,
-                        fill=MUTED))
+        for hy_mm in holes:
+            cy = by + fw / 2.0 + hy_mm * sc
+            if hkind == "round":
+                o.append(f'<circle cx="{hx:.1f}" cy="{cy:.1f}" r="{a.bolt_dia * sc / 2:.1f}" '
+                         f'fill="{PAPER}" stroke="{INK}" stroke-width="1.1"/>')
+            else:
+                sl = a.slot_len * sc
+                o.append(f'<rect x="{hx - sl / 2:.1f}" y="{cy - 4:.1f}" width="{sl:.1f}" '
+                         f'height="8" rx="4" fill="{PAPER}" stroke="{INK}" stroke-width="1.1"/>')
+        if hkind == "round":
+            o.append(f'<line x1="{hx:.1f}" y1="{by + fw / 2 - half * sc:.1f}" x2="{hx:.1f}" '
+                     f'y2="{by + fw / 2 + half * sc:.1f}" stroke="{OK}" stroke-width="1"/>')
+            lx = bx + flat_len * sc + 12
+            o.append(f'<line x1="{hx:.1f}" y1="{by + fw / 2:.1f}" x2="{lx - 4:.1f}" '
+                     f'y2="{by + fw / 2:.1f}" stroke="{OK}" stroke-width="0.7" '
+                     f'stroke-dasharray="3 3"/>')
+            o.append(_t(lx, by + fw / 2 - 3, f"{a.strut_spacing:.0f} mm", 9.4, anchor="start",
+                        fill=OK, weight="bold"))
+            o.append(_t(lx, by + fw / 2 + 9, "strut centres", 8.6, anchor="start", fill=OK))
+            o.append(_t(bx + flat_len * sc / 2, by + fw + 24,
+                        "square holes 8.38 — the stud cannot spin", 8.6, fill=MUTED))
         else:
-            sl = a.slot_len * sc
-            o.append(f'<rect x="{hx - sl / 2:.1f}" y="{by + fw / 2 - 5:.1f}" width="{sl:.1f}" '
-                     f'height="10" rx="5" fill="{PAPER}" stroke="{INK}" stroke-width="1.1"/>')
-            o.append(_t(hx, by + fw + 26, f"slot {a.slot_len:.1f} long — height adjustment "
-                        f"lives HERE", 8.6, fill=MUTED))
+            o.append(_t(bx + flat_len * sc / 2, by + fw + 24,
+                        f"slot {a.slot_len:.1f} long — height adjustment lives HERE", 8.6,
+                        fill=MUTED))
 
-        for x0, x1, ly, txt in [(bx, blx, by + fw + 52, f"{leg:.0f} formed"),
-                                (blx, bx + flat_len * sc, by + fw + 52, f"{short:.0f} formed")]:
-            o.append(f'<line x1="{x0:.1f}" y1="{ly:.1f}" x2="{x1:.1f}" y2="{ly:.1f}" '
+        dy = by + fw + 48
+        for x0, x1, txt in [(bx, blx, f"{leg:.0f} formed"),
+                            (blx, bx + flat_len * sc, f"{short:.0f} formed")]:
+            o.append(f'<line x1="{x0:.1f}" y1="{dy:.1f}" x2="{x1:.1f}" y2="{dy:.1f}" '
                      f'stroke="{INK}" stroke-width="0.8"/>')
-            o.append(_t((x0 + x1) / 2, ly - 5, txt, 9.0, weight="bold"))
-        o.append(_t(bx + flat_len * sc / 2, by + fw + 86,
-                    f"FLAT {flat_len:.2f} x {wid:.0f} = {leg:.0f} + {short:.0f} - {bd:.2f}", 10.5,
-                    weight="bold"))
+            o.append(_t((x0 + x1) / 2, dy - 5, txt, 9.0, weight="bold"))
+        o.append(_t(bx + flat_len * sc / 2, dy + 26,
+                    f"FLAT {flat_len:.2f} x {wid:.0f}", 10.5, weight="bold"))
         o += _para(px + 16, py + 54, note, 62)
-        o += _para(px + 16, py + 386,
-                   f"Material {a.bracket_t:.2f} mm ({a.bracket_t / IN:.3f} in). Bend radius "
-                   f"{a.bend_radius:.2f} assumed at about 1T, K = {a.k_factor}. Deduction "
-                   f"{bd:.2f} mm. Both parts drawn at the SAME scale.", 62)
+        o += _para(px + 16, py + 424,
+                   f"Material {a.bracket_t:.2f} mm ({a.bracket_t / IN:.3f} in), bend radius "
+                   f"{a.bend_radius:.2f} at about 1T, K = {a.k_factor}, deduction {bd:.2f} mm. "
+                   f"Both parts drawn at the SAME scale.", 62)
 
-    o += _panel(40, 590, 1085, 130, "WHY THE DEDUCTION MATTERS MORE THAN IT LOOKS", WARN)
-    o += _para(56, 640, f"The deduction is {bd:.2f} mm — small, and tempting to ignore. It is not "
-               f"ignorable here because the foot's slot is what absorbs height error, and the "
-               f"slot is only {a.slot_len:.1f} mm long. Getting both bends wrong in the same "
-               f"direction spends {2 * bd:.1f} mm of a {a.slot_len:.1f} mm adjustment range "
-               f"before the thing is even on the fridge. Replace this estimate with SendCutSend's "
-               f"own calculator before ordering.", 150)
+    o += _panel(40, 590, 1085, 130, "WHAT SPANNING COSTS, AND THE ONE RISK IT CARRIES", WARN)
+    o += _para(56, 636,
+               f"Two bars instead of four tabs uses about 2.7x the clamp steel, and the top bar "
+               f"now fixes the {a.strut_spacing:.0f} mm spacing instead of relying on careful "
+               f"assembly — which is a gain. The risk is underneath: the LOWER bar has to bear "
+               f"across {a.clamp_width:.0f} mm of an underside measured at 10-20 mm and known "
+               f"NOT to be flat. It therefore bears on TWO PADS inset {a.lower_pad_inset:.0f} mm "
+               f"from each strut rather than along a continuous edge, so an uneven surface loads "
+               f"two known points instead of whichever high spot it finds first.", 150)
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
-    LOG.info("Wrote %s — 2 parts, bend deduction %.2f mm", path, bd)
+    LOG.info("Wrote %s — %d clamps x %.0f mm span, %d feet, deduction %.2f",
+             path, a.n_clamps, a.clamp_width, a.n_feet, bd)
 
 
 # --------------------------------------------------------------------------------------------
@@ -320,12 +348,18 @@ def sheet_clearance(path: Path, a: Assembly) -> None:
         o.append(f'<rect x="{cx - a.strut_width * sc / 2:.1f}" y="{oy + 30:.1f}" '
                  f'width="{a.strut_width * sc:.1f}" height="90" fill="{C_STRUT}" '
                  f'stroke="{INK}" stroke-width="1.2"/>')
-        o.append(f'<rect x="{cx - a.clamp_width * sc / 2:.1f}" y="{oy + 46:.1f}" '
-                 f'width="{a.clamp_width * sc:.1f}" height="58" fill="{C_STEEL}" '
-                 f'fill-opacity="0.85" stroke="{INK}" stroke-width="1.2"/>')
-        o.append(_t(cx, oy + 80, "clamp", 8.4, fill="#fff", weight="bold"))
+
     margin = a.hinge_margin
-    front_edge = centre + a.strut_spacing / 2.0 + a.clamp_width / 2.0
+    bar_x = ox + (centre - a.clamp_outer_half) * sc
+    o.append(f'<rect x="{bar_x:.1f}" y="{oy + 40:.1f}" width="{a.clamp_width * sc:.1f}" '
+             f'height="70" fill="{C_STEEL}" fill-opacity="0.9" stroke="{INK}" '
+             f'stroke-width="1.3"/>')
+    o.append(_t(ox + centre * sc, oy + 72,
+                f"ONE CLAMP BAR spanning both struts — {a.clamp_width:.0f} mm", 9.4, fill="#fff",
+                weight="bold"))
+    o.append(_t(ox + centre * sc, oy + 88, "ties the two struts into a frame", 8.4,
+                fill="#d8d2c8"))
+    front_edge = centre + a.clamp_outer_half
     o.append(f'<line x1="{ox + front_edge * sc:.1f}" y1="{oy + 160:.1f}" x2="{hc_x:.1f}" '
              f'y2="{oy + 160:.1f}" stroke="{BAD if margin < 10 else OK}" stroke-width="1.6"/>')
     o.append(_t((ox + front_edge * sc + hc_x) / 2, oy + 145, f"{margin:.1f} mm", 10,
@@ -361,13 +395,15 @@ def sheet_assembly(path: Path, a: Assembly) -> None:
               "Stud through the foot's slot and the strut's bottom slot. Nut FINGER TIGHT. The "
               "slot is the height adjustment, so leaving it loose is the whole point.",
               "loose"),
-             ("2  HOOK THE TOP CLAMPS OVER",
-              "Long leg on the fridge top, short leg down beside the strut. Washers behind the "
-              "strut. Nut on, still loose. The clamps hang the assembly in place while you work.",
+             ("2  HOOK THE TOP CLAMP BAR OVER",
+              "ONE bar across both struts. Long leg on the fridge top, short leg down beside "
+              "them, washers behind. Nuts on, still loose. Because it reaches both struts it "
+              "SETS the spacing for you rather than needing it measured.",
               "loose"),
-             ("3  SLIDE THE LOWER CLAMPS UP",
-              "Up their slots until the long leg engages under the appliance. This is the step "
-              "that needs a torch and the one with an open question against it.",
+             ("3  SLIDE THE LOWER BAR UP",
+              "Up until its two pads engage under the appliance. Pads, not a continuous edge, "
+              "because the underside is not flat. This is the step that needs a torch and the "
+              "one with an open question against it.",
               "loose"),
              ("4  LOCK EVERYTHING",
               "Top first, then bottom, then the feet. The struts go into tension between the two "
@@ -385,7 +421,7 @@ def sheet_assembly(path: Path, a: Assembly) -> None:
                     weight="bold"))
     o += _panel(40, 530, 1100, 140, "THE ONE THING THAT WILL BITE", BAD)
     o += _para(56, 580,
-               f"Tightening the top clamps before the lower ones are engaged pulls the struts "
+               f"Tightening the top bar before the lower one is engaged pulls the struts "
                f"against the panel at an angle and they will not then slide. The struts are "
                f"{a.strut_len:.0f} mm of stiff channel; there is no compliance in them to take "
                f"that out afterwards. If a lower clamp will not move, slacken the top and start "
