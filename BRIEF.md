@@ -205,6 +205,54 @@ for tipping — which means it can be modest, and stay out of the way.
 
 ---
 
+## 3c. THE ASSEMBLY — decided 2026-08-31
+
+**Two parts, two of each.**
+
+**Part A — the studded clamp (×2, the lower one flipped).** An L: the long leg lies on the fridge
+top, or reaches under its base. The short leg runs down (or up) the side. A **carriage bolt**
+through a square hole in the short leg gives the stud — its square shoulder locks in the laser-cut
+hole so it cannot spin, which means the bracket stays a pure laser-plus-one-bend part with no
+welding and no secondary operation. Foam lines the inside of the L; no steel touches the appliance
+anywhere.
+
+**Part B — the slotted foot (×2, back to back).** Two vertical slots at 246 mm — strut spacing and
+stud spacing. Back to back their slots align and their horizontal legs point opposite ways: one
+inboard under the fridge, one outboard onto the floor. **The strut stands on the outboard leg**, so
+it never touches the floor and needs no separate floor pad.
+
+### The stack through the stud, and the washers that make it work
+
+At the base the stud passes clamp leg + foot + foot = **9.07 mm** before it reaches the strut. Left
+alone that would stand the strut off at the bottom and hard against the panel at the top, so it
+would lean.
+
+**Fix: 6.05 mm of washers behind the strut at the top**, replacing the two foot legs that are not
+there. The strut then sits **~12 mm off the panel, parallel, top and bottom** — and nothing but
+foam ever touches the appliance.
+
+Display CG lands **65.1 mm** off the panel, against 66.3 for the magnet version and 45.7 for the
+hook. The doors project 117 mm, so it is still well inside them.
+
+### Assembly sequence
+
+1. Bolt the two feet back to back, slots aligned, and stand the struts on the outboard legs.
+2. Hook the top clamps over the fridge top; stud through washers and the strut slot; nut loose.
+3. Slide the lower clamps **up** their slots until they engage under the appliance; lock.
+4. Tighten the top nuts. The struts go into tension between the clamps and the fridge is gripped.
+
+### Sliding along the panel — SOLVED by geometry, not friction
+
+Friction alone gives roughly **15–30 lb** of resistance (foot plus preloaded clamps). Enough for
+ordinary use, but not positive location.
+
+**Use the clear window instead.** The hinge cover occupies the front 203 mm of the fridge top and
+the measured clear window behind it is **406 mm**. Size the top clamp's long leg to very nearly
+fill that window and it is captured front-to-back between the hinge cover and the rear edge — a
+geometric stop, using a measurement already in hand, needing no extra feature and no second bend.
+
+---
+
 ## 3b. The foot, after the gap was measured
 
 **10–20 mm, and not flat.** Two consequences.

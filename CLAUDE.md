@@ -33,6 +33,19 @@ clamp lifts the foot off the ground.
 If a future revision removes the clamp, the magnets have to come back to structural duty and every
 number in §1.1 changes with them.
 
+### 1.0b Two parts, two of each — and the stud is a CARRIAGE BOLT
+Part A is the studded clamp, Part B the slotted foot. The stud is a carriage bolt through a square
+laser-cut hole: the square shoulder stops it spinning, so the bracket needs no welding and stays a
+laser-plus-one-bend part. **Do not specify a welded stud** — SendCutSend cannot weld and it would
+make the bracket a two-operation part.
+
+The strut stands on the outboard foot leg and never touches the floor. Because the base stack puts
+9.07 mm between panel and strut, the top needs **6.05 mm of washers** to keep the strut parallel.
+Without them it leans.
+
+**Sliding is stopped by the 406 mm clear window**, not by friction: size the top clamp's long leg
+to fill it and the hinge cover and rear edge capture the assembly front-to-back.
+
 ### 1.1 The load path is the FLOOR, and the magnets are for STIFFNESS
 Vertical load goes display → plate → struts → bent foot → floor. Compression into a floor is
 unarguable and needs no justification.
