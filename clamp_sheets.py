@@ -845,9 +845,7 @@ def sheet_plate(path: Path, a: Assembly) -> None:
          f"Depth {a.notch_depth:.1f} is derived: fan near edge minus {a.scale_tol:.0f} mm for the "
          f"fact that every one of those figures is SCALED off a raster, not dimensioned.", BAD),
         (f"Bolt rows are {a.plate_bolt_dy:.1f} apart — exactly {a.plate_bolt_pitches} slot "
-         f"pitches, so both sit identically in their slots. Putting them ABOVE and BELOW the box "
-         f"instead needs 6 pitches and a plate 2.3x taller, whose edge would reach past the Pi "
-         f"opening and bring the vent windows back.", MUTED),
+         f"pitches, so both sit identically in their slots.", MUTED),
         (f"ORIENTATION — CORRECTED. At the old 246 spacing landscape overhung the rear edge and "
          f"was impossible. Narrowing to {a.strut_spacing:.0f} moved the struts forward, and it now "
          f"technically fits: it clears the rear by "
@@ -892,7 +890,7 @@ def sheet_depth(path: Path, a: Assembly) -> None:
                "DEPTH STUDY — the same parts, arranged two ways")
 
     PANEL_W, BOX_W = 324.65, a.box_w_portrait
-    nest_sp = BOX_W + a.strut_width + 6.0                 # box must pass BETWEEN the struts
+    nest_sp = a.strut_spacing            # ask Assembly; do not re-derive it here
     # DEPTH is the whole subject and is only 76 mm against 325 front-to-back, so at one scale it
     # renders as a sliver. Exaggerate depth 4x, exactly as the side elevation does, and say so.
     SD, SW = 4.0, 1.02
@@ -968,20 +966,21 @@ def sheet_depth(path: Path, a: Assembly) -> None:
         o.append(_t(px + 310, py + 462, f"depth exaggerated {SD:.0f}x; front-to-back true scale", 8.4, fill=MUTED))
         return total, spacing
 
-    cur, _ = draw(40, 100, "A — AS BUILT: strut BEHIND the box, depths ADD", a.strut_spacing,
+    cur, _ = draw(40, 100, "A — SUPERSEDED: strut BEHIND the box, depths ADD", 160.0,
                   False, INK)
-    nst, _ = draw(700, 100, "B — NESTED: strut BESIDE the box, depths SHARE", nest_sp, True, OK)
+    nst, _ = draw(700, 100, "B — ADOPTED: strut BESIDE the box, depths SHARE", nest_sp,
+                  True, OK)
 
     o.extend(_panel(40, 600, 1340, 250, "WHAT THE TWO DRAWINGS DIFFER BY", OK))
     rows = [
         ("depth off the fridge", f"{cur:.1f} mm", f"{nst:.1f} mm",
          f"{cur - nst:.1f} mm closer — exactly the strut depth: the strut leaves the stack"),
-        ("strut spacing", f"{a.strut_spacing:.0f} mm", f"{nest_sp:.1f} mm",
+        ("strut spacing", "160 mm", f"{nest_sp:.2f} mm",
          f"the {BOX_W:.0f} mm box must PASS BETWEEN the struts, so they open up"),
-        ("plate", f"{a.plate_w:.0f} wide, in front of the struts",
-         f"{nest_sp + 2 * (a.plate_edge + a.plate_margin):.0f} wide, BEHIND them",
+        ("plate", "211 wide, in front of the struts",
+         f"{a.plate_w:.0f} wide, BEHIND them",
          "VESA is inside the box footprint, so a plate clearing the box cannot reach it"),
-        ("screen off case centre", "25.7 mm", f"{a.fridge_d / 2 - (a.clear_window - a.cover_margin - (nest_sp + a.part_width) / 2):.1f} mm",
+        ("screen off case centre", "25.7 mm", f"{a.display_bias_rearward:.1f} mm",
          "wider spacing lengthens the clamp bar, pushing the struts back again"),
         ("hardware behind the plate", "n/a",
          f"{a.gap - a.plate_t:.2f} mm of room",
@@ -1004,7 +1003,147 @@ def sheet_depth(path: Path, a: Assembly) -> None:
              path, cur, nst, cur - nst, nest_sp)
 
 
-SHEETS = {"clamp_depth": sheet_depth,
+# --------------------------------------------------------------------------------------------
+def sheet_stack(path: Path, a: Assembly) -> None:
+    """THE STACK, in section, at 7x. Two cuts, because the stack is not the same everywhere.
+
+    Through a STRUT you see plate, strut, air, panel. Through the CENTRE you see plate, box,
+    panel — the strut is not there at all, which is the entire point of nesting.
+    """
+    W, H = 1420, 900
+    SC = 7.0
+    o = _frame(W, H, "THE STACK, PANEL TO SCREEN",
+               f"Section at {SC:.0f}x. The stack differs depending on where you cut it, so both "
+               f"cuts are drawn. Fridge on the left, room on the right.",
+               "STACK DETAIL — nested: the box passes BETWEEN the struts")
+
+    ox = 150.0
+    def X(mm):
+        return ox + mm * SC
+
+    # ---- key: where the two cuts are taken, in plan
+    o.extend(_panel(1080, 100, 300, 250, "WHERE THE CUTS ARE", MUTED))
+    kx, ky, ks = 1230.0, 230.0, 0.62
+    o.append(f'<rect x="{kx - a.box_w_portrait * ks / 2:.1f}" y="{ky - 40:.1f}" '
+             f'width="{a.box_w_portrait * ks:.1f}" height="80" fill="#2b3440"/>')
+    o.append(_t(kx, ky + 4, "box", 8, fill="#fff"))
+    for sgn in (1, -1):
+        sx = kx + sgn * a.strut_spacing * ks / 2
+        o.append(f'<rect x="{sx - a.strut_width * ks / 2:.1f}" y="{ky - 40:.1f}" '
+                 f'width="{a.strut_width * ks:.1f}" height="80" fill="{C_STRUT}" '
+                 f'stroke="{INK}"/>')
+    o.append(f'<line x1="{kx - a.strut_spacing * ks / 2:.1f}" y1="{ky - 62:.1f}" '
+             f'x2="{kx - a.strut_spacing * ks / 2:.1f}" y2="{ky + 62:.1f}" stroke="{BAD}" '
+             f'stroke-width="1.4" stroke-dasharray="6 4"/>')
+    o.append(_t(kx - a.strut_spacing * ks / 2, ky - 68, "A", 11, fill=BAD, weight="bold"))
+    o.append(f'<line x1="{kx:.1f}" y1="{ky - 62:.1f}" x2="{kx:.1f}" y2="{ky + 62:.1f}" '
+             f'stroke={chr(34)}{OK}{chr(34)} stroke-width="1.4" stroke-dasharray="6 4"/>')
+    o.append(_t(kx, ky - 68, "B", 11, fill=OK, weight="bold"))
+    o.append(_t(kx, ky + 84, "plan view, looking down", 8.4, fill=MUTED))
+
+    # ---- the two sections
+    def section(py, title, layers, colour):
+        o.extend(_panel(40, py, 1010, 250, title, colour))
+        band, top = 92.0, py + 78
+        o.append(f'<rect x="{X(-14):.1f}" y="{top - 16:.1f}" width="{14 * SC:.1f}" '
+                 f'height="{band + 32:.1f}" fill="{FRIDGE_SIDE}"/>')
+        o.append(_t(X(-7), top + band / 2, "FRIDGE", 8.4, fill="#cfc9c2", rot=-90))
+        z = 0.0
+        for li, (nm, d, fill, txt) in enumerate(layers):
+            if fill is None:                       # air
+                o.append(f'<rect x="{X(z):.1f}" y="{top:.1f}" width="{d * SC:.1f}" '
+                         f'height="{band:.1f}" fill="none" stroke="{RULE}" '
+                         f'stroke-width="0.8" stroke-dasharray="3 3"/>')
+            else:
+                o.append(f'<rect x="{X(z):.1f}" y="{top:.1f}" width="{d * SC:.1f}" '
+                         f'height="{band:.1f}" fill="{fill}" stroke="{INK}" stroke-width="1.1"/>')
+            o.append(_t(X(z + d / 2), top + band + 15, f"{d:.2f}", 8.6, weight="bold",
+                        fill=INK if fill else MUTED))
+            ly = top - 8 - (16 if li % 2 else 0)
+            o.append(f'<line x1="{X(z + d / 2):.1f}" y1="{ly + 3:.1f}" '
+                     f'x2="{X(z + d / 2):.1f}" y2="{top - 1:.1f}" stroke="{RULE}" '
+                     f'stroke-width="0.7"/>')
+            o.append(_t(X(z + d / 2), ly, nm, 8.4, fill=INK if fill else MUTED,
+                        weight="bold"))
+            z += d
+        o.append(f'<line x1="{X(0):.1f}" y1="{top + band + 34:.1f}" x2="{X(z):.1f}" '
+                 f'y2="{top + band + 34:.1f}" stroke="{colour}" stroke-width="1.5"/>')
+        for xx in (0.0, z):
+            o.append(f'<line x1="{X(xx):.1f}" y1="{top + band + 29:.1f}" x2="{X(xx):.1f}" '
+                     f'y2="{top + band + 39:.1f}" stroke="{colour}" stroke-width="1.5"/>')
+        o.append(_t(X(z / 2), top + band + 29, f"{z:.2f} mm total", 10.5, fill=colour,
+                    weight="bold"))
+        return top, band
+
+    air1 = a.gap - a.plate_t
+    strut_air = a.rear_box - a.strut_depth
+    top_a, band = section(100, "SECTION A-A — through a STRUT", [
+        ("air", air1, None, MUTED),
+        ("PLATE", a.plate_t, C_PLATE, INK),
+        ("STRUT", a.strut_depth, C_STRUT, INK),
+        ("air", strut_air, None, MUTED),
+        ("display PANEL", a.panel_d, "#101820", "#fff"),
+    ], BAD)
+    o.append(_t(X(a.gap + a.strut_depth + strut_air / 2), top_a + band + 52,
+                f"the strut stops {strut_air:.2f} mm short of the panel — it is beside the box, "
+                f"not behind it", 8.4, fill=MUTED))
+
+    top_b, band_b = section(380, "SECTION B-B — through the CENTRE, where the box is", [
+        ("air + PADS", air1, None, MUTED),
+        ("PLATE", a.plate_t, C_PLATE, INK),
+        ("REAR BOX — between the struts", a.rear_box, "#5b6b7d", "#fff"),
+        ("display PANEL", a.panel_d, "#101820", "#fff"),
+    ], OK)
+    # the M4 into VESA, head living in the air gap
+    hy = top_b + band_b / 2
+    o.append(f'<rect x="{X(2.0):.1f}" y="{hy - 9:.1f}" width="{4.02 * SC:.1f}" height="18" '
+             f'rx="2" fill="{C_STEEL}" stroke="{INK}" stroke-width="1"/>')
+    o.append(f'<rect x="{X(a.gap - a.plate_t):.1f}" y="{hy - 4:.1f}" '
+             f'width="{(a.plate_t + 8) * SC:.1f}" height="8" fill="{C_STEEL}" stroke="{INK}" '
+             f'stroke-width="0.8"/>')
+    o.append(f'<line x1="{X(4.0):.1f}" y1="{hy + 10:.1f}" x2="{X(4.0):.1f}" '
+             f'y2="{top_b + band_b + 52:.1f}" stroke="{INK}" stroke-width="0.7"/>')
+    o.append(_t(X(0.0), top_b + band_b + 64,
+                f"M4 into the VESA insert — its head lives in the {air1:.2f} mm gap, and the "
+                f"pads sit at the plate CORNERS clear of it", 8.4, anchor="start", fill=INK))
+
+    o.extend(_panel(1080, 380, 300, 250, "THE PADS", WARN))
+    o.extend(_para(1096, 424,
+                   f"{a.n_pads} pads, {a.pad_dia:.0f} mm across, {a.pad_t:.2f} thick — at the "
+                   f"plate corners, NOT a covering sheet.", 34, size=9.8))
+    o.extend(_para(1096, 486,
+                   "Nothing presses the plate against the fridge, so there is nothing here to "
+                   "compress. Their only job is to stop bare steel meeting paint if the plate "
+                   "ever flexes.", 34, size=9.8))
+    o.extend(_para(1096, 570,
+                   "They clear the M4 heads by sitting at the corners, away from the VESA "
+                   "pattern.", 34, size=9.8))
+
+    o.extend(_panel(40, 660, 1340, 200, "WHAT THIS BUYS", OK))
+    rows = [(f"display face, off the fridge panel", f"{a.display_face:.2f} mm",
+             f"was 75.71 stacked — {75.71 - a.display_face:.2f} mm closer, {100*(1-a.display_face/75.71):.0f}%"),
+            ("of which the DISPLAY ITSELF is", f"{a.fixed_part:.0f} mm",
+             "box 25 + panel 18. No mount can remove this."),
+            ("of which the MOUNT adds", f"{a.display_face - a.fixed_part:.2f} mm",
+             "just the clamp gap. Stacked, the mount added 32.71."),
+            ("strut spacing, now DERIVED", f"{a.strut_spacing:.2f} mm",
+             f"box {a.box_w_portrait:.0f} + strut {a.strut_width:.2f} + {2*a.box_clearance:.0f} "
+             f"clearance. Not a choice any more — the box has to pass through.")]
+    for i, (k, v, note) in enumerate(rows):
+        yy = 700 + i * 38
+        if i % 2 == 0:
+            o.append(f'<rect x="52" y="{yy - 16:.1f}" width="1316" height="34" fill="#f2f5f7"/>')
+        o.append(_t(64, yy + 2, k, 10.4, anchor="start", weight="bold"))
+        o.append(_t(430, yy + 2, v, 11.0, anchor="end", weight="bold", fill=OK))
+        o.append(_t(460, yy + 2, note, 9.6, anchor="start", fill=MUTED))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — face %.2f (display %.0f + mount %.2f), spacing %.2f",
+             path, a.display_face, a.fixed_part, a.display_face - a.fixed_part, a.strut_spacing)
+
+
+SHEETS = {"clamp_stack": sheet_stack,
+          "clamp_depth": sheet_depth,
           "clamp_frame": sheet_frame,
           "clamp_plate": sheet_plate,
           "clamp_approval": sheet_approval, "clamp_parts": sheet_parts,

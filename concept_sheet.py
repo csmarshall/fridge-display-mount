@@ -45,14 +45,10 @@ class Assembly:
     clamped_surfaces: int = 2             # the fridge TOP and the fridge UNDERSIDE. Two planes.
     clamp_spans: bool = True              # ONE clamp reaching across BOTH struts, per surface
     lower_pad_inset: float = 40.0         # bearing pads inboard of each strut on the lower bar
-    # 246 used to live here, inherited verbatim from the magnet plate's MAGNET-HOLE spacing and
-    # never re-derived once the magnets went away — the drifting constant CLAUDE.md warns about.
-    # What actually bounds it: the bolts should clear the rear box (134 wide in portrait) without
-    # leaning on spacer height, which floors it near 155; and touch-press wobble at the screen
-    # edge grows as 1/spacing^2. 160 keeps that wobble under a millimetre while making the plate
-    # 29% narrower AND -- because the clamp bar shortens with it and can sit further forward in
-    # the hinge window -- cutting the screen's rearward bias from 68.7 mm to 25.7.
-    strut_spacing: float = 160.0
+    nested: bool = True                   # box passes BETWEEN the struts instead of behind them
+    box_clearance: float = 6.0            # each side, box to strut
+    pad_dia: float = 25.0                 # small pads, NOT a full sheet — see pad_t
+    n_pads: int = 4
     bracket_t: float = 0.119 * IN         # 3.02 clamp and foot
     foam: float = 3.0
     plate_t: float = 0.119 * IN
@@ -203,6 +199,34 @@ class Assembly:
         return self.plate_bolt_dx / 2.0 - self.box_w_portrait / 2.0
 
     @property
+    def strut_spacing(self) -> float:
+        """Front-to-back centres of the two struts. DERIVED, and by different rules per layout.
+
+        246 used to be hardcoded here, inherited verbatim from the magnet plate's MAGNET-HOLE
+        spacing and never re-derived once the magnets went away.
+
+        NESTED: the rear box has to pass BETWEEN the struts, so the box width plus a strut width
+        plus clearance IS the spacing. Nothing else is free to choose.
+
+        STACKED: bounded below by the bolts clearing the box (~155) and above by plate width;
+        touch-press wobble at the screen edge grows as 1/spacing^2, and 160 keeps it under a
+        millimetre.
+        """
+        if self.nested:
+            return self.box_w_portrait + self.strut_width + 2.0 * self.box_clearance
+        return 160.0
+
+    @property
+    def pad_t(self) -> float:
+        """Pad thickness behind the plate. Fills the space that is actually left, no more.
+
+        These are small pads at the plate corners, not a covering sheet: the plate is not pressed
+        against the fridge by anything, so there is nothing here to compress. Their only job is to
+        stop bare steel meeting paint if the plate ever flexes.
+        """
+        return self.gap - self.plate_t
+
+    @property
     def plate_bolt_dy(self) -> float:
         """Vertical spacing of the plate-to-strut bolts. A WHOLE NUMBER OF SLOT PITCHES.
 
@@ -297,12 +321,25 @@ class Assembly:
 
     @property
     def display_face(self) -> float:
+        """How far the screen face stands off the fridge panel.
+
+        NESTED: the strut is BESIDE the box, not behind it, so its depth leaves the stack. The
+        plate lives inside the clamp gap rather than adding to it — the clamps set the strut's
+        back face wherever the plate happens to be.
+        """
+        if self.nested:
+            return self.gap + self.rear_box + self.panel_d
         return self.gap + self.strut_depth + self.plate_t + self.rear_box + self.panel_d
 
     @property
     def fixed_part(self) -> float:
-        """The bit no design decision can change."""
-        return self.strut_depth + self.plate_t + self.rear_box + self.panel_d
+        """The bit no design decision can change: the display's OWN depth.
+
+        The strut and plate used to be counted here as if they were unavoidable. Once the box
+        nests between the struts they are not part of the depth at all, so the only irreducible
+        term is the display itself.
+        """
+        return self.rear_box + self.panel_d
 
     @property
     def proud(self) -> float:
