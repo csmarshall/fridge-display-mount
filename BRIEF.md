@@ -216,23 +216,46 @@ hole so it cannot spin, which means the bracket stays a pure laser-plus-one-bend
 welding and no secondary operation. Foam lines the inside of the L; no steel touches the appliance
 anywhere.
 
-**Part B — the slotted foot (×2, back to back).** Two vertical slots at 246 mm — strut spacing and
-stud spacing. Back to back their slots align and their horizontal legs point opposite ways: one
-inboard under the fridge, one outboard onto the floor. **The strut stands on the outboard leg**, so
-it never touches the floor and needs no separate floor pad.
+**Part B — the slotted foot (×2, one per strut).** Vertical leg carrying an elongated slot for the
+stud; horizontal leg bending **outward, into the room**, tucking under the strut so the strut
+stands on it. It therefore never touches the floor and needs no separate floor pad.
+
+**REVISED 2026-08-31: one foot per strut, not two back to back.** The inboard foot was removed
+because it was doing nothing the rest of the assembly was not already doing:
+
+| what it might have done | what actually does it |
+|---|---|
+| resist tipping outward | the outboard foot |
+| resist tipping inward | **the fridge** — it is right there |
+| anti-lift under the appliance | the lower CLAMP, which was always its job |
+
+Removing it takes one layer out of the stud stack: the gap drops 12.07 → **9.05 mm**, the display
+face comes in to **75.7 mm**, and the top washers halve from 6.05 to **3.02 mm**.
 
 ### The stack through the stud, and the washers that make it work
 
-At the base the stud passes clamp leg + foot + foot = **9.07 mm** before it reaches the strut. Left
+At the base the stud passes clamp leg + foot leg = **6.05 mm** before it reaches the strut. Left
 alone that would stand the strut off at the bottom and hard against the panel at the top, so it
 would lean.
 
-**Fix: 6.05 mm of washers behind the strut at the top**, replacing the two foot legs that are not
-there. The strut then sits **~12 mm off the panel, parallel, top and bottom** — and nothing but
-foam ever touches the appliance.
+**Fix: 3.02 mm of washers behind the strut at the top**, replacing the foot leg that is not there.
+The strut then sits **~9 mm off the panel, parallel, top and bottom** — and nothing but foam ever
+touches the appliance.
 
-Display CG lands **65.1 mm** off the panel, against 66.3 for the magnet version and 45.7 for the
-hook. The doors project 117 mm, so it is still well inside them.
+### How far the display ends up sticking out
+
+66.7 mm of it is fixed no matter what — strut 20.64 + plate + 25 mm rear box + 18 mm panel. Only
+the gap is a variable:
+
+| | gap | display face off the panel |
+|---|---|---|
+| two feet back to back | 12.07 mm | 78.7 mm |
+| **one foot, as built** | **9.05 mm** | **75.7 mm** |
+| feet outboard of the strut entirely | 6.02 mm | 72.7 mm |
+
+Standard-height channel instead of low-profile would add **20.6 mm** on top of any of these, which
+is why low-profile is a requirement and not a preference. Everything here is well inside the
+117 mm the doors project.
 
 ### Assembly sequence
 

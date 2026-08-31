@@ -39,9 +39,17 @@ laser-cut hole: the square shoulder stops it spinning, so the bracket needs no w
 laser-plus-one-bend part. **Do not specify a welded stud** — SendCutSend cannot weld and it would
 make the bracket a two-operation part.
 
-The strut stands on the outboard foot leg and never touches the floor. Because the base stack puts
-9.07 mm between panel and strut, the top needs **6.05 mm of washers** to keep the strut parallel.
-Without them it leans.
+**ONE foot per strut, outboard, tucked under the strut.** The strut stands on its horizontal leg
+and never touches the floor. The inboard foot was removed 2026-08-31 as redundant: tipping outward
+is the outboard foot's job, tipping inward is stopped by the fridge itself, and anti-lift under the
+appliance was always the lower clamp's.
+
+Because the base stack puts 6.05 mm between panel and strut, the top needs **3.02 mm of washers**
+to keep the strut parallel. Without them it leans.
+
+**LOW-PROFILE CHANNEL IS A REQUIREMENT, not a preference.** Standard height would add 20.6 mm to
+the display's projection. Minimising that projection is an explicit goal — the display face sits
+75.7 mm off the panel as designed, of which 66.7 mm is unavoidable.
 
 **Sliding is stopped by the 406 mm clear window**, not by friction: size the top clamp's long leg
 to fill it and the hinge cover and rear edge capture the assembly front-to-back.
