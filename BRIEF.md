@@ -156,12 +156,52 @@ That is a real give-back — but a light retention bracket with a short reach is
 commitment than an arm carrying the whole load, and the clear-window measurement that made the
 hook work is already in hand.
 
+### The two clamp brackets are ONE part, made twice
+
+Top and bottom are the same L, the lower one flipped. Foam goes on the same face of the part in
+both cases — facing down onto the fridge top, facing up against its underside. One DXF, one part
+number, quantity two.
+
+Size the part for the BOTTOM's constraint, which is the strict one: it has to enter a 10–20 mm
+irregular gap. The top merely rests on a surface and has a 406 mm clear window to live in, so it
+is never the binding case.
+
+### The foot and the lower clamp must be SEPARATE parts
+
+They point opposite ways off the same strut — foot outward onto the floor, clamp inward under the
+appliance — so they do not conflict. But they cannot be one part, and the reason is mechanical
+rather than aesthetic:
+
+**The lower clamp has to slide UP the slot to generate clamp force. The foot has to stay on the
+floor.** Combine them and tightening the clamp lifts the foot off the ground, which destroys the
+load path you built the foot for.
+
+### Sizing the foot, now that the clamp exists
+
+If the foot had to resist tipping alone, by reaching out into the room:
+
+| outward reach | SF |
+|---|---|
+| 200 mm | 1.04 |
+| 250 mm | 1.30 |
+| 300 mm | **1.56** |
+
+About 300 mm gets there unaided — and that is a lot of steel on a kitchen floor, right where
+someone walks.
+
+**The clamp removes that requirement.** With anti-tip handled at the top for 3.8 lb, the foot only
+has to carry 154 N downward and not rock. Size it for bearing and for not wobbling underfoot, not
+for tipping — which means it can be modest, and stay out of the way.
+
 ### Open on this
 
-- **How the two brackets generate clamp force.** Sliding the lower one up the slot until snug is
-  the obvious mechanism and needs no extra parts, but it wants drawing before it is believed.
-- **What the bottom bracket engages.** It faces the same 10–20 mm irregular gap as the foot, so it
-  may end up being the same conforming-pad problem in a different place.
+- **How the brackets generate clamp force.** Sliding the lower one up the slot until snug needs no
+  extra parts, but it wants drawing before it is believed — this is exactly the kind of thing that
+  reads fine in prose and turns out to need a jacking feature once it is drawn.
+- **What the bottom bracket engages.** Same 10–20 mm irregular gap as the foot, so probably the
+  same conforming-pad answer in a second place.
+- **Whether the identical-part idea survives contact with both reaches.** If the bottom is limited
+  by fouling and the top by nothing, one length may be wrong for one of them.
 
 ---
 

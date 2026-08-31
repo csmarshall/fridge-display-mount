@@ -22,6 +22,13 @@ panel positively.
 The top bracket carries NO weight — the foot does — so it holds about **3.8 lb**, and its reach
 only has to be enough not to slip. It is not a hook; do not size it like one.
 
+**The two clamp brackets are ONE part made twice**, the lower flipped, sized for the bottom's
+10–20 mm gap because the top is never the binding case.
+
+**The foot and the lower clamp must NOT be combined into one part.** The clamp slides UP the slot
+to generate its force; the foot must stay on the floor. One part doing both means tightening the
+clamp lifts the foot off the ground.
+
 **Consequence: the magnets are no longer structural.** They drop to anti-rattle, or go entirely.
 If a future revision removes the clamp, the magnets have to come back to structural duty and every
 number in §1.1 changes with them.
