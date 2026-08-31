@@ -105,7 +105,11 @@ class Assembly:
     floor_pad: float = 3.0
     cover_margin: float = 20.0            # clamp-to-hinge-cover clearance DELIBERATELY kept back
     hinge_proud: float = 36.5              # covers stand this far above the CASE top (spec sheet)
-    hinge_cover: float = 203.0
+    # MEASURED 2026-08-31: Charles read 15.75 in from the rear edge to the cover, so the cover
+    # is 609.6 - 400.05 = 209.55 deep. The earlier 203 came from reading the same photo at
+    # ruler 16 in. His word was "roughly", and a quarter inch either way moves this 6.35 mm —
+    # which matters, because landscape lives or dies inside that quarter inch.
+    hinge_cover: float = 209.55
     # --- the two bent parts. Named here because the elevation, the part drawings and the
     # --- clearance check all need them and must never disagree.
     clamp_leg: float = 150.0              # long leg, lies on the fridge top / under its base
