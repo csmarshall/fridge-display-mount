@@ -62,7 +62,11 @@ class Assembly:
     bracket_t: float = 0.119 * IN         # 3.02 clamp and foot
     foam: float = 3.0
     plate_t: float = 0.119 * IN
-    plate_margin: float = 15.0            # beyond the true minimum, all round
+    # Material beyond the 2T hole-to-edge rule, purely for handling — a laser-cut edge on a
+    # 3 mm plate is sharp and 6 mm of material to hold is better than 0. It is NOT tolerance
+    # margin: every input to the plate's width (box 134 DIMENSIONED, strut 41.27 from McMaster,
+    # 6 mm clearance chosen) is known, so there is nothing here to hedge against.
+    plate_margin: float = 6.0
     plate_bolt_pitches: int = 2           # strut-bolt rows, in WHOLE slot pitches
     # --- REAR BOX. 260 x 134 is DIMENSIONED on Waveshare's drawing; everything below it is
     # --- SCALED against that 260, because the drawing dimensions none of it.
