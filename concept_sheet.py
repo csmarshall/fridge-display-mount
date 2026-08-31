@@ -51,8 +51,14 @@ class Assembly:
     plate_t: float = 0.119 * IN
     plate_margin: float = 15.0            # beyond the true minimum, all round
     plate_bolt_pitches: int = 2           # strut-bolt rows, in WHOLE slot pitches
-    pi_fan_tol: float = 5.0               # radius was SCALED off a raster drawing, not dimensioned
-    pi_open_half: float = 20.0            # ESTIMATE — the opening's own size is not published
+    # --- REAR BOX. 260 x 134 is DIMENSIONED on Waveshare's drawing; everything below it is
+    # --- SCALED against that 260, because the drawing dimensions none of it.
+    box_h_portrait: float = 260.0         # the box's 260 axis runs VERTICAL in portrait
+    fan_r: float = 82.0                   # SCALED — fan centre from the VESA/box centre
+    fan_dia: float = 30.0                 # SCALED — Pi 5 active cooler is about this
+    gpio_r: float = 107.0                 # SCALED — GPIO slot, further out than the fan
+    gpio_len: float = 50.0                # SCALED
+    scale_tol: float = 5.0                # how wrong a raster-scaled figure could be
     notch_w: float = 50.0
     box_w_portrait: float = 134.0         # rear box, SHORT axis — horizontal in portrait
     # ELEVATOR bolt, 5/16-18. Head 1 3/16 in dia x 7/64 in high, FLAT; square neck 0.33 x 0.19 in.
@@ -148,12 +154,22 @@ class Assembly:
 
     @property
     def opening_near_edge(self) -> float:
-        """Worst-case nearest approach of the Pi opening to the plate centre.
+        """Worst-case nearest approach of the Pi opening to the box centre.
 
-        Both terms are soft: the radius was scaled off a raster drawing (+/-5) and the opening's
-        own size is NOT published at all. This is the number the notches insure against.
+        The FAN is the near feature, not the GPIO slot. Every term here is scaled off a raster,
+        so the tolerance is carried explicitly rather than hidden in a rounded number.
         """
-        return self.pi_fan_radius - self.pi_fan_tol - self.pi_open_half
+        return self.fan_r - self.fan_dia / 2.0 - self.scale_tol
+
+    @property
+    def plate_covers_fan_by(self) -> float:
+        """How far the plate edge laps over the fan. POSITIVE means the notch is doing real work.
+
+        This was assumed to be negative — the notches were described as idle insurance against a
+        radius that might be wrong. Reading the fan position off Waveshare's own drawing says
+        otherwise: the plate does overlap it, and the notch is what uncovers it.
+        """
+        return self.plate_h / 2.0 - (self.fan_r - self.fan_dia / 2.0)
 
     @property
     def notch_depth(self) -> float:
@@ -168,18 +184,6 @@ class Assembly:
     @property
     def n_notches(self) -> int:
         return 2
-
-    @property
-    def n_vents(self) -> int:
-        """Two, not four.
-
-        Four windows existed so one landed over the Pi opening in EVERY 90 degree rotation. But
-        90 and 270 ARE landscape, which this cabinet cannot take. The two that remain sit on the
-        vertical centreline — where the opening actually is in portrait, the rear box's 260 axis
-        being vertical — and between them they cover both 0 and 180, since upside-down is a real
-        mounting.
-        """
-        return 0
 
     @property
     def bolt_clear_of_box(self) -> float:

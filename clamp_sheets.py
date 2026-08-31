@@ -706,72 +706,93 @@ def sheet_plate(path: Path, a: Assembly) -> None:
                "struts stand on the floor. The fridge carries none of the weight.",
                "PLATE — the link that was dimensioned but never drawn")
 
-    o += _panel(40, 100, 600, 800, f"PLATE — {a.plate_w:.0f} x {a.plate_h:.0f} x "
-                f"{a.bracket_t:.2f}, x{a.n_plates}", OK)
+    o += _panel(40, 100, 600, 800,
+                f"PLATE {a.plate_w:.0f} x {a.plate_h:.1f} vs THE REAR BOX, IN PORTRAIT", OK)
     sc = 1.62
-    cx, cy = 340.0, 530.0
+    cx, cy = 318.0, 470.0
     hw, hp = a.plate_w / 2.0 * sc, a.plate_h / 2.0 * sc
+    bw, bh = a.box_w_portrait / 2.0 * sc, a.box_h_portrait / 2.0 * sc
+
+    # THE REAR BOX, rotated: its dimensioned 260 axis is VERTICAL in portrait.
+    o.append(f'<rect x="{cx - bw:.1f}" y="{cy - bh:.1f}" width="{2 * bw:.1f}" '
+             f'height="{2 * bh:.1f}" rx="3" fill="#101820" fill-opacity="0.07" '
+             f'stroke="{INK}" stroke-width="1.3" stroke-dasharray="7 4"/>')
+    o.append(_t(cx, cy - bh - 9, f"REAR BOX {a.box_w_portrait:.0f} x {a.box_h_portrait:.0f}"
+                f"  — DIMENSIONED", 9.0, weight="bold"))
+
+    # THE PLATE, notched
     nw, nd = a.notch_w / 2.0 * sc, a.notch_depth * sc
-    # the notches are cut INTO the outline, not overlaid, so the part reads as one contour
     o.append(f'<path d="M{cx - hw:.1f} {cy - hp:.1f} '
              f'L{cx - nw:.1f} {cy - hp:.1f} L{cx - nw:.1f} {cy - hp + nd:.1f} '
              f'L{cx + nw:.1f} {cy - hp + nd:.1f} L{cx + nw:.1f} {cy - hp:.1f} '
              f'L{cx + hw:.1f} {cy - hp:.1f} L{cx + hw:.1f} {cy + hp:.1f} '
              f'L{cx + nw:.1f} {cy + hp:.1f} L{cx + nw:.1f} {cy + hp - nd:.1f} '
              f'L{cx - nw:.1f} {cy + hp - nd:.1f} L{cx - nw:.1f} {cy + hp:.1f} '
-             f'L{cx - hw:.1f} {cy + hp:.1f} Z" fill="{C_PLATE}" stroke="{INK}" '
-             f'stroke-width="1.5"/>')
-    for sgn in (1, -1):
-        o.append(f'<line x1="{cx - nw - 26:.1f}" y1="{cy - sgn * (hp - nd):.1f}" '
-                 f'x2="{cx - nw - 4:.1f}" y2="{cy - sgn * (hp - nd):.1f}" stroke="{WARN}" '
-                 f'stroke-width="1"/>')
-    o.append(_t(cx - nw - 30, cy - hp + nd + 4, f"notch {a.notch_depth:.1f} deep", 8.4,
-                anchor="end", fill=WARN, weight="bold"))
+             f'L{cx - hw:.1f} {cy + hp:.1f} Z" fill="{C_PLATE}" fill-opacity="0.92" '
+             f'stroke="{INK}" stroke-width="1.6"/>')
 
-    # vent windows on a RADIUS, not a margin — so one covers the Pi opening in every 90 deg turn
-    # where the Pi opening is THOUGHT to be, and how far it could actually sit
+    # FAN and GPIO — scaled, so drawn with their uncertainty band
     for sgn in (1, -1):
-        oy_ = cy - sgn * a.pi_fan_radius * sc
-        o.append(f'<line x1="{cx - 60:.1f}" y1="{oy_:.1f}" x2="{cx + 60:.1f}" y2="{oy_:.1f}" '
-                 f'stroke={chr(34)}{BAD}{chr(34)} stroke-width="1.1" stroke-dasharray="5 4"/>')
-        o.append(f'<rect x="{cx - 60:.1f}" y="{oy_ - a.pi_fan_tol * sc:.1f}" width="120" '
-                 f'height="{2 * a.pi_fan_tol * sc:.1f}" fill="{BAD}" fill-opacity="0.10"/>')
-    o.append(_t(cx + 64, cy - a.pi_fan_radius * sc - 4, "Pi opening", 8.4, anchor="start",
-                fill=BAD, weight="bold"))
-    o.append(_t(cx + 64, cy - a.pi_fan_radius * sc + 7,
-                f"R{a.pi_fan_radius:.1f} +/-{a.pi_fan_tol:.0f}, SCALED", 8.0, anchor="start",
+        fy = cy - sgn * a.fan_r * sc
+        o.append(f'<circle cx="{cx:.1f}" cy="{fy:.1f}" r="{a.fan_dia / 2.0 * sc:.1f}" '
+                 f'fill="{BAD}" fill-opacity="0.22" stroke="{BAD}" stroke-width="1.3"/>')
+        o.append(f'<rect x="{cx - 60:.1f}" y="{fy - a.scale_tol * sc:.1f}" width="120" '
+                 f'height="{2 * a.scale_tol * sc:.1f}" fill="{BAD}" fill-opacity="0.10"/>')
+        gy = cy - sgn * a.gpio_r * sc
+        o.append(f'<rect x="{cx - a.gpio_len / 2.0 * sc:.1f}" y="{gy - 3:.1f}" '
+                 f'width="{a.gpio_len * sc:.1f}" height="6" rx="3" fill="{BAD}" '
+                 f'fill-opacity="0.30" stroke="{BAD}" stroke-width="1"/>')
+    lx = cx + bw + 16
+    for r, lab, sub in ((a.gpio_r, f"GPIO slot ~R{a.gpio_r:.0f}",
+                         f"clears the plate by {a.gpio_r - a.plate_h / 2.0:.0f}"),
+                        (a.fan_r, f"FAN ~R{a.fan_r:.0f}, ~{a.fan_dia:.0f} dia",
+                         f"plate laps it by {a.plate_covers_fan_by:.1f}")):
+        yy_ = cy - r * sc
+        o.append(f'<line x1="{cx + 16:.1f}" y1="{yy_:.1f}" x2="{lx - 5:.1f}" y2="{yy_:.1f}" '
+                 f'stroke="{BAD}" stroke-width="0.7" stroke-dasharray="3 3"/>')
+        o.append(_t(lx, yy_ - 3, lab, 8.4, anchor="start", fill=BAD, weight="bold"))
+        o.append(_t(lx, yy_ + 8, sub, 8.0, anchor="start", fill=BAD))
+    o.append(_t(lx, cy - a.fan_r * sc + 21, "both SCALED off the raster,", 8.0, anchor="start",
                 fill=BAD))
-    
-    
+    o.append(_t(lx, cy - a.fan_r * sc + 31, "not dimensioned by Waveshare", 8.0, anchor="start",
+                fill=BAD))
 
+    # VESA
     v = a.vesa / 2.0 * sc
+    o.append(f'<rect x="{cx - v:.1f}" y="{cy - v:.1f}" width="{2 * v:.1f}" height="{2 * v:.1f}" '
+             f'fill="none" stroke="{OK}" stroke-width="1.2" stroke-dasharray="5 3"/>')
     for sx_ in (-1, 1):
         for sy_ in (-1, 1):
             o.append(f'<circle cx="{cx + sx_ * v:.1f}" cy="{cy + sy_ * v:.1f}" '
-                     f'r="{a.vesa_hole_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{INK}" '
-                     f'stroke-width="1.2"/>')
-    o.append(f'<rect x="{cx - v:.1f}" y="{cy - v:.1f}" width="{2 * v:.1f}" height="{2 * v:.1f}" '
-             f'fill="none" stroke="{OK}" stroke-width="0.9" stroke-dasharray="4 3"/>')
-    o.append(_t(cx, cy + 5, f"VESA {a.vesa:.0f}", 9.4, fill=OK, weight="bold"))
+                     f'r="{a.vesa_hole_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{OK}" '
+                     f'stroke-width="1.3"/>')
+    o.append(_t(cx, cy + 4, f"VESA {a.vesa:.0f} — DIMENSIONED", 9.0, fill=OK, weight="bold"))
 
+    # strut bolts
     bx_, by_ = a.plate_bolt_dx / 2.0 * sc, a.plate_bolt_dy / 2.0 * sc
     for sx_ in (-1, 1):
         for sy_ in (-1, 1):
             o.append(f'<circle cx="{cx + sx_ * bx_:.1f}" cy="{cy + sy_ * by_:.1f}" '
-                     f'r="{a.plate_bolt_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{BAD}" '
+                     f'r="{a.plate_bolt_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{INK}" '
                      f'stroke-width="1.4"/>')
-    for sx_ in (-1, 1):
-        o.append(f'<line x1="{cx + sx_ * bx_:.1f}" y1="{cy - hp - 14:.1f}" '
-                 f'x2="{cx + sx_ * bx_:.1f}" y2="{cy + hp + 14:.1f}" stroke="{BAD}" '
-                 f'stroke-width="0.7" stroke-dasharray="3 4"/>')
-    o.append(_t(cx, cy - hp - 22, f"strut centres {a.plate_bolt_dx:.0f}", 9.0, fill=BAD,
-                weight="bold"))
-    o.append(_t(cx + hp - 10, cy - 4, f"{a.plate_bolt_dy:.1f} apart", 9.0, anchor="end",
-                fill=BAD, weight="bold"))
-    o.append(_t(cx + hp - 10, cy + 8, f"= {a.plate_bolt_pitches} slot pitches", 8.2,
-                anchor="end", fill=BAD))
-    o.append(_t(cx, cy + hp + 34, f"{a.plate_w:.0f} x {a.plate_h:.1f} — sits BELOW the Pi "
-                f"opening instead of covering it", 9.0, fill=MUTED))
+    o.append(_t(cx - bx_, cy - by_ - 13, "to strut", 8.0, fill=INK, weight="bold"))
+
+    # dimensions, all outside the geometry
+    def hd(y, x0, x1, txt, col):
+        o.append(f'<line x1="{cx + x0:.1f}" y1="{y:.1f}" x2="{cx + x1:.1f}" y2="{y:.1f}" '
+                 f'stroke="{col}" stroke-width="1.1"/>')
+        for xx in (x0, x1):
+            o.append(f'<line x1="{cx + xx:.1f}" y1="{y - 4:.1f}" x2="{cx + xx:.1f}" '
+                     f'y2="{y + 4:.1f}" stroke="{col}" stroke-width="1.1"/>')
+        o.append(_t(cx + (x0 + x1) / 2, y - 6, txt, 8.6, fill=col, weight="bold"))
+    hd(cy + bh + 26, -bw, bw, f"box {a.box_w_portrait:.0f} wide", INK)
+    hd(cy + bh + 52, -bx_, bx_, f"strut bolts {a.plate_bolt_dx:.0f} — clear the box by "
+       f"{a.bolt_clear_of_box:.0f} each side", OK)
+    hd(cy + bh + 78, -hw, hw, f"plate {a.plate_w:.1f}", INK)
+    o.append(_t(cx, cy + bh + 100, f"the plate is {a.plate_h:.1f} TALL inside a "
+               f"{a.box_h_portrait:.0f} box — it sits wholly on the box face", 8.6, fill=MUTED))
+    o.append(_t(cx, cy + bh + 113, f"and laps the fan by {a.plate_covers_fan_by:.1f} mm, which "
+               f"is what the {a.notch_depth:.1f} mm notch removes", 8.6, fill=BAD, weight="bold"))
 
     o += _panel(660, 100, 340, 800, "THE CHAIN", INK)
     steps = [("THE DISPLAY", "3.94 kg", C_PLATE, "4 x M4 into the VESA inserts, on SPACERS"),
@@ -814,13 +835,15 @@ def sheet_plate(path: Path, a: Assembly) -> None:
         ("That is the whole point of the change. The magnet design really did hang off the "
          "fridge, so every question was about how hard it gripped. Here the grip carries "
          "nothing, so a non-magnetic panel, paint creep and peel all stop mattering.", MUTED),
-        (f"A solid plate over the Pi's fan and GPIO opening cooks it. The old plate was 279 tall "
-         f"PURELY to carry vent windows over an opening it never needed to reach. At "
-         f"{a.plate_h:.1f} it stops {a.plate_h / 2.0 - a.opening_near_edge:+.1f} mm short of "
-         f"where that opening could sit at worst, so there is nothing to vent.", MUTED),
-        (f"The {a.n_notches} edge notches are insurance, not cooling. The radius was SCALED off a "
-         f"raster drawing (+/-{a.pi_fan_tol:.0f}) and the opening's own size is not published at "
-         f"all. Their {a.notch_depth:.1f} mm depth is derived from that uncertainty.", MUTED),
+        (f"A solid plate over the Pi's fan and GPIO cooks it. The old plate was 279 tall purely "
+         f"to carry vent WINDOWS over that region. At {a.plate_h:.1f} the plate clears the GPIO "
+         f"slot entirely ({a.gpio_r - a.plate_h / 2.0:.0f} mm clear) and needs only to deal with "
+         f"the fan, which an edge notch does far more cheaply than an enclosed window.", MUTED),
+        (f"The {a.n_notches} edge notches are NOT idle insurance — correcting an earlier claim "
+         f"here. Reading the fan off Waveshare's drawing puts it at ~R{a.fan_r:.0f}, so the plate "
+         f"edge laps it by {a.plate_covers_fan_by:.1f} mm and the notch is what uncovers it. "
+         f"Depth {a.notch_depth:.1f} is derived: fan near edge minus {a.scale_tol:.0f} mm for the "
+         f"fact that every one of those figures is SCALED off a raster, not dimensioned.", BAD),
         (f"Bolt rows are {a.plate_bolt_dy:.1f} apart — exactly {a.plate_bolt_pitches} slot "
          f"pitches, so both sit identically in their slots. Putting them ABOVE and BELOW the box "
          f"instead needs 6 pitches and a plate 2.3x taller, whose edge would reach past the Pi "
@@ -845,10 +868,10 @@ def sheet_plate(path: Path, a: Assembly) -> None:
         LOG.warning("right column overflows its panel by %.0f px", yy - 900)
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
-    LOG.info("Wrote %s — plate %.0f x %.0f, bolts %.0f x %.1f, %d vents on R%.1f, "
+    LOG.info("Wrote %s — plate %.0f x %.0f, bolts %.0f x %.1f, %d notches, fan ~R%.0f, "
              "heads clear the rear box by %.0f",
              path, a.plate_w, a.plate_h, a.plate_bolt_dx, a.plate_bolt_dy,
-             a.n_vents, a.pi_fan_radius, a.bolt_clear_of_box)
+             a.n_notches, a.fan_r, a.bolt_clear_of_box)
 
 
 SHEETS = {"clamp_frame": sheet_frame,
