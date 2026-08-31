@@ -16,7 +16,12 @@ black powder coat chosen for the steel parts.
 | Width (the slotted face) | **1 5/8 in = 41.28 mm** |
 | Inside channel width | 7/8 in = 22.23 mm |
 | Wall thickness | **0.07 in = 1.78 mm** |
-| Slot | 1 1/8 in long × 9/16 in wide |
+| Slot length | 1 1/8 in = 28.58 mm (drawing says 1.13 in) |
+| Slot width | 9/16 in = 14.29 mm (drawing says 0.56 in) |
+| **Slot pitch, centre to centre** | **2 in = 50.80 mm** |
+| First slot centre from the channel end | 1 in = 25.40 mm |
+| Gap between slot ends | 7/8 in = 22.23 mm |
+| Slot end to channel end | 7/16 in = 11.11 mm |
 
 McMaster's own caveat, worth keeping in front of you: *"Low-profile is channel not as strong as
 standard, but it's the same width, so it fits most of the accessories we offer."*
@@ -46,6 +51,21 @@ Two 6 ft lengths = **$68.80**.
 
 Note the powder-coated and aluminium options are **thinner** than the plated/stainless ones
 (0.07 and 0.06 vs 0.08 in). If the section properties ever get re-derived, the finish changes them.
+
+## What the slot pitch means for the clamps — CONFIRMED 2026-08-31
+
+Read off McMaster's own spec table and 2-D drawing, not assumed.
+
+Slots are **50.8 mm on centres** and each is **28.58 mm long**, so there is a 22.23 mm dead zone
+between them. A clamp stud can therefore be placed anywhere within about **±11 mm** of any target
+height by choosing the right slot, and can then slide 28.58 mm within it.
+
+On a 6 ft strut that is roughly **36 slots**. Ample.
+
+Worked for the top clamp: with the strut standing on a ~3 mm foot leg, slot centres fall at
+28.4 mm + n × 50.8. The slot nearest the fridge top (1743.1 mm) is centred at 1704.8 mm and spans
+**1690.5–1719.1 mm**, i.e. 24–53 mm below the top surface. A clamp whose short leg drops ~40 mm
+lands in it comfortably.
 
 ## Section properties — DERIVED, not published
 
