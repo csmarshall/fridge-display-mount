@@ -106,8 +106,17 @@ NOT flat**. Both change the design — see §3b.
 
 3. **Wedge pressure — SNUG ONLY.** See above. The foot captures the tail; it does not transfer
    load. Nothing comes off the levelling legs.
-4. **Floor — wood, flat enough.** Non-marking pads on the foot, but **no levelling adjustment**:
-   the foot stays a simple bent part.
+4. **Floor — wood, flat enough.** **No levelling adjustment** — the foot stays a simple bent part.
+   But it gets a **pad underneath**, and the reason is not the pressure: at under 3 psi nothing is
+   being crushed. It is that the foot's **laser-cut edges line-load a floor that is not perfectly
+   flat**, that any grit trapped beneath turns the foot into an abrasive, and that this assembly
+   sits unmoved for years rather than being shuffled about.
+
+   **The pad has to GRIP as well as protect**, which rules out the obvious choice. Felt is the
+   standard furniture answer and it is wrong here — it would let the assembly slide, which is the
+   one thing it must not do. Wants a non-marking rubber or EPDM. **Flag:** rubber left in contact
+   with a polyurethane wood finish for years can discolour it through plasticizer migration, so
+   the compound matters. Not yet sourced.
 5. **Pull-out — rare, treat it as a teardown.** Moving the fridge means unwedging and re-seating.
    That permits a deeper tail and a properly fitted wedge rather than something designed to slide
    in and out, and it means the wedge can be shaped for the gap rather than generic.

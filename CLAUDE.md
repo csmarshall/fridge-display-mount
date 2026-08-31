@@ -130,8 +130,12 @@ already carries — point at it.
 
 - **Display** — Waveshare 23.8 in FHD (SKU 34025). 555.23 × 324.65 × 18 mm panel + 25 mm rear box
   = 43 mm overall, 3.94 kg, VESA 100 on the rear box face.
-- **Floor** — wood, flat enough to need no levelling adjustment. The foot gets non-marking pads
-  and stays a simple bent part.
+- **Floor** — wood, flat enough to need no levelling adjustment. The foot stays a simple bent
+  part but gets a **pad underneath**: not for pressure (under 3 psi) but because laser-cut edges
+  line-load an imperfect floor and this sits unmoved for years. The pad must **grip as well as
+  protect** — felt is the standard answer and is wrong here, because sliding is the one failure
+  this design has no other defence against. Non-marking rubber or EPDM; the compound matters,
+  since rubber against a polyurethane finish can discolour it over years.
 - **Servicing** — the fridge is pulled out rarely; moving it is treated as a teardown. The wedge
   may therefore be fitted to the gap rather than designed to slide in and out.
 - **Fridge** — Samsung RS23A500ASR. Case **1743.1 mm** tall, **609.6 mm** deep, 229 lb.

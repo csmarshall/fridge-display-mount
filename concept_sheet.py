@@ -60,6 +60,11 @@ class Assembly:
     # The side panel's underside sits this far off the floor. MEASURED as 10-20 mm;
     # 15 is the middle. Everything the lower clamp does has to happen inside it.
     base_gap: float = 15.0
+    # Under the outboard foot. Steel on a wood floor is a bad long-term contact: not because of
+    # the pressure, which is under 3 psi, but because laser-cut EDGES line-load an imperfect floor
+    # and because this thing sits unmoved for years. Wants GRIP as well as protection — felt would
+    # protect but it would also let the assembly slide, which is the one thing it must not do.
+    floor_pad: float = 3.0
     hinge_cover: float = 203.0
 
     @property
@@ -385,14 +390,20 @@ def _base_detail(ox, oy, a: Assembly) -> list[str]:
              f'height="{rise * K:.1f}" fill="#f8e2a4" stroke="{PAD_EDGE}" stroke-width="0.9"/>')
 
     # foot: vertical leg in the stack, horizontal leg outboard on the floor
+    fp = a.floor_pad
     o.append(f'<path d="M{X(foam + t):.1f} {Y(bg + rise - 12):.1f} '
-             f'L{X(foam + t):.1f} {Y(t):.1f} L{X(OUT_L - 6):.1f} {Y(t):.1f} '
-             f'L{X(OUT_L - 6):.1f} {Y(0):.1f} L{X(foam + t):.1f} {Y(0):.1f} '
-             f'L{X(foam + 2 * t):.1f} {Y(0):.1f} '
+             f'L{X(foam + t):.1f} {Y(fp + t):.1f} L{X(OUT_L - 6):.1f} {Y(fp + t):.1f} '
+             f'L{X(OUT_L - 6):.1f} {Y(fp):.1f} L{X(foam + t):.1f} {Y(fp):.1f} '
+             f'L{X(foam + 2 * t):.1f} {Y(fp):.1f} '
              f'L{X(foam + 2 * t):.1f} {Y(bg + rise - 12):.1f} Z" '
              f'fill="{C_STEEL}" stroke="{INK}" stroke-width="1.2"/>')
+    # the floor pad, under the whole footprint
+    o.append(f'<rect x="{X(foam + t):.1f}" y="{Y(fp):.1f}" '
+             f'width="{(OUT_L - 6 - foam - t) * K:.1f}" height="{fp * K:.1f}" fill="#c7b299" '
+             f'stroke="#8a7458" stroke-width="0.9"/>')
     o.append(f'<rect x="{X(foam + 2 * t):.1f}" y="{Y(bg + rise + 20):.1f}" '
-             f'width="{a.strut_depth * K:.1f}" height="{(bg + rise + 20 - t) * K:.1f}" '
+             f'width="{a.strut_depth * K:.1f}" '
+             f'height="{(bg + rise + 20 - t - a.floor_pad) * K:.1f}" '
              f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1.1"/>')
 
     o.append(_t(X(OUT_L) + 6, Y(bg) + 3, f"underside {bg:.0f}", 8.5, anchor="start", fill=BAD,
@@ -405,8 +416,10 @@ def _base_detail(ox, oy, a: Assembly) -> list[str]:
                 weight="bold"))
     o.append(_t(X(OUT_L) + 6, Y(bg + rise - 20) + 11, "rises OUTSIDE", 8.4, anchor="start",
                 fill=INK))
-    o.append(_t(X(OUT_L - 6) + 6, Y(t) - 4, "foot on the floor", 8.4, anchor="start", fill=OK,
+    o.append(_t(X(OUT_L - 6) + 6, Y(fp + t) - 3, "foot", 8.4, anchor="start", fill=OK,
                 weight="bold"))
+    o.append(_t(X(OUT_L - 6) + 6, Y(fp / 2) + 3, f"floor pad {fp:.0f}", 8.4, anchor="start",
+                fill="#8a7458", weight="bold"))
     return o
 
 
