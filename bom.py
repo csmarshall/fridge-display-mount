@@ -98,20 +98,22 @@ def hardware(a: Assembly, with_strips: bool = True) -> list[Buy]:
             "McMaster", "3310T791", 25.48),
         Buy("S2", "Strut channel, 1 ft", a.n_struts, "same section", "McMaster", "3310T791",
             6.37),
-        Buy("F1", "Elevator bolt 5/16-18", n_clamp_bolts + n_foot_bolts,
-            f"{bolt_len(grip_clamp) / IN:.3g} in, flat {ELEV_HEAD} head, square shoulder",
-            "McMaster", "", None),
-        Buy("F2", "Elevator bolt 5/16-18", n_plate_bolts,
-            f"{bolt_len(grip_plate) / IN:.3g} in — LONGER, the strip adds {a.bracket_t:.2f}"
-            if with_strips else f"{bolt_len(grip_plate) / IN:.3g} in",
-            "McMaster", "", None),
-        Buy("F3", "Strut channel nut 5/16-18", n_clamp_bolts + n_foot_bolts,
-            "spring nut, grips the channel lips", "McMaster", "", None),
-        Buy("F4", "Hex nut 5/16-18", n_plate_bolts, "inside the channel, beyond the strip",
-            "McMaster", "", None),
+        # PRICED LIVE 2026-08-31. McMaster's shortest 5/16-18 elevator bolt is 3/4 in, so the
+        # 5/8 my grip calc allowed does not exist — ONE length covers every joint, which is
+        # simpler than the two the drawings assumed.
+        # NOTE the unit is a PACK, not a piece. Multiplying a pack price by the piece count is
+        # how a $9.63 line became $96.30 the first time this was totalled.
+        Buy("F1", "Elevator bolt 5/16-18 x 3/4, SQUARE neck", 1,
+            f"PACK OF 25, zinc plated, flat {ELEV_HEAD} head, INCLUDES NUT — "
+            f"{n_clamp_bolts + n_foot_bolts + n_plate_bolts} needed, so one pack",
+            "McMaster", "92670A781", 9.63),
+        Buy("F1b", "ALTERNATIVE: black oxide, RIBBED neck", 0,
+            "90432A170 1-1/2 in $7.11/10. BLACK, but ribbed necks are meant to bite soft metal "
+            "and plastic — no square neck exists in black oxide at this size",
+            "McMaster", "90432A150", None),
         Buy("F5", "Flat washer 5/16", n_clamp_bolts + n_foot_bolts + n_plate_bolts,
-            f"{WASHER_T} thick", "McMaster", "", None),
-        Buy("F6", "M4 screw", 4, f"button head, into the VESA inserts", "McMaster", "", None),
+            f"{WASHER_T} thick, behind the strut web", "McMaster", "", None),
+        Buy("F6", "M4 screw", 4, "button head, into the VESA inserts", "McMaster", "", None),
         Buy("P1", "Closed-cell foam, 3 mm", 1,
             f"clamp faces, {a.clamp_leg:.0f} x {a.clamp_width:.0f} x {a.n_clamps}",
             "sheet", "", None),
