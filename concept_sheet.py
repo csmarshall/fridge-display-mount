@@ -49,7 +49,12 @@ class Assembly:
     bracket_t: float = 0.119 * IN         # 3.02 clamp and foot
     foam: float = 3.0
     plate_t: float = 0.119 * IN
-    plate_h: float = 310.0
+    plate_margin: float = 15.0            # beyond the true minimum, all round
+    plate_bolt_pitches: int = 2           # strut-bolt rows, in WHOLE slot pitches
+    pi_fan_tol: float = 5.0               # radius was SCALED off a raster drawing, not dimensioned
+    pi_open_half: float = 20.0            # ESTIMATE — the opening's own size is not published
+    notch_w: float = 50.0
+    box_w_portrait: float = 134.0         # rear box, SHORT axis — horizontal in portrait
     # ELEVATOR bolt, 5/16-18. Head 1 3/16 in dia x 7/64 in high, FLAT; square neck 0.33 x 0.19 in.
     # Chosen over a carriage bolt because the head faces the FRIDGE: 2.78 mm hides inside 3 mm of
     # foam where a carriage bolt's 5.08 mm dome stands proud and presses a hard point on the panel.
@@ -114,6 +119,79 @@ class Assembly:
         return self.n_struts
 
     @property
+    def plate_edge(self) -> float:
+        """Hole centre to plate edge: half the hole plus SendCutSend's 2T rule."""
+        return self.plate_bolt_dia / 2.0 + 2.0 * self.bracket_t
+
+    @property
+    def plate_w(self) -> float:
+        """Across, front-to-back. Set by the STRUT SPACING — never by the display's outline.
+
+        The old 310 square came from the hook design, where the plate had to hide behind the
+        display in EITHER orientation. Landscape is impossible on this cabinet, so that reason is
+        gone — but the plate barely shrinks, because what actually sets it is where the struts
+        are, and they did not move.
+        """
+        return self.plate_bolt_dx + 2.0 * (self.plate_edge + self.plate_margin)
+
+    @property
+    def plate_h(self) -> float:
+        """Up-down. Short enough to sit BELOW the Pi opening instead of covering it.
+
+        The tall version existed only to carry vent windows over an opening the plate did not
+        need to reach in the first place. Dropping under it removes the windows entirely — the
+        cheapest feature is the one not cut.
+        """
+        h_bolt = self.plate_bolt_dy / 2.0 + self.plate_edge
+        h_vesa = self.vesa / 2.0 + self.vesa_hole_dia / 2.0 + 2.0 * self.bracket_t
+        return 2.0 * (max(h_bolt, h_vesa) + self.plate_margin)
+
+    @property
+    def opening_near_edge(self) -> float:
+        """Worst-case nearest approach of the Pi opening to the plate centre.
+
+        Both terms are soft: the radius was scaled off a raster drawing (+/-5) and the opening's
+        own size is NOT published at all. This is the number the notches insure against.
+        """
+        return self.pi_fan_radius - self.pi_fan_tol - self.pi_open_half
+
+    @property
+    def notch_depth(self) -> float:
+        """How far the edge notches cut in. Derived from the uncertainty, not chosen.
+
+        If the opening really is where the drawing suggests, the plate edge already clears it and
+        these do nothing. If it sits at the near end of its tolerance, they vent it anyway. An
+        open notch costs a fraction of the cut length an enclosed window does.
+        """
+        return max(0.0, self.plate_h / 2.0 - self.opening_near_edge)
+
+    @property
+    def n_notches(self) -> int:
+        return 2
+
+    @property
+    def n_vents(self) -> int:
+        """Two, not four.
+
+        Four windows existed so one landed over the Pi opening in EVERY 90 degree rotation. But
+        90 and 270 ARE landscape, which this cabinet cannot take. The two that remain sit on the
+        vertical centreline — where the opening actually is in portrait, the rear box's 260 axis
+        being vertical — and between them they cover both 0 and 180, since upside-down is a real
+        mounting.
+        """
+        return 0
+
+    @property
+    def bolt_clear_of_box(self) -> float:
+        """Bolt head to the edge of the display's rear box. Must stay positive.
+
+        The heads sit on the display side of the plate, so anything under the Pi bump-out would
+        foul it. They clear because the strut spacing is far wider than the box — not by luck of
+        the bolt positions.
+        """
+        return self.plate_bolt_dx / 2.0 - self.box_w_portrait / 2.0
+
+    @property
     def plate_bolt_dy(self) -> float:
         """Vertical spacing of the plate-to-strut bolts. A WHOLE NUMBER OF SLOT PITCHES.
 
@@ -121,7 +199,7 @@ class Assembly:
         other spacing puts one row near the middle of a slot and the other near its end, and the
         plate then only mounts at certain heights.
         """
-        return 3.0 * self.slot_pitch
+        return self.plate_bolt_pitches * self.slot_pitch
 
     @property
     def plate_bolt_dx(self) -> float:

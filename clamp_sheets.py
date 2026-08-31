@@ -406,7 +406,11 @@ def sheet_assembly(path: Path, a: Assembly) -> None:
               "because the underside is not flat. This is the step that needs a torch and the "
               "one with an open question against it.",
               "loose"),
-             ("4  LOCK EVERYTHING",
+             ("4  PLATE ON, THEN THE DISPLAY — IN THAT ORDER",
+              "The plate-to-strut bolt heads sit on the display side. Once the display is "
+              "mounted they cannot be reached, so the plate goes on first and the display last.",
+              "TIGHT"),
+             ("5  LOCK EVERYTHING",
               "Top first, then bottom, then the feet. The struts go into tension between the two "
               "clamps and the fridge is gripped rather than leaned on.",
               "TIGHT")]
@@ -547,11 +551,11 @@ def sheet_frame(path: Path, a: Assembly) -> None:
 
     # the display and its plate, drawn BEHIND the frame so the frame reads on top
     dc = a.strut_centre
-    o.append(f'<rect x="{X(dc - a.plate_h / 2):.1f}" y="{Y(a.screen_centre + a.plate_h / 2):.1f}" '
-             f'width="{a.plate_h * sc:.1f}" height="{a.plate_h * sc:.1f}" fill="{C_PLATE}" '
+    o.append(f'<rect x="{X(dc - a.plate_w / 2):.1f}" y="{Y(a.screen_centre + a.plate_h / 2):.1f}" '
+             f'width="{a.plate_w * sc:.1f}" height="{a.plate_h * sc:.1f}" fill="{C_PLATE}" '
              f'fill-opacity="0.9" stroke="{INK}" stroke-width="1.1"/>')
-    o.append(_t(X(dc), Y(a.screen_centre + 96), f"PLATE {a.plate_h:.0f} x {a.plate_h:.0f}", 9.2,
-                weight="bold"))
+    o.append(_t(X(dc), Y(a.screen_centre + 96),
+                f"PLATE {a.plate_w:.0f} x {a.plate_h:.0f}", 9.2, weight="bold"))
 
     strut_half = a.strut_width / 2.0
     for s in (dc - a.strut_spacing / 2.0, dc + a.strut_spacing / 2.0):
@@ -657,16 +661,17 @@ def sheet_frame(path: Path, a: Assembly) -> None:
                f"instead would add steel that is not joined to anything at its far end, and the "
                f"couple arm would stay the strut spacing regardless.", 54)
     o += _para(961, 350,
-               f"The plate is {a.plate_h:.0f} mm square and reaches {(a.plate_h - a.strut_spacing) / 2.0:.0f} mm "
-               f"past each strut, so the strut spacing is set by what the PLATE can span, not by "
-               f"what the fridge top allows.", 54)
+               f"The plate is {a.plate_w:.0f} x {a.plate_h:.0f} and reaches "
+               f"{(a.plate_w - a.strut_spacing) / 2.0:.1f} mm past each strut. It is no longer "
+               f"square: it was, only so it could hide behind the display in EITHER orientation, "
+               f"and landscape is impossible on this cabinet.", 54)
 
     o += _panel(945, 510, 435, 390, "THE NUMBERS IN THIS VIEW", INK)
     rows = [("strut centres", f"{a.strut_spacing:.0f} mm"),
             ("bar across", f"{a.clamp_width:.0f} mm"),
             ("bar overhang past each strut", f"{a.part_width / 2.0:.1f} mm"),
-            ("plate", f"{a.plate_h:.0f} x {a.plate_h:.0f} mm"),
-            ("plate past each strut", f"{(a.plate_h - a.strut_spacing) / 2.0:.0f} mm"),
+            ("plate", f"{a.plate_w:.0f} x {a.plate_h:.0f} mm"),
+            ("plate past each strut", f"{(a.plate_w - a.strut_spacing) / 2.0:.1f} mm"),
             ("display, portrait", f"324.65 x {a.display_h:.0f} mm"),
             ("bars (identical parts)", f"{a.n_clamps}"),
             ("feet", f"{a.n_feet}"),
@@ -701,27 +706,43 @@ def sheet_plate(path: Path, a: Assembly) -> None:
                "struts stand on the floor. The fridge carries none of the weight.",
                "PLATE — the link that was dimensioned but never drawn")
 
-    o += _panel(40, 100, 600, 800, f"PLATE — {a.plate_h:.0f} x {a.plate_h:.0f} x "
+    o += _panel(40, 100, 600, 800, f"PLATE — {a.plate_w:.0f} x {a.plate_h:.0f} x "
                 f"{a.bracket_t:.2f}, x{a.n_plates}", OK)
     sc = 1.62
     cx, cy = 340.0, 530.0
-    hp = a.plate_h / 2.0 * sc
-    o.append(f'<rect x="{cx - hp:.1f}" y="{cy - hp:.1f}" width="{2 * hp:.1f}" '
-             f'height="{2 * hp:.1f}" rx="4" fill="{C_PLATE}" stroke="{INK}" stroke-width="1.5"/>')
+    hw, hp = a.plate_w / 2.0 * sc, a.plate_h / 2.0 * sc
+    nw, nd = a.notch_w / 2.0 * sc, a.notch_depth * sc
+    # the notches are cut INTO the outline, not overlaid, so the part reads as one contour
+    o.append(f'<path d="M{cx - hw:.1f} {cy - hp:.1f} '
+             f'L{cx - nw:.1f} {cy - hp:.1f} L{cx - nw:.1f} {cy - hp + nd:.1f} '
+             f'L{cx + nw:.1f} {cy - hp + nd:.1f} L{cx + nw:.1f} {cy - hp:.1f} '
+             f'L{cx + hw:.1f} {cy - hp:.1f} L{cx + hw:.1f} {cy + hp:.1f} '
+             f'L{cx + nw:.1f} {cy + hp:.1f} L{cx + nw:.1f} {cy + hp - nd:.1f} '
+             f'L{cx - nw:.1f} {cy + hp - nd:.1f} L{cx - nw:.1f} {cy + hp:.1f} '
+             f'L{cx - hw:.1f} {cy + hp:.1f} Z" fill="{C_PLATE}" stroke="{INK}" '
+             f'stroke-width="1.5"/>')
+    for sgn in (1, -1):
+        o.append(f'<line x1="{cx - nw - 26:.1f}" y1="{cy - sgn * (hp - nd):.1f}" '
+                 f'x2="{cx - nw - 4:.1f}" y2="{cy - sgn * (hp - nd):.1f}" stroke="{WARN}" '
+                 f'stroke-width="1"/>')
+    o.append(_t(cx - nw - 30, cy - hp + nd + 4, f"notch {a.notch_depth:.1f} deep", 8.4,
+                anchor="end", fill=WARN, weight="bold"))
 
     # vent windows on a RADIUS, not a margin — so one covers the Pi opening in every 90 deg turn
-    for ang in (0, 90, 180, 270):
-        rad = math.radians(ang)
-        vx = cx + a.pi_fan_radius * sc * math.cos(rad)
-        vy = cy - a.pi_fan_radius * sc * math.sin(rad)
-        w_, h_ = (62 * sc, 22 * sc) if ang % 180 == 0 else (22 * sc, 62 * sc)
-        o.append(f'<rect x="{vx - w_ / 2:.1f}" y="{vy - h_ / 2:.1f}" width="{w_:.1f}" '
-                 f'height="{h_:.1f}" rx="{min(w_, h_) / 2:.1f}" fill="{PAPER}" stroke="{INK}" '
-                 f'stroke-width="1.2"/>')
-    o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{a.pi_fan_radius * sc:.1f}" fill="none" '
-             f'stroke="{WARN}" stroke-width="0.9" stroke-dasharray="5 4"/>')
-    o.append(_t(cx, cy - a.pi_fan_radius * sc - 8, f"vents on R{a.pi_fan_radius:.1f}", 8.6,
-                fill=WARN, weight="bold"))
+    # where the Pi opening is THOUGHT to be, and how far it could actually sit
+    for sgn in (1, -1):
+        oy_ = cy - sgn * a.pi_fan_radius * sc
+        o.append(f'<line x1="{cx - 60:.1f}" y1="{oy_:.1f}" x2="{cx + 60:.1f}" y2="{oy_:.1f}" '
+                 f'stroke={chr(34)}{BAD}{chr(34)} stroke-width="1.1" stroke-dasharray="5 4"/>')
+        o.append(f'<rect x="{cx - 60:.1f}" y="{oy_ - a.pi_fan_tol * sc:.1f}" width="120" '
+                 f'height="{2 * a.pi_fan_tol * sc:.1f}" fill="{BAD}" fill-opacity="0.10"/>')
+    o.append(_t(cx + 64, cy - a.pi_fan_radius * sc - 4, "Pi opening", 8.4, anchor="start",
+                fill=BAD, weight="bold"))
+    o.append(_t(cx + 64, cy - a.pi_fan_radius * sc + 7,
+                f"R{a.pi_fan_radius:.1f} +/-{a.pi_fan_tol:.0f}, SCALED", 8.0, anchor="start",
+                fill=BAD))
+    
+    
 
     v = a.vesa / 2.0 * sc
     for sx_ in (-1, 1):
@@ -747,13 +768,14 @@ def sheet_plate(path: Path, a: Assembly) -> None:
                 weight="bold"))
     o.append(_t(cx + hp - 10, cy - 4, f"{a.plate_bolt_dy:.1f} apart", 9.0, anchor="end",
                 fill=BAD, weight="bold"))
-    o.append(_t(cx + hp - 10, cy + 8, "= 3 slot pitches", 8.2, anchor="end", fill=BAD))
-    o.append(_t(cx, cy + hp + 26, f"{a.plate_h:.0f} square — hides behind the display in BOTH "
-                f"orientations", 9.0, fill=MUTED))
+    o.append(_t(cx + hp - 10, cy + 8, f"= {a.plate_bolt_pitches} slot pitches", 8.2,
+                anchor="end", fill=BAD))
+    o.append(_t(cx, cy + hp + 34, f"{a.plate_w:.0f} x {a.plate_h:.1f} — sits BELOW the Pi "
+                f"opening instead of covering it", 9.0, fill=MUTED))
 
     o += _panel(660, 100, 340, 800, "THE CHAIN", INK)
     steps = [("THE DISPLAY", "3.94 kg", C_PLATE, "4 x M4 into the VESA inserts, on SPACERS"),
-             ("THE PLATE", f"{a.plate_h:.0f} sq", C_PLATE, f"4 bolts at {a.plate_bolt_dx:.0f} x "
+             ("THE PLATE", f"{a.plate_w:.0f}x{a.plate_h:.0f}", C_PLATE, f"4 bolts at {a.plate_bolt_dx:.0f} x "
               f"{a.plate_bolt_dy:.1f} into the strut slots"),
              ("THE STRUTS", "x2", C_STRUT, "stand on"),
              ("THE FEET", "x2", C_STEEL, "rest on"),
@@ -785,44 +807,48 @@ def sheet_plate(path: Path, a: Assembly) -> None:
         o.append(_t(700, yy + 64 + j * 12, ln, 8.8, anchor="start", fill=MUTED))
 
     o += _panel(1020, 100, 360, 800, "SO, WHAT HOLDS IT?", OK)
-    o += _para(1036, 146,
-               "Nothing holds it TO the fridge. The FLOOR holds it up, the way a bookcase stands "
-               "on the floor and leans on a wall. The fridge only stops it tipping away.", 42,
-               size=10.6)
-    o += _para(1036, 226,
-               "That is the whole point of the change. The magnet design really did hang off the "
-               "fridge, so every question was about how hard it gripped. Here the grip carries "
-               "nothing, so a non-magnetic panel, paint creep and peel all stop mattering.", 42,
-               size=10.6)
-    o += _para(1036, 340,
-               f"The vent windows are not decoration. They sit on R{a.pi_fan_radius:.1f} rather "
-               f"than a margin from the edge, so one lands over the Pi's fan and GPIO opening in "
-               f"EVERY 90 degree rotation of the plate. A solid plate there cooks the Pi.", 42,
-               size=10.6)
-    o += _para(1036, 460,
-               f"The bolt rows are {a.plate_bolt_dy:.1f} apart because that is exactly three slot "
-               f"pitches. Both rows then sit identically in their slots; a round 150 would put one "
-               f"row mid-slot and the other near its end, and the plate would only mount at "
-               f"certain heights.", 42, size=10.6)
-    o += _para(1036, 590,
-               f"ORIENTATION IS FORCED. Portrait spans "
-               f"{a.strut_centre - 324.65 / 2:.0f} to {a.strut_centre + 324.65 / 2:.0f} on a "
-               f"{a.fridge_d:.0f} deep case and fits. LANDSCAPE would hang "
-               f"{max(0.0, 555.23 / 2 - a.strut_centre):.1f} mm off the REAR edge, and cannot be "
-               f"slid forward to fix it: the clamp must stay inside the "
-               f"{a.clear_window:.1f} mm window. Centring landscape needs a strut centre of "
-               f"{a.fridge_d / 2:.1f}, which is "
-               f"{a.fridge_d / 2 + a.clamp_outer_half - a.clear_window:.1f} mm into the cover.",
-               42, size=10.6, fill=WARN)
-    o += _para(1036, 700,
-               "STILL OPEN: the bolt heads sit between the plate and the strut, so they must "
-               "clear the display's rear box. The box is 260 x 134 and the bolts are 246 apart, "
-               "so they fall just outside it — worth confirming against the real panel.", 42,
-               size=10.6, fill=BAD)
+    # Fixed y-positions kept colliding because the paragraphs differ in length. Flow them.
+    blocks = [
+        ("Nothing holds it TO the fridge. The FLOOR holds it up, the way a bookcase stands on "
+         "the floor and leans on a wall. The fridge only stops it tipping away.", INK),
+        ("That is the whole point of the change. The magnet design really did hang off the "
+         "fridge, so every question was about how hard it gripped. Here the grip carries "
+         "nothing, so a non-magnetic panel, paint creep and peel all stop mattering.", MUTED),
+        (f"A solid plate over the Pi's fan and GPIO opening cooks it. The old plate was 279 tall "
+         f"PURELY to carry vent windows over an opening it never needed to reach. At "
+         f"{a.plate_h:.1f} it stops {a.plate_h / 2.0 - a.opening_near_edge:+.1f} mm short of "
+         f"where that opening could sit at worst, so there is nothing to vent.", MUTED),
+        (f"The {a.n_notches} edge notches are insurance, not cooling. The radius was SCALED off a "
+         f"raster drawing (+/-{a.pi_fan_tol:.0f}) and the opening's own size is not published at "
+         f"all. Their {a.notch_depth:.1f} mm depth is derived from that uncertainty.", MUTED),
+        (f"Bolt rows are {a.plate_bolt_dy:.1f} apart — exactly {a.plate_bolt_pitches} slot "
+         f"pitches, so both sit identically in their slots. Putting them ABOVE and BELOW the box "
+         f"instead needs 6 pitches and a plate 2.3x taller, whose edge would reach past the Pi "
+         f"opening and bring the vent windows back.", MUTED),
+        (f"ORIENTATION IS FORCED. Landscape would hang "
+         f"{max(0.0, 555.23 / 2 - a.strut_centre):.1f} mm off the REAR edge and cannot be slid "
+         f"forward: the clamp must stay inside the {a.clear_window:.1f} mm window.", WARN),
+        (f"Heads sit on the DISPLAY side, so they must not fall under the Pi bump-out. In "
+         f"portrait the box is {a.box_w_portrait:.0f} wide and the bolts {a.plate_bolt_dx:.0f} "
+         f"apart, clearing by {a.bolt_clear_of_box:.0f} mm — because the STRUT SPACING is wider "
+         f"than the box, not by luck of where the holes went.", MUTED),
+        ("CONSEQUENCE: those heads are unreachable once the display is on. The plate goes on the "
+         "struts BEFORE the display.", BAD),
+    ]
+    yy = 146.0
+    for txt, col in blocks:
+        lines = _wrap(txt, 42)
+        o += [_t(1036, yy + i * 12.4, ln, 10.2, anchor="start", fill=col)
+              for i, ln in enumerate(lines)]
+        yy += len(lines) * 12.4 + 15
+    if yy > 900:
+        LOG.warning("right column overflows its panel by %.0f px", yy - 900)
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
-    LOG.info("Wrote %s — plate %.0f sq, bolts %.0f x %.1f, vents on R%.1f",
-             path, a.plate_h, a.plate_bolt_dx, a.plate_bolt_dy, a.pi_fan_radius)
+    LOG.info("Wrote %s — plate %.0f x %.0f, bolts %.0f x %.1f, %d vents on R%.1f, "
+             "heads clear the rear box by %.0f",
+             path, a.plate_w, a.plate_h, a.plate_bolt_dx, a.plate_bolt_dy,
+             a.n_vents, a.pi_fan_radius, a.bolt_clear_of_box)
 
 
 SHEETS = {"clamp_frame": sheet_frame,
