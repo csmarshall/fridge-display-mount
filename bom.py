@@ -19,6 +19,17 @@ ELEV_HEAD = 2.78                # elevator bolt head, flat
 M4_HEAD = 2.2                   # M4 button head
 
 
+# LIVE SendCutSend quotes, 2026-08-31, 0.119 in A36/1008 CRS + MATTE BLACK POWDER COAT.
+# Matte black "includes free deburring", which is why it was specified.
+# Prices are PER PIECE at the quantity we actually need.
+QUOTED = {
+    "A": dict(qty=2, cut=41.55, bend=53.32, coated_1=77.95, each=59.74),
+    "B": dict(qty=2, cut=21.94, bend=33.71, coated_1=46.15, each=29.69),
+    "C": dict(qty=1, cut=60.90, bend=None, coated_1=94.05, each=94.05),
+    "D": dict(qty=2, cut=None, bend=None, coated_1=None, each=None),   # NOT QUOTED
+}
+
+
 @dataclass(frozen=True)
 class Fab:
     """A part we have cut. Everything is 0.119 in mild steel unless it says otherwise."""
@@ -38,6 +49,14 @@ class Fab:
     @property
     def perim_mm(self) -> float:
         return 2.0 * (self.flat_w + self.flat_h)
+
+    @property
+    def each(self) -> float | None:
+        return QUOTED.get(self.tag, {}).get("each")
+
+    @property
+    def line_total(self) -> float | None:
+        return None if self.each is None else self.each * self.qty
 
 
 @dataclass(frozen=True)
