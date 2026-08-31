@@ -1401,6 +1401,29 @@ def sheet_dims(path: Path, a: Assembly) -> None:
                  f'height="{(Y(a.screen_centre - hmm / 2, oy) - Y(a.screen_centre + hmm / 2, oy)):.1f}" '
                  f'fill="none" stroke="{col}" stroke-width="1.7" stroke-dasharray="{dash}"/>')
 
+    # THE REAR BOX — the SAME 260 x 134 on both display sizes, so only TWO outlines exist,
+    # not four. Drawing the landscape one is what shows it cannot pass between the struts.
+    clear_gap = a.strut_spacing - a.strut_width
+    for nm, bw, bh, col in (("BOX, portrait", a.box_w_portrait, a.box_h_portrait, INK),
+                            ("BOX, landscape", a.box_h_portrait, a.box_w_portrait, BAD)):
+        o.append(f'<rect x="{ox - bw / 2 * sc:.1f}" '
+                 f'y="{Y(a.screen_centre + bh / 2, oy):.1f}" width="{bw * sc:.1f}" '
+                 f'height="{(Y(a.screen_centre - bh / 2, oy) - Y(a.screen_centre + bh / 2, oy)):.1f}" '
+                 f'fill="none" stroke="{col}" stroke-width="2.0" stroke-dasharray="10 4"/>')
+    o.append(f'<rect x="{ox - a.box_h_portrait / 2 * sc:.1f}" '
+             f'y="{Y(a.screen_centre + a.box_w_portrait / 2, oy):.1f}" '
+             f'width="{(a.box_h_portrait - clear_gap) / 2 * sc:.1f}" '
+             f'height="{(Y(a.screen_centre - a.box_w_portrait / 2, oy) - Y(a.screen_centre + a.box_w_portrait / 2, oy)):.1f}" '
+             f'fill="{BAD}" fill-opacity="0.30"/>')
+    o.append(f'<rect x="{ox + clear_gap / 2 * sc:.1f}" '
+             f'y="{Y(a.screen_centre + a.box_w_portrait / 2, oy):.1f}" '
+             f'width="{(a.box_h_portrait - clear_gap) / 2 * sc:.1f}" '
+             f'height="{(Y(a.screen_centre - a.box_w_portrait / 2, oy) - Y(a.screen_centre + a.box_w_portrait / 2, oy)):.1f}" '
+             f'fill="{BAD}" fill-opacity="0.30"/>')
+    o.append(_t(ox, 158, f"LANDSCAPE BOX 260 fouls the struts by "
+                f"{(a.box_h_portrait - clear_gap) / 2:.0f} mm each side — shaded red", 9.0,
+                fill=BAD, weight="bold"))
+
     pc = a.plate_centre
     for sx_ in (-1, 1):
         for sy_ in (-1, 1):
@@ -1419,8 +1442,8 @@ def sheet_dims(path: Path, a: Assembly) -> None:
                  f'y="{Y(vy + a.vent_len / 2, oy):.1f}" width="{a.vent_wid * sc:.1f}" '
                  f'height="{a.vent_len * sc:.1f}" rx="{a.vent_wid / 2 * sc:.1f}" '
                  f'fill="{PAPER}" stroke="{INK}" stroke-width="1"/>')
-    o.append(_t(ox, Y(a.plate_centre - a.plate_h / 2, oy) + 30,
-                "holes: VESA green, strut bolts red, vents open", 7.6, fill=MUTED))
+    o.append(_t(ox, 172, "plate holes: VESA green, strut bolts red, vents open", 8.0,
+                fill=MUTED))
 
     by = Y(F_LO, oy) - 2
     o.append(f'<path d="M{ox - 140:.1f} {by + 7:.1f} L{ox:.1f} {by - 5:.1f} '
@@ -1468,10 +1491,20 @@ def sheet_dims(path: Path, a: Assembly) -> None:
                  f'stroke-width="2.2" stroke-dasharray="{dash}"/>')
         o.append(_t(1660, ly + 3, nm, 9.0, anchor="start", fill=col, weight="bold"))
         o.append(_t(1618, ly + 17, f"{wmm:.2f} x {hmm:.2f}", 8.4, anchor="start", fill=MUTED))
-    o.extend(_para(1618, 370, "All four share the same 260 x 134 rear box and the same VESA 100, "
-                   "so the plate, the struts and the bars are common to every one of them.", 26,
-                   size=8.8))
-    o.extend(_para(1618, 470, f"The tallest, 27 PORTRAIT at {a.display_27_h:.2f}, still stops "
+    o.append(f'<line x1="1618" y1="352" x2="1652" y2="352" stroke="{INK}" stroke-width="2.2" '
+             f'stroke-dasharray="10 4"/>')
+    o.append(_t(1660, 355, "REAR BOX, portrait", 9.0, anchor="start", weight="bold"))
+    o.append(f'<line x1="1618" y1="376" x2="1652" y2="376" stroke="{BAD}" stroke-width="2.2" '
+             f'stroke-dasharray="10 4"/>')
+    o.append(_t(1660, 379, "REAR BOX, landscape", 9.0, anchor="start", fill=BAD, weight="bold"))
+    o.extend(_para(1618, 402, "260 x 134 on BOTH sizes — so there are only TWO box outlines for "
+                   "four display options, and the plate, struts and bars are common to all of "
+                   "them.", 26, size=8.8))
+    o.extend(_para(1618, 478, f"In LANDSCAPE the box turns its 260 axis front-to-back and no "
+                   f"longer passes between the struts: the clear gap is "
+                   f"{a.strut_spacing - a.strut_width:.0f} and it needs 260.", 26, size=8.8,
+                   fill=BAD))
+    o.extend(_para(1618, 566, f"The tallest, 27 PORTRAIT at {a.display_27_h:.2f}, still stops "
                    f"{a.fridge_h - (a.screen_centre + a.display_27_h / 2):.0f} mm below the "
                    f"fridge top.", 26, size=8.8))
 
