@@ -1371,8 +1371,8 @@ def sheet_dims(path: Path, a: Assembly) -> None:
         o.append(_t(x, y + 3.4, tag, 8.2, fill=col, weight="bold"))
 
     # ================= FRONT ELEVATION =================
-    o.extend(_panel(40, 100, 480, 700, "FRONT ELEVATION — the mount, with the plate's holes"))
-    ox, oy = 300.0, 700.0
+    o.extend(_panel(40, 100, 900, 700, "ELEVATION — looking AT the fridge's side panel, all four displays overlaid"))
+    ox, oy = 500.0, 700.0
     hw = a.strut_width / 2.0
     o.append(f'<line x1="{ox - 150:.1f}" y1="{oy:.1f}" x2="{ox + 150:.1f}" y2="{oy:.1f}" '
              f'stroke="{INK}" stroke-width="2"/>')
@@ -1391,6 +1391,16 @@ def sheet_dims(path: Path, a: Assembly) -> None:
         o.append(f'<rect x="{ox - a.clamp_width / 2 * sc:.1f}" y="{Y(hgt, oy) - 5:.1f}" '
                  f'width="{a.clamp_width * sc:.1f}" height="10" rx="2" fill="{C_STEEL}" '
                  f'stroke="{INK}" stroke-width="1"/>')
+    OPTS = [("23.8 PORTRAIT", a.display_w, a.display_h, OK, "6 4"),
+            ("23.8 LANDSCAPE", a.display_h, a.display_w, BAD, "3 3"),
+            ("27 PORTRAIT", a.display_27_w, a.display_27_h, "#1b6ea8", "9 5"),
+            ("27 LANDSCAPE", a.display_27_h, a.display_27_w, "#8a4fbf", "2 4")]
+    for nm, wmm, hmm, col, dash in OPTS:
+        o.append(f'<rect x="{ox - wmm / 2 * sc:.1f}" '
+                 f'y="{Y(a.screen_centre + hmm / 2, oy):.1f}" width="{wmm * sc:.1f}" '
+                 f'height="{(Y(a.screen_centre - hmm / 2, oy) - Y(a.screen_centre + hmm / 2, oy)):.1f}" '
+                 f'fill="none" stroke="{col}" stroke-width="1.7" stroke-dasharray="{dash}"/>')
+
     pc = a.plate_centre
     for sx_ in (-1, 1):
         for sy_ in (-1, 1):
@@ -1422,7 +1432,7 @@ def sheet_dims(path: Path, a: Assembly) -> None:
              ("V8", a.plate_bolt_hi, 3), ("V12", a.screen_centre, 0), ("V9", a.plate_bolt_lo, 1),
              ("V7", a.lower_strut_len, 2), ("V14", a.base_gap, 3)]
     for tag, hgt, lane in vdims:
-        x = ox - 96 - lane * 26
+        x = ox - 210 - lane * 26
         o.append(f'<line x1="{x:.1f}" y1="{Y(hgt, oy):.1f}" x2="{ox - 60:.1f}" '
                  f'y2="{Y(hgt, oy):.1f}" stroke="{RULE}" stroke-width="0.7"/>')
         balloon(x - 12, Y(hgt, oy), tag)
@@ -1451,38 +1461,27 @@ def sheet_dims(path: Path, a: Assembly) -> None:
         balloon(ox + wid / 2 * sc + 16, yy, tag, WARN)
 
     # ================= WHAT THE MOUNT CARRIES =================
-    o.extend(_panel(1300, 100, 560, 700, "THE SAME FOUR, LOOKED AT FROM THE FRONT"))
-    dx0, dy0, ds = 1580.0, 420.0, 0.70
-    o.append(f'<rect x="{dx0 - a.plate_w / 2 * ds:.1f}" y="{dy0 - a.plate_h / 2 * ds:.1f}" '
-             f'width="{a.plate_w * ds:.1f}" height="{a.plate_h * ds:.1f}" fill="{C_PLATE}" '
-             f'stroke="{INK}" stroke-width="1.1"/>')
-    for s_ in (-a.strut_spacing / 2, a.strut_spacing / 2):
-        o.append(f'<rect x="{dx0 + (s_ - hw) * ds:.1f}" y="{dy0 - 300 * ds:.1f}" '
-                 f'width="{a.strut_width * ds:.1f}" height="{600 * ds:.1f}" fill="{C_STRUT}" '
-                 f'fill-opacity="0.55" stroke="{INK}" stroke-width="0.8"/>')
-    o.append(_t(dx0, dy0 + 4, "plate + struts", 8.0, fill=INK, weight="bold"))
-    OPTS = [("23.8 PORTRAIT", a.display_w, a.display_h, OK, "6 4"),
-            ("23.8 LANDSCAPE", a.display_h, a.display_w, BAD, "3 3"),
-            ("27 PORTRAIT", a.display_27_w, a.display_27_h, "#1b6ea8", "9 5"),
-            ("27 LANDSCAPE", a.display_27_h, a.display_27_w, "#8a4fbf", "2 4")]
+    o.extend(_panel(1600, 100, 260, 700, "THE FOUR OPTIONS"))
     for i, (nm, wmm, hmm, col, dash) in enumerate(OPTS):
-        o.append(f'<rect x="{dx0 - wmm / 2 * ds:.1f}" y="{dy0 - hmm / 2 * ds:.1f}" '
-                 f'width="{wmm * ds:.1f}" height="{hmm * ds:.1f}" fill="none" stroke="{col}" '
-                 f'stroke-width="1.7" stroke-dasharray="{dash}"/>')
-        ly = 706 + i * 18
-        o.append(f'<line x1="1322" y1="{ly - 3:.1f}" x2="1352" y2="{ly - 3:.1f}" stroke="{col}" '
-                 f'stroke-width="1.7" stroke-dasharray="{dash}"/>')
-        o.append(_t(1360, ly, f"{nm}   {wmm:.2f} x {hmm:.2f}", 8.6, anchor="start", fill=col,
-                    weight="bold"))
-    o.append(_t(dx0, 146, "all four share the same 260 x 134 rear box and VESA 100 — "
-                "so the mount does not change", 8.4, fill=MUTED))
+        ly = 150 + i * 46
+        o.append(f'<line x1="1618" y1="{ly:.1f}" x2="1652" y2="{ly:.1f}" stroke="{col}" '
+                 f'stroke-width="2.2" stroke-dasharray="{dash}"/>')
+        o.append(_t(1660, ly + 3, nm, 9.0, anchor="start", fill=col, weight="bold"))
+        o.append(_t(1618, ly + 17, f"{wmm:.2f} x {hmm:.2f}", 8.4, anchor="start", fill=MUTED))
+    o.extend(_para(1618, 370, "All four share the same 260 x 134 rear box and the same VESA 100, "
+                   "so the plate, the struts and the bars are common to every one of them.", 26,
+                   size=8.8))
+    o.extend(_para(1618, 470, f"The tallest, 27 PORTRAIT at {a.display_27_h:.2f}, still stops "
+                   f"{a.fridge_h - (a.screen_centre + a.display_27_h / 2):.0f} mm below the "
+                   f"fridge top.", 26, size=8.8))
 
     # ================= SIDE ELEVATION =================
-    o.extend(_panel(540, 100, 740, 700, "SIDE ELEVATION, WITH ALL FOUR DISPLAYS OVERLAID — depth exaggerated 2.6x"))
-    sx, soy = 700.0, 700.0
-    # depth exaggerated against height: the whole stack is 52 mm against 1768 of height,
-    # so at one scale the D-dimensions collapse into 29 px and cannot be read.
-    DS = 1.45
+    o.extend(_panel(960, 100, 300, 700, "SECTION — ALONG the panel, TRUE SCALE"))
+    sx, soy = 1110.0, 700.0
+    # TRUE SCALE, same as the vertical. Exaggerating depth stretched the 150 mm clamp leg and
+    # the 150 mm foot to look like 390 — real lengths, wrongly drawn. The thin stack goes in a
+    # magnified DETAIL instead, which is what a detail callout is for.
+    DS = sc
     o.append(f'<rect x="{sx - 30:.1f}" y="{Y(a.fridge_h, soy):.1f}" width="30" '
              f'height="{(Y(a.base_gap, soy) - Y(a.fridge_h, soy)):.1f}" fill="{FRIDGE_SIDE}"/>')
     o.append(_t(sx - 15, Y(1500, soy), "FRIDGE", 7.6, fill="#cfc9c2", rot=-90))
@@ -1511,57 +1510,66 @@ def sheet_dims(path: Path, a: Assembly) -> None:
     o.append(f'<path d="M{zs:.1f} {soy - a.foot_rise * sc:.1f} L{zs:.1f} {soy:.1f} '
              f'L{zs + a.foot_leg * DS:.1f} {soy:.1f}" fill="none" stroke="{C_STEEL}" '
              f'stroke-width="4"/>')
-    OPTS_S = [("23.8 PORTRAIT", a.display_h, OK, "6 4"),
-              ("23.8 LANDSCAPE", a.display_w, BAD, "3 3"),
-              ("27 PORTRAIT", a.display_27_h, "#1b6ea8", "9 5"),
-              ("27 LANDSCAPE", a.display_27_w, "#8a4fbf", "2 4")]
-    pz0 = sx + (a.gap + a.rear_box) * DS
-    for i, (nm, tall, col, dash) in enumerate(OPTS_S):
-        top_, bot_ = a.screen_centre + tall / 2, a.screen_centre - tall / 2
-        xoff = 0.0
-        o.append(f'<rect x="{pz0 + xoff:.1f}" y="{Y(top_, soy):.1f}" '
-                 f'width="{a.panel_d * DS:.1f}" height="{(Y(bot_, soy) - Y(top_, soy)):.1f}" '
-                 f'fill="none" stroke="{col}" stroke-width="1.7" stroke-dasharray="{dash}"/>')
-        o.append(f'<line x1="{pz0 + a.panel_d * DS:.1f}" y1="{Y(top_, soy):.1f}" '
-                 f'x2="{sx + 236 + i * 16:.1f}" y2="{Y(top_, soy):.1f}" stroke="{col}" '
-                 f'stroke-width="0.7" stroke-dasharray="3 3"/>')
-        o.append(f'<line x1="{sx + 236 + i * 16:.1f}" y1="{Y(top_, soy):.1f}" '
-                 f'x2="{sx + 236 + i * 16:.1f}" y2="{Y(bot_, soy):.1f}" stroke="{col}" '
-                 f'stroke-width="1.1"/>')
-        o.append(f'<line x1="{pz0 + a.panel_d * DS:.1f}" y1="{Y(bot_, soy):.1f}" '
-                 f'x2="{sx + 236 + i * 16:.1f}" y2="{Y(bot_, soy):.1f}" stroke="{col}" '
-                 f'stroke-width="0.7" stroke-dasharray="3 3"/>')
-        o.append(_t(sx + 300 + 3 * 16 + 10, Y(top_, soy) + 3,
-                    f"{nm}  {tall:.2f} tall", 8.2, anchor="start", fill=col,
-                    weight="bold"))
-    o.append(f'<line x1="{sx - 60:.1f}" y1="{Y(a.fridge_h, soy):.1f}" x2="{sx + 300:.1f}" '
-             f'y2="{Y(a.fridge_h, soy):.1f}" stroke="{INK}" stroke-width="1" '
-             f'stroke-dasharray="8 4"/>')
-    o.append(_t(sx + 364, Y(a.fridge_h, soy) + 3, f"fridge top {a.fridge_h:.0f}", 8.4,
-                anchor="start", fill=INK, weight="bold"))
-    o.append(_t(sx + 364, Y(a.screen_centre - a.display_27_h / 2, soy) - 16,
-                f"tallest option clears the fridge top by "
-                f"{a.fridge_h - (a.screen_centre + a.display_27_h / 2):.0f} mm", 8.2,
-                anchor="start", fill=MUTED))
+    for i, (nm, tall, col, dash) in enumerate(
+            [("23.8 P", a.display_h, OK, "6 4"), ("23.8 L", a.display_w, BAD, "3 3"),
+             ("27 P", a.display_27_h, "#1b6ea8", "9 5"), ("27 L", a.display_27_w, "#8a4fbf",
+                                                          "2 4")]):
+        o.append(f'<line x1="{sx + (a.gap + a.rear_box) * DS:.1f}" '
+                 f'y1="{Y(a.screen_centre + tall / 2, soy):.1f}" '
+                 f'x2="{sx + (a.gap + a.rear_box + a.panel_d) * DS:.1f}" '
+                 f'y2="{Y(a.screen_centre + tall / 2, soy):.1f}" stroke="{col}" '
+                 f'stroke-width="1.6"/>')
+        o.append(_t(sx + 90 + i * 4, Y(a.screen_centre + tall / 2, soy) - 4, nm, 7.4,
+                    anchor="start", fill=col, weight="bold"))
 
-    dseq = [("D1", 0.0, a.gap), ("D3", a.gap, a.gap + a.strut_depth),
-            ("D4", a.gap, a.gap + a.rear_box),
-            ("D5", a.gap + a.rear_box, a.gap + a.rear_box + a.panel_d),
-            ("D6", 0.0, a.display_face)]
-    for i, (tag, z0, z1) in enumerate(dseq):
-        yy = 150 + i * 26
-        o.append(f'<line x1="{sx + z0 * DS:.1f}" y1="{yy:.1f}" x2="{sx + z1 * DS:.1f}" '
-                 f'y2="{yy:.1f}" stroke="{WARN}" stroke-width="1.2"/>')
-        for zz_ in (z0, z1):
-            o.append(f'<line x1="{sx + zz_ * DS:.1f}" y1="{yy - 4:.1f}" '
-                     f'x2="{sx + zz_ * DS:.1f}" y2="{yy + 4:.1f}" stroke="{WARN}" '
-                     f'stroke-width="1.1"/>')
-        balloon(sx + z1 * DS + 16, yy, tag, WARN)
     for tag, x0, x1, yy in (("D7", sx - a.clamp_leg * DS, sx, soy + 28),
-                            ("D9", zs, zs + a.foot_leg * DS, soy + 54)):
+                            ("D9", sx + a.gap * DS, sx + (a.gap + a.foot_leg) * DS, soy + 54)):
         o.append(f'<line x1="{x0:.1f}" y1="{yy:.1f}" x2="{x1:.1f}" y2="{yy:.1f}" '
                  f'stroke="{WARN}" stroke-width="1.2"/>')
+        for xx_ in (x0, x1):
+            o.append(f'<line x1="{xx_:.1f}" y1="{yy - 5:.1f}" x2="{xx_:.1f}" y2="{yy + 5:.1f}" '
+                     f'stroke="{WARN}" stroke-width="1.2"/>')
         balloon(x1 + 16, yy, tag, WARN)
+
+    # ---- DETAIL: the stack, magnified, because at true scale it is 29 px wide
+    o.extend(_panel(1280, 100, 300, 320, "DETAIL — THE STACK, MAGNIFIED", WARN))
+    MG = 3.9
+    dx_, dy_ = 1306.0, 176.0
+    o.append(f'<rect x="{dx_ - 14:.1f}" y="{dy_ - 30:.1f}" '
+             f'width="{a.display_face * MG + 34:.1f}" height="196" rx="6" fill="#fff" '
+             f'stroke="{RULE}" stroke-width="0.9"/>')
+    o.append(_t(dx_, dy_ - 12, f"{MG:.1f}x", 9.0, anchor="start", fill=WARN,
+                weight="bold"))
+    o.append(f'<circle cx="{sx + a.display_face * DS / 2:.1f}" '
+             f'cy="{Y(a.screen_centre, soy):.1f}" r="26" fill="none" stroke="{WARN}" '
+             f'stroke-width="1.2" stroke-dasharray="4 3"/>')
+    o.append(f'<line x1="{sx + a.display_face * DS / 2 + 26:.1f}" '
+             f'y1="{Y(a.screen_centre, soy):.1f}" x2="{dx_ - 14:.1f}" y2="{dy_ + 60:.1f}" '
+             f'stroke="{WARN}" stroke-width="0.8" stroke-dasharray="4 3"/>')
+    zz = 0.0
+    for tag, nm, d in (("D1", "gap", a.gap), ("D2", "plate", a.plate_t),
+                       ("D4", "rear box", a.rear_box), ("D5", "panel", a.panel_d)):
+        fill = {"D1": None, "D2": C_PLATE, "D4": "#5b6b7d", "D5": "#101820"}[tag]
+        if fill:
+            o.append(f'<rect x="{dx_ + zz * MG:.1f}" y="{dy_ + 8:.1f}" width="{d * MG:.1f}" '
+                     f'height="76" fill="{fill}" stroke="{INK}" stroke-width="1"/>')
+        else:
+            o.append(f'<rect x="{dx_ + zz * MG:.1f}" y="{dy_ + 8:.1f}" width="{d * MG:.1f}" '
+                     f'height="76" fill="none" stroke="{RULE}" stroke-width="0.9" '
+                     f'stroke-dasharray="3 3"/>')
+        o.append(_t(dx_ + (zz + d / 2) * MG, dy_ + 98, f"{d:.2f}", 8.2, weight="bold"))
+        o.append(_t(dx_ + (zz + d / 2) * MG, dy_ + 2, tag, 8.0, fill=WARN, weight="bold"))
+        zz += d
+    o.append(f'<rect x="{dx_ + a.gap * MG:.1f}" y="{dy_ + 8:.1f}" '
+             f'width="{a.strut_depth * MG:.1f}" height="18" fill="{C_STRUT}" stroke="{INK}" '
+             f'stroke-width="0.9"/>')
+    o.append(_t(dx_ + (a.gap + a.strut_depth / 2) * MG, dy_ + 21, "D3 strut", 7.4, fill=INK))
+    o.append(f'<line x1="{dx_:.1f}" y1="{dy_ + 120:.1f}" x2="{dx_ + a.display_face * MG:.1f}" '
+             f'y2="{dy_ + 120:.1f}" stroke="{WARN}" stroke-width="1.4"/>')
+    o.append(_t(dx_ + a.display_face * MG / 2, dy_ + 114,
+                f"D6  {a.display_face:.2f} to the screen face", 8.6, fill=WARN, weight="bold"))
+    o.extend(_para(dx_ - 8, dy_ + 146, "the strut sits BESIDE the box, not behind it, "
+                   "so it does not add to D6", 34, size=8.0))
 
     # ================= REGISTER =================
     o.extend(_panel(40, 820, 1820, 320, "THE REGISTER — every tag, its value, and what sets it"))
