@@ -62,6 +62,18 @@ DIAGRAM_INFO = {
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
+    "clamp_elevations.svg": ("Both elevations, with the fridge",
+                            "True scale, nothing broken. Looking AT the side panel, and ALONG "
+                            "it at the whole appliance with the mount edge-on.", "current"),
+    "clamp_allparts.svg": ("Every cut part, flat",
+                          "The whole cut list at one scale — clamp bar, foot, plate, backing "
+                          "strip — with hole patterns and bend lines.", "current"),
+    "clamp_joints.svg": ("Every joint, as a stack",
+                        "All four bolted joints layer by layer at 15x, each with its grip and "
+                        "the bolt length that follows from it.", "current"),
+    "clamp_bom.svg": ("Bill of materials",
+                     "7 cut parts, 45 bought pieces. Says plainly which lines are priced and "
+                     "which are not.", "current"),
     "clamp_real.svg": ("What it will look like",
                       "Realistic elevation, true scale and unbroken, with people at 5ft1 and "
                       "6ft5 for reference and their eye lines to the screen.", "current"),
