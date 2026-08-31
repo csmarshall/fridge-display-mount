@@ -409,7 +409,10 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
         Item("m-fan", "[BOTH] Photograph the display's rear box",
              f"The Pi fan opening is at R{G.DISPLAY.rear_face_feature_radius:.1f} mm from the VESA "
              "centre, scaled off a raster drawing to ±5 mm. The vent windows sit on that radius.",
-             "Only matters once the panel is in hand.", "open"),
+             "NOW GATES THE PLATE SIZE. The plate is 152 mm tall specifically to stop "
+             "short of this opening so no vent windows have to be cut at all. Two edge "
+             "notches insure against the radius being wrong, but the opening's own size "
+             "is not published anywhere and has to be measured.", "open"),
         Item("m-thread", "[BOTH] VESA insert thread depth",
              "Sets the M4 screw length. Any standard head clears the fridge inside the "
              f"{p.magnet_standoff:.0f} mm standoff.", "", "open"),
