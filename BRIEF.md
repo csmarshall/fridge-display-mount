@@ -210,10 +210,19 @@ for tipping — which means it can be modest, and stay out of the way.
 **Two parts, two of each.**
 
 **Part A — the studded clamp (×2, the lower one flipped).** An L: the long leg lies on the fridge
-top, or reaches under its base. The short leg runs down (or up) the side. A **carriage bolt**
+top, or reaches under its base. The short leg runs down (or up) the side. An **ELEVATOR bolt**
 through a square hole in the short leg gives the stud — its square shoulder locks in the laser-cut
 hole so it cannot spin, which means the bracket stays a pure laser-plus-one-bend part with no
-welding and no secondary operation. Foam lines the inside of the L; no steel touches the appliance
+welding and no secondary operation.
+
+**Elevator, not carriage, because the head faces the FRIDGE.** 5/16"-18 elevator: head 30.16 mm
+diameter x **2.78 mm** thick and FLAT, against a carriage bolt's 19.81 mm x 5.08 mm dome. At 2.78
+the head **hides inside the 3 mm foam and never touches the panel**; a carriage dome stands
+**2.08 mm proud** of the same foam and presses a hard point on appliance sheet. It also spreads
+over 715 mm2 instead of 308 — 2.3x the bearing.
+
+The square neck is 8.38 mm across x 4.83 mm long, so it passes **1.80 mm beyond** a 3.02 mm clamp
+leg: **the foot's slot has to clear 8.38 mm, not just the 7.94 mm shank.** Foam lines the inside of the L; no steel touches the appliance
 anywhere.
 
 **Part B — the slotted foot (×2, one per strut).** Vertical leg carrying an elongated slot for the

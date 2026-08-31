@@ -44,6 +44,14 @@ class Assembly:
     foam: float = 3.0
     plate_t: float = 0.119 * IN
     plate_h: float = 310.0
+    # ELEVATOR bolt, 5/16-18. Head 1 3/16 in dia x 7/64 in high, FLAT; square neck 0.33 x 0.19 in.
+    # Chosen over a carriage bolt because the head faces the FRIDGE: 2.78 mm hides inside 3 mm of
+    # foam where a carriage bolt's 5.08 mm dome stands proud and presses a hard point on the panel.
+    bolt_head_d: float = (1 + 3 / 16) * IN
+    bolt_head_h: float = (7 / 64) * IN
+    bolt_neck_w: float = 0.33 * IN
+    bolt_neck_l: float = 0.19 * IN
+    bolt_dia: float = 0.3125 * IN
     screen_centre: float = 1331.0
     display_h: float = 555.23             # portrait: long side vertical
     rear_box: float = 25.0
@@ -240,8 +248,79 @@ def _stack_detail(ox, oy, w, a: Assembly) -> list[str]:
     return o
 
 
+def _joint_detail(ox, oy, a: Assembly) -> list[str]:
+    """The base joint at 4.5x. The elevation cannot resolve this, and it is where the design is."""
+    o: list[str] = []
+    K, h = 4.5, 150.0
+    def W(mm): return mm * K
+    o.append(_t(ox, oy - 42, "THE BASE JOINT — 4.5x", 11.5, anchor="start", weight="bold"))
+    o.append(_t(ox, oy - 27, "section through one stud, looking along the fridge face", 9,
+                anchor="start", fill=MUTED))
+
+    x, xs = ox, {}
+    for name, t, fill in (("fridge", 7.0, FRIDGE_SIDE), ("foam", a.foam, "#f8e2a4"),
+                          ("clamp", a.bracket_t, C_STEEL), ("foot", a.bracket_t, C_STEEL),
+                          ("wall", 1.78, C_STRUT)):
+        xs[name] = x
+        o.append(f'<rect x="{x:.1f}" y="{oy:.1f}" width="{W(t):.1f}" height="{h:.1f}" '
+                 f'fill="{fill}" stroke="{INK}" stroke-width="1"/>')
+        x += W(t)
+    inner = W(a.strut_depth - 2 * 1.78)
+    o.append(f'<rect x="{x:.1f}" y="{oy:.1f}" width="{inner:.1f}" height="{h:.1f}" fill="#fff" '
+             f'stroke="{INK}" stroke-width="0.8" stroke-dasharray="3 3"/>')
+    x += inner
+    o.append(f'<rect x="{x:.1f}" y="{oy:.1f}" width="{W(1.78):.1f}" height="{h:.1f}" '
+             f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1"/>')
+    far = x + W(1.78)
+
+    cy = oy + h / 2
+    hx = xs["foam"] + W(a.foam) - W(a.bolt_head_h)
+    o.append(f'<rect x="{hx:.1f}" y="{cy - W(a.bolt_head_d) / 2:.1f}" '
+             f'width="{W(a.bolt_head_h):.1f}" height="{W(a.bolt_head_d):.1f}" fill="#8a6a10" '
+             f'stroke="#6d5300" stroke-width="1.2"/>')
+    o.append(f'<rect x="{xs["clamp"]:.1f}" y="{cy - W(a.bolt_neck_w) / 2:.1f}" '
+             f'width="{W(a.bolt_neck_l):.1f}" height="{W(a.bolt_neck_w):.1f}" fill="#a37f14" '
+             f'stroke="#6d5300" stroke-width="1.2"/>')
+    o.append(f'<rect x="{xs["clamp"] + W(a.bolt_neck_l):.1f}" y="{cy - W(a.bolt_dia) / 2:.1f}" '
+             f'width="{far + 52 - xs["clamp"] - W(a.bolt_neck_l):.1f}" '
+             f'height="{W(a.bolt_dia):.1f}" fill="#8a6a10" fill-opacity="0.9" '
+             f'stroke="#6d5300" stroke-width="1"/>')
+    o.append(f'<rect x="{far + 8:.1f}" y="{cy - W(12.7) / 2:.1f}" width="{W(6.75):.1f}" '
+             f'height="{W(12.7):.1f}" fill="{C_STEEL}" stroke="{INK}" stroke-width="1.2"/>')
+
+    # layer labels BELOW, staggered so they never touch
+    below = [(xs["fridge"] + W(3.5), "fridge", MUTED, 0),
+             (xs["foam"] + W(a.foam / 2), f"foam {a.foam:.0f}", PAD_EDGE, 1),
+             (xs["clamp"] + W(a.bracket_t / 2), f"clamp {a.bracket_t:.2f}", INK, 2),
+             (xs["foot"] + W(a.bracket_t / 2), f"foot {a.bracket_t:.2f}", INK, 3),
+             (far + 8 + W(3.4), "nut", INK, 0)]
+    for lx, _t_, _c, row in below:
+        o.append(f'<line x1="{lx:.1f}" y1="{oy + h + 2:.1f}" x2="{lx:.1f}" '
+                 f'y2="{oy + h + 12 + row * 14:.1f}" stroke="{MUTED}" stroke-width="0.7"/>')
+    for lx, txt, col, row in below:
+        o.append(_t(lx, oy + h + 22 + row * 14, txt, 8.6, fill=col, weight="bold"))
+
+    # notes to the RIGHT, where there is room, rather than below where there is not
+    nx = far + W(12.7) + 40
+    o.append(_t(nx, oy + 16, "ELEVATOR bolt, 5/16-18", 10, anchor="start", weight="bold",
+                fill=WARN))
+    for i, ln in enumerate([
+            f"head {a.bolt_head_d:.1f} dia x {a.bolt_head_h:.2f} thick, FLAT",
+            f"it hides inside the {a.foam:.0f} mm foam and never",
+            "touches the panel. A carriage bolt's dome",
+            "would stand 2.08 mm proud of the same foam.",
+            "",
+            f"square neck {a.bolt_neck_w:.2f} across x {a.bolt_neck_l:.2f} long",
+            f"locks in a square hole in the CLAMP only.",
+            f"It passes {a.bolt_neck_l - a.bracket_t:.2f} mm beyond, so the FOOT",
+            f"slot must clear {a.bolt_neck_w:.2f} mm, not just the shank."]):
+        col = BAD if i >= 7 else MUTED
+        o.append(_t(nx, oy + 36 + i * 13, ln, 9, anchor="start", fill=col))
+    return o
+
+
 def render(path: Path, a: Assembly) -> None:
-    W, H = 1300.0, 1212.0
+    W, H = 1300.0, 1326.0
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
          f'viewBox="0 0 {W:.0f} {H:.0f}">',
          f'<rect width="{W:.0f}" height="{H:.0f}" fill="{PAPER}"/>',
@@ -254,8 +333,8 @@ def render(path: Path, a: Assembly) -> None:
                     "grip; the floor carries; nothing magnetic is involved.", 12, anchor="start",
             fill=MUTED)]
 
-    o += _card(40, 100, 700, 700, "SIDE ELEVATION")
-    o += _elevation(112, 760, 0.335, a)
+    o += _card(40, 100, 700, 500, "SIDE ELEVATION")
+    o += _elevation(112, 566, 0.235, a)
 
     o += _card(760, 100, 500, 330, "WHAT HOLDS IT")
     rows = [("Weight", "into the FLOOR through the foot", "154 N", OK),
@@ -269,7 +348,7 @@ def render(path: Path, a: Assembly) -> None:
         o.append(_t(784, ry + 15, v, 10, anchor="start", fill=MUTED))
         o.append(_t(1238, ry, n, 11, anchor="end", fill=c, weight="bold"))
 
-    o += _card(760, 450, 500, 350, "THE TWO PARTS")
+    o += _card(760, 450, 500, 420, "THE TWO PARTS")
     parts = [
         ("A — studded clamp  x2", INK,
          "L bracket. Long leg on the fridge top, or under its base. Short leg down the side. A "
@@ -290,17 +369,19 @@ def render(path: Path, a: Assembly) -> None:
             py += 13
         py += 12
 
-    o += _card(40, 820, 1220, 200, "")
-    o += _stack_detail(72, 856, 700, a)
-    o.append(_t(800, 882, "Assembly", 11.5, anchor="start", weight="bold"))
+    o += _card(40, 616, 700, 296, "")
+    o += _joint_detail(76, 690, a)
+    o += _card(40, 934, 1220, 200, "")
+    o += _stack_detail(72, 970, 700, a)
+    o.append(_t(800, 996, "Assembly", 11.5, anchor="start", weight="bold"))
     for i, step in enumerate([
             "1. Stand the struts on the feet; stud through foot slot and strut slot, nut loose.",
             "2. Hook the top clamps over the fridge top; washers behind the strut; nut loose.",
             "3. Slide the lower clamps UP their slots until they engage under the appliance.",
             "4. Lock everything. The struts go into tension and the fridge is gripped."]):
-        o.append(_t(812, 900 + i * 14, step, 9.5, anchor="start", fill=MUTED))
+        o.append(_t(812, 1014 + i * 14, step, 9.5, anchor="start", fill=MUTED))
 
-    o += _card(40, 1036, 1220, 152, "STILL OPEN — both need a torch under the fridge", BAD)
+    o += _card(40, 1150, 1220, 152, "STILL OPEN — both need a torch under the fridge", BAD)
     for i, q in enumerate([
             "Does a 150-250 mm clamp reach foul anything under there? Compressor, tubing, "
             "insulation, cross-members. It sets how far the lower clamp can go in, and nothing "
@@ -310,7 +391,7 @@ def render(path: Path, a: Assembly) -> None:
             f"The gap under the side measured 10-20 mm and the underside is NOT flat, so the "
             f"lower clamp's short leg plus its foam has to live inside that, at its tightest."]):
         for j, ln in enumerate(_wrap(q, 128)):
-            o.append(_t(64, 1076 + i * 34 + j * 13, ("- " if j == 0 else "  ") + ln, 10,
+            o.append(_t(64, 1190 + i * 34 + j * 13, ("- " if j == 0 else "  ") + ln, 10,
                         anchor="start", fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
