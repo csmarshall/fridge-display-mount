@@ -62,6 +62,9 @@ DIAGRAM_INFO = {
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
                        "strut stands proud of the fridge.", "current"),
+    "clamp_plate.svg": ("What holds the monitor — the plate",
+                       "Part C. The display bolts to it, it bolts to the struts, the struts "
+                       "stand on the floor. Carries the vent windows the Pi needs.", "current"),
     "clamp_approval.svg": ("Approval sheet — clamped strut",
                           "Partner-facing. What it is, what it sticks out into the room, what is "
                           "not settled.", "current"),
@@ -347,6 +350,15 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"$/kg and stiffness-per-dollar in the material sweep. Hot-rolled is cheaper stock "
              f"than cold-rolled, which is why .188 HRPO undercuts .135 CRS despite being thicker.",
              "+$11.21 over the 0.119 build. Commercial TV mounts run 1.8-2.7 mm; this is 4.75 mm.",
+             "settled"),
+        Item("d-orient", "[BOTH] Orientation is FORCED to portrait — not a preference",
+             "Portrait spans 41 to 366 mm on a 609.6 mm counter-depth case and fits. Landscape "
+             "would hang 74.3 mm off the REAR edge. It cannot be slid forward to fix: the clamp "
+             "bar must stay inside the 406.6 mm window, pinning the strut centre to 150.5-256.1, "
+             "and even the most forward position still overhangs by 21.5 mm. Centring landscape "
+             "needs a strut centre of 304.8, which is 48.7 mm INTO the hinge cover.",
+             "Portrait also sits 101.5 mm rearward of the case centre — a consequence of "
+             "datuming on the window rather than the case. Cosmetic, and unavoidable.",
              "settled"),
         Item("d-coat",
              "[BOTH] Powder coat at SendCutSend, or spray it yourself",
