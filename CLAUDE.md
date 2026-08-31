@@ -34,10 +34,18 @@ If a future revision removes the clamp, the magnets have to come back to structu
 number in §1.1 changes with them.
 
 ### 1.0b Two parts, two of each — and the stud is a CARRIAGE BOLT
-Part A is the studded clamp, Part B the slotted foot. The stud is a carriage bolt through a square
-laser-cut hole: the square shoulder stops it spinning, so the bracket needs no welding and stays a
-laser-plus-one-bend part. **Do not specify a welded stud** — SendCutSend cannot weld and it would
-make the bracket a two-operation part.
+Part A is the studded clamp, Part B the slotted foot. The stud is an **ELEVATOR bolt** through a
+square laser-cut hole: the square shoulder stops it spinning, so the bracket needs no welding and
+stays a laser-plus-one-bend part. **Do not specify a welded stud** — SendCutSend cannot weld and it
+would make the bracket a two-operation part.
+
+**Elevator, not carriage, because the head faces the FRIDGE.** At 2.78 mm thick and flat it hides
+inside the 3 mm foam; a carriage bolt's 5.08 mm dome stands proud of the same foam and presses a
+hard point onto appliance sheet. It also bears over 715 mm² instead of 308.
+
+**The foot slot must clear the 8.38 mm square NECK, not the 7.94 mm shank.** The neck is 4.83 mm
+long against a 3.02 mm clamp leg, so it passes 1.80 mm through into the foot. Easy to get wrong by
+sizing off the thread.
 
 **ONE foot per strut, outboard, tucked under the strut.** The strut stands on its horizontal leg
 and never touches the floor. The inboard foot was removed 2026-08-31 as redundant: tipping outward
