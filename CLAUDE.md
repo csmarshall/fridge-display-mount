@@ -119,7 +119,7 @@ drawing at
 | VESA | 100 x 100, **on the raised rear box face** | **CONFIRMED** on the dimension drawing |
 | Active area / bezel | 528.04 x 297.46 mm / 13.60 mm | dimension drawing |
 | Panel corner radius | R10.00 | dimension drawing |
-| Pi 5 fan / GPIO opening | in the rear box FACE, **87.5 mm** from the VESA centre (+/- 5, scaled against the dimensioned 260 mm box width) | dimension drawing |
+| Pi 5 fan / GPIO opening | in the rear box FACE, on the box's **260 axis**. TWO features, not one: **fan ~R82 (~30 dia)** and **GPIO slot ~R107**. Both **SCALED** against the dimensioned 260 mm box width — Waveshare dimensions NEITHER. The old single "87.5" figure averaged them and hid that the fan is the near one, which is the only one a plate edge can foul | scaled off the dimension drawing 2026-08-31 |
 | Enclosure material / Pi 5 bay | not stated | measure |
 | Bundled PSU | not stated on the spec page (brief says 12 V 5 A / 60 W) | confirm in box |
 
