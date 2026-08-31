@@ -1306,7 +1306,208 @@ def sheet_orientation(path: Path, a: Assembly) -> None:
              c - a.display_h / 2, c + a.display_h / 2, a.display_h / 2 - c)
 
 
-SHEETS = {"clamp_orientation": sheet_orientation,
+# --------------------------------------------------------------------------------------------
+def sheet_dims(path: Path, a: Assembly) -> None:
+    """Dimensioned general arrangement: front and side, every length TAGGED so it can be named.
+
+    The tags are the point. V-numbers run up the assembly, H-numbers across it, D-numbers into
+    the room. Every one is listed with where it comes from, so a dimension can be argued with by
+    its source rather than by eye.
+    """
+    W, H = 1620, 1180
+    o = _frame(W, H, "THE MOUNT, DIMENSIONED",
+               "Front and side elevation. Every length carries a tag — V up, H across, D into "
+               "the room — and the table says what sets each one.",
+               "GENERAL ARRANGEMENT — refer to any length by its tag")
+
+    F_LO, F_HI = 200.0, 950.0
+    cut = F_HI - F_LO
+    sc = 0.55
+
+    def Y(mm, oy):
+        return oy - (mm if mm <= F_LO else mm - cut) * sc
+
+    # ---------- the dimension register: (tag, value, what, source) ----------
+    REG = [
+        ("V1", a.strut_top, "top of the upper strut piece, above the floor", "derived"),
+        ("V2", a.proud, "upper piece stands proud of the case top", "DERIVED to land a slot on V4"),
+        ("V3", a.fridge_h, "fridge case height — the top clamp bolts here", "Samsung spec sheet"),
+        ("V4", a.upper_strut_len, "upper strut piece", "1 ft STOCK"),
+        ("V5", a.upper_strut_lo, "upper piece lower end, above the floor", "derived"),
+        ("V6", a.upper_strut_lo - a.lower_strut_len, "GAP — the open window at the box's edge",
+         "derived"),
+        ("V7", a.lower_strut_len, "lower strut piece", "4 ft STOCK"),
+        ("V8", a.plate_bolt_hi, "plate's upper bolt row", "a real slot on the upper grid"),
+        ("V9", a.plate_bolt_lo, "plate's lower bolt row", "a real slot on the lower grid"),
+        ("V10", a.plate_bolt_dy, "between the plate's bolt rows", "V8 - V9"),
+        ("V11", a.plate_h, "plate height", "V10 + 2 x (edge + margin)"),
+        ("V12", a.screen_centre, "screen centre above the floor", "chosen for 5'1\"-6'4\""),
+        ("V13", a.box_h_portrait, "rear box, long axis (vertical in portrait)", "DIMENSIONED"),
+        ("V14", a.base_gap, "underside of the case, above the floor", "measured 10-20"),
+        ("H1", a.strut_spacing, "strut centres", "box + strut + 2 x clearance"),
+        ("H2", a.strut_width, "strut channel width", "McMaster 3310T791"),
+        ("H3", a.clamp_width, "clamp bar, front to back", "H1 + part width"),
+        ("H4", a.plate_w, "plate width", "H1 + 2 x (edge + margin)"),
+        ("H5", a.box_w_portrait, "rear box, short axis (horizontal in portrait)", "DIMENSIONED"),
+        ("H6", a.display_w, "display width in portrait", "DIMENSIONED"),
+        ("H7", a.box_clearance, "box to strut, each side", "chosen"),
+        ("D1", a.gap, "fridge panel to the strut's back face", "foam + 2 x bracket"),
+        ("D2", a.plate_t, "plate thickness", "0.119 in stock"),
+        ("D3", a.strut_depth, "strut depth off the panel", "13/16 in low-profile"),
+        ("D4", a.rear_box, "display's rear box depth", "DIMENSIONED"),
+        ("D5", a.panel_d, "display panel depth", "DIMENSIONED"),
+        ("D6", a.display_face, "screen face off the fridge panel", "D1 + D4 + D5"),
+        ("D7", a.clamp_leg, "clamp bar long leg, onto the fridge top", "chosen"),
+        ("D8", a.clamp_short, "clamp bar short leg, down the side", "chosen"),
+        ("D9", a.foot_leg, "foot, outboard along the floor", "chosen"),
+        ("D10", a.foot_rise, "foot vertical leg", "chosen"),
+        ("D11", a.cover_margin, "clamp bar held off the hinge cover", "CHOSEN — see orientation"),
+    ]
+    VAL = {tag: v for tag, v, _, _ in REG}
+
+    def balloon(x, y, tag, col=BAD):
+        o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="10.5" fill="{PAPER}" stroke="{col}" '
+                 f'stroke-width="1.3"/>')
+        o.append(_t(x, y + 3.4, tag, 8.2, fill=col, weight="bold"))
+
+    # ================= FRONT ELEVATION =================
+    o.extend(_panel(40, 100, 470, 700, "FRONT ELEVATION — looking at the side panel"))
+    ox, oy = 300.0, 700.0
+    hw = a.strut_width / 2.0
+    o.append(f'<line x1="{ox - 150:.1f}" y1="{oy:.1f}" x2="{ox + 150:.1f}" y2="{oy:.1f}" '
+             f'stroke="{INK}" stroke-width="2"/>')
+    o.append(f'<rect x="{ox - a.plate_w / 2 * sc:.1f}" '
+             f'y="{Y(a.plate_centre + a.plate_h / 2, oy):.1f}" '
+             f'width="{a.plate_w * sc:.1f}" '
+             f'height="{(Y(a.plate_centre - a.plate_h / 2, oy) - Y(a.plate_centre + a.plate_h / 2, oy)):.1f}" '
+             f'fill="{C_PLATE}" stroke="{INK}" stroke-width="1.1"/>')
+    for s in (-a.strut_spacing / 2, a.strut_spacing / 2):
+        for lo, hi in ((0.0, a.lower_strut_len), (a.upper_strut_lo, a.strut_top)):
+            o.append(f'<rect x="{ox + (s - hw) * sc:.1f}" y="{Y(hi, oy):.1f}" '
+                     f'width="{a.strut_width * sc:.1f}" '
+                     f'height="{(Y(lo, oy) - Y(hi, oy)):.1f}" fill="{C_STRUT}" stroke="{INK}" '
+                     f'stroke-width="1"/>')
+    for hgt in (a.fridge_h, a.base_gap):
+        o.append(f'<rect x="{ox - a.clamp_width / 2 * sc:.1f}" y="{Y(hgt, oy) - 5:.1f}" '
+                 f'width="{a.clamp_width * sc:.1f}" height="10" rx="2" fill="{C_STEEL}" '
+                 f'stroke="{INK}" stroke-width="1"/>')
+    by = Y(F_LO, oy) - 2
+    o.append(f'<path d="M{ox - 140:.1f} {by + 7:.1f} L{ox:.1f} {by - 5:.1f} '
+             f'L{ox + 140:.1f} {by + 7:.1f}" fill="none" stroke="{PAPER}" stroke-width="8"/>')
+    o.append(f'<path d="M{ox - 140:.1f} {by + 7:.1f} L{ox:.1f} {by - 5:.1f} '
+             f'L{ox + 140:.1f} {by + 7:.1f}" fill="none" stroke="{BAD}" stroke-width="1.3"/>')
+
+    vdims = [("V1", a.strut_top, 0), ("V3", a.fridge_h, 1), ("V5", a.upper_strut_lo, 2),
+             ("V8", a.plate_bolt_hi, 3), ("V12", a.screen_centre, 0), ("V9", a.plate_bolt_lo, 1),
+             ("V7", a.lower_strut_len, 2), ("V14", a.base_gap, 3)]
+    for tag, hgt, lane in vdims:
+        x = ox - 96 - lane * 26
+        o.append(f'<line x1="{x:.1f}" y1="{Y(hgt, oy):.1f}" x2="{ox - 60:.1f}" '
+                 f'y2="{Y(hgt, oy):.1f}" stroke="{RULE}" stroke-width="0.7"/>')
+        balloon(x - 12, Y(hgt, oy), tag)
+    for tag, y0, y1, lane in (("V4", a.upper_strut_lo, a.strut_top, 0),
+                              ("V6", a.lower_strut_len, a.upper_strut_lo, 1),
+                              ("V11", a.plate_centre - a.plate_h / 2,
+                               a.plate_centre + a.plate_h / 2, 2)):
+        x = ox + 86 + lane * 30
+        o.append(f'<line x1="{x:.1f}" y1="{Y(y0, oy):.1f}" x2="{x:.1f}" y2="{Y(y1, oy):.1f}" '
+                 f'stroke="{OK}" stroke-width="1.2"/>')
+        for yy_ in (y0, y1):
+            o.append(f'<line x1="{x - 5:.1f}" y1="{Y(yy_, oy):.1f}" x2="{x + 5:.1f}" '
+                     f'y2="{Y(yy_, oy):.1f}" stroke="{OK}" stroke-width="1.2"/>')
+            o.append(f'<line x1="{ox + 56:.1f}" y1="{Y(yy_, oy):.1f}" x2="{x:.1f}" '
+                     f'y2="{Y(yy_, oy):.1f}" stroke="{RULE}" stroke-width="0.6"/>')
+        balloon(x, (Y(y0, oy) + Y(y1, oy)) / 2, tag, OK)
+    for tag, wid, yy in (("H1", a.strut_spacing, oy + 28), ("H3", a.clamp_width, oy + 54),
+                         ("H4", a.plate_w, oy + 80)):
+        o.append(f'<line x1="{ox - wid / 2 * sc:.1f}" y1="{yy:.1f}" '
+                 f'x2="{ox + wid / 2 * sc:.1f}" y2="{yy:.1f}" stroke="{WARN}" '
+                 f'stroke-width="1.2"/>')
+        for xx_ in (-wid / 2, wid / 2):
+            o.append(f'<line x1="{ox + xx_ * sc:.1f}" y1="{yy - 5:.1f}" '
+                     f'x2="{ox + xx_ * sc:.1f}" y2="{yy + 5:.1f}" stroke="{WARN}" '
+                     f'stroke-width="1.2"/>')
+        balloon(ox + wid / 2 * sc + 16, yy, tag, WARN)
+
+    # ================= SIDE ELEVATION =================
+    o.extend(_panel(530, 100, 470, 700, "SIDE ELEVATION — depth exaggerated 2.6x against height"))
+    sx, soy = 620.0, 700.0
+    # depth exaggerated against height: the whole stack is 52 mm against 1768 of height,
+    # so at one scale the D-dimensions collapse into 29 px and cannot be read.
+    DS = 1.45
+    o.append(f'<rect x="{sx - 30:.1f}" y="{Y(a.fridge_h, soy):.1f}" width="30" '
+             f'height="{(Y(a.base_gap, soy) - Y(a.fridge_h, soy)):.1f}" fill="{FRIDGE_SIDE}"/>')
+    o.append(_t(sx - 15, Y(1500, soy), "FRIDGE", 7.6, fill="#cfc9c2", rot=-90))
+    o.append(f'<line x1="{sx - 40:.1f}" y1="{soy:.1f}" x2="{sx + 220:.1f}" y2="{soy:.1f}" '
+             f'stroke="{INK}" stroke-width="2"/>')
+    zs = sx + a.gap * DS
+    for lo, hi in ((0.0, a.lower_strut_len), (a.upper_strut_lo, a.strut_top)):
+        o.append(f'<rect x="{zs:.1f}" y="{Y(hi, soy):.1f}" width="{a.strut_depth * DS:.1f}" '
+                 f'height="{(Y(lo, soy) - Y(hi, soy)):.1f}" fill="{C_STRUT}" stroke="{INK}" '
+                 f'stroke-width="1"/>')
+    o.append(f'<rect x="{sx + (a.gap - a.plate_t) * DS:.1f}" '
+             f'y="{Y(a.plate_centre + a.plate_h / 2, soy):.1f}" '
+             f'width="{a.plate_t * DS + 1:.1f}" '
+             f'height="{(Y(a.plate_centre - a.plate_h / 2, soy) - Y(a.plate_centre + a.plate_h / 2, soy)):.1f}" '
+             f'fill="{C_PLATE}" stroke="{INK}" stroke-width="0.8"/>')
+    o.append(f'<rect x="{zs:.1f}" y="{Y(a.box_hi, soy):.1f}" width="{a.rear_box * DS:.1f}" '
+             f'height="{(Y(a.box_lo, soy) - Y(a.box_hi, soy)):.1f}" fill="#5b6b7d" '
+             f'stroke="{INK}" stroke-width="1"/>')
+    dz = sx + (a.gap + a.rear_box) * DS
+    o.append(f'<rect x="{dz:.1f}" y="{Y(a.screen_centre + a.display_h / 2, soy):.1f}" '
+             f'width="{a.panel_d * DS:.1f}" height="{a.display_h * sc:.1f}" fill="#101820" '
+             f'stroke="{INK}" stroke-width="1"/>')
+    o.append(f'<path d="M{sx - a.clamp_leg * DS:.1f} {Y(a.fridge_h, soy):.1f} '
+             f'L{zs + a.strut_depth * DS:.1f} {Y(a.fridge_h, soy):.1f} '
+             f'L{zs + a.strut_depth * DS:.1f} {Y(a.fridge_h, soy) + a.clamp_short * sc:.1f}" '
+             f'fill="none" stroke="{C_STEEL}" stroke-width="4"/>')
+    o.append(f'<path d="M{sx - a.clamp_leg * DS:.1f} {Y(a.base_gap, soy):.1f} '
+             f'L{zs + a.strut_depth * DS:.1f} {Y(a.base_gap, soy):.1f}" fill="none" '
+             f'stroke="{C_STEEL}" stroke-width="4"/>')
+    o.append(f'<path d="M{zs:.1f} {soy - a.foot_rise * sc:.1f} L{zs:.1f} {soy:.1f} '
+             f'L{zs + a.foot_leg * DS:.1f} {soy:.1f}" fill="none" stroke="{C_STEEL}" '
+             f'stroke-width="4"/>')
+    dseq = [("D1", 0.0, a.gap), ("D3", a.gap, a.gap + a.strut_depth),
+            ("D4", a.gap, a.gap + a.rear_box),
+            ("D5", a.gap + a.rear_box, a.gap + a.rear_box + a.panel_d),
+            ("D6", 0.0, a.display_face)]
+    for i, (tag, z0, z1) in enumerate(dseq):
+        yy = 150 + i * 26
+        o.append(f'<line x1="{sx + z0 * DS:.1f}" y1="{yy:.1f}" x2="{sx + z1 * DS:.1f}" '
+                 f'y2="{yy:.1f}" stroke="{WARN}" stroke-width="1.2"/>')
+        for zz_ in (z0, z1):
+            o.append(f'<line x1="{sx + zz_ * DS:.1f}" y1="{yy - 4:.1f}" '
+                     f'x2="{sx + zz_ * DS:.1f}" y2="{yy + 4:.1f}" stroke="{WARN}" '
+                     f'stroke-width="1.1"/>')
+        balloon(sx + z1 * DS + 16, yy, tag, WARN)
+    for tag, x0, x1, yy in (("D7", sx - a.clamp_leg * DS, sx, soy + 28),
+                            ("D9", zs, zs + a.foot_leg * DS, soy + 54)):
+        o.append(f'<line x1="{x0:.1f}" y1="{yy:.1f}" x2="{x1:.1f}" y2="{yy:.1f}" '
+                 f'stroke="{WARN}" stroke-width="1.2"/>')
+        balloon(x1 + 16, yy, tag, WARN)
+
+    # ================= REGISTER =================
+    o.extend(_panel(40, 820, 1540, 320, "THE REGISTER — every tag, its value, and what sets it"))
+    per = (len(REG) + 2) // 3
+    for i, (tag, val, what, src) in enumerate(REG):
+        col, row = i // per, i % per
+        x = 62 + col * 512
+        y = 862 + row * 24
+        if row % 2 == 0:
+            o.append(f'<rect x="{x - 10:.1f}" y="{y - 15:.1f}" width="500" height="22" '
+                     f'fill="#f2f5f7"/>')
+        c = BAD if tag[0] == "V" else (WARN if tag[0] == "D" else OK)
+        o.append(_t(x + 2, y, tag, 9.4, anchor="start", fill=c, weight="bold"))
+        o.append(_t(x + 76, y, f"{val:.2f}", 9.6, anchor="end", weight="bold"))
+        o.append(_t(x + 84, y, what, 8.8, anchor="start"))
+        o.append(_t(x + 486, y, src, 8.2, anchor="end", fill=MUTED))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s — %d tagged dimensions", path, len(REG))
+
+
+SHEETS = {"clamp_dims": sheet_dims,
+          "clamp_orientation": sheet_orientation,
           "clamp_stack": sheet_stack,
           "clamp_depth": sheet_depth,
           "clamp_frame": sheet_frame,
