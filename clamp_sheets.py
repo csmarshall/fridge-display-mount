@@ -194,20 +194,38 @@ def sheet_height_check(path: Path, a: Assembly) -> None:
     ox, oy, sc = 250.0, 552.0, 0.212
     def Y(mm):
         return oy - mm * sc
-    o.append(f'<rect x="{ox:.1f}" y="{Y(a.strut_len):.1f}" width="26" '
-             f'height="{a.strut_len * sc:.1f}" fill="{C_STRUT}" stroke="{INK}" '
-             f'stroke-width="1.1"/>')
-    for s in slot_centres(a):
-        o.append(f'<rect x="{ox + 8:.1f}" y="{Y(s + a.slot_len / 2):.1f}" width="10" '
-                 f'height="{a.slot_len * sc:.1f}" fill="{INK}" fill-opacity="0.45"/>')
+    pieces = ([(0.0, a.lower_strut_len), (a.upper_strut_lo, a.strut_top)] if a.strut_split
+              else [(0.0, a.strut_len)])
+    for p_lo, p_hi in pieces:
+        o.append(f'<rect x="{ox:.1f}" y="{Y(p_hi):.1f}" width="26" '
+                 f'height="{(Y(p_lo) - Y(p_hi)):.1f}" fill="{C_STRUT}" stroke="{INK}" '
+                 f'stroke-width="1.1"/>')
+        for s in a._slots_between(p_lo, p_hi - 11.11, p_lo):
+            o.append(f'<rect x="{ox + 8:.1f}" y="{Y(s + a.slot_len / 2):.1f}" width="10" '
+                     f'height="{a.slot_len * sc:.1f}" fill="{INK}" fill-opacity="0.45"/>')
+    if a.strut_split:
+        o.append(f'<rect x="{ox - 3:.1f}" y="{Y(a.upper_strut_lo):.1f}" width="32" '
+                 f'height="{(Y(a.lower_strut_len) - Y(a.upper_strut_lo)):.1f}" fill="{OK}" '
+                 f'fill-opacity="0.14"/>')
+        o.append(_t(ox + 13, (Y(a.lower_strut_len) + Y(a.upper_strut_lo)) / 2, "GAP", 8.0,
+                    fill=OK, weight="bold"))
     o.append(f'<line x1="{ox - 150:.1f}" y1="{Y(a.fridge_h):.1f}" x2="{ox + 150:.1f}" '
              f'y2="{Y(a.fridge_h):.1f}" stroke="{FRIDGE_EDGE}" stroke-width="1.2"/>')
     o.append(f'<rect x="{ox - 150:.1f}" y="{Y(a.fridge_h):.1f}" width="150" '
              f'height="{(Y(a.base_gap) - Y(a.fridge_h)):.1f}" fill="{FRIDGE_SIDE}"/>')
     o.append(_t(ox - 75, Y(a.fridge_h / 2), "fridge", 9, fill="#cfc9c2", rot=-90))
 
-    for want, cen, off, nm in [(a.fridge_h, top_c, top_off, "TOP CLAMP"),
-                               (a.base_gap, low_c, low_off, "LOWER CLAMP")]:
+    rowspec = [(a.fridge_h, "TOP CLAMP", a.upper_strut_lo),
+               (a.base_gap, "LOWER CLAMP", 0.0),
+               (a.plate_bolt_hi, "PLATE, upper bolts", a.upper_strut_lo),
+               (a.plate_bolt_lo, "PLATE, lower bolts", 0.0)] if a.strut_split else [
+               (a.fridge_h, "TOP CLAMP", 0.0), (a.base_gap, "LOWER CLAMP", 0.0)]
+    packed = []
+    for want, nm, origin in rowspec:
+        cand = a._slots_between(origin, origin + 4000, origin)
+        cen = min(cand, key=lambda s: abs(s - want))
+        packed.append((want, cen, cen - want, nm))
+    for want, cen, off, nm in packed:
         ok = abs(off) <= reach
         col = OK if ok else BAD
         o.append(f'<line x1="{ox + 26:.1f}" y1="{Y(want):.1f}" x2="{ox + 170:.1f}" '
@@ -226,14 +244,19 @@ def sheet_height_check(path: Path, a: Assembly) -> None:
                 anchor="start", fill=WARN, weight="bold"))
 
     o += _panel(760, 100, 380, 470, "WHAT THE NUMBERS SAY", OK)
-    rows = [("strut length", f"{a.strut_len:.1f}", "6 ft stock"),
+    rows = [("strut, lower + upper", f"{a.lower_strut_ft:.0f}+{a.upper_strut_ft:.0f} ft",
+             "both stock, no cutting"),
             ("fridge case height", f"{a.fridge_h:.1f}", "published"),
             ("strut stands proud by", f"{a.proud:.1f}", "derived"),
             ("slot pitch", f"{a.slot_pitch:.1f}", "McMaster table"),
             ("slot length", f"{a.slot_len:.1f}", "McMaster table"),
             ("adjustment either way", f"±{reach:.1f}", "half a slot"),
-            ("top clamp error", f"{top_off:+.1f}", "PASS" if abs(top_off) <= reach else "FAIL"),
-            ("lower clamp error", f"{low_off:+.1f}", "PASS" if abs(low_off) <= reach else "FAIL")]
+            ("lower piece", f"{a.lower_strut_ft:.0f} ft", "stock, no cut"),
+            ("upper piece", f"{a.upper_strut_ft:.0f} ft", "stock, no cut"),
+            ("gap over the box", f"{a.upper_strut_lo - a.lower_strut_len:.1f}",
+             f"{a.edge_open:.0f} of {a.box_h_portrait:.0f} mm edge open")] + [
+            (nm.lower(), f"{off:+.1f}", "PASS" if abs(off) <= reach else "FAIL")
+            for _, _, off, nm in packed]
     for i, (k, v, n) in enumerate(rows):
         ry = 140 + i * 34
         if i % 2 == 0:
@@ -246,15 +269,17 @@ def sheet_height_check(path: Path, a: Assembly) -> None:
 
     o += _panel(40, 590, 1100, 110, "THE POINT", OK if abs(top_off) <= reach else BAD)
     o += _para(56, 640,
-               f"A 6 ft strut against a {a.fridge_h / IN:.1f} in fridge leaves {a.proud:.1f} mm "
-               f"standing proud of the top, and the pitch happens to put a slot {abs(top_off):.1f} "
-               f"mm from where the top clamp wants one — well inside the half-slot. This is luck, "
-               f"not design: the strut is stock and the fridge is what it is. It is checked here "
-               f"precisely BECAUSE nothing made it come out right, and a different fridge or a "
-               f"different strut length would need this recomputed.", 152)
+               f"Four landings on TWO slot grids, because each piece anchors its own slots to its "
+               f"own end. Three are EXACT and one is {max(abs(o_) for _, _, o_, _ in packed):.1f} "
+               f"mm out, all inside the {reach:.1f} mm half-slot. The exact ones are not luck: "
+               f"strut_top_proud is DERIVED to put a slot on the top clamp — at an arbitrary "
+               f"60 mm the nearest was 16.2 mm away, outside the half-slot and unbuildable. The "
+               f"plate bolts are exact by construction, because they are CHOSEN from real slot "
+               f"positions rather than picked and hoped for.", 152)
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
-    LOG.info("Wrote %s — top %+.1f, lower %+.1f against ±%.1f", path, top_off, low_off, reach)
+    worst = max(abs(off) for _, _, off, _ in packed)
+    LOG.info("Wrote %s — %d landings checked on %d slot grids, worst %+.2f against ±%.1f", path, len(packed), 2 if a.strut_split else 1, worst, reach)
 
 
 # --------------------------------------------------------------------------------------------
@@ -557,21 +582,55 @@ def sheet_frame(path: Path, a: Assembly) -> None:
     o.append(_t(X(dc), Y(a.screen_centre + 96),
                 f"PLATE {a.plate_w:.0f} x {a.plate_h:.0f}", 9.2, weight="bold"))
 
+    o.append(f'<rect x="{X(dc - a.plate_w / 2):.1f}" '
+             f'y="{Y(a.plate_centre + a.plate_h / 2):.1f}" '
+             f'width="{a.plate_w * sc:.1f}" '
+             f'height="{(Y(a.plate_centre - a.plate_h / 2) - Y(a.plate_centre + a.plate_h / 2)):.1f}" '
+             f'fill="{C_PLATE}" stroke="{INK}" stroke-width="1.3"/>')
+    o.append(_t(X(dc), Y(a.plate_centre) + 40, "PLATE splices the two pieces", 8.6,
+                weight="bold"))
+
     strut_half = a.strut_width / 2.0
+    # TWO pieces per side, with a gap over the display's rear box so its long edges — where the
+    # ports and controls most likely are — stay reachable. Both sides split identically.
+    pieces = ([(0.0, a.lower_strut_len), (a.upper_strut_lo, a.strut_top)] if a.strut_split
+              else [(0.0, a.strut_len)])
     for s in (dc - a.strut_spacing / 2.0, dc + a.strut_spacing / 2.0):
-        o.append(f'<rect x="{X(s - strut_half):.1f}" y="{Y(a.strut_len):.1f}" '
-                 f'width="{a.strut_width * sc:.1f}" '
-                 f'height="{(Y(0.0) - Y(a.strut_len)):.1f}" '
-                 f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1.2"/>')
-        for i in range(int(a.strut_len / a.slot_pitch)):
-            sy = 25.4 + i * a.slot_pitch
-            if F_LO < sy < F_HI:
-                continue
-            o.append(f'<rect x="{X(s) - 2.6:.1f}" y="{Y(sy + a.slot_len / 2):.1f}" width="5.2" '
-                     f'height="{a.slot_len * sc:.1f}" fill="{INK}" fill-opacity="0.4"/>')
+        for p_lo, p_hi in pieces:
+            o.append(f'<rect x="{X(s - strut_half):.1f}" y="{Y(p_hi):.1f}" '
+                     f'width="{a.strut_width * sc:.1f}" '
+                     f'height="{(Y(p_lo) - Y(p_hi)):.1f}" '
+                     f'fill="{C_STRUT}" stroke="{INK}" stroke-width="1.2"/>')
+            n = 0
+            while True:
+                sy = p_lo + 25.4 + n * a.slot_pitch
+                n += 1
+                if sy > p_hi - 11.11:
+                    break
+                if F_LO < sy < F_HI:
+                    continue
+                o.append(f'<rect x="{X(s) - 2.6:.1f}" y="{Y(sy + a.slot_len / 2):.1f}" '
+                         f'width="5.2" height="{a.slot_len * sc:.1f}" fill="{INK}" '
+                         f'fill-opacity="0.4"/>')
         o.append(f'<rect x="{X(s - strut_half) - 1:.1f}" y="{oy - 7:.1f}" '
                  f'width="{a.strut_width * sc + 2:.1f}" height="7" fill="{C_STEEL}" '
                  f'stroke="{INK}" stroke-width="1"/>')
+    if a.strut_split:
+        gy0, gy1 = Y(a.lower_strut_len), Y(a.upper_strut_lo)
+        o.append(f'<rect x="{X(dc - a.strut_spacing / 2 - strut_half) - 6:.1f}" y="{gy1:.1f}" '
+                 f'width="{(a.strut_spacing + a.strut_width) * sc + 12:.1f}" '
+                 f'height="{gy0 - gy1:.1f}" fill="{OK}" fill-opacity="0.10"/>')
+        o.append(f'<line x1="{X(dc + a.strut_spacing / 2 + strut_half) + 10:.1f}" y1="{gy0:.1f}" '
+                 f'x2="{X(dc + a.strut_spacing / 2 + strut_half) + 10:.1f}" y2="{gy1:.1f}" '
+                 f'stroke="{OK}" stroke-width="1.6"/>')
+        o.append(_t(X(dc + a.strut_spacing / 2 + strut_half) + 16, (gy0 + gy1) / 2 - 4,
+                    f"GAP {a.upper_strut_lo - a.lower_strut_len:.0f}", 9.0, anchor="start",
+                    fill=OK, weight="bold"))
+        o.append(_t(X(dc + a.strut_spacing / 2 + strut_half) + 16, (gy0 + gy1) / 2 + 7,
+                    f"{a.edge_open:.0f} of {a.box_h_portrait:.0f} mm", 8.2, anchor="start",
+                    fill=OK))
+        o.append(_t(X(dc + a.strut_spacing / 2 + strut_half) + 16, (gy0 + gy1) / 2 + 17,
+                    "of box edge OPEN", 8.2, anchor="start", fill=OK))
 
     # the two IDENTICAL bars — the whole point of the view
     bar_x0, bar_w = X(dc - a.clamp_outer_half), a.clamp_width * sc
@@ -707,92 +766,70 @@ def sheet_plate(path: Path, a: Assembly) -> None:
                "PLATE — the link that was dimensioned but never drawn")
 
     o += _panel(40, 100, 600, 800,
-                f"PLATE {a.plate_w:.0f} x {a.plate_h:.1f} vs THE REAR BOX, IN PORTRAIT", OK)
-    sc = 1.62
-    cx, cy = 318.0, 470.0
+                f"PLATE {a.plate_w:.0f} x {a.plate_h:.0f} — SPLICES THE TWO STRUT PIECES", OK)
+    sc = 1.30
+    cx, cy = 318.0, 500.0                       # cy is the PLATE's centre, not the VESA's
     hw, hp = a.plate_w / 2.0 * sc, a.plate_h / 2.0 * sc
+    vy0 = cy - a.vesa_offset_in_plate * sc      # where the VESA/display centre falls on the plate
+
+    o.append(f'<rect x="{cx - hw:.1f}" y="{cy - hp:.1f}" width="{2 * hw:.1f}" '
+             f'height="{2 * hp:.1f}" rx="4" fill="{C_PLATE}" stroke="{INK}" stroke-width="1.6"/>')
+
+    # rear box, dashed — the plate now reaches PAST it top and bottom, which is the whole point
     bw, bh = a.box_w_portrait / 2.0 * sc, a.box_h_portrait / 2.0 * sc
+    o.append(f'<rect x="{cx - bw:.1f}" y="{vy0 - bh:.1f}" width="{2 * bw:.1f}" '
+             f'height="{2 * bh:.1f}" fill="none" stroke="{INK}" stroke-width="1.2" '
+             f'stroke-dasharray="7 4"/>')
+    o.append(_t(cx, vy0 - bh - 7, f"rear box {a.box_w_portrait:.0f} x {a.box_h_portrait:.0f}",
+                8.4, fill=MUTED))
 
-    # THE REAR BOX, rotated: its dimensioned 260 axis is VERTICAL in portrait.
-    o.append(f'<rect x="{cx - bw:.1f}" y="{cy - bh:.1f}" width="{2 * bw:.1f}" '
-             f'height="{2 * bh:.1f}" rx="3" fill="#101820" fill-opacity="0.07" '
-             f'stroke="{INK}" stroke-width="1.3" stroke-dasharray="7 4"/>')
-    o.append(_t(cx, cy - bh - 9, f"REAR BOX {a.box_w_portrait:.0f} x {a.box_h_portrait:.0f}"
-                f"  — DIMENSIONED", 9.0, weight="bold"))
-
-    # THE PLATE, notched
-    nw, nd = a.notch_w / 2.0 * sc, a.notch_depth * sc
-    o.append(f'<path d="M{cx - hw:.1f} {cy - hp:.1f} '
-             f'L{cx - nw:.1f} {cy - hp:.1f} L{cx - nw:.1f} {cy - hp + nd:.1f} '
-             f'L{cx + nw:.1f} {cy - hp + nd:.1f} L{cx + nw:.1f} {cy - hp:.1f} '
-             f'L{cx + hw:.1f} {cy - hp:.1f} L{cx + hw:.1f} {cy + hp:.1f} '
-             f'L{cx + nw:.1f} {cy + hp:.1f} L{cx + nw:.1f} {cy + hp - nd:.1f} '
-             f'L{cx - nw:.1f} {cy + hp - nd:.1f} L{cx - nw:.1f} {cy + hp:.1f} '
-             f'L{cx - hw:.1f} {cy + hp:.1f} Z" fill="{C_PLATE}" fill-opacity="0.92" '
-             f'stroke="{INK}" stroke-width="1.6"/>')
-
-    # FAN and GPIO — scaled, so drawn with their uncertainty band
+    # VENT WINDOWS are back: the plate is tall enough to cover fan AND GPIO
     for sgn in (1, -1):
-        fy = cy - sgn * a.fan_r * sc
-        o.append(f'<circle cx="{cx:.1f}" cy="{fy:.1f}" r="{a.fan_dia / 2.0 * sc:.1f}" '
-                 f'fill="{BAD}" fill-opacity="0.22" stroke="{BAD}" stroke-width="1.3"/>')
-        o.append(f'<rect x="{cx - 60:.1f}" y="{fy - a.scale_tol * sc:.1f}" width="120" '
-                 f'height="{2 * a.scale_tol * sc:.1f}" fill="{BAD}" fill-opacity="0.10"/>')
-        gy = cy - sgn * a.gpio_r * sc
-        o.append(f'<rect x="{cx - a.gpio_len / 2.0 * sc:.1f}" y="{gy - 3:.1f}" '
-                 f'width="{a.gpio_len * sc:.1f}" height="6" rx="3" fill="{BAD}" '
+        wy = vy0 - sgn * a.vent_r * sc
+        o.append(f'<rect x="{cx - a.vent_wid / 2 * sc:.1f}" y="{wy - a.vent_len / 2 * sc:.1f}" '
+                 f'width="{a.vent_wid * sc:.1f}" height="{a.vent_len * sc:.1f}" '
+                 f'rx="{a.vent_wid / 2 * sc:.1f}" fill="{PAPER}" stroke="{INK}" '
+                 f'stroke-width="1.3"/>')
+        fy = vy0 - sgn * a.fan_r * sc
+        o.append(f'<circle cx="{cx:.1f}" cy="{fy:.1f}" r="{a.fan_dia / 2 * sc:.1f}" fill="{BAD}" '
                  f'fill-opacity="0.30" stroke="{BAD}" stroke-width="1"/>')
-    lx = cx + bw + 16
-    for r, lab, sub in ((a.gpio_r, f"GPIO slot ~R{a.gpio_r:.0f}",
-                         f"clears the plate by {a.gpio_r - a.plate_h / 2.0:.0f}"),
-                        (a.fan_r, f"FAN ~R{a.fan_r:.0f}, ~{a.fan_dia:.0f} dia",
-                         f"plate laps it by {a.plate_covers_fan_by:.1f}")):
-        yy_ = cy - r * sc
-        o.append(f'<line x1="{cx + 16:.1f}" y1="{yy_:.1f}" x2="{lx - 5:.1f}" y2="{yy_:.1f}" '
-                 f'stroke="{BAD}" stroke-width="0.7" stroke-dasharray="3 3"/>')
-        o.append(_t(lx, yy_ - 3, lab, 8.4, anchor="start", fill=BAD, weight="bold"))
-        o.append(_t(lx, yy_ + 8, sub, 8.0, anchor="start", fill=BAD))
-    o.append(_t(lx, cy - a.fan_r * sc + 21, "both SCALED off the raster,", 8.0, anchor="start",
-                fill=BAD))
-    o.append(_t(lx, cy - a.fan_r * sc + 31, "not dimensioned by Waveshare", 8.0, anchor="start",
-                fill=BAD))
+        gy = vy0 - sgn * a.gpio_r * sc
+        o.append(f'<rect x="{cx - a.gpio_wid / 2 * sc:.1f}" y="{gy - 2:.1f}" width="{a.gpio_wid * sc:.1f}" '
+                 f'height="4" rx="2" fill="{BAD}" fill-opacity="0.40"/>')
+    o.append(_t(cx + hw + 10, vy0 - a.vent_r * sc - 4,
+                f"VENT {a.vent_len:.0f} x {a.vent_wid:.0f}", 8.6, anchor="start", fill=INK,
+                weight="bold"))
+    o.append(_t(cx + hw + 10, vy0 - a.vent_r * sc + 7, f"at R{a.vent_r:.0f} — covers fan AND GPIO",
+                8.0, anchor="start", fill=MUTED))
 
-    # VESA
     v = a.vesa / 2.0 * sc
-    o.append(f'<rect x="{cx - v:.1f}" y="{cy - v:.1f}" width="{2 * v:.1f}" height="{2 * v:.1f}" '
+    o.append(f'<rect x="{cx - v:.1f}" y="{vy0 - v:.1f}" width="{2 * v:.1f}" height="{2 * v:.1f}" '
              f'fill="none" stroke="{OK}" stroke-width="1.2" stroke-dasharray="5 3"/>')
     for sx_ in (-1, 1):
         for sy_ in (-1, 1):
-            o.append(f'<circle cx="{cx + sx_ * v:.1f}" cy="{cy + sy_ * v:.1f}" '
+            o.append(f'<circle cx="{cx + sx_ * v:.1f}" cy="{vy0 + sy_ * v:.1f}" '
                      f'r="{a.vesa_hole_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{OK}" '
                      f'stroke-width="1.3"/>')
-    o.append(_t(cx, cy + 4, f"VESA {a.vesa:.0f} — DIMENSIONED", 9.0, fill=OK, weight="bold"))
+    o.append(_t(cx, vy0 + 4, f"VESA {a.vesa:.0f}", 9.0, fill=OK, weight="bold"))
 
-    # strut bolts
-    bx_, by_ = a.plate_bolt_dx / 2.0 * sc, a.plate_bolt_dy / 2.0 * sc
-    for sx_ in (-1, 1):
-        for sy_ in (-1, 1):
-            o.append(f'<circle cx="{cx + sx_ * bx_:.1f}" cy="{cy + sy_ * by_:.1f}" '
-                     f'r="{a.plate_bolt_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{INK}" '
-                     f'stroke-width="1.4"/>')
-    o.append(_t(cx - bx_, cy - by_ - 13, "to strut", 8.0, fill=INK, weight="bold"))
-
-    # dimensions, all outside the geometry
-    def hd(y, x0, x1, txt, col):
-        o.append(f'<line x1="{cx + x0:.1f}" y1="{y:.1f}" x2="{cx + x1:.1f}" y2="{y:.1f}" '
-                 f'stroke="{col}" stroke-width="1.1"/>')
-        for xx in (x0, x1):
-            o.append(f'<line x1="{cx + xx:.1f}" y1="{y - 4:.1f}" x2="{cx + xx:.1f}" '
-                     f'y2="{y + 4:.1f}" stroke="{col}" stroke-width="1.1"/>')
-        o.append(_t(cx + (x0 + x1) / 2, y - 6, txt, 8.6, fill=col, weight="bold"))
-    hd(cy + bh + 26, -bw, bw, f"box {a.box_w_portrait:.0f} wide", INK)
-    hd(cy + bh + 52, -bx_, bx_, f"strut bolts {a.plate_bolt_dx:.0f} — clear the box by "
-       f"{a.bolt_clear_of_box:.0f} each side", OK)
-    hd(cy + bh + 78, -hw, hw, f"plate {a.plate_w:.1f}", INK)
-    o.append(_t(cx, cy + bh + 100, f"the plate is {a.plate_h:.1f} TALL inside a "
-               f"{a.box_h_portrait:.0f} box — it sits wholly on the box face", 8.6, fill=MUTED))
-    o.append(_t(cx, cy + bh + 113, f"and laps the fan by {a.plate_covers_fan_by:.1f} mm, which "
-               f"is what the {a.notch_depth:.1f} mm notch removes", 8.6, fill=BAD, weight="bold"))
+    bx_ = a.plate_bolt_dx / 2.0 * sc
+    for sgn, lab in ((-1, "to the UPPER piece"), (1, "to the LOWER piece")):
+        by_ = cy + sgn * a.plate_bolt_dy / 2.0 * sc
+        for sx_ in (-1, 1):
+            o.append(f'<circle cx="{cx + sx_ * bx_:.1f}" cy="{by_:.1f}" '
+                     f'r="{a.plate_bolt_dia * sc / 2:.1f}" fill="{PAPER}" stroke="{BAD}" '
+                     f'stroke-width="1.5"/>')
+        o.append(_t(cx - hw - 8, by_ + 3, lab, 8.2, anchor="end", fill=BAD, weight="bold"))
+    o.append(f'<line x1="{cx + hw + 4:.1f}" y1="{cy - a.plate_bolt_dy / 2 * sc:.1f}" '
+             f'x2="{cx + hw + 4:.1f}" y2="{cy + a.plate_bolt_dy / 2 * sc:.1f}" stroke="{BAD}" '
+             f'stroke-width="1.2"/>')
+    o.append(_t(cx + hw + 10, cy - 4, f"{a.plate_bolt_dy:.1f} apart", 9.0, anchor="start",
+                fill=BAD, weight="bold"))
+    o.append(_t(cx + hw + 10, cy + 8, "real slots on TWO grids", 8.0, anchor="start", fill=BAD))
+    o.append(_t(cx, cy + hp + 20,
+                f"VESA sits {abs(a.vesa_offset_in_plate):.1f} mm "
+                f"{'below' if a.vesa_offset_in_plate < 0 else 'above'} the plate's own centre — "
+                f"the two grids do not line up", 8.6, fill=MUTED))
 
     o += _panel(660, 100, 340, 800, "THE CHAIN", INK)
     steps = [("THE DISPLAY", "3.94 kg", C_PLATE, "4 x M4 into the VESA inserts, on SPACERS"),
@@ -870,7 +907,7 @@ def sheet_plate(path: Path, a: Assembly) -> None:
         LOG.warning("right column overflows its panel by %.0f px", yy - 900)
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
-    LOG.info("Wrote %s — plate %.0f x %.0f, bolts %.0f x %.1f, %d notches, fan ~R%.0f, "
+    LOG.info("Wrote %s — plate %.0f x %.0f, bolts %.0f x %.1f, %d vents, fan ~R%.0f, "
              "heads clear the rear box by %.0f",
              path, a.plate_w, a.plate_h, a.plate_bolt_dx, a.plate_bolt_dy,
              a.n_notches, a.fan_r, a.bolt_clear_of_box)

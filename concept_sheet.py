@@ -37,7 +37,17 @@ class Assembly:
     """One home for the assembly's dimensions. Change here, the sheet follows."""
     fridge_h: float = 68.625 * IN         # 1743.1 — case, not hinge covers
     fridge_d: float = 24.0 * IN           # 609.6 counter-depth
-    strut_len: float = 6 * 12 * IN        # 1828.8
+    # SPLIT STRUTS. Two stock McMaster lengths per side with a gap over the display's rear box,
+    # so the box's long edges — where the ports and controls most likely are — stay reachable.
+    # Both sides split identically, so it does not matter which edge they turn out to be on.
+    strut_split: bool = True
+    lower_strut_ft: float = 4.0           # stock, $25.48
+    upper_strut_ft: float = 1.0           # stock, $6.37
+    # DERIVED, not chosen: the upper piece's slots are anchored to ITS OWN lower end, so where
+    # that piece sits decides whether a slot lands on the top clamp. 25.4 (one inch) puts a slot
+    # EXACTLY on the clamp — at 60 the nearest was 16.2 mm away, outside the half-slot.
+    strut_top_proud: float = 25.4
+    strut_len: float = 6 * 12 * IN        # 1828.8 — the UNSPLIT length, kept for comparison
     strut_depth: float = (13 / 16) * IN   # 20.64 low-profile
     strut_width: float = (1 + 5 / 8) * IN
     slot_pitch: float = 2.0 * IN          # 50.8, CONFIRMED off McMaster's table
@@ -60,7 +70,8 @@ class Assembly:
     fan_r: float = 82.0                   # SCALED — fan centre from the VESA/box centre
     fan_dia: float = 30.0                 # SCALED — Pi 5 active cooler is about this
     gpio_r: float = 107.0                 # SCALED — GPIO slot, further out than the fan
-    gpio_len: float = 50.0                # SCALED
+    gpio_len: float = 50.0                # SCALED — along the 260 axis
+    gpio_wid: float = 44.0                # SCALED — across it; WIDER than the fan
     scale_tol: float = 5.0                # how wrong a raster-scaled figure could be
     notch_w: float = 50.0
     box_w_portrait: float = 134.0         # rear box, SHORT axis — horizontal in portrait
@@ -227,6 +238,99 @@ class Assembly:
         return self.gap - self.plate_t
 
     @property
+    def lower_strut_len(self) -> float:
+        return self.lower_strut_ft * 12.0 * IN
+
+    @property
+    def upper_strut_len(self) -> float:
+        return self.upper_strut_ft * 12.0 * IN
+
+    @property
+    def strut_top(self) -> float:
+        return self.fridge_h + self.strut_top_proud
+
+    @property
+    def upper_strut_lo(self) -> float:
+        return self.strut_top - self.upper_strut_len
+
+    @property
+    def box_lo(self) -> float:
+        return self.screen_centre - self.box_h_portrait / 2.0
+
+    @property
+    def box_hi(self) -> float:
+        return self.screen_centre + self.box_h_portrait / 2.0
+
+    @property
+    def edge_open(self) -> float:
+        """How much of the box's long edge the gap actually exposes."""
+        return (min(self.upper_strut_lo, self.box_hi)
+                - max(self.lower_strut_len, self.box_lo))
+
+    def _slots_between(self, lo: float, hi: float, origin: float) -> list[float]:
+        """Slot centres on a piece whose lower end is at `origin`, within [lo, hi]."""
+        out, n = [], 0
+        while True:
+            z = origin + 25.4 + n * self.slot_pitch
+            if z > hi:
+                return out
+            if z >= lo:
+                out.append(z)
+            n += 1
+
+    @property
+    def plate_bolt_lo(self) -> float:
+        """Highest slot on the LOWER piece that is still below the box. A real slot, not a wish."""
+        cand = self._slots_between(0.0, self.lower_strut_len - 11.11, 0.0)
+        return max(z for z in cand if z < self.box_lo + 30.0)
+
+    @property
+    def plate_bolt_hi(self) -> float:
+        """Lowest slot on the UPPER piece above the box."""
+        cand = self._slots_between(self.upper_strut_lo, self.strut_top - 11.11,
+                                   self.upper_strut_lo)
+        return min(z for z in cand if z > self.box_hi - 30.0)
+
+    @property
+    def plate_centre(self) -> float:
+        """The plate is ASYMMETRIC about the VESA: its bolts are set by two different slot grids."""
+        return (self.plate_bolt_hi + self.plate_bolt_lo) / 2.0
+
+    @property
+    def vesa_offset_in_plate(self) -> float:
+        return self.screen_centre - self.plate_centre
+
+    @property
+    def fan_near(self) -> float:
+        return self.fan_r - self.fan_dia / 2.0 - self.scale_tol
+
+    @property
+    def gpio_far(self) -> float:
+        return self.gpio_r + 6.0 + self.scale_tol
+
+    @property
+    def vent_r(self) -> float:
+        """One window per side covering fan AND GPIO, so it is centred between them."""
+        return (self.fan_near + self.gpio_far) / 2.0
+
+    @property
+    def vent_len(self) -> float:
+        return self.gpio_far - self.fan_near
+
+    @property
+    def vent_wid(self) -> float:
+        """Across the window. The GPIO slot is WIDER than the fan, so the fan does not set this.
+
+        Sizing the window to the fan alone left the GPIO slot poking out either side of it —
+        caught by drawing both features rather than trusting the one number.
+        """
+        return max(self.fan_dia, self.gpio_wid) + 2.0 * self.scale_tol
+
+    @property
+    def n_vents(self) -> int:
+        return 2
+
+    @property
     def plate_bolt_dy(self) -> float:
         """Vertical spacing of the plate-to-strut bolts. A WHOLE NUMBER OF SLOT PITCHES.
 
@@ -234,6 +338,8 @@ class Assembly:
         other spacing puts one row near the middle of a slot and the other near its end, and the
         plate then only mounts at certain heights.
         """
+        if self.strut_split:
+            return self.plate_bolt_hi - self.plate_bolt_lo
         return self.plate_bolt_pitches * self.slot_pitch
 
     @property
@@ -343,7 +449,7 @@ class Assembly:
 
     @property
     def proud(self) -> float:
-        return self.strut_len - self.fridge_h
+        return (self.strut_top if self.strut_split else self.strut_len) - self.fridge_h
 
 
 A = Assembly()
