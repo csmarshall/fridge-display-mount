@@ -26,7 +26,8 @@ QUOTED = {
     "A": dict(qty=2, cut=41.55, bend=53.32, coated_1=77.95, each=59.74),
     "B": dict(qty=2, cut=21.94, bend=33.71, coated_1=46.15, each=29.69),
     "C": dict(qty=1, cut=60.90, bend=None, coated_1=94.05, each=94.05),
-    "D": dict(qty=2, cut=None, bend=None, coated_1=None, each=None),   # NOT QUOTED
+    # QUOTED, but powder coating is DISABLED at this size — see below.
+    "D": dict(qty=2, cut=10.98, bend=None, coated_1=None, each=8.11),
 }
 
 
