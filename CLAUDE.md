@@ -14,6 +14,28 @@ it is a deliberate change, not an oversight.
 
 ## 1. Design invariants — SETTLED, do not re-litigate
 
+### 1.-1 NOTHING IS FIXED TO THE BUILDING. EVER.
+**Stated by Charles 2026-09-01, in these words:** *"WE ARE NOT BOLTING INTO THE FLOOR EVER!!!
+This mount is designed to be removable and cause no damage to the things it's leaning against
+and clamping onto."*
+
+No floor anchors, no wall anchors, no adhesive to the appliance, no fastener into anything that
+is not a part of this mount. Every load goes to the **floor by bearing** and to the **fridge by
+clamping**, and the whole thing lifts away leaving no mark. This governs the appliance too: foam
+lines the inside of every clamp, no steel touches the panel, and the pads are EPDM rather than
+rubber because rubber stains polyurethane floors.
+
+Why this is written at the very top rather than buried: it is not a preference, it is the reason
+the design has the shape it has. The clamp reaches under the fridge INSTEAD of an anchor; the
+foot turns outboard onto the floor INSTEAD of being screwed to it. Anyone "simplifying" either
+of those into a fixing has thrown away the point of the project.
+
+**It has already been violated once — in a DRAWING, not in the design.** `hybrid_sketch.py` drew
+the lower clamp's short leg running DOWN through the floor line (it runs UP the side; the lower
+clamp is the top clamp FLIPPED), which made the elevator bolts read as anchoring into the floor.
+Fixed 2026-09-01. **When drawing the base, check that nothing crosses the floor line.**
+
+
 ### 1.0 Anti-tip is a CLAMP, not the magnets
 Two adjustable L brackets, top and bottom of the struts, foam-faced where they touch the
 appliance, slid along the strut slots until engaged and locked. That clamps the struts to the side

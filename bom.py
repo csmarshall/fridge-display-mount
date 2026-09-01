@@ -102,10 +102,14 @@ def fabricated(a: Assembly, with_strips: bool = True) -> list[Fab]:
 
 
 def hardware(a: Assembly, with_strips: bool = True) -> list[Buy]:
-    n_clamp_bolts = a.n_clamps * a.n_struts          # each bar picks up both struts
-    n_foot_bolts = a.n_feet
+    # Each bar picks up both struts. The base bolts also carry the feet -- same bolts,
+    # not extra ones, so the feet add NO fasteners of their own.
+    n_clamp_bolts = a.n_clamps * a.n_struts
+    n_foot_bolts = 0                                 # the feet ride the lower clamp bolts
     n_plate_bolts = 4
-    grip_clamp = a.bracket_t + WEB
+    # Clamp leg AND foot leg share one bolt at the base; at the top two washers replace
+    # the foot leg so the strut sits parallel. Both work out the same, which is the point.
+    grip_clamp = 2.0 * a.bracket_t + WEB
     grip_plate = a.plate_t + WEB + (a.bracket_t if with_strips else 0.0)
     def bolt_len(grip):
         need = grip + NUT_H + 3.0
@@ -131,8 +135,10 @@ def hardware(a: Assembly, with_strips: bool = True) -> list[Buy]:
             "90432A170 1-1/2 in $7.11/10. BLACK, but ribbed necks are meant to bite soft metal "
             "and plastic — no square neck exists in black oxide at this size",
             "McMaster", "90432A150", None),
-        Buy("F5", "Flat washer 5/16", n_clamp_bolts + n_foot_bolts + n_plate_bolts,
-            f"{WASHER_T} thick, behind the strut web", "McMaster", "", None),
+        Buy("F5", "Flat washer 5/16", 2 * a.n_struts + n_plate_bolts,
+            f"{WASHER_T} thick. TWO per TOP clamp bolt only, standing in for the "
+            f"foot leg that is not there — the base bolts do not get them",
+            "McMaster", "", None),
         Buy("F6", "M4 screw", 4, "button head, into the VESA inserts", "McMaster", "", None),
         Buy("P1", "Closed-cell foam, 3 mm", 1,
             f"clamp faces, {a.clamp_leg:.0f} x {a.clamp_width:.0f} x {a.n_clamps}",

@@ -53,16 +53,20 @@ def sheet_joints(path: Path, a: Assembly, strips: bool = True) -> None:
     SC = 15.0
 
     JOINTS = [
-        ("J1", "CLAMP BAR to STRUT", OK,
-         [("elevator head", B.ELEV_HEAD, C_STEEL), ("CLAMP BAR", a.bracket_t, C_PLATE),
-          ("washer", B.WASHER_T, "#8a949e"), ("strut web", B.WEB, C_STRUT),
+        ("J1", "TOP CLAMP to STRUT", OK,
+         [("elevator head", B.ELEV_HEAD, C_STEEL), ("CLAMP leg", a.bracket_t, C_PLATE),
+          ("washer", B.WASHER_T, "#8a949e"), ("washer", B.WASHER_T, "#8a949e"),
+          ("strut web", B.WEB, C_STRUT), ("channel nut", B.NUT_H, C_STEEL)],
+         "square shoulder in the clamp's square hole, so the bolt cannot spin. The TWO washers "
+         "stand in for the foot leg that is not here — without them the strut is held off at "
+         "the bottom and hard against the panel at the top, and it leans"),
+        ("J2", "LOWER CLAMP + FOOT to STRUT — ONE BOLT", OK,
+         [("elevator head", B.ELEV_HEAD, C_STEEL), ("CLAMP leg", a.bracket_t, C_PLATE),
+          ("FOOT leg", a.bracket_t, WARN), ("strut web", B.WEB, C_STRUT),
           ("channel nut", B.NUT_H, C_STEEL)],
-         "the square shoulder sits in the bar's square hole, so the bolt cannot spin"),
-        ("J2", "FOOT to STRUT", OK,
-         [("elevator head", B.ELEV_HEAD, C_STEEL), ("FOOT", a.bracket_t, C_PLATE),
-          ("washer", B.WASHER_T, "#8a949e"), ("strut web", B.WEB, C_STRUT),
-          ("channel nut", B.NUT_H, C_STEEL)],
-         "through the foot's SLOT, which is the height adjustment — leave it loose until last"),
+         "NOT two joints. The clamp's square hole locks the shoulder, the bolt then passes "
+         "through the foot's SLOT — that slot is the height adjustment — and nuts inside the "
+         "channel. Same grip as J1, so ONE bolt length does the whole base"),
         ("J3", "PLATE to STRUT" + (" — SANDWICHED" if strips else ""), BAD,
          ([("elevator head", B.ELEV_HEAD, C_STEEL), ("PLATE", a.plate_t, C_PLATE),
            ("strut web", B.WEB, C_STRUT)]
