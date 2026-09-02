@@ -403,6 +403,13 @@ sags but stays hung; design 2 rotates on the captured tail.
   RE-QUOTE, taken on the six-hole file; 4 magnets $95.68; the hook hardware $203.07) + 3 unpriced
   lines; the kit **$207.48** only if needed. Design 1 $599.87, design 2 $346.24. Display + PSU
   ($387.01) are the same purchase whichever wins and are listed once, outside the quotes.
+  **Budget column (sourced 2026-09-02, single observations):** nyloc nuts replace jam nut +
+  Loctite + primer; Home Depot fender washers; Foam Factory 1/2 in sheet (FAILS the pad rule by
+  +1.19 mm — laminate or waive consciously); Walmart VELCRO 50-pack; a $33 Superstrut 10 ft
+  half-slot stick (SAME slot pattern as 3310T791) cut in half; Rubber-Cal EPDM. Design 3 phase 1
+  $333.15, kit $191.22. The plate keeps its powder coat (Charles) and the O48 magnet has no
+  cheaper source; those two are the floor. A 36 mm K&J male-stud magnet ($9.72) is recorded as a
+  DESIGN CHANGE option, not a swap: 8 mm standoff, M6 stud, no imperial foam matches.
 
 ### 9.3 Provenance is part of the number
 Every figure is MEASURED, DERIVED or ESTIMATED and says which. A guess and a vendor figure must

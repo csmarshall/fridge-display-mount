@@ -656,8 +656,14 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
         if q.design == 3:
             qrows.append((f"design {q.design}", "PHASE 1 — first order", "", f"${PR.phase(q, 1):.2f}", "", ""))
             qrows.append((f"design {q.design}", "PHASE 2 — the kit", "", f"${PR.phase(q, 2):.2f}", "", ""))
-        qrows.append((f"design {q.design}", "PRICED TOTAL", f"{q.unpriced} lines not priced",
+        qrows.append((f"design {q.design}", "PRICED TOTAL, as listed", f"{q.unpriced} lines not priced",
                       f"${q.priced:.2f}", "", ""))
+        b = PR.budget(q)
+        swaps = "; ".join(f"{ln.item.split(' — ')[0]} ${ln.total:.2f}" for g in b.groups for ln in g.lines
+                          if ln.key.startswith("b_"))
+        qrows.append((f"design {q.design}", "BUDGET-SOURCED", f"{b.unpriced} lines not priced",
+                      f"${b.priced:.2f}" + (f" (phase 1 ${PR.phase(b, 1):.2f} + kit ${PR.phase(b, 2):.2f})" if q.design == 3 else ""),
+                      "sourced 2026-09-02", swaps))
     S.append(Section("quotes", "What each design costs",
                      "Three quotes from ONE price table (prices.py). Dated vendor observations, never "
                      "derived. Design 3's phase 1 is design 1 rebased to 0.119 in and 4 magnets; its "

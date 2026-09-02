@@ -96,6 +96,31 @@ P: dict[str, Price] = {p.key: p for p in (
     Price("floor_pad", "Non-marking EPDM floor pad, 3 mm", None, "sheet", "", "",
           "under the feet — EPDM, rubber stains polyurethane"),
     Price("plate_pad", "Small pads, plate corners to fridge", None, "4", "", "", ""),
+    # BUDGET ALTERNATIVES — sourced 2026-09-02 from search snippets and vendor pages (retail sites
+    # block direct fetches, so each is a single observation, not a cross-check). Same job, cheaper
+    # source or sensible quantity. Where the cheap part does NOT meet a design rule, the note says so.
+    Price("b_nyloc", "Nyloc nut 5/16-18, 18-8 stainless — replaces jam nut + threadlocker + primer",
+          12.80, "pack of 50", "BCP Fasteners BCP587", "2026-09-02",
+          "one nut per magnet stud; 8.2 mm tall vs the jam nut's 4.76 — CHECK the stud reaches "
+          "(fastener_matrix: thin nyloc + washer was marginal). Amazon 10-packs exist, unpriced"),
+    Price("b_fender", "Fender washer 5/16 x 1-1/4 OD, stainless", 1.47, "pack of 2",
+          "Home Depot Everbilt 825241", "2026-09-02", "same OD as the McMaster oversized washer"),
+    Price("b_foam", "Neoprene closed-cell sheet 1/2 in, 80 x 24 in, NO adhesive", 37.99, "half sheet",
+          "The Foam Factory", "2026-09-02",
+          "12.7 mm = 1.19 mm PROUD of the 11.51 magnets, outside the -0.60/+0.30 pad rule. Use only "
+          "if laminated to 7/16 or the rule is consciously waived; needs contact adhesive (~$8)"),
+    Price("b_velcro", "VELCRO ONE-WRAP thin ties 8 x 1/2 in", 5.97, "pack of 50",
+          "Walmart", "2026-09-02", "$7.29 at Office Depot; pre-cut 8 in ties suit the 4 x 18 slots"),
+    Price("b_strut10", "Superstrut ZB14HS10EG half-slot channel 1-5/8 x 13/16, 14 ga, 10 ft", 33.00, "each",
+          "Home Depot", "2026-09-02",
+          "SAME slot pattern as McMaster 3310T791 (1-1/8 in slots on 2 in centres); cut in half for "
+          "two 5 ft; electro-galvanized, not black. Measure the first slot from the cut end"),
+    Price("b_epdm", "EPDM sheet 1/8 in x 12 x 24, adhesive-backed, 60A", 11.26, "sheet",
+          "Home Depot / Lowe's Rubber-Cal 31-P16-125-012-024", "2026-09-02", "floor pads AND clamp faces"),
+    Price("b_magnet36", "OPTION: K&J MM-C-36 pot magnet, O36 x 8 mm, M6 male stud, 90.4 lb", 9.72, "each",
+          "K&J Magnetics", "2026-09-02",
+          "NOT in the budget column: 8 mm standoff needs an 8 mm pad no imperial foam gives, and the "
+          "plate's O8.5 holes want a 6.5 for an M6 stud. SF still ~19x. A design change, not a swap"),
     # common to every design
     Price("display", "Waveshare 23.8 in FHD touch monitor, SKU 34025, with 12 V 5 A PSU", 349.99, "each",
           "waveshare.com", "2026-08-27", ""),
@@ -198,6 +223,38 @@ def quote_hybrid(n_magnets: int = 4, strut_ft: int = 5) -> Quote:
     ])
 
 
+# What the budget column swaps. key -> (alt key, qty) or None to drop the line (its job is done
+# by another alt — the nyloc covers the threadlocker and its primer). Anything not listed is bought
+# exactly as in the main column: the plate keeps its powder coat (Charles, 2026-09-02) and the O48
+# magnets have no cheaper source ($25.68 at AMF, $23.92 McMaster).
+BUDGET: dict[str, tuple[str, float] | None] = {
+    "jam_nut": ("b_nyloc", 1), "threadlocker": None, "primer": None,
+    "washer_os": ("b_fender", 2), "foam_hook": ("b_foam", 1), "velcro": ("b_velcro", 1),
+    "strut_5ft": ("b_strut10", 1), "strut_4ft": ("b_strut10", 1), "strut_1ft": None,
+    "floor_pad": ("b_epdm", 1), "foam_3mm": None, "plate_pad": None,
+}
+
+
+def budget(q: Quote) -> Quote:
+    """The same quote with the sourced alternatives swapped in. Nothing unlisted changes."""
+    groups = []
+    for g in q.groups:
+        lines = []
+        for ln in g.lines:
+            if ln.key not in BUDGET:
+                lines.append(ln)
+                continue
+            alt = BUDGET[ln.key]
+            if alt is None:
+                continue
+            key, qty = alt
+            if key == "b_epdm" and any(x.key == "b_epdm" for x in lines):
+                continue            # one sheet does both jobs
+            lines.append(Line(key, qty))
+        groups.append(Group(g.title, lines))
+    return Quote(q.design, q.name, q.tagline + " — BUDGET-SOURCED", groups)
+
+
 def common() -> Group:
     return Group("Common to every design — the display itself",
                  [Line("display", 1), Line("psu", 1), Line("iec_cord", 1)])
@@ -219,7 +276,7 @@ def render(path: Path, quotes: list[Quote]) -> None:
     COL = {1: "#1b6ea8", 2: "#c8791a", 3: "#0b7a4b"}
     W, PW = 1720, 540
     rows_max = max(sum(len(g.lines) + 2 for g in q.groups) for q in quotes)
-    H = 250 + rows_max * 22 + 200
+    H = 250 + rows_max * 22 + 330
 
     def t(x, y, s, size=10.5, anchor="start", fill=INK, weight="normal"):
         return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="Helvetica, Arial, sans-serif" '
@@ -259,6 +316,14 @@ def render(path: Path, quotes: list[Quote]) -> None:
             o.append(t(px + PW - 14, y + 9, f"group ${g.priced:.2f}"
                        + (f" + {g.unpriced} not priced" if g.unpriced else ""), 9.2, "end", MUTED))
             y += 26
+        # what the budget column changes, then both totals
+        b = budget(q)
+        swapped = [(ln.item.split(" — ")[0], ln.total) for g in b.groups for ln in g.lines if ln.key.startswith("b_")]
+        yb = H - 150 - 30 - 16 * (len(swapped) + 1)
+        o.append(t(px + 14, yb, "BUDGET-SOURCED — what changes", 9.2, fill=COL[q.design], weight="bold"))
+        for i, (nm, tot) in enumerate(swapped):
+            o.append(t(px + 22, yb + 16 * (i + 1), nm[:70], 9.0))
+            o.append(t(px + PW - 14, yb + 16 * (i + 1), f"${tot:.2f}", 9.2, "end", weight="bold"))
         yb = H - 150
         o.append(f'<rect x="{px + 10}" y="{yb}" width="{PW - 20}" height="80" rx="5" fill="{COL[q.design]}" fill-opacity="0.08"/>')
         if q.design == 3:
@@ -266,12 +331,15 @@ def render(path: Path, quotes: list[Quote]) -> None:
             o.append(t(px + PW - 22, yb + 22, f"${phase(q, 1):.2f}", 13, "end", weight="bold"))
             o.append(t(px + 22, yb + 44, "PHASE 2 — the kit, only if needed", 10.5, weight="bold"))
             o.append(t(px + PW - 22, yb + 44, f"${phase(q, 2):.2f}", 13, "end", weight="bold"))
-            o.append(t(px + 22, yb + 66, f"both, and {q.unpriced} lines not priced", 9.5, fill=MUTED))
-            o.append(t(px + PW - 22, yb + 66, f"${q.priced:.2f}", 11, "end", fill=MUTED, weight="bold"))
+            o.append(t(px + 22, yb + 66, f"budget-sourced: phase 1 ${phase(b, 1):.2f}, kit ${phase(b, 2):.2f}", 10,
+                       fill=COL[q.design], weight="bold"))
+            o.append(t(px + PW - 22, yb + 66, f"${b.priced:.2f}", 11, "end", fill=COL[q.design], weight="bold"))
         else:
-            o.append(t(px + 22, yb + 30, "PRICED TOTAL", 10.5, weight="bold"))
-            o.append(t(px + PW - 22, yb + 30, f"${q.priced:.2f}", 15, "end", weight="bold"))
-            o.append(t(px + 22, yb + 56, f"plus {q.unpriced} lines not priced", 9.5, fill=MUTED))
+            o.append(t(px + 22, yb + 26, "PRICED TOTAL, as listed", 10.5, weight="bold"))
+            o.append(t(px + PW - 22, yb + 26, f"${q.priced:.2f}", 15, "end", weight="bold"))
+            o.append(t(px + 22, yb + 48, "budget-sourced", 10.5, weight="bold", fill=COL[q.design]))
+            o.append(t(px + PW - 22, yb + 48, f"${b.priced:.2f}", 15, "end", weight="bold", fill=COL[q.design]))
+            o.append(t(px + 22, yb + 68, f"plus {q.unpriced} / {b.unpriced} lines not priced", 9.5, fill=MUTED))
     c = common()
     o.append(t(40, H - 40, f"Common to every design: {'; '.join(f'{ln.item} ${ln.total:.2f}' for ln in c.lines)} "
                           f"= ${c.priced:.2f}.", 9.8, fill=MUTED))
@@ -296,8 +364,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             for ln in g.lines:
                 print(f"    {ln.qty:>4g}  {ln.item[:62]:62} "
                       f"{'NOT PRICED' if ln.total is None else '$' + format(ln.total, '.2f'):>11}")
+        b = budget(q)
         if q.design == 3:
-            print(f"  phase 1 ${phase(q, 1):.2f}   phase 2 ${phase(q, 2):.2f}")
+            print(f"  phase 1 ${phase(q, 1):.2f}   phase 2 ${phase(q, 2):.2f}   "
+                  f"budget: phase 1 ${phase(b, 1):.2f}, kit ${phase(b, 2):.2f}")
+        print(f"  BUDGET-SOURCED ${b.priced:.2f} ({b.unpriced} not priced): "
+              + "; ".join(f"{ln.item.split(' — ')[0][:40]} ${ln.total:.2f}" for g in b.groups for ln in g.lines if ln.key.startswith('b_')))
     print(f"\nCommon to all: ${common().priced:.2f}")
     render(args.out, qs)
     return 0
