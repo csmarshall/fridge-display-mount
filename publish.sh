@@ -54,7 +54,19 @@ if [ "${1:-}" = "--check" ]; then
   exit 0
 fi
 
-[ -z "$(git status --porcelain)" ] || die "working tree not clean — commit first, publish exactly what is in git"
+# The rebuild above regenerates every artefact. Generated files (pages, sheets, cut files, params)
+# are committed HERE, as part of publishing, so the site and the repo always agree. Anything else
+# dirty means source changed without a commit — refuse, so what is published is exactly what is in git.
+if ! git diff --quiet -- . ':!*.html' ':!*.svg' ':!*.dxf' ':!*.json' || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+  git status --short | grep -vE '\.(html|svg|dxf|json)$' >&2
+  die "source files changed or untracked — commit them first"
+fi
+if [ -n "$(git status --porcelain)" ]; then
+  git add -A
+  git -c commit.gpgsign=false commit -q -m "Rebuild generated artefacts for publish" \
+    -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+  log "committed regenerated artefacts: $(git rev-parse --short HEAD)"
+fi
 
 log "push main"
 git push origin main
