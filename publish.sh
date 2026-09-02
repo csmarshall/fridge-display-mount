@@ -33,7 +33,11 @@ log "design 3: plate via the root generator, audited, then its sheets"
 log "plate FEA on design 3's plate"
 "$PY" plate_fea.py --params strut/dxf/H_hook_plate.json --support magnets struts --thickness 0.119 0.187 --log-level WARNING
 
-log "prices: three quotes from one table"
+log "magnet sizing + design 4 concept"
+"$PY" magnet_sizing.py --log-level WARNING
+"$PY" angle_concept.py --log-level WARNING
+
+log "prices: quotes from one table"
 "$PY" prices.py --log-level WARNING >/dev/null
 
 log "design 1 studies"

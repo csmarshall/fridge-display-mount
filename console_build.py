@@ -65,6 +65,14 @@ DIAGRAM_INFO = {
                                           "The hook generator's own preview of THE file to "
                                           "upload: every hook hole plus four strut bolts in two "
                                           "rows. Reference only.", "hybrid"),
+    "angle_concept.svg": ("Design 4 concept - the hook in stock aluminium",
+                          "Clip, two bars, a small plate, four O36 magnets. Same load path, no custom "
+                          "plate, no coat, hand-drilled. Not validated; a sketch with derived numbers.",
+                          "shared"),
+    "magnet_sizing.svg": ("Right-sizing the magnets",
+                          "What one magnet actually holds (touch, peel, a grab) against a ladder of "
+                          "smaller male-stud magnets, and what a smaller one changes: pad, stud, holes.",
+                          "shared"),
     "quotes.svg": ("What each design costs — three quotes from one price table",
                    "Dated vendor observations. Design 3's phase 1 is design 1 at 0.119 in with "
                    "4 magnets; its kit is design 2's feet and lower clamp. Display excluded.",
@@ -341,6 +349,15 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "Tagged hook-final in this repo. Its magnet primer is worth reading whichever design "
              "wins — the physics of why magnet ratings mislead does not change.",
              "settled"),
+        Item("st-angle",
+             "[ALL] DESIGN 4 - CONCEPT: the hook in stock aluminium",
+             "A 2 x 2 x 1/4 in angle clipped over the fridge top corner, two 2 x 1/4 in flat bars "
+             "down the side 250 mm apart carrying four O36 K&J magnets, and an 8 x 8 plate for the "
+             "VESA. Same load path as the hook, no custom plate, no coat, bare 6061. About $150 in "
+             "parts, half of it estimates. Hand-drilled; no strut option.",
+             "Sketched 2026-09-02 because the custom plate is a third of the hook cost and the O48 "
+             "magnets another third. Not validated by a generator. Moot if design 3 plate is cut.",
+             "open"),
         Item("st-clamp",
              "[CLAMP] DESIGN 2 — a clamped strut standing on the floor",
              "Two low-profile slotted struts up the side panel, clamped top and bottom by a pair "

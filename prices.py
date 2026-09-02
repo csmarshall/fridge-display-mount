@@ -121,6 +121,20 @@ P: dict[str, Price] = {p.key: p for p in (
           "K&J Magnetics", "2026-09-02",
           "NOT in the budget column: 8 mm standoff needs an 8 mm pad no imperial foam gives, and the "
           "plate's O8.5 holes want a 6.5 for an M6 stud. SF still ~19x. A design change, not a swap"),
+    # DESIGN 4 - stock aluminium (angle_concept.py). ESTIMATE where the vendor page would not
+    # give a price for the exact size; sourced where it did.
+    Price("al_angle", "6061-T6 angle 2 x 2 x 1/4 in, 12 in", 18.86, "each", "Speedy Metals", "2026-09-02",
+          "price shown is their 2 x 2-1/2 x 1/4; 2 x 2 is the same order of cost"),
+    Price("al_bar", "6061-T6 flat bar 2 x 1/4 in, 24 in", 12.50, "each", "ESTIMATE", "2026-09-02",
+          "metals4u lists $8.33 for 12 in and a $8.33-49.42 range; 24 in taken as ~$12.50"),
+    Price("al_plate", "6061 plate 1/4 in, 8 x 8 in", 30.00, "each", "ESTIMATE", "2026-09-02",
+          "Online Metals cut-to-size; page blocked the price fetch"),
+    Price("mmc36", "K&J MM-C-36 pot magnet, O36 x 8 mm, M6 male stud, 90.4 lb", 9.72, "each",
+          "K&J Magnetics", "2026-09-02", ""),
+    Price("m6_nyloc", "M6 nyloc nuts + 1/4-20 bolts, washers", 15.00, "lot", "ESTIMATE", "2026-09-02",
+          "hardware store; 4 nylocs, 8 bolts, washers"),
+    Price("foam_5_16", "Neoprene foam 5/16 in, adhesive strips", None, "roll", "McMaster", "",
+          "8 mm standoff wants 7.94 mm foam; stocked, not yet priced"),
     # common to every design
     Price("display", "Waveshare 23.8 in FHD touch monitor, SKU 34025, with 12 V 5 A PSU", 349.99, "each",
           "waveshare.com", "2026-08-27", ""),
@@ -255,13 +269,22 @@ def budget(q: Quote) -> Quote:
     return Quote(q.design, q.name, q.tagline + " — BUDGET-SOURCED", groups)
 
 
+def quote_angle() -> Quote:
+    return Quote(4, "STOCK ALUMINIUM (CONCEPT)", "the hook in hardware-store 6061, hand-drilled; not validated", [
+        Group("Stock aluminium", [Line("al_angle", 1), Line("al_bar", 2), Line("al_plate", 1)]),
+        Group("Magnets", [Line("mmc36", 4, "K&J MM-C-36 - sized for the duty, on the bars")]),
+        Group("Hardware", [Line("m6_nyloc", 1), Line("foam_5_16", 1), Line("b_velcro", 1),
+                           Line("vesa_screws", 1), Line("spacers", 1)]),
+    ])
+
+
 def common() -> Group:
     return Group("Common to every design — the display itself",
                  [Line("display", 1), Line("psu", 1), Line("iec_cord", 1)])
 
 
 def all_quotes() -> list[Quote]:
-    return [quote_hook(), quote_clamp(), quote_hybrid()]
+    return [quote_hook(), quote_clamp(), quote_hybrid(), quote_angle()]
 
 
 def phase(q: Quote, which: int) -> float:
@@ -273,8 +296,9 @@ def phase(q: Quote, which: int) -> float:
 def render(path: Path, quotes: list[Quote]) -> None:
     import html as _h
     PAPER, INK, MUTED, RULE = "#f7f8fa", "#111", "#5b6166", "#d0d4d8"
-    COL = {1: "#1b6ea8", 2: "#c8791a", 3: "#0b7a4b"}
-    W, PW = 1720, 540
+    COL = {1: "#1b6ea8", 2: "#c8791a", 3: "#0b7a4b", 4: "#6b3fa0"}
+    PW = 440
+    W = 40 + len(quotes) * (PW + 24)
     rows_max = max(sum(len(g.lines) + 2 for g in q.groups) for q in quotes)
     H = 250 + rows_max * 22 + 330
 
@@ -294,7 +318,7 @@ def render(path: Path, quotes: list[Quote]) -> None:
                    "design 2's feet and lower clamp plus 5 ft struts. Design 2's plate is a different "
                    "part and shares nothing but the strut hardware.", 11.5, fill=MUTED)]
     for k, q in enumerate(quotes):
-        px, py = 40 + k * (PW + 30), 110
+        px, py = 40 + k * (PW + 24), 110
         o.append(f'<rect x="{px}" y="{py}" width="{PW}" height="{H - py - 60}" rx="7" fill="#fff" stroke="{RULE}"/>')
         o.append(f'<rect x="{px}" y="{py}" width="{PW}" height="34" rx="7" fill="{COL[q.design]}"/>')
         o.append(t(px + 14, py + 23, f"DESIGN {q.design} — {q.name}", 13, fill="#fff", weight="bold"))
@@ -306,11 +330,11 @@ def render(path: Path, quotes: list[Quote]) -> None:
             for ln in g.lines:
                 p = ln.price
                 qty = f"{ln.qty:g} x " if ln.qty != 1 or p.pack != "each" else ""
-                o.append(t(px + 22, y, f"{qty}{ln.item}"[:78], 9.4))
+                o.append(t(px + 22, y, f"{qty}{ln.item}"[:62], 9.0))
                 o.append(t(px + PW - 14, y, "NOT PRICED" if ln.total is None else f"${ln.total:.2f}",
                            9.6, "end", MUTED if ln.total is None else INK, "bold"))
                 y += 13
-                o.append(t(px + 22, y, f"{p.source} {p.date}  {p.note}"[:90], 7.6, fill=MUTED))
+                o.append(t(px + 22, y, f"{p.source} {p.date}  {p.note}"[:72], 7.4, fill=MUTED))
                 y += 12
             o.append(f'<line x1="{px + 14}" y1="{y - 4}" x2="{px + PW - 14}" y2="{y - 4}" stroke="{RULE}"/>')
             o.append(t(px + PW - 14, y + 9, f"group ${g.priced:.2f}"
@@ -322,7 +346,7 @@ def render(path: Path, quotes: list[Quote]) -> None:
         yb = H - 150 - 30 - 16 * (len(swapped) + 1)
         o.append(t(px + 14, yb, "BUDGET-SOURCED — what changes", 9.2, fill=COL[q.design], weight="bold"))
         for i, (nm, tot) in enumerate(swapped):
-            o.append(t(px + 22, yb + 16 * (i + 1), nm[:70], 9.0))
+            o.append(t(px + 22, yb + 16 * (i + 1), nm[:56], 8.8))
             o.append(t(px + PW - 14, yb + 16 * (i + 1), f"${tot:.2f}", 9.2, "end", weight="bold"))
         yb = H - 150
         o.append(f'<rect x="{px + 10}" y="{yb}" width="{PW - 20}" height="80" rx="5" fill="{COL[q.design]}" fill-opacity="0.08"/>')
