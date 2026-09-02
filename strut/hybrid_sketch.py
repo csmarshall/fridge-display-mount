@@ -246,7 +246,7 @@ def render_overview(path: Path, h: Hybrid, a: Assembly, hook: dict) -> None:
     The point of the sheet is the split, not the geometry: everything blue is in the first order
     whatever happens, everything amber is a later purchase that may never happen.
     """
-    W, H = 1560, 1120
+    W, H = 1560, 1260
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
          f'viewBox="0 0 {W} {H}">',
          f'<rect width="{W}" height="{H}" fill="{PAPER}"/>',
@@ -357,12 +357,11 @@ def render_overview(path: Path, h: Hybrid, a: Assembly, hook: dict) -> None:
     o.append(_t(ox_lbl, ly + 45, "between them", 8.6, anchor="start", fill=BAD))
 
     # ------------------------------------------------------------------------ what you buy when
-    o.extend(_panel(700, 104, 820, 470, "WHAT YOU BUY, AND WHEN", INK))
+    o.extend(_panel(700, 104, 820, 600, "WHAT YOU BUY, AND WHEN", INK))
     rows_now, rows_later, total_now, total_later = [], [], 0.0, 0.0
     for nm, src, cost, note in costed(h):
-        later = any(k in nm for k in ("STRUT", "FOOT", "LOWER CLAMP"))
-        if "MAGNET" in nm:
-            later = False
+        later = any(k in nm for k in ("STRUT", "FOOT", "LOWER CLAMP", "Elevator", "Foam 3 mm",
+                                       "Floor pads"))
         (rows_later if later else rows_now).append((nm, cost, note))
         if cost:
             if later:
@@ -380,10 +379,10 @@ def render_overview(path: Path, h: Hybrid, a: Assembly, hook: dict) -> None:
         yy += 34
         for nm, cost, note in rows:
             o.append(_t(730, yy, nm, 10.4, anchor="start", weight="bold"))
-            o.append(_t(1160, yy, "optional" if cost is None else f"${cost:.2f}", 10.2,
+            o.append(_t(1160, yy, "NOT PRICED" if cost is None else f"${cost:.2f}", 10.2,
                         anchor="end", fill=MUTED if cost is None else INK, weight="bold"))
             o.extend(_para(1180, yy - 3, note, 44, size=8.6, lead=10.0)[:2])
-            yy += 34
+            yy += 26
         o.append(f'<line x1="716" y1="{yy - 12:.1f}" x2="1500" y2="{yy - 12:.1f}" '
                  f'stroke="{RULE}" stroke-width="0.8"/>')
         o.append(_t(730, yy + 6, "subtotal", 10.4, anchor="start", fill=col, weight="bold"))
@@ -391,15 +390,15 @@ def render_overview(path: Path, h: Hybrid, a: Assembly, hook: dict) -> None:
         yy += 44
 
     # ------------------------------------------------------------------------- the one caveat
-    o.extend(_panel(700, 596, 820, 408, "THE ONE THING THE FIRST ORDER HAS TO GET RIGHT", BAD))
+    o.extend(_panel(700, 726, 820, 408, "THE ONE THING THE FIRST ORDER HAS TO GET RIGHT", BAD))
     s2 = structural(h, "struts", hook["engineering"]["plate_mass_kg"])
-    o.extend(_para(716, 644,
+    o.extend(_para(716, 774,
                    f"Four Ø8.5 holes in the plate: two rows at {a.strut_spacing:.2f} centres, "
                    f"{bolt_rows[0]:.2f} and {bolt_rows[-1]:.2f} above its bottom edge. If the struts are "
                    f"never bought they are four unused holes hidden behind the display. If they "
                    f"are bought and the holes are not there, the plate is scrap.", 88, size=10.6,
                    lead=14.0, fill=INK))
-    o.extend(_para(716, 718,
+    o.extend(_para(716, 848,
                    f"They are NOT at the hook's 246 mm magnet spacing. At 246 a bolt centre "
                    f"lands {14.27:.2f} mm from a magnet centre against a "
                    f"{h.magnet_disc / 2:.2f} mm disc — the bolts would sit UNDER the "
@@ -407,7 +406,7 @@ def render_overview(path: Path, h: Hybrid, a: Assembly, hook: dict) -> None:
                    f"is the HOOK GENERATOR's output with these holes added; it checks every bolt "
                    f"against every magnet face, window and hole and refuses to write otherwise.",
                    88, size=10.6, lead=14.0))
-    o.extend(_para(716, 806,
+    o.extend(_para(716, 936,
                    f"{h.strut_ft:.0f} ft struts, not 4. A 4 ft strut put ONE slot row 17.7 mm "
                    f"above the plate edge and the plate cantilevered 144 mm to the VESA: 0.876 mm "
                    f"of screen-edge movement under a 5 lb press, four times the feel-rigid band. "
@@ -417,7 +416,7 @@ def render_overview(path: Path, h: Hybrid, a: Assembly, hook: dict) -> None:
                    f"{h.strut_above_plate:.0f} mm above the plate, behind the display. If the "
                    f"mounting height moves, the rows are re-picked and the generator refuses if "
                    f"they no longer bracket.", 88, size=10.6, lead=14.0))
-    o.extend(_para(716, 894,
+    o.extend(_para(716, 1024,
                    "The foot and lower clamp are the clamped-strut design's parts, unchanged — "
                    "nothing new gets designed for the fallback, only cut.", 88, size=10.6,
                    lead=14.0, fill=OK))

@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Sequence
 
-from concept_sheet import IN, Assembly
+from concept_sheet import IN, Assembly   # puts the repo root on sys.path
 
 WEB = 0.07 * IN                 # strut wall
 NUT_H = 6.7                     # 5/16 standard hex nut
@@ -22,12 +22,14 @@ M4_HEAD = 2.2                   # M4 button head
 # LIVE SendCutSend quotes, 2026-08-31, 0.119 in A36/1008 CRS + MATTE BLACK POWDER COAT.
 # Matte black "includes free deburring", which is why it was specified.
 # Prices are PER PIECE at the quantity we actually need.
+# Cut-part quotes live in ONE place, ../prices.py (dated SendCutSend observations). The
+# cut/bend/coated ladder that used to sit here is in that file's notes.
+from prices import P as _PRICES  # noqa: E402
 QUOTED = {
-    "A": dict(qty=2, cut=41.55, bend=53.32, coated_1=77.95, each=59.74),
-    "B": dict(qty=2, cut=21.94, bend=33.71, coated_1=46.15, each=29.69),
-    "C": dict(qty=1, cut=60.90, bend=None, coated_1=94.05, each=94.05),
-    # QUOTED, but powder coating is DISABLED at this size — see below.
-    "D": dict(qty=2, cut=10.98, bend=None, coated_1=None, each=8.11),
+    "A": dict(qty=2, each=_PRICES["clamp_bar"].unit),
+    "B": dict(qty=2, each=_PRICES["foot"].unit),
+    "C": dict(qty=1, each=_PRICES["plate_c"].unit),
+    "D": dict(qty=2, each=_PRICES["strip"].unit),   # quoted, but powder coating is DISABLED at this width
 }
 
 

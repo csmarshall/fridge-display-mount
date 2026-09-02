@@ -397,8 +397,12 @@ sags but stays hung; design 2 rotates on the captured tail.
 - **0.119 in, not the hook's 0.187.** Design 1 chose 0.187 for heft (its own record); checked at
   0.119 in both phases (neck SF 32x/41x, body 34x/36x; FEA agrees with the strip model to ~15 %).
   One gauge for the whole kit.
-- Costs (dated observations): first order **$283.08** (plate $177.77 — RE-QUOTE, taken on the
-  six-hole file; 4 magnets $95.68; bolts $9.63); support kit **$197.85** only if needed.
+- **Money has ONE home: `prices.py`** (dated vendor observations, never derived), which builds all
+  three quotes and `quotes.svg`; `strut/bom.py`, `strut/hybrid.py` and the page read it. Design 3
+  phase 1 = design 1 rebased to 0.119 in and 4 magnets: **$476.52** priced (plate $177.77 —
+  RE-QUOTE, taken on the six-hole file; 4 magnets $95.68; the hook hardware $203.07) + 3 unpriced
+  lines; the kit **$207.48** only if needed. Design 1 $599.87, design 2 $346.24. Display + PSU
+  ($387.01) are the same purchase whichever wins and are listed once, outside the quotes.
 
 ### 9.3 Provenance is part of the number
 Every figure is MEASURED, DERIVED or ESTIMATED and says which. A guess and a vendor figure must

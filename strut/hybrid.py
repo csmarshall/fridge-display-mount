@@ -434,31 +434,30 @@ def fabricated(h: Hybrid, hook: dict) -> list[B.Fab]:
     ]
 
 
-MAGNET_EACH_USD = 23.92   # McMaster 3506K67, qty 1, 2026-08-27 (hook BOM)
-STRUT_USD = {4.0: 25.48, 5.0: 30.26, 6.0: 34.40}   # McMaster 3310T791 ladder, reference/
-
-
 def costed(h: Hybrid) -> list[tuple[str, str, float | None, str]]:
-    """Live prices where we have them, and NOTHING invented where we do not."""
-    return [
-        ("HOOK PLATE x1", "SendCutSend, quoted 2026-09-01", 177.77,
-         "0.119 CRS, 1 bend, matte black. NOT the archived $197.07 figure, which was 0.187 "
-         "HRPO. QUOTED ON THE SIX-HOLE REDRAWING: the real plate has the hook's full hole set, "
-         "the bounding box is unchanged to 0.4 mm, cut length is not — RE-QUOTE before ordering"),
-        (f"MAGNETS x{h.n_magnets_fitted}", "McMaster 3506K67, 2026-08-27",
-         h.n_magnets_fitted * MAGNET_EACH_USD,
-         "the four BODY magnets, REQUIRED in phase 1: nothing else holds the bottom of the "
-         "plate to the panel. Arm holes are cut; those magnets are bought only if the arm creeps"),
-        ("Elevator bolts, pack of 25", "McMaster 92670A781", 9.63,
-         "square neck, includes nuts; one pack covers everything"),
-        ("FOOT x2", "SendCutSend, quoted 2026-08-31", 2 * 29.69,
-         "one per strut, unchanged part, matte black"),
-        ("LOWER CLAMP x1", "SendCutSend, quoted 2026-08-31", 77.95,
-         "clamp design's part at QTY 1 ($77.95, not the $59.74 qty-2 rate)"),
-        (f"STRUT {h.strut_ft:.0f} ft x2", "McMaster 3310T791", 2 * STRUT_USD[h.strut_ft],
-         f"already black powder-coated; {h.strut_above_plate:.0f} mm stands above the plate "
-         f"top, behind the display"),
-    ]
+    """Design 3's lines, from the ONE price table (../prices.py). Nothing invented where unpriced."""
+    from prices import P, quote_hybrid
+    q = quote_hybrid(n_magnets=h.n_magnets_fitted, strut_ft=int(h.strut_ft))
+    # Short names for the sheet's cost table; the full descriptions live in prices.py.
+    SHORT = {"plate_119": "HOOK PLATE", "magnet": "MAGNETS", "jam_nut": "Jam nuts, pack",
+             "washer_os": "Oversized washers, pack", "threadlocker": "Threadlocker",
+             "primer": "Primer for threadlocker", "vesa_screws": "VESA screws, pack",
+             "spacers": "M4 spacers", "foam_hook": "Foam roll 7/16 in", "velcro": "VELCRO roll",
+             "foot": "FOOT", "clamp_bar_q1": "LOWER CLAMP", "strut_5ft": "STRUT 5 ft",
+             "strut_4ft": "STRUT 4 ft", "elevator": "Elevator bolts, pack",
+             "foam_3mm": "Foam 3 mm", "floor_pad": "Floor pads"}
+    out = []
+    for g in q.groups:
+        for ln in g.lines:
+            pr = ln.price
+            nm = SHORT.get(ln.key, ln.item)
+            if ln.qty != 1:
+                nm += f" x{ln.qty:g}"
+            out.append((nm, f"{pr.source}, {pr.date}" if pr.date else pr.source, ln.total, pr.note))
+    return out
+
+
+MAGNET_EACH_USD = __import__("prices").P["magnet"].unit   # kept for callers; the home is prices.py
 
 
 def main(argv: Sequence[str] | None = None) -> int:

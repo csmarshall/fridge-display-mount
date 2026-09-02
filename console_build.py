@@ -65,6 +65,10 @@ DIAGRAM_INFO = {
                                           "The hook generator's own preview of THE file to "
                                           "upload: every hook hole plus four strut bolts in two "
                                           "rows. Reference only.", "hybrid"),
+    "quotes.svg": ("What each design costs — three quotes from one price table",
+                   "Dated vendor observations. Design 3's phase 1 is design 1 at 0.119 in with "
+                   "4 magnets; its kit is design 2's feet and lower clamp. Display excluded.",
+                   "shared"),
     "plate_fea.svg": ("Plate bending under a touch — finite elements vs the strip model",
                       "Kirchhoff plate on the real cut geometry, both gauges, pinned on magnets "
                       "and on strut bolts. Screen-edge movement for each.", "hybrid"),
@@ -305,8 +309,9 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     h3 = HY.Hybrid(bolt_rows=tuple(hook3["params"]["strut_bolt_rows"]))
     s3 = {ph: HY.structural(h3, ph, hook3["engineering"]["plate_mass_kg"]) for ph in HY.PHASES}
     cost3 = HY.costed(h3)
-    now3 = sum(c for nm, _, c, _ in cost3 if c and not any(k in nm for k in ("STRUT", "FOOT", "LOWER CLAMP")))
-    later3 = sum(c for nm, _, c, _ in cost3 if c and any(k in nm for k in ("STRUT", "FOOT", "LOWER CLAMP")))
+    import prices as PR
+    _q3 = PR.quote_hybrid(n_magnets=h3.n_magnets_fitted, strut_ft=int(h3.strut_ft))
+    now3, later3 = PR.phase(_q3, 1), PR.phase(_q3, 2)
     rows3 = sorted(h3.bolt_rows)
 
     S.append(Section("status", "Three designs, one plate", "One display, one fridge, three ways to "
@@ -640,13 +645,25 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
         ("Strut", f"{h3.strut_ft:.0f} ft McMaster 3310T791 x2",
          f"stands {h3.strut_above_plate:.0f} mm above the plate top, behind the display"),
     ]))
-    S.append(Section("hprices", "Design 3 — what it costs, and when",
-                     "Dated observations, not derived values. The plate line needs a re-quote (see "
-                     "Before ordering). Nothing in a cart.", "table",
-                     columns=["item", "cost", "source", "note"],
-                     rows=[(nm, f"${c:.2f}" if c else "NOT PRICED", src, note) for nm, src, c, note in cost3]
-                          + [("FIRST ORDER", f"${now3:.2f}", "", "plate, body magnets, bolts"),
-                             ("ONLY IF THE ARM IS TOO LIVELY", f"${later3:.2f}", "", "feet, lower clamp, struts")]))
+    qrows = []
+    for q in PR.all_quotes():
+        for g in q.groups:
+            for ln in g.lines:
+                pr = ln.price
+                qrows.append((f"design {q.design}", g.title, f"{ln.qty:g} x {ln.item}",
+                              "NOT PRICED" if ln.total is None else f"${ln.total:.2f}",
+                              f"{pr.source} {pr.date}".strip(), pr.note))
+        if q.design == 3:
+            qrows.append((f"design {q.design}", "PHASE 1 — first order", "", f"${PR.phase(q, 1):.2f}", "", ""))
+            qrows.append((f"design {q.design}", "PHASE 2 — the kit", "", f"${PR.phase(q, 2):.2f}", "", ""))
+        qrows.append((f"design {q.design}", "PRICED TOTAL", f"{q.unpriced} lines not priced",
+                      f"${q.priced:.2f}", "", ""))
+    S.append(Section("quotes", "What each design costs",
+                     "Three quotes from ONE price table (prices.py). Dated vendor observations, never "
+                     "derived. Design 3's phase 1 is design 1 rebased to 0.119 in and 4 magnets; its "
+                     "kit is design 2's feet and lower clamp. Display and PSU excluded — same purchase "
+                     "whichever design wins. Nothing in a cart.", "table",
+                     columns=["design", "group", "line", "cost", "source", "note"], rows=qrows))
 
     strut = root / "strut"
     found = (sorted(root.glob("*.svg")) + sorted(strut.glob("*.svg"))
@@ -880,7 +897,7 @@ VARIANTS = {
     "hybrid": {"groups": [("hybrid", "Design 3 — the plate prepared for struts"),
                           ("hook", "Design 1 — the hook this is built on"),
                           ("shared", "Background — applies to any mount")],
-               "drop_sections": {"parity", "numbers", "prices"},
+               "drop_sections": {"parity", "numbers", "prices", "hprices"},
                "keep": lambda t: t.startswith(("[HYBRID]", "[HOOK]", "[ALL]"))},
     "hook":   {"groups": [("hook", "Design 1 — the hook"),
                           ("shared", "Background — applies to any mount")],
