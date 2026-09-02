@@ -21,6 +21,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
 
+# The shared modules (bracket_common, generate_bracket, audit_dxf) live one level up: this
+# directory is the strut/hybrid half of ONE project, merged from its own repo on 2026-09-02.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from bracket_common import (LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_SIDE_EDGE,
                             ON_FRIDGE_MUTED, ON_FRIDGE_OK, PAD_EDGE, PAD_FILL)
 

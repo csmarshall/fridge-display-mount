@@ -13,3 +13,8 @@ variants/
 __pycache__/
 .DS_Store
 _fullpage.html
+
+# strut/: the hook generator's scratch runs made by strut/generate_hybrid.py. The deliverables
+# (H_hook_plate.dxf/.json/_preview.svg) are copied out of it and ARE committed.
+strut/dxf/_hook_ref/
+strut/.venv/

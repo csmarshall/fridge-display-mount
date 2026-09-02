@@ -53,83 +53,97 @@ PRICES_SUPERSEDED_119 = [
 ]
 
 DIAGRAM_INFO = {
-    # The CURRENT design. It lives in csmarshall/fridge-strut-mount; the sheet is copied here so
-    # one page can carry both designs. Regenerate it there, then re-copy.
-    "strut_concept.svg": ("Concept sheet — the whole assembly",
+    # DESIGN 3 — the hook plate prepared for struts. Generated in strut/ by generate_hybrid.py
+    # and hybrid_sketch.py; the FEA sheet by plate_fea.py at the root.
+    "strut/hybrid_overview.svg": ("The third design — one plate, two ways to hold it up",
+                                  "Whole-design elevation split by WHEN each part is bought, "
+                                  "and the cost table for both phases.", "hybrid"),
+    "strut/hybrid_sketch.svg": ("If the hook needs help — the bottom end",
+                                "Contingency sketch of the feet and lower clamp under the plate. "
+                                "Not a fabrication drawing.", "hybrid"),
+    "strut/dxf/H_hook_plate_preview.svg": ("The plate as cut — 0.119 in, with strut holes",
+                                          "The hook generator's own preview of THE file to "
+                                          "upload: every hook hole plus four strut bolts in two "
+                                          "rows. Reference only.", "hybrid"),
+    "plate_fea.svg": ("Plate bending under a touch — finite elements vs the strip model",
+                      "Kirchhoff plate on the real cut geometry, both gauges, pinned on magnets "
+                      "and on strut bolts. Screen-edge movement for each.", "hybrid"),
+    # DESIGN 2 — the clamped strut. Generated in strut/ (merged from its own repo 2026-09-02).
+    "strut/concept_sheet.svg": ("Concept sheet — the whole assembly",
                          "Side elevation, the base joint at 4.5x, and the panel-to-screen "
-                         "stack. The sheet the design was decided from.", "current"),
-    "clamp_frame.svg": ("The frame, from the front",
+                         "stack. The sheet the design was decided from.", "clamp"),
+    "strut/clamp_frame.svg": ("The frame, from the front",
                        "Two struts tied top and bottom by IDENTICAL bars. The only view that "
                        "shows it as one frame — and a true-scale strip answering whether the "
-                       "strut stands proud of the fridge.", "current"),
-    "clamp_elevations.svg": ("Both elevations, with the fridge",
+                       "strut stands proud of the fridge.", "clamp"),
+    "strut/clamp_elevations.svg": ("Both elevations, with the fridge",
                             "True scale, nothing broken. Looking AT the side panel, and ALONG "
-                            "it at the whole appliance with the mount edge-on.", "current"),
-    "clamp_allparts.svg": ("Every cut part, flat",
+                            "it at the whole appliance with the mount edge-on.", "clamp"),
+    "strut/clamp_allparts.svg": ("Every cut part, flat",
                           "The whole cut list at one scale — clamp bar, foot, plate, backing "
-                          "strip — with hole patterns and bend lines.", "current"),
-    "clamp_joints.svg": ("Every joint, as a stack",
+                          "strip — with hole patterns and bend lines.", "clamp"),
+    "strut/clamp_joints.svg": ("Every joint, as a stack",
                         "All four bolted joints layer by layer at 15x, each with its grip and "
-                        "the bolt length that follows from it.", "current"),
-    "clamp_bom.svg": ("Bill of materials",
+                        "the bolt length that follows from it.", "clamp"),
+    "strut/clamp_bom.svg": ("Bill of materials",
                      "7 cut parts, 45 bought pieces. Says plainly which lines are priced and "
-                     "which are not.", "current"),
-    "clamp_real.svg": ("What it will look like",
+                     "which are not.", "clamp"),
+    "strut/clamp_real.svg": ("What it will look like",
                       "Realistic elevation, true scale and unbroken, with people at 5ft1 and "
-                      "6ft5 for reference and their eye lines to the screen.", "current"),
-    "clamp_dims.svg": ("The mount, dimensioned",
+                      "6ft5 for reference and their eye lines to the screen.", "clamp"),
+    "strut/clamp_dims.svg": ("The mount, dimensioned",
                       "Front and side elevation with 32 TAGGED lengths, the plate's hole pattern, "
                       "and all four display options dashed over the mount at one scale.",
-                      "current"),
-    "clamp_orientation.svg": ("Why portrait fits and landscape does not",
+                      "clamp"),
+    "strut/clamp_orientation.svg": ("Why portrait fits and landscape does not",
                              "Every dimension that decides it on one depth axis — case, doors, "
                              "hinge cover, window, bar, struts, box, and both orientations.",
-                             "current"),
-    "clamp_stack.svg": ("The stack, panel to screen",
+                             "clamp"),
+    "strut/clamp_stack.svg": ("The stack, panel to screen",
                        "Section at 7x, cut twice — through a strut and through the box, because "
-                       "the stack is not the same in both places. 52.05 mm total.", "current"),
-    "clamp_depth.svg": ("Why the struts sit BESIDE the box",
+                       "the stack is not the same in both places. 52.05 mm total.", "clamp"),
+    "strut/clamp_depth.svg": ("Why the struts sit BESIDE the box",
                        "Plan view, the two arrangements compared. Nesting took 23.7 mm — 31% — "
-                       "off how far the screen stands out. ADOPTED.", "current"),
-    "clamp_plate.svg": ("What holds the monitor — the plate",
+                       "off how far the screen stands out. ADOPTED.", "clamp"),
+    "strut/clamp_plate.svg": ("What holds the monitor — the plate",
                        "Part C. The display bolts to it, it bolts to the struts, the struts "
-                       "stand on the floor. Carries the vent windows the Pi needs.", "current"),
-    "clamp_approval.svg": ("Approval sheet — clamped strut",
+                       "stand on the floor. Carries the vent windows the Pi needs.", "clamp"),
+    "strut/clamp_approval.svg": ("Approval sheet — clamped strut",
                           "Partner-facing. What it is, what it sticks out into the room, what is "
-                          "not settled.", "current"),
-    "clamp_loadpath.svg": ("Where the weight goes",
+                          "not settled.", "clamp"),
+    "strut/clamp_loadpath.svg": ("Where the weight goes",
                           "Down the strut, into the foot, into the floor. The clamps carry "
-                          "nothing.", "current"),
-    "clamp_parts.svg": ("Flat patterns — the two parts",
+                          "nothing.", "clamp"),
+    "strut/clamp_parts.svg": ("Flat patterns — the two parts",
                        "Two bent parts, two of each, both drawn at the same scale. Bend "
-                       "deduction is still an estimate.", "current"),
-    "clamp_assembly.svg": ("Assembly order",
-                          "Four steps. Everything stays loose until the last one.", "current"),
-    "clamp_clearance.svg": ("Top clamp vs the hinge cover",
+                       "deduction is still an estimate.", "clamp"),
+    "strut/clamp_assembly.svg": ("Assembly order",
+                          "Four steps. Everything stays loose until the last one.", "clamp"),
+    "strut/clamp_clearance.svg": ("Top clamp vs the hinge cover",
                            "Plan view. Centring the struts on the case depth drives the front "
-                           "clamp 51 mm INTO the cover; the window is the datum.", "current"),
-    "clamp_height_check.svg": ("Does a slot land where the clamps need one?",
+                           "clamp 51 mm INTO the cover; the window is the datum.", "clamp"),
+    "strut/clamp_height_check.svg": ("Does a slot land where the clamps need one?",
                               "A fixed 50.8 mm slot pitch against whatever height the fridge "
-                              "is. Both clamps land inside a half-slot.", "current"),
-    "approval_sheet.svg": ("Approval sheet", "For significant-other review. Three views plus plain-language facts.", "prev"),
-    "bracket_preview.svg": ("Technical flat pattern", "The cut file, annotated. Reference only.", "prev"),
-    "magnet_pattern_study.svg": ("Magnet layout study", "Does staggering help? Closed-form comparison.", "prev"),
-    "spacing_explainer.svg": ("Magnet spacing floor", "Why a bigger disc runs out of plate.", "prev"),
-    "assembly_drawing.svg": ("Assembly, 23.8in", "Display and rear box as transparent overlays.", "prev"),
-    "assembly_drawing_27in.svg": ("Assembly, 27in", "Same bracket, larger panel.", "prev"),
+                              "is. Both clamps land inside a half-slot.", "clamp"),
+    "approval_sheet.svg": ("Approval sheet", "For significant-other review. Three views plus plain-language facts.", "hook"),
+    "bracket_preview.svg": ("Technical flat pattern", "The cut file, annotated. Reference only.", "hook"),
+    "magnet_pattern_study.svg": ("Magnet layout study", "Does staggering help? Closed-form comparison.", "hook"),
+    "spacing_explainer.svg": ("Magnet spacing floor", "Why a bigger disc runs out of plate.", "hook"),
+    "assembly_drawing.svg": ("Assembly, 23.8in", "Display and rear box as transparent overlays.", "hook"),
+    "assembly_drawing_27in.svg": ("Assembly, 27in", "Same bracket, larger panel.", "hook"),
     "ergonomics_sweep.svg": ("Ergonomics sweep",
                             "Mounting height vs neck length, on the Samsung 1743 mm case height. "
                             "Note the built neck (257 mm) is not one of the four panels — they "
                             "bracket it.", "shared"),
     "arm_width_sweep.svg": ("Arm width sweep",
                            "Arm width vs hold-down on the Samsung 610 mm counter-depth top, "
-                           "against the MEASURED 406 mm clear window.", "prev"),
-    "thickness_study.svg": ("Thickness study — SUPERSEDED",
-                           "ALUMINIUM-era: highlights 0.187 in 5052 at 5.89 kg. The build is "
-                           "A36 steel 0.187 in at 5.81 kg. See docs/PRICE-STUDY.md instead.",
-                           "prev"),
-    "variant_compare.svg": ("Variant comparison", "The reach variants side by side.", "prev"),
-    "pad_explainer.svg": ("Pad budget", "Why the pad thickness is locked to the magnet height, and what the corner radius costs.", "prev"),
+                           "against the MEASURED 406 mm clear window.", "hook"),
+    "thickness_study.svg": ("Thickness study — aluminium-era chart",
+                           "Drawn for 5052 before the switch to steel; the shape of the curve "
+                           "still holds, the figures do not. The steel decision and its live "
+                           "quotes are in docs/PRICE-STUDY.md.", "hook"),
+    "variant_compare.svg": ("Variant comparison", "The reach variants side by side.", "hook"),
+    "pad_explainer.svg": ("Pad budget", "Why the pad thickness is locked to the magnet height, and what the corner radius costs.", "hook"),
     "orientation_compare.svg": ("Orientation", "Portrait vs landscape, counter-depth.", "shared"),
     "display_compare.svg": ("23.8 vs 27 inch", "Both panels, same bracket.", "shared"),
     # Was falling through to a snake_case filename title with no caption, sitting uncaptioned
@@ -137,29 +151,30 @@ DIAGRAM_INFO = {
     # not a cable harness, and not a fabrication drawing.
     "stack_detail.svg": ("Fastener sandwich at one magnet",
                         "Every stack shape that fits, in true section — magnet | plate | washer | "
-                        "nut, and whether the fixed 1/2 in stud still reaches.", "prev"),
+                        "nut, and whether the fixed 1/2 in stud still reaches.", "hook"),
     "magnet_primer.svg": ("Why not just magnets?",
                          "Pull vs shear vs peel, and why a 175 lb magnet delivers 12 lb where "
                          "it counts. Start here if the hook looks like overkill.", "shared"),
     "fastener_matrix.svg": ("Every fastener permutation",
                            "All 39 nut x washer x threadlocker combinations with the arithmetic "
-                           "shown: plate + washer + nut vs stud.", "prev"),
+                           "shown: plate + washer + nut vs stud.", "hook"),
     "force_table.svg": ("Force by direction and magnet count",
                        "What it takes to shift or unseat it, 6 to 15 magnets, in lb and newtons.",
-                       "prev"),
+                       "hook"),
     "mount_views.svg": ("Both faces of the mount",
                        "Front and back side by side — magnets and foam on the fridge face, "
-                       "VESA and spacers on the display face.", "prev"),
+                       "VESA and spacers on the display face.", "hook"),
     "hinge_clearance.svg": ("Hinge cover clearance",
                             "Plan view: where the arm and the hinge cover meet, or miss. The one "
-                            "view that dimensions it.", "prev"),
+                            "view that dimensions it.", "hook"),
     "harness_view.svg": ("Magnet placement validator — deliberate FAIL",
                         "Shows a configuration the validator REFUSES, on purpose, so a refusal "
-                        "can be judged rather than obeyed. NOT the built part.", "prev"),
+                        "can be judged rather than obeyed. NOT the built part.", "hook"),
 }
-GROUP_ORDER_ALL = [("current", "CURRENT DESIGN — clamped strut"),
-               ("shared", "APPLIES TO BOTH DESIGNS"),
-               ("prev", "PREVIOUS DESIGN — magnet hook, superseded")]
+GROUP_ORDER_ALL = [("hybrid", "DESIGN 3 — hook with optional strut"),
+                   ("hook", "DESIGN 1 — the hook alone"),
+                   ("clamp", "DESIGN 2 — clamped strut"),
+                   ("shared", "APPLIES TO EVERY DESIGN")]
 
 
 @dataclass
@@ -210,7 +225,9 @@ def export_pngs(root: Path, out_dir: Path, scale: int = 2) -> list[Path]:
         return []
     out_dir.mkdir(parents=True, exist_ok=True)
     written, skipped = [], 0
-    for svg in sorted(root.glob("*.svg")):
+    strut = root / "strut"
+    for svg in (sorted(root.glob("*.svg")) + sorted(strut.glob("*.svg"))
+                + sorted((strut / "dxf").glob("*_preview.svg"))):
         w, h = svg_size(svg)
         png = out_dir / (svg.stem + ".png")
         # Incremental: rasterising all 29 costs ~20 s, which is enough friction that the PNGs
@@ -280,37 +297,62 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
 
     S: list[Section] = []
 
-    S.append(Section("status", "Two designs", "This project changed load path once. Both are here, "
-                     "and the difference is not a detail.", "decisions", items=[
-        Item("st-current",
-             "CURRENT — a clamped strut standing on the floor",
-             "Two 6 ft low-profile slotted struts up the side panel, clamped top and bottom by a "
-             "pair of identical L brackets, standing on the floor through an outboard foot. The "
-             "clamps hold it in; the floor carries the weight. The display height becomes "
-             "adjustable after the fact, nothing depends on the fridge top's geometry, and there "
-             "are NO MAGNETS — which removes the derate chain, the fastener stack, the peel "
-             "failure mode and the dependency on the panel being magnetic at all.",
-             "Work continues in csmarshall/fridge-strut-mount. Two questions remain and both need "
-             "a torch under the appliance: whether the lower clamp's reach fouls anything, and "
-             "whether there is a rib worth hooking rather than bearing on. See the clamped-strut "
-             "sheet under Diagrams.",
+    # ---- the third design, read from what strut/generate_hybrid.py actually produced
+    sys.path.insert(0, str((root / "strut").resolve()))
+    import hybrid as HY
+    plate_json = root / "strut" / "dxf" / "H_hook_plate.json"
+    hook3 = json.loads(plate_json.read_text(encoding="utf-8"))
+    h3 = HY.Hybrid(bolt_rows=tuple(hook3["params"]["strut_bolt_rows"]))
+    s3 = {ph: HY.structural(h3, ph, hook3["engineering"]["plate_mass_kg"]) for ph in HY.PHASES}
+    cost3 = HY.costed(h3)
+    now3 = sum(c for nm, _, c, _ in cost3 if c and not any(k in nm for k in ("STRUT", "FOOT", "LOWER CLAMP")))
+    later3 = sum(c for nm, _, c, _ in cost3 if c and any(k in nm for k in ("STRUT", "FOOT", "LOWER CLAMP")))
+    rows3 = sorted(h3.bolt_rows)
+
+    S.append(Section("status", "Three designs, one plate", "One display, one fridge, three ways to "
+                     "hold the plate up. Design 3 is what is being ordered; the other two are its "
+                     "parents and each has its own page.", "decisions", items=[
+        Item("st-hybrid",
+             "[HYBRID] DESIGN 3 — BEING ORDERED: the hook, with the plate prepared for struts",
+             f"Design 1's plate, cut at {h3.plate_t / 25.4:.3f} in with four extra O8.5 holes in two "
+             f"rows ({rows3[0]:.1f} and {rows3[-1]:.1f} mm above the bottom edge) at "
+             f"{h3.strut_spacing:.2f} centres. Phase 1 is the hook: arm over the top, "
+             f"{h3.n_magnets_fitted} body magnets holding the plate flat. If that proves too lively, "
+             f"phase 2 bolts two {h3.strut_ft:.0f} ft struts through those holes onto design 2's feet "
+             f"and lower clamp, and the magnets come off. Nothing about the plate changes between "
+             f"the phases.",
+             f"First order ${now3:.2f}; the support kit ${later3:.2f} only if needed. Touch flex at "
+             f"the screen edge: {s3['magnets'].screen_edge_mm:.3f} mm on magnets, "
+             f"{s3['struts'].screen_edge_mm:.3f} mm on struts (strip model; the FEA sheet says "
+             f"0.065 / 0.036). Generated by the hook generator, audited, in strut/dxf/.",
              "open"),
-        Item("st-previous",
-             "[MAGNET HOOK] PREVIOUS — a hook over the top, held flat by magnets",
+        Item("st-hook",
+             "[HOOK] DESIGN 1 — the hook alone, held flat by magnets",
              "One bent plate: an arm reaching over the fridge top carrying the entire load into "
-             "bearing at the corner, a neck down the side, and 8 magnets holding the plate flat. "
-             "It is FINISHED — validated, audited 15/15, and quoted at $197.07. It is superseded "
-             "for adjustability and floor loading, NOT for being wrong.",
-             "Everything below this section documents that design. Tagged hook-final in this "
-             "repo if it is ever needed. Its magnet primer is worth reading whichever design "
+             "bearing at the corner, a neck down the side, and magnets holding the plate flat. "
+             "FINISHED — validated, audited 15/15, and quoted at $197.07 in 0.187 in HRPO. "
+             "Design 3 IS this plate, thinner and with four more holes; every sheet on the hook "
+             "page still describes it.",
+             "Tagged hook-final in this repo. Its magnet primer is worth reading whichever design "
              "wins — the physics of why magnet ratings mislead does not change.",
+             "settled"),
+        Item("st-clamp",
+             "[CLAMP] DESIGN 2 — a clamped strut standing on the floor",
+             "Two low-profile slotted struts up the side panel, clamped top and bottom by a pair "
+             "of identical L brackets, standing on the floor through an outboard foot. The clamps "
+             "hold it in; the floor carries the weight. Height-adjustable after the fact, nothing "
+             "depends on the fridge top, NO magnets. Its foot and lower clamp are design 3's "
+             "support kit, unchanged.",
+             "Standalone fallback. Two questions remain and both need a torch under the appliance: "
+             "whether the lower clamp's reach fouls anything, and whether there is a rib worth "
+             "hooking rather than bearing on.",
              "settled"),
     ]))
 
-    S.append(Section("decisions", "Open decisions", "Tagged by which design they belong to. [MAGNET HOOK] items are kept for the record and are NOT live — the clamped strut does not have magnets, an arm, or a plate thickness to choose.",
+    S.append(Section("decisions", "Open decisions", "Tagged by which design they belong to. [HOOK] items are kept for the record and are NOT live — the clamped strut does not have magnets, an arm, or a plate thickness to choose.",
                      "decisions", items=[
         Item("d-magnets",
-             "[MAGNET HOOK] Magnet layout and count — the four corners are provably optimal",
+             "[HOOK] Magnet layout and count — the four corners are provably optimal",
              "Exhaustive search, 1.25M layouts, under your margins (7.99 mm of plate beyond every "
              "disc = 12.7x the 0.63 mm tolerance stack; 6 mm between adjacent discs). Result: the "
              "FOUR CORNERS at inset 32 are the single best positions on the plate — 43.4 units of "
@@ -331,7 +373,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"in count later needs no recut.",
              "settled"),
         Item("d-detach",
-             "[MAGNET HOOK] What it takes to pull it off — by direction",
+             "[HOOK] What it takes to pull it off — by direction",
              " ".join(f"{name}: {force:.0f} lb ({why})."
                       for name, _, force, why in detach_modes if force != float("inf")),
              f"Caveat: these assume a rigid plate with every magnet releasing at once. Peeling "
@@ -341,13 +383,13 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"along the panel, which MOVES it rather than detaching it — the hook does not resist "
              f"that axis.", "settled"),
         Item("d-vents",
-             "[MAGNET HOOK] Vent windows: keep them",
+             "[HOOK] Vent windows: keep them",
              "Quoted live. Removing all four makes the part $0.68 DEARER ($97.38 vs $96.70) on an "
              "identical blank. 23% less cutting does not pay for the 148 cm² of steel you then keep "
              "— their material component tracks part area and cut time is cheap at this size.",
              "No decision needed unless you want them gone for looks. They also save 116 g.", "settled"),
         Item("d-lighten",
-             "[MAGNET HOOK] Lightening the plate to save material — not worth it",
+             "[HOOK] Lightening the plate to save material — not worth it",
              "Three live price points solve for the pricing model: about $4.00 per 100 cm2 of "
              "steel, $0.136 per inch of cut, and $16.22 fixed. So the $96.70 part is roughly $58 "
              "steel + $23 cutting + $16 setup. The consequence is a hard break-even: a cutout only "
@@ -360,7 +402,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "deliberately lightened variant to validate it if you want the number nailed down.",
              "settled"),
         Item("d-reach",
-             "[MAGNET HOOK] How far the arm reaches onto the fridge top — SETTLED at 180 mm",
+             "[HOOK] How far the arm reaches onto the fridge top — SETTLED at 180 mm",
              "Reach costs sheet one-for-one, and the cost is linear: about $16.50 per 100 mm "
              "powder-coated — $8.68 laser and material, $7.80 coating, with bending a flat $11.77 "
              "that does not scale. Coated: 130 mm $174.30 / 230 mm $190.78 / 330 mm $207.26 / "
@@ -372,7 +414,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "more than halfway across the top. Decide on the measured clear window, not price.",
              "settled"),
         Item("d-height",
-             f"[BOTH] Screen centre at {rep['screen_centre_height_mm']:.0f} mm — APPROVED 2026-08-27",
+             f"[ALL] Screen centre at {rep['screen_centre_height_mm']:.0f} mm — APPROVED 2026-08-27",
              f"A 5 ft 1 in viewer's eye line ({1549*0.935:.0f} mm) lands on the screen. A 6 ft 4 in "
              f"viewer's ({1930*0.935:.0f} mm) sits {1930*0.935 - rep['screen_top_portrait_mm']:.0f} mm "
              "ABOVE the top edge, so they look down at it. Normal for a fridge-side display, but it "
@@ -380,7 +422,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "Charles confirmed the viewing height looks right on the actual fridge. "
              "Adjustable with --screen-centre-height if that ever changes.", "settled"),
         Item("d-thickness",
-             "[MAGNET HOOK] Plate thickness — SETTLED at 0.187 in / 4.75 mm HRPO (SendCutSend list it as .188)",
+             "[HOOK] Plate thickness — SETTLED at 0.187 in / 4.75 mm HRPO (SendCutSend list it as .188)",
              f"Chosen for heft and margin, NOT for stiffness you can feel: plate flex under a "
              f"touch is 0.016 mm here against 0.064 mm at 0.119 in, and neither is perceptible. "
              f"What it buys is {rep['bracket_mass_kg']:.2f} kg instead of 3.71 kg, plus the best "
@@ -388,7 +430,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"than cold-rolled, which is why .188 HRPO undercuts .135 CRS despite being thicker.",
              "+$11.21 over the 0.119 build. Commercial TV mounts run 1.8-2.7 mm; this is 4.75 mm.",
              "settled"),
-        Item("d-orient", "[BOTH] Portrait — on practical grounds, CORRECTED from \"impossible\"",
+        Item("d-orient", "[ALL] Portrait — on practical grounds, CORRECTED from \"impossible\"",
              "At the old 246 mm strut spacing landscape overhung the cabinet's REAR edge and was "
              "geometrically impossible. Narrowing the struts to 160 moved them forward, and "
              "landscape now technically fits — by 1.5 mm at the rear against 52.9 at the front.",
@@ -396,7 +438,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "remains the choice. But the honest reason is now practical, not geometric, and the "
              "earlier claim on this page overstated it.",
              "settled"),
-        Item("d-datum", "[BOTH] Struts as far FORWARD as the hinge cover allows — SETTLED",
+        Item("d-datum", "[CLAMP] Struts as far FORWARD as the hinge cover allows — SETTLED",
              "Centring on the CASE drives the clamp bar into the cover. Centring on the WINDOW is "
              "safe but pushes the screen 101.5 mm behind the case centre, away from where anyone "
              "stands. Hard forward centres best but leaves zero tolerance against a cover "
@@ -405,7 +447,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "160 the bar is shorter and can sit further forward still, so the screen is now "
              "25.7 mm rearward — down from 68.7 at the old spacing, and 101.5 window-centred.",
              "settled"),
-        Item("d-spacing", "[BOTH] Strut spacing 160, re-derived — was an inherited 246",
+        Item("d-spacing", "[CLAMP] Strut spacing 160, re-derived — was an inherited 246",
              "246 was the MAGNET-HOLE spacing from the hook design, carried over verbatim when "
              "the load path changed and never re-derived. What actually bounds it: the plate "
              "bolts should clear the 134 mm rear box without leaning on spacer height (floor "
@@ -415,42 +457,86 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "narrower (297 to 211), the clamp bar 215 instead of 301, and cuts the screen's "
              "rearward bias from 68.7 to 25.7 mm. Bolts still clear the box by 13 mm each side.",
              "settled"),
+        Item("d-h-rows",
+             f"[HYBRID] {h3.strut_ft:.0f} ft struts and two bolt rows — SETTLED 2026-09-01",
+             f"A 4 ft strut put ONE slot row {17.73:.1f} mm above the plate edge and the plate "
+             f"cantilevered 144 mm to the VESA: 0.876 mm of screen-edge movement under a 5 lb "
+             f"press, four times the feel-rigid band and WORSE than the magnets. {h3.strut_ft:.0f} ft "
+             f"puts {len(h3.candidate_rows)} slot rows inside the plate; the lowest and highest that "
+             f"clear every magnet face, window and hole are {rows3[0]:.2f} and {rows3[-1]:.2f}, "
+             f"bracketing the VESA, and the plate becomes a beam between them: "
+             f"{s3['struts'].screen_edge_mm:.3f} mm by the strip model, 0.036 by FEA.",
+             f"The rows are PICKED from the hook generator's own feature map and the generator "
+             f"re-validates them; if the mounting height moves they are re-picked and the build "
+             f"refuses if they no longer bracket. The strut stands {h3.strut_above_plate:.0f} mm "
+             f"above the plate top, behind the display.", "settled"),
+        Item("d-h-magnets",
+             f"[HYBRID] {h3.n_magnets_fitted} body magnets in phase 1, arm magnets not bought — SETTLED 2026-09-01",
+             "The magnets are NOT optional in phase 1: nothing else holds the bottom of the plate to "
+             "the panel. An earlier costing called them optional and was wrong. The four ARM "
+             "magnets are anti-walk insurance with zero load credit; their holes are cut, they are "
+             "bought only if the arm is seen to creep on the foam.",
+             f"${h3.n_magnets_fitted * HY.MAGNET_EACH_USD:.2f} at ${HY.MAGNET_EACH_USD:.2f} each. "
+             f"They come OFF when the struts go on: the plate then sits {h3.strut_standoff:.2f} mm "
+             f"off the panel against the magnets' {h3.magnet_standoff:.2f}.", "settled"),
+        Item("d-h-thickness",
+             f"[HYBRID] Plate thickness {h3.plate_t / 25.4:.3f} in for design 3 — SETTLED, checked both ways",
+             "Design 1 chose 0.187 in for heft, not stiffness — its own record says flex is "
+             "imperceptible at either gauge. 0.119 in makes the whole kit one gauge (plate, clamp, "
+             f"feet share a bend spec) and hangs 2.1 kg less on the fridge top. Checked: neck SF "
+             f"{s3['magnets'].neck_sf:.0f}x / body SF {s3['magnets'].body_sf:.0f}x on magnets, "
+             f"{s3['struts'].neck_sf:.0f}x / {s3['struts'].body_sf:.0f}x on struts; the FEA plate "
+             "model agrees with the strip model to ~15%.",
+             "Bend deduction is SendCutSend's published 4.97 mm for this gauge, one home for all "
+             "three designs.", "settled"),
         Item("d-coat",
-             "[BOTH] Powder coat at SendCutSend, or spray it yourself",
+             "[ALL] Powder coat at SendCutSend, or spray it yourself",
              "Matte black powder adds $66–70 and pushes delivery Aug 31 → Sep 3. Bare CRS will "
              "surface-rust in a kitchen, so it needs something.",
              "Recommend: let them do it. A hand-sprayed edge on bare steel is where rust starts.", "open"),
     ]))
 
-    S.append(Section("checklist", "Before ordering", "Measurements that gate an order. [MAGNET HOOK] ones no longer gate anything: the clamp design does not care whether the panel is magnetic or what the top corner radius is. That is the point of it.",
+    S.append(Section("checklist", "Before ordering", "Measurements that gate an order. [HOOK] ones no longer gate anything: the clamp design does not care whether the panel is magnetic or what the top corner radius is. That is the point of it.",
                      "checklist", items=[
-        Item("m-window", "[BOTH] Clear window on the fridge top, front to back — MEASURED 2026-08-27",
-             f"{p.top_clear_window:.0f} mm clear from the rear edge to the hinge cover, against a "
-             f"{p.neck_w:.0f} mm arm width — fits with {p.top_clear_window - p.neck_w:.0f} mm to "
-             f"spare ({p.top_clear_window / p.neck_w:.2f}x). The hinge cover occupies the front "
-             f"{609.6 - p.top_clear_window:.0f} mm and is removable/adjustable, so even a clash "
-             f"would be recoverable. This was the likeliest recut risk; it is now closed.",
-             "", "settled"),
-        Item("m-height", "[BOTH] Height to the TOP OF THE CASE, not the hinges",
+        Item("m-window", "[ALL] Clear window on the fridge top, front to back — MEASURED, TWICE",
+             f"Two readings of the same cover: 2026-08-27 gave {p.top_clear_window:.1f} mm clear "
+             f"from the rear edge (cover {609.6 - p.top_clear_window:.0f} deep); 2026-08-31 gave "
+             f"400.05 (cover 209.55). Charles's word for the second was 'roughly'. The hook designs "
+             f"(1 and 3) centre the plate on the case depth, which puts the {p.neck_w:.0f} mm arm's "
+             f"front edge {p.top_clear_window - (609.6 + p.neck_w) / 2:.1f} mm from the cover on "
+             f"the first reading and TOUCHING it on the second. The clamp design's top bar reaches "
+             f"only tens of mm and is not affected.",
+             "The hook generator still carries the first reading. Resolve with one measurement; "
+             "if 400 stands, move the hook plate ~10 mm rearward (plate_from_rear_override) or "
+             "lift the cover, which Charles says is removable.", "open"),
+        Item("m-height", "[ALL] Height to the TOP OF THE CASE, not the hinges",
              f"Design assumes Samsung's published {p.fridge_height:.0f} mm. Sets the neck length and "
              "therefore the screen height.", "", "blocked"),
-        Item("m-magnetic", "[MAGNET HOOK] Is the side panel actually magnetic? — YES, measured 2026-08-26",
+        Item("m-magnetic", "[HOOK] Is the side panel actually magnetic? — YES, measured 2026-08-26",
              "Checked on the actual unit: the TOP and the SIDES are both magnetic. That confirms "
              "the arm retention magnets will do their job, so all eight are fitted in the first "
              "order. It also demotes the non-magnetic-panel fallback behind the 190 mm arm width "
              "from a design driver to free insurance.",
              "The hook carries all the weight either way — this was never load-bearing.", "settled"),
-        Item("m-radius", "[MAGNET HOOK] Top corner radius",
+        Item("m-radius", "[HOOK] Top corner radius",
              f"The {p.arm_pad:.1f} mm pad covers up to R{rep['max_fridge_corner_radius_covered_mm']:.0f} mm, "
              "so this is a confirmation rather than an input.", "", "blocked"),
-        Item("m-fan", "[BOTH] Photograph the display's rear box",
-             f"The Pi fan opening is at R{G.DISPLAY.rear_face_feature_radius:.1f} mm from the VESA "
-             "centre, scaled off a raster drawing to ±5 mm. The vent windows sit on that radius.",
-             "NOW GATES THE PLATE SIZE. The plate is 152 mm tall specifically to stop "
-             "short of this opening so no vent windows have to be cut at all. Two edge "
-             "notches insure against the radius being wrong, but the opening's own size "
-             "is not published anywhere and has to be measured.", "open"),
-        Item("m-thread", "[BOTH] VESA insert thread depth",
+        Item("m-fan", "[ALL] Photograph the display's rear box",
+             "TWO features in the box face, both SCALED off Waveshare's raster drawing to ±5 mm: "
+             "the Pi fan at ~R82 (~30 dia) and the GPIO slot at ~R107. The hook plate's four vent "
+             f"windows sit at R{G.DISPLAY.rear_face_feature_radius:.1f}, an average of the two, so "
+             "one covers the fan in every rotation; the clamp design's plate stops short of both.",
+             "Neither feature is dimensioned anywhere. One photo with a rule across the box "
+             "settles the windows for designs 1 and 3 and the plate height for design 2.", "open"),
+        Item("m-h-requote", "[HYBRID] Re-quote the plate at SendCutSend",
+             "The $177.77 quote (2026-09-01, 0.119 CRS, 1 bend, matte black) was taken on a "
+             "six-hole redrawing that could not take magnets. The real plate has the hook's full "
+             "hole set plus four strut holes: same bounding box to the millimetre, more cut length. "
+             "Upload strut/dxf/H_hook_plate.dxf and re-quote; expect a small increase.",
+             "Nothing is in a cart. The four clamp-design DXFs also moved 0.38 mm when the bend "
+             "deduction went to the published value — re-upload those too before any order.",
+             "open"),
+        Item("m-thread", "[ALL] VESA insert thread depth",
              "Sets the M4 screw length. Any standard head clears the fridge inside the "
              f"{p.magnet_standoff:.0f} mm standoff.", "", "open"),
     ]))
@@ -532,13 +618,46 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
                      columns=["variant", "blank (mm)", "cut only", "+ bend", "+ textured black"],
                      rows=PRICES))
 
-    found = sorted(root.glob("*.svg"))
+    S.append(Section("hnumbers", "Design 3 — the numbers",
+                     "Read from strut/dxf/H_hook_plate.json, which the hook generator wrote and the "
+                     "audit accepted — these cannot drift from the cut file.", "table",
+                     columns=["", "value", "note"],
+                     rows=[
+        ("Material", f"A36/1008 mild steel {h3.plate_t / 25.4:.3f} in ({h3.plate_t:.2f} mm) CRS", "matte black"),
+        ("Flat pattern", f"{hook3['flat']['width_mm']:.0f} × {hook3['flat']['height_mm']:.2f} mm",
+         f"1 bend, deduction {h3.bend_deduction:.2f} mm (SendCutSend published)"),
+        ("Holes / windows", f"{len(hook3['holes'])} / {len(hook3['windows'])}",
+         f"the hook's set plus {sum(1 for x in hook3['holes'] if x['tag'] == 'strut_bolt')} strut bolts"),
+        ("Strut bolt rows", f"{rows3[0]:.2f} and {rows3[-1]:.2f} mm above the bottom edge",
+         f"{h3.strut_spacing:.2f} centres; picked from {len(h3.candidate_rows)} candidate slots"),
+        ("Plate mass", f"{hook3['engineering']['plate_mass_kg']:.2f} kg", "steel only"),
+        ("Phase 1 (magnets): neck / body SF", f"{s3['magnets'].neck_sf:.0f}x / {s3['magnets'].body_sf:.0f}x",
+         f"hangs {s3['magnets'].hanging_lbf:.1f} lb; screen edge {s3['magnets'].screen_edge_mm:.3f} mm strip, 0.065 FEA"),
+        ("Phase 2 (struts): neck / body SF", f"{s3['struts'].neck_sf:.0f}x / {s3['struts'].body_sf:.0f}x",
+         f"beam between rows; screen edge {s3['struts'].screen_edge_mm:.3f} mm strip, 0.036 FEA"),
+        ("Magnet vs strut standoff", f"{h3.magnet_standoff:.2f} vs {h3.strut_standoff:.2f} mm",
+         "the magnets come OFF when the struts go on"),
+        ("Strut", f"{h3.strut_ft:.0f} ft McMaster 3310T791 x2",
+         f"stands {h3.strut_above_plate:.0f} mm above the plate top, behind the display"),
+    ]))
+    S.append(Section("hprices", "Design 3 — what it costs, and when",
+                     "Dated observations, not derived values. The plate line needs a re-quote (see "
+                     "Before ordering). Nothing in a cart.", "table",
+                     columns=["item", "cost", "source", "note"],
+                     rows=[(nm, f"${c:.2f}" if c else "NOT PRICED", src, note) for nm, src, c, note in cost3]
+                          + [("FIRST ORDER", f"${now3:.2f}", "", "plate, body magnets, bolts"),
+                             ("ONLY IF THE ARM IS TOO LIVELY", f"${later3:.2f}", "", "feet, lower clamp, struts")]))
+
+    strut = root / "strut"
+    found = (sorted(root.glob("*.svg")) + sorted(strut.glob("*.svg"))
+             + sorted((strut / "dxf").glob("*_preview.svg")))
+    rel = lambda f: f.relative_to(root).as_posix()
     S.append(Section("diagrams", "Diagrams",
                      "DIAGRAM_COUNT drawings, all generated from the same parameters as the cut file.",
-                     "diagrams", items=[Item(f.name, *DIAGRAM_INFO.get(f.name, (f.stem, "", "prev"))[:2],
-                                             meta=DIAGRAM_INFO.get(f.name, ("", "", "prev"))[2])
+                     "diagrams", items=[Item(rel(f), *DIAGRAM_INFO.get(rel(f), (f.stem, "", "hook"))[:2],
+                                             meta=DIAGRAM_INFO.get(rel(f), ("", "", "hook"))[2])
                                         for f in found]))
-    ctx = {"files": {f.name: f.stat().st_mtime for f in found}, "params": p, "report": rep}
+    ctx = {"files": {rel(f): f.stat().st_mtime for f in found}, "params": p, "report": rep}
     return S, ctx
 
 
@@ -743,27 +862,34 @@ def render_table(sec: Section) -> str:
 
 
 GROUP_ORDER = GROUP_ORDER_ALL
-OTHER_LABEL = {"clamp": "Archived magnet-hook design",
-               "hook": "Back to the current design"}
-TITLES = {"clamp": "FRIDGE-SIDE CHORE DISPLAY",
-          "hook": "ARCHIVE — MAGNET HOOK DESIGN"}
-SUBS = {"clamp": "clamped strut, standing on the floor",
-        "hook": "SUPERSEDED by the clamped strut — kept for the record"}
-PAGE_TITLES = {"clamp": "Fridge display mount — clamped strut",
-               "hook": "Archive — magnet hook design"}
+PAGES = {"hybrid": "index.html", "hook": "hook.html", "clamp": "clamp.html"}
+TITLES = {"hybrid": "FRIDGE-SIDE CHORE DISPLAY",
+          "hook": "DESIGN 1 — THE HOOK ALONE",
+          "clamp": "DESIGN 2 — CLAMPED STRUT"}
+SUBS = {"hybrid": "design 3: the hook, with the plate prepared for struts — being ordered",
+        "hook": "finished and quoted; design 3 is this plate with four more holes",
+        "clamp": "floor-standing fallback; its feet and lower clamp are design 3's support kit"}
+PAGE_TITLES = {"hybrid": "Fridge display mount — design 3, hook with optional strut",
+               "hook": "Fridge display mount — design 1, the hook",
+               "clamp": "Fridge display mount — design 2, clamped strut"}
+NAV_LABEL = {"hybrid": "Design 3 — being ordered", "hook": "Design 1 — hook", "clamp": "Design 2 — clamped strut"}
 
-
-# Which groups and which items belong on each page. The hook design is ARCHIVED, not deleted:
-# it is finished, quoted and audited, and its reasoning still explains why the strut design won.
+# Which groups and which items belong on each page. Items are tagged [HYBRID], [HOOK], [CLAMP]
+# or [ALL]; design 3 IS the hook plate, so its page carries the hook's items as well as its own.
 VARIANTS = {
-    "clamp": {"groups": [("current", "The clamped strut"),
-                         ("shared", "Background — applies to any mount")],
-              "drop_sections": {"parity", "numbers", "prices"},
-              "keep": lambda t: not t.startswith("[MAGNET HOOK]")},
-    "hook":  {"groups": [("prev", "Magnet hook — the archived design"),
-                         ("shared", "Background — applies to any mount")],
-              "drop_sections": set(),
-              "keep": lambda t: t.startswith("[MAGNET HOOK]") or t.startswith("[BOTH]")},
+    "hybrid": {"groups": [("hybrid", "Design 3 — the plate prepared for struts"),
+                          ("hook", "Design 1 — the hook this is built on"),
+                          ("shared", "Background — applies to any mount")],
+               "drop_sections": {"parity", "numbers", "prices"},
+               "keep": lambda t: t.startswith(("[HYBRID]", "[HOOK]", "[ALL]"))},
+    "hook":   {"groups": [("hook", "Design 1 — the hook"),
+                          ("shared", "Background — applies to any mount")],
+               "drop_sections": {"parity", "hnumbers", "hprices"},
+               "keep": lambda t: t.startswith(("[HOOK]", "[ALL]"))},
+    "clamp":  {"groups": [("clamp", "Design 2 — the clamped strut"),
+                          ("shared", "Background — applies to any mount")],
+               "drop_sections": {"numbers", "prices", "hnumbers", "hprices"},
+               "keep": lambda t: t.startswith(("[CLAMP]", "[ALL]"))},
 }
 
 
@@ -773,27 +899,27 @@ def filter_sections(sections: list[Section], variant: str) -> list[Section]:
     cfg = VARIANTS[variant]
     want = {k for k, _ in cfg["groups"]}
     RETITLE = {
-        "clamp": {"status": ("What is being built",
-                             "One design. The magnet hook that came before it is archived on its "
-                             "own page — see the link in the header."),
-                  "decisions": ("Open decisions",
+        "hybrid": {"decisions": ("Decisions",
+                                 "Design 3's own, then the hook decisions it inherits unchanged."),
+                   "checklist": ("Before ordering",
+                                 "What gates the first order: the plate, the magnets, the bolts.")},
+        "hook": {"decisions": ("Decisions, as they stood",
+                               "Frozen with design 1. Design 3 inherits every one of them."),
+                 "checklist": ("Measurements it needed",
+                               "Kept for the record; the live list is on design 3's page.")},
+        "clamp": {"decisions": ("Open decisions",
                                 "Things waiting on you for the clamped strut."),
                   "checklist": ("Before ordering",
-                                "Measurements that gate an order for this design.")},
-        "hook": {"status": ("Why this was superseded",
-                            "Finished, audited and quoted. Replaced for adjustability and floor "
-                            "loading, NOT for being wrong."),
-                 "decisions": ("Decisions, as they stood",
-                               "Frozen. These belonged to the hook and are kept for the record."),
-                 "checklist": ("Measurements it needed",
-                               "Two of these stopped mattering the moment the design stopped "
-                               "depending on magnets and on the fridge top's geometry.")},
+                                "Measurements that gate an order for this design on its own.")},
     }[variant]
     out: list[Section] = []
     for sec in sections:
         if sec.id in cfg["drop_sections"]:
             continue
-        if sec.kind == "diagrams":
+        if sec.id == "status":
+            # The overview of all three designs belongs on every page; only the tags come off.
+            items = [replace(i, title=re.sub(r"^\[[A-Z]+\] ", "", i.title)) for i in sec.items]
+        elif sec.kind == "diagrams":
             items = [i for i in sec.items if (i.meta or "study") in want]
         elif sec.kind == "table":
             out.append(sec)
@@ -801,8 +927,7 @@ def filter_sections(sections: list[Section], variant: str) -> list[Section]:
         else:
             # The tags did their job while both designs shared a page. Now that each page IS one
             # design, they are noise — strip them rather than leave a label nothing contrasts with.
-            items = [replace(i, title=i.title.replace("[MAGNET HOOK] ", "")
-                                             .replace("[BOTH] ", ""))
+            items = [replace(i, title=re.sub(r"^\[[A-Z]+\] ", "", i.title))
                      for i in sec.items if cfg["keep"](i.title)]
         if items:
             sec = replace(sec, items=items)
@@ -853,20 +978,28 @@ def render_diagrams(sec: Section, ctx: dict) -> str:
             f'<div id="grid">{"".join(figs)}</div>')
 
 
-ARCHIVE_BANNER = ('<div style="background:#b00020;color:#fff;padding:9px 16px;font:600 13px/1.4 '
-                  'system-ui,sans-serif">ARCHIVED DESIGN &mdash; this is the magnet hook, which '
-                  'is finished and quoted but NOT what is being built. It is kept because its '
-                  'reasoning is what led to the clamped strut.</div>')
+BANNERS = {
+    "hybrid": "",
+    "hook": ('<div style="background:#1b6ea8;color:#fff;padding:9px 16px;font:600 13px/1.4 '
+             'system-ui,sans-serif">DESIGN 1 &mdash; the hook alone. Finished and quoted, and the '
+             'basis of design 3, which is this plate cut thinner with four strut holes. See the '
+             'index page for what is being ordered.</div>'),
+    "clamp": ('<div style="background:#c8791a;color:#fff;padding:9px 16px;font:600 13px/1.4 '
+              'system-ui,sans-serif">DESIGN 2 &mdash; the clamped strut, standing on the floor. A '
+              'standalone fallback; its feet and lower clamp are also design 3\'s support kit. See '
+              'the index page for what is being ordered.</div>'),
+}
 
 
-def build(root: Path, out: Path, variant: str = "clamp", other: str = "") -> int:
+def build(root: Path, out: Path, variant: str, model=None) -> int:
     global GROUP_ORDER
-    sections, ctx = build_sections(root)
+    sections, ctx = model if model else build_sections(root)
     sections = filter_sections(sections, variant)
     GROUP_ORDER = VARIANTS[variant]["groups"]
     nav = " ".join(f'<a href="#{s.id}">{esc(s.title)}</a>' for s in sections)
-    if other:
-        nav += f' <a href="{esc(other)}" class="xpage">{esc(OTHER_LABEL[variant])} \u2192</a>'
+    for v, page in PAGES.items():
+        if v != variant:
+            nav += f' <a href="{esc(page)}" class="xpage">{esc(NAV_LABEL[v])} \u2192</a>'
 
     body = []
     for s in sections:
@@ -885,7 +1018,7 @@ def build(root: Path, out: Path, variant: str = "clamp", other: str = "") -> int
 <html lang="en" data-theme="light"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{PAGE_TITLES[variant]}</title><style>{CSS}</style></head><body>
-{ARCHIVE_BANNER if variant == 'hook' else ''}<header><div class="bar">
+{BANNERS[variant]}<header><div class="bar">
   <h1>{TITLES[variant]}</h1>
   <span class="sub">{SUBS[variant]} &middot; built {time.strftime('%d %b %H:%M')}</span>
   <nav>{nav}</nav>
@@ -919,10 +1052,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--log-level", choices=LOG_LEVELS, default="INFO")
     a = ap.parse_args(argv)
     configure_logging(a.log_level)
-    # Two pages from one model: the live design, and the archive it replaced.
-    rc = build(a.root, a.out, variant="clamp", other="archive.html")
-    rc |= build(a.root, a.out.parent / "archive.html", variant="hook",
-                other=a.out.name)
+    # Three pages from ONE model: design 3 on the index, its two parents on their own pages.
+    model = build_sections(a.root)
+    rc = 0
+    for variant, page in PAGES.items():
+        rc |= build(a.root, a.out.parent / page, variant, model)
+    # The hook used to live at archive.html and that URL has been shared; keep it pointing home.
+    (a.out.parent / "archive.html").write_text(
+        '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=hook.html">'
+        '<title>moved</title><a href="hook.html">The hook design moved to hook.html</a>\n',
+        encoding="utf-8")
     if not a.no_png:
         LOG.info("Rasterising for Preview (%dx) — Preview has no SVG support:", a.png_scale)
         LOG.info("Wrote %d PNGs", len(export_pngs(a.root, a.png_dir, a.png_scale)))

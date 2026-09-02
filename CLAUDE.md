@@ -1,10 +1,21 @@
 # CLAUDE.md — Fridge-Side Display Mount
 
-Magnetic-assisted **hook** bracket that hangs a Waveshare 23.8" FHD touch monitor on the
-side panel of a **Samsung RS23A500ASR** counter-depth side-by-side refrigerator. This repo produces the parametric
-flat-pattern generator and the fabrication package.
+ONE project, THREE designs, one plate. A Waveshare 23.8" FHD touch monitor on the side panel of a
+**Samsung RS23A500ASR** counter-depth side-by-side refrigerator, running a household chore board.
 
-Original brief: `docs/BRIEF.md`. Live session state: `session-state.md`.
+| # | design | where | status |
+|---|---|---|---|
+| 1 | **Hook** — magnetic-assisted hook bracket over the fridge top | repo root | finished, quoted, tagged `hook-final` |
+| 2 | **Clamped strut** — two slotted struts to the floor, clamped top and bottom | `strut/` | standalone fallback; its feet + lower clamp are design 3's support kit |
+| 3 | **Hook with optional strut** — design 1's plate, cut thinner with four strut holes, so design 2's feet can be added later without recutting | `strut/hybrid*.py`, plate via the root generator | **BEING ORDERED** |
+
+Sections 1–8 below are design 1's invariants and remain the base of design 3. Section 9 carries
+designs 2 and 3. `strut/` was its own repo (`csmarshall/fridge-strut-mount`) until 2026-09-02;
+it was merged here with history because the third design's plate is built by the root generator
+and two repos meant two homes for one fact.
+
+Original brief for design 1: `docs/BRIEF.md`. Design 2's brief: `strut/BRIEF.md`.
+Live session state: `session-state.md`. Published page: <https://csmarshall.github.io/fridge-display-mount/>.
 
 ---
 
@@ -164,6 +175,10 @@ cap. Until measured, treat as UNKNOWN:
   fudge factor to work, question the framing, not the ruler.
   - hinge cover occupies the **front 203 mm** of the top (ruler 16-24 in)
   - **clear window, rear edge to cover: 406 mm**
+  - **SECOND READING 2026-08-31 (design 2 work): 15.75 in -> window 400.05, cover 209.55.**
+    Charles's word was "roughly". The root generator still carries 406.4; `strut/` carries
+    400.05. **At 400 the hook's centred arm TOUCHES the cover** (6.6 mm clear at 406). Open on the
+    page's checklist; resolve with one measurement, then make one home for it
   - arm WIDTH is 190 mm front-to-back -> the 406 mm window is **2.14x** the arm width
   - **BUT that is not the installed margin.** The plate is centred on the case depth, which puts
     the arm's front edge ~6.6 mm from the cover, not 216 mm. The 2.14x figure describes how much
@@ -224,7 +239,7 @@ SOLID line would be read as a cut and would slice the part in half.
 | Parameter | Default | How to resolve |
 |---|---|---|
 | Neck length | **310 mm** | Derived, not hardcoded: `neck = fridge_height - screen_centre - body_h/2`. Screen centre 1331 mm is mid-band for 5'1"-6'4". The brief's "- 12 mm" is not magic either: it is `(display_height - body_height)/2`, 12.3 mm landscape and 127.6 mm portrait. Use `--fridge-height` + `--screen-centre-height` |
-| Bend deduction | **derived estimate**, `BD = 2(R+T)tan(45) - (pi/2)(R + K*T)` with **K = 0.42** | replace with SendCutSend's bending calculator value |
+| Bend deduction | **SendCutSend's PUBLISHED table** (`BEND_SPECS_MILD_STEEL`: 0.3225 in at .187, 0.1955 in at .119), NOT an estimate — an earlier version of this row said "K = 0.42 estimate" long after the generator had switched. `strut/` re-derived it with K = 0.42 until 2026-09-02 and got 5.35 mm where the table says 4.97; now it reads the same table (`strut/concept_sheet.py: SCS_MILD_STEEL_BEND`) | verify against their calculator if a new gauge is ever used |
 | Orientation | **portrait — as built** | the generator default is portrait; it is mechanically better (torsion arm 278 -> 162 mm) and the counter-depth cabinet is only 610 mm deep, which a 555 mm landscape display nearly fills |
 | Fridge top corner radius `R_f` | **12 mm** | affects **pad sizing only**, never cut geometry. Straightedge on the side, another on the top; they meet at the theoretical sharp corner; measure from that intersection along the top to the tangent point — for a 90 deg corner that distance is the radius. Cross-check down the side face. Quick screen: a US quarter is O 24.26 mm (R = 12.13 mm) — if it rocks and will not seat, `R_f` < 12 mm |
 
@@ -293,6 +308,12 @@ proud head against the fridge. Any standard M4 head works.
 | `approval_sheet.py` / `approval_sheet.svg` | partner-facing sheet: front elevation, side elevation, shaded 3D view, plain-language fact band. Reads the same params as the DXF, and refuses to draw a part that does not validate |
 | `ergonomics_sweep.py` / `.svg` | mounting-height study: neck length vs the band comfortable for 5'1"-6'4" |
 | `arm_width_sweep.py` / `.svg` | arm width study in plan view: lift demand vs hold-down in the non-magnetic fallback |
+| `plate_fea.py` / `plate_fea.svg` | Kirchhoff-plate finite elements (gmsh + scikit-fem, in `.venv`) of the body plate as cut, under the touch press, pinned on magnets or strut bolts. Validates the strip model (~15 % agreement) |
+| `console_build.py` | builds **three pages** from one model: `index.html` (design 3), `hook.html` (1), `clamp.html` (2); `archive.html` redirects to `hook.html`. Reads `strut/*.svg` and `strut/dxf/*_preview.svg` directly — no copies |
+| `publish.sh` | rebuilds, validates, and pushes `main` plus the `gh-pages` branch that GitHub Pages serves |
+| `strut/generate_parts.py` -> `strut/dxf/{A_clamp_bar,B_foot,C_plate,D_backing_strip}.dxf` | design 2's cut parts |
+| `strut/generate_hybrid.py` -> `strut/dxf/H_hook_plate.{dxf,json}` + `_preview.svg` | design 3's plate: calls the ROOT generator in-process with `--strut-bolts`, rows picked by `strut/hybrid.py` from the generator's own JSON, audited by the root audit |
+| `strut/clamp_sheets.py`, `strut/package.py`, `strut/bom.py`, `strut/concept_sheet.py`, `strut/hybrid_sketch.py` | design 2's and 3's sheets. Run from `strut/` with `../.venv/bin/python` |
 
 ## 7. Code style
 - Timestamped logging on every operation; INFO for major steps, DEBUG for per-feature detail
@@ -304,5 +325,87 @@ proud head against the fridge. Any standard M4 head works.
 - Type hints and dataclasses where they earn their keep. `unset TMOUT` in any shell script.
 
 ## 8. Environment
-`python3 -m venv .venv && .venv/bin/pip install ezdxf` — ezdxf 1.4.2. Run everything with
-`.venv/bin/python`.
+`python3 -m venv .venv && .venv/bin/pip install ezdxf gmsh scikit-fem numpy scipy meshio` — one
+venv for everything (`TOOLS-INSTALLED.md`). Run root scripts with `.venv/bin/python`, `strut/`
+scripts from inside `strut/` with `../.venv/bin/python`. `strut/` finds the shared modules
+(`bracket_common`, `generate_bracket`, `audit_dxf`) one level up via `sys.path` in
+`strut/concept_sheet.py` and `strut/generate_hybrid.py`.
+
+---
+
+## 9. Designs 2 and 3 — invariants (merged from the strut repo's CLAUDE.md, 2026-09-02)
+
+### 9.-1 NOTHING IS FIXED TO THE BUILDING. EVER.
+**Charles, 2026-09-01, verbatim:** *"WE ARE NOT BOLTING INTO THE FLOOR EVER!!! This mount is
+designed to be removable and cause no damage to the things it's leaning against and clamping
+onto."* No floor anchors, no wall anchors, no adhesive to the appliance, no fastener into anything
+that is not part of this mount. Load goes to the **floor by bearing** and to the **fridge by
+clamping**; foam lines every clamp face; no steel touches the panel; floor pads are EPDM (rubber
+stains polyurethane). The clamp reaches under the fridge INSTEAD of an anchor; the foot turns
+outboard INSTEAD of being screwed down. It was violated once, in a DRAWING (the lower clamp's
+short leg drawn through the floor) — `strut/hybrid_sketch.py` now asserts no part rect spans the
+floor line. **When drawing the base, check that nothing crosses the floor line.**
+
+### 9.0 Design 2: anti-tip is a CLAMP, not the magnets
+Two identical L brackets (one part, made twice, the lower flipped), foam-faced, slid along the
+strut slots until engaged and locked. The top one carries NO weight (the foot does) — ~3.8 lb of
+retention, reach only enough not to slip; do not size it like a hook. **Foot and lower clamp are
+SEPARATE parts** — the clamp slides UP the slot to clamp, the foot must stay on the floor. The
+magnets are therefore not structural in design 2 and are not fitted.
+- The stud is an **ELEVATOR bolt** (McMaster 92670A781) through a square laser-cut hole — no
+  welded stud (SendCutSend cannot weld). Elevator, not carriage: the 2.78 mm flat head faces the
+  FRIDGE and hides in the 3 mm foam. **Nut INSIDE the channel** on the back web; bolt spans
+  7.83 mm; the foot slot clears the 8.38 mm square NECK, not the 7.94 shank.
+- **ONE foot per strut, outboard, tucked under the strut** (inboard foot removed 2026-08-31).
+  The strut stands on the foot's horizontal leg and never touches the floor.
+- Joint stack: `J1 TOP CLAMP head -> clamp leg -> washer -> washer -> web -> nut` (grip 7.84);
+  `J2 LOWER CLAMP + FOOT head -> clamp leg -> foot leg -> web -> nut` (grip 7.82). The two top
+  washers stand in for the absent foot leg so the strut stays parallel. ONE 3/4 in bolt does every
+  joint; the feet add no fasteners of their own.
+- **LOW-PROFILE channel is a requirement** (McMaster 3310T791, 13/16 in deep). Strut orientation
+  is forced: flat back on the panel, slots to the room. Nested: the display box passes BETWEEN
+  the struts, so strut spacing = box 134 + 2 x 6 clearance + strut 41.27 = **187.28** (Assembly
+  derives it).
+- **Sliding is stopped by the clear window**, not friction: the top clamp's long leg fills it.
+
+### 9.1 Design 2: the load path is the FLOOR
+display -> plate -> struts -> bent foot -> floor. The pad under the tail CAPTURES it (10–20 mm
+irregular gap, measured 2026-08-29) — never a wedge or jacking screw, never preloaded: size it to
+JUST TOUCH, fit by layers. **PRELOAD IS THE TRAP** (a 60 x 200 pad at 25 % strain pushes 223 lb
+upward). Anti-tip is geometric: the tail can only rise by its clearance before it bears on the
+cabinet underside. State the failure mode honestly: if every magnet released, design 1's screen
+sags but stays hung; design 2 rotates on the captured tail.
+
+### 9.2 Design 3: the hook plate, prepared for struts — SETTLED 2026-09-01
+- **The plate is the ROOT generator's output**, not a redrawing: `generate_bracket.py
+  --thickness 0.119 --strut-bolts 187.28 <rows>`. An earlier six-hole redrawing could not take
+  the magnets phase 1 needs; it is gone. `strut/generate_hybrid.py` runs the generator twice
+  (plain, for the feature map; then with rows) and the root audit accepts the result.
+- **Two phases, one plate.** Phase 1 = the hook: arm over the top, **4 body magnets REQUIRED**
+  (nothing else holds the plate bottom in; the 4 arm magnets are anti-walk only, holes cut, not
+  bought). Phase 2 = if too lively: two **5 ft** struts through **two bolt rows bracketing the
+  VESA** onto design 2's feet and lower clamp UNCHANGED; the **magnets come OFF** (plate then
+  sits 6.02 mm off the panel vs the magnets' 11.51).
+- **Why 5 ft, not 4:** 4 ft put ONE row 17.7 mm above the plate edge; the plate cantilevered
+  144 mm to the VESA and the model gave 0.876 mm at the screen edge — worse than the magnets.
+  Two rows (17.73 and 220.93) make it a beam: 0.118 mm strip / 0.036 mm FEA. Rows are PICKED by
+  `strut/hybrid.py` from the generator's JSON (lowest and highest clear of every magnet face,
+  window and hole) and the build refuses if they no longer bracket.
+- **Strut bolts must clear the magnet faces** (`strut_bolt_disc`, 2 mm): at the hook's 246
+  spacing the bolts sat under the lower discs (14.27 mm centre-to-centre vs 30.26 needed); 187.28
+  is the first spacing that clears AND is design 2's own.
+- **0.119 in, not the hook's 0.187.** Design 1 chose 0.187 for heft (its own record); checked at
+  0.119 in both phases (neck SF 32x/41x, body 34x/36x; FEA agrees with the strip model to ~15 %).
+  One gauge for the whole kit.
+- Costs (dated observations): first order **$283.08** (plate $177.77 — RE-QUOTE, taken on the
+  six-hole file; 4 magnets $95.68; bolts $9.63); support kit **$197.85** only if needed.
+
+### 9.3 Provenance is part of the number
+Every figure is MEASURED, DERIVED or ESTIMATED and says which. A guess and a vendor figure must
+never wear the same font.
+
+### 9.4 Drawing rules — learned the hard way
+SVG is XML: escape `&`, `<`, `>`. Emit leaders and dimensions BEFORE text. Derive label positions.
+Colour follows the BACKGROUND (the fridge renders near-black). **Render it and look at it** —
+layout cannot be reasoned about; three consecutive fix passes each repaired defects and introduced
+new ones. **Every image opened for Charles carries a question or an explicit "no action needed".**

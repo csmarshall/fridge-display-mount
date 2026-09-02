@@ -5,6 +5,10 @@ directory, the file wins until someone re-verifies it.
 
 ## The appliance
 
+(The Samsung spec sheet and both Waveshare dimension drawings now live once, in
+`../../docs/reference/`; the copies that used to be here were byte-identical and were removed on
+the 2026-09-02 merge.)
+
 - **`samsung-RS23A500ASR-specsheet.pdf`** — the fridge. Case 35 7/8 × 68 5/8 × 24 in
   (911.2 × **1743.1** × **609.6 mm**), 229 lb, counter-depth. The height that matters is the CASE
   height, not the height over the hinge covers.
@@ -14,7 +18,8 @@ directory, the file wins until someone re-verifies it.
 - **`waveshare-23.8-dimension-drawing.jpg`** — the one being mounted. 555.23 × 324.65 × 18 mm
   panel, plus a **25 mm raised rear box** (260 × 134, centred) carrying the VESA 100 pattern, so
   overall depth is 43 mm. 3.94 kg. The Pi 5 fan/GPIO opening is in the rear box FACE at a
-  **87.5 mm radius** from the VESA centre — do not blank it off.
+  **~82 mm radius** (fan, ~30 dia) and **~107 mm** (GPIO slot), both SCALED off the drawing;
+  the hook's windows sit at 87.5, an average — do not blank either off.
 - **`waveshare-27-dimension-drawing.jpg`** — the 27 in shares the same rear box, VESA and depth
   profile. Only the panel size and mass differ (629.62 × 367.40, 4.92 kg).
 

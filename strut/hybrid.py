@@ -57,9 +57,8 @@ N_PER_LBF = 4.4482216
 SF_FLOOR = 4.0
 FEELS_RIGID_MM = 0.2
 
-# Where the hook design lives. Its generator is the plate's one home; this repo only adds the
-# strut rows. Overridable on the command line for anyone whose checkout is elsewhere.
-HOOK_REPO_DEFAULT = Path(__file__).resolve().parent.parent / "chore-tracker-mount"
+# The generated plate's params JSON — written by generate_hybrid.py via the project's own
+# generate_bracket.py (one level up), which is the plate's one home.
 PLATE_JSON = Path("dxf/H_hook_plate.json")
 
 
