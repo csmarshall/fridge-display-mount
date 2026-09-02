@@ -50,7 +50,7 @@ log "pages"
 "$PY" review_build.py --log-level WARNING
 
 # Every SVG the pages reference must exist, or a card is a broken image on the live site.
-for page in index.html hook.html clamp.html review.html; do
+for page in index.html hook.html clamp.html angle.html review.html; do
   grep -oE 'src="[^"?]+\.svg' "$page" | sed 's/src="//' | sort -u | while read -r f; do
     [ -f "$f" ] || die "$page references missing $f"
   done
@@ -90,7 +90,7 @@ else
   git worktree add -q --detach "$WT"
   ( cd "$WT" && git checkout -q --orphan gh-pages && git rm -rqf . )
 fi
-cp index.html hook.html clamp.html archive.html review.html "$WT/"
+cp index.html hook.html clamp.html angle.html archive.html review.html "$WT/"
 mkdir -p "$WT/strut/dxf" "$WT/angle"
 cp ./*.svg "$WT/"
 cp strut/*.svg "$WT/strut/"
