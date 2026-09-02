@@ -181,6 +181,7 @@ and quoted; no fallback if it proves too lively.</p>
 {fig(root, "mount_views.svg", "Both faces of the mount", "Magnets and foam on the fridge face; VESA and spacers on the display face.")}
 {fig(root, "hinge_clearance.svg", "Hinge cover clearance", "Where the arm lands on the fridge top relative to the hinge cover. Two readings of the cover exist and the second puts the arm touching it — an open measurement.")}
 {fig(root, "bracket_preview.svg", "The flat pattern", "The cut file annotated: every hole, window, slot and the single bend line.")}
+{fig(root, "magnet_economics.svg", "Magnet economics — hold against cost", "Every type at every count the plate takes, on one hold model; the dashed lines are 2x, 4x and 6x on a 20 lb grab of the bottom edge.")}
 {fig(root, "magnet_sizing.svg", "Right-sizing the magnets", "What one magnet actually holds against a ladder of smaller male-stud magnets, and what a smaller one changes: pad, stud, holes. The O48 stays; this is why.")}
 {ask(1, [
     "The arm bears the whole load on an 11.5 mm closed-cell foam pad over a corner of unknown radius. Would you want a stiffer bearing, or is the foam the right thing between steel and painted sheet?",

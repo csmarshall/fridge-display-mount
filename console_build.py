@@ -75,6 +75,9 @@ DIAGRAM_INFO = {
                           "What one magnet actually holds (touch, peel, a grab) against a ladder of "
                           "smaller male-stud magnets, and what a smaller one changes: pad, stud, holes.",
                           "shared"),
+    "magnet_economics.svg": ("Magnet economics - hold against cost",
+                             "Every magnet type at every count the plate takes, on one hold model. Where the "
+                             "grab targets fall, and what each option costs per pound of hold.", "shared"),
     "quotes.svg": ("What each design costs — three quotes from one price table",
                    "Dated vendor observations. Design 3's phase 1 is design 1 at 0.119 in with "
                    "4 magnets; its kit is design 2's feet and lower clamp. Display excluded.",
