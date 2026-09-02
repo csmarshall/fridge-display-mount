@@ -188,7 +188,7 @@ DIAGRAM_INFO = {
 GROUP_ORDER_ALL = [("hybrid", "DESIGN 3 — hook with optional strut"),
                    ("hook", "DESIGN 1 — the hook alone"),
                    ("clamp", "DESIGN 2 — clamped strut"),
-                   ("angle", "DESIGN 4 — stock aluminium"),
+                   ("angle", "DESIGN 4 — stock aluminium (REJECTED)"),
                    ("shared", "APPLIES TO EVERY DESIGN")]
 
 
@@ -358,7 +358,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "wins — the physics of why magnet ratings mislead does not change.",
              "settled"),
         Item("st-angle",
-             "[ANGLE] DESIGN 4 — the hook in stock aluminium, hand-drilled",
+             "[ANGLE] DESIGN 4 — REJECTED 2026-09-02: the hook in stock aluminium, hand-drilled",
              f"A 2 x 2 x 3/16 in angle clipped over the fridge top corner, two 2 x 1/4 in flat bars "
              f"down the side {a4.bar_spacing:.0f} mm apart carrying four O36 K&J magnets, and a 5 x 3/16 in "
              f"bar across them for the VESA. Same load path as the hook, no custom plate, no coat, "
@@ -367,8 +367,10 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"Hangs {a4.hanging_lbf:.1f} lb at {a4.bearing_psi:.2f} psi on the top; magnet SF {a4.magnet_sf_touch:.0f}x "
              f"touch / {a4.magnet_sf_grab:.1f}x on a 20 lb grab; screen edge {a4.bar_touch_flex_mm:.3f} mm. The clip "
              f"must live inside the hinge-cover window, which puts the screen {a4.display_bias_rearward:.0f} mm "
-             f"rearward of the case centre unless the cover is lifted. No strut option.",
-             "open"),
+             f"rearward of the case centre unless the cover is lifted. No strut option. "
+             f"REJECTED by Charles: he will not hand-drill it. Kept for its magnet study and the "
+             f"plate-vs-fan finding; not offered for review.",
+             "settled"),
         Item("st-clamp",
              "[CLAMP] DESIGN 2 — a clamped strut standing on the floor",
              "Two low-profile slotted struts up the side panel, clamped top and bottom by a pair "
@@ -958,6 +960,7 @@ def render_table(sec: Section) -> str:
 
 GROUP_ORDER = GROUP_ORDER_ALL
 PAGES = {"hybrid": "index.html", "hook": "hook.html", "clamp": "clamp.html", "angle": "angle.html"}
+NAV_HIDE = {"angle"}      # still built, reachable by URL, but REJECTED — not in the nav
 TITLES = {"hybrid": "FRIDGE-SIDE CHORE DISPLAY",
           "hook": "DESIGN 1 — THE HOOK ALONE",
           "clamp": "DESIGN 2 — CLAMPED STRUT",
@@ -1087,9 +1090,10 @@ def render_diagrams(sec: Section, ctx: dict) -> str:
 
 BANNERS = {
     "hybrid": "",
-    "angle": ('<div style="background:#6b3fa0;color:#fff;padding:9px 16px;font:600 13px/1.4 '
-              'system-ui,sans-serif">DESIGN 4 &mdash; the hook in stock aluminium, hand-drilled. Validated by its '
-              'own generator; the cheapest to try. See the index page for what is being ordered.</div>'),
+    "angle": ('<div style="background:#b00020;color:#fff;padding:9px 16px;font:600 13px/1.4 '
+              'system-ui,sans-serif">DESIGN 4 &mdash; REJECTED 2026-09-02. Stock aluminium, hand-drilled: validated, '
+              'cheapest, and not wanted &mdash; the owner will not hand-drill it. Kept for the record. '
+              'See the index page for what is being ordered.</div>'),
     "hook": ('<div style="background:#1b6ea8;color:#fff;padding:9px 16px;font:600 13px/1.4 '
              'system-ui,sans-serif">DESIGN 1 &mdash; the hook alone. Finished and quoted, and the '
              'basis of design 3, which is this plate cut thinner with four strut holes. See the '
@@ -1108,7 +1112,7 @@ def build(root: Path, out: Path, variant: str, model=None) -> int:
     GROUP_ORDER = VARIANTS[variant]["groups"]
     nav = " ".join(f'<a href="#{s.id}">{esc(s.title)}</a>' for s in sections)
     for v, page in PAGES.items():
-        if v != variant:
+        if v != variant and v not in NAV_HIDE:
             nav += f' <a href="{esc(page)}" class="xpage">{esc(NAV_LABEL[v])} \u2192</a>'
 
     body = []

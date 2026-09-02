@@ -284,7 +284,7 @@ def common() -> Group:
 
 
 def all_quotes() -> list[Quote]:
-    return [quote_hook(), quote_clamp(), quote_hybrid(), quote_angle()]
+    return [quote_hook(), quote_clamp(), quote_hybrid()]   # design 4 is REJECTED; quote_angle() stays callable
 
 
 def phase(q: Quote, which: int) -> float:

@@ -53,7 +53,7 @@ MILESTONES = [
     ("b04ec07", "Plate finite-element check agrees with the strip model to ~15%"),
     ("232131d", "One repo: the strut work merged in with history"),
     ("55a71f7", "One price table builds every quote"),
-    ("6b4a56a", "Design 4 concept in stock aluminium; magnet right-sizing study"),
+    ("6b4a56a", "Magnet right-sizing study; a stock-aluminium design 4, later rejected"),
 ]
 
 
@@ -156,38 +156,11 @@ leaving no mark.</p>
     ("Governing everyday load", "a 5 lb press at the outer screen edge", f"a torsion of {rep['torsion_moment_in_lbf']:.0f} in-lb about the mount"),
     ("Rules that bind every design", "nothing fixed to the building; magnets carry no weight; foam between any steel and the panel; pad thickness matches the magnet standoff", "CLAUDE.md sections 1 and 9"),
 ])}
-<p>Four designs exist. They are presented below in <b>increasing order of maturity and stiffness</b>:
-design 4 is the youngest and the cheapest, design 1 is finished but has no fallback, design 2 stands alone on the
-floor, and design 3 is design 1 with a fallback built in and is what we intend to order.</p>
+<p>Three designs are up for review, in <b>increasing order of maturity and stiffness</b>: design 1 is finished but
+has no fallback, design 2 stands alone on the floor, and design 3 is design 1 with a fallback built in and is what we
+intend to order. A fourth, the hook rebuilt from stock aluminium and hand-drilled, was worked up and rejected by the
+owner; its magnet study survives below.</p>
 {fig(root, "magnet_primer.svg", "Why not just magnets?", "The derate chain: a 175 lb magnet delivers about 12 lb of shear on painted appliance sheet. This is why every design carries the weight some other way.")}
-</section>""")
-
-    # ---------------------------------------------------------------- design 4
-    body.append(f"""<section id="d4" class="design"><h2><span class="tag t4">DESIGN 4</span> The hook in stock aluminium — hand-drilled</h2>
-<p class="blurb">Same load path as the hook, no custom plate. A 2 x 2 x 3/16 in 6061 angle clipped over the
-fridge's top corner, two 2 x 1/4 in flat bars down the side 250 mm apart carrying four O36 magnets, and a
-5 x 3/16 in bar across them for the VESA. Validated by its own generator (pad band, torsion floor, hole edges,
-fan clearance, hinge window, bending); three drill templates audited. The youngest design, and the cheapest.</p>
-{table([
-    ("Hanging on the clip", f"{a4.hanging_lbf:.1f} lb", f"display + {a4.hardware_kg:.2f} kg of aluminium"),
-    ("Bearing on the fridge top", f"{a4.bearing_psi:.2f} psi", "2 in x 12 in on 5/16 in foam"),
-    ("Clip position", f"{a4.clip_from_rear:.0f} mm from the rear edge", f"{a4.hinge_margin:.0f} mm to the hinge cover; screen {a4.display_bias_rearward:.0f} mm rearward of centre unless the cover is lifted"),
-    ("Touch torsion per magnet", f"{a4.torsion_per_magnet_lbf:.2f} lb", f"MM-C-36 derated {a4.magnet_derated_lbf:.1f} lb: SF {a4.magnet_sf_touch:.0f}x; {a4.magnet_sf_grab:.1f}x on a 20 lb grab"),
-    ("Bar and plate bending", f"SF {a4.bar_overturning_sf:.0f}x / {35000 / a4.plate_psi:.0f}x", "6061-T6 at 35 ksi yield"),
-    ("Screen edge under 5 lb", f"{a4.bar_touch_flex_mm:.3f} mm", "bar as a beam between its magnets"),
-    ("Plate vs Pi fan opening", f"{a4.plate_fan_clearance:.1f} mm", "why the plate is 5 in tall, not 8; the fan position is scaled, not measured"),
-    ("Display face off the panel", f"{a4.display_face:.0f} mm", "8 magnet + 6.35 bar + 4.76 plate + 25 box + 18"),
-    ("Parts", f"${q[4].priced:.2f} priced, {q[4].unpriced} not", "the bars are estimates; the angle and magnets are sourced"),
-])}
-{fig(root, "angle/angle_concept.svg", "Design 4 elevation sheet", "Side and front elevations at true scale, derived numbers, parts, trade-offs.")}
-{fig(root, "angle/angle_drill.svg", "Design 4 drill drawing", "The three parts, every hole from a datum corner. Print at 100 % for 1:1 templates.")}
-{fig(root, "magnet_sizing.svg", "Right-sizing the magnets", "What one magnet actually holds, against a ladder of smaller male-stud magnets. Design 4 starts from the O36; designs 1 and 3 keep the O48.")}
-{ask(4, [
-    "Is a 2 in wide bearing on the fridge top, on foam, acceptable, or does the clip need a wider foot to stop it rocking about the corner?",
-    "Two 2 x 1/4 in bars 24 in long with the magnets on their faces: any concern about the bars twisting under the touch couple, or the magnets not seating coplanar after hand assembly?",
-    "The clip has to sit inside the hinge-cover window, which puts the screen about 77 mm behind the case centre. Live with it, lift the cover, or is there a better clip geometry?",
-    "Is this too economical — what would you add before you trusted it with a $350 display?",
-])}
 </section>""")
 
     # ---------------------------------------------------------------- design 1
@@ -208,6 +181,7 @@ and quoted; no fallback if it proves too lively.</p>
 {fig(root, "mount_views.svg", "Both faces of the mount", "Magnets and foam on the fridge face; VESA and spacers on the display face.")}
 {fig(root, "hinge_clearance.svg", "Hinge cover clearance", "Where the arm lands on the fridge top relative to the hinge cover. Two readings of the cover exist and the second puts the arm touching it — an open measurement.")}
 {fig(root, "bracket_preview.svg", "The flat pattern", "The cut file annotated: every hole, window, slot and the single bend line.")}
+{fig(root, "magnet_sizing.svg", "Right-sizing the magnets", "What one magnet actually holds against a ladder of smaller male-stud magnets, and what a smaller one changes: pad, stud, holes. The O48 stays; this is why.")}
 {ask(1, [
     "The arm bears the whole load on an 11.5 mm closed-cell foam pad over a corner of unknown radius. Would you want a stiffer bearing, or is the foam the right thing between steel and painted sheet?",
     "The magnets are 37x over the touch case and 6x over a 20 lb pull on the bottom edge. Is that the right margin for a household display, or is it money?",
@@ -271,7 +245,7 @@ finite-element model.</p>
     body.append(f"""<section id="money"><h2>What each costs</h2>
 <p class="blurb">Dated vendor observations from one price table, never derived. Display and PSU excluded; they are
 the same purchase whichever design wins.</p>
-{fig(root, "quotes.svg", "Four quotes from one price table", "As listed, and budget-sourced with the substitutions shown and their caveats.")}
+{fig(root, "quotes.svg", "Three quotes from one price table", "As listed, and budget-sourced with the substitutions shown and their caveats.")}
 </section>
 <section id="revisions"><h2>Revisions</h2>
 <p class="blurb">Milestones, from the repository history. {len(MILESTONES)} of {subprocess.run(['git', 'rev-list', '--count', 'HEAD'], capture_output=True, text=True).stdout.strip()} commits.</p>
@@ -287,13 +261,13 @@ source are in <a href="https://github.com/{REPO}">the repository</a>.</p>
 </section>""")
 
     nav = " ".join(f'<a href="#{i}">{esc(l)}</a>' for i, l in (
-        ("problem", "The problem"), ("d4", "Design 4"), ("d1", "Design 1"), ("d2", "Design 2"),
+        ("problem", "The problem"), ("d1", "Design 1"), ("d2", "Design 2"),
         ("d3", "Design 3 (proposed)"), ("money", "Costs"), ("revisions", "Revisions"), ("how", "How to comment")))
     doc = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Fridge display mount — engineering review</title><style>{CSS}</style></head><body>
 <header><h1>Fridge-side display mount — for review</h1>
-<div class="sub">Four ways to hang a 24 in touch screen on the side of a fridge, none of them fixed to anything. Read top to bottom; the last design is the one we intend to build.</div>
+<div class="sub">Three ways to hang a 24 in touch screen on the side of a fridge, none of them fixed to anything. Read top to bottom; the last design is the one we intend to build.</div>
 <nav style="margin-top:8px">{nav}</nav></header>
 <main>{"".join(body)}</main></body></html>
 """

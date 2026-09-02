@@ -8,7 +8,7 @@ ONE project, THREE designs, one plate. A Waveshare 23.8" FHD touch monitor on th
 | 1 | **Hook** — magnetic-assisted hook bracket over the fridge top | repo root | finished, quoted, tagged `hook-final` |
 | 2 | **Clamped strut** — two slotted struts to the floor, clamped top and bottom | `strut/` | standalone fallback; its feet + lower clamp are design 3's support kit |
 | 3 | **Hook with optional strut** — design 1's plate, cut thinner with four strut holes, so design 2's feet can be added later without recutting | `strut/hybrid*.py`, plate via the root generator | **BEING ORDERED** |
-| 4 | **Stock aluminium hook** — 2 x 2 angle clip, two 2 x 1/4 bars, a 5 in bar for the VESA, four O36 magnets; hand-drilled | `angle/` | validated, cheapest; the fallback if the plate is never cut |
+| 4 | **Stock aluminium hook** — angle clip, two bars, a 5 in bar for the VESA, four O36 magnets; hand-drilled | `angle/` | **REJECTED 2026-09-02** — Charles will not hand-drill. Kept for the record; not in the nav, not on the review page |
 
 Sections 1–8 below are design 1's invariants and remain the base of design 3. Section 9 carries
 designs 2 and 3; section 10 carries design 4. `strut/` was its own repo (`csmarshall/fridge-strut-mount`) until 2026-09-02;
@@ -424,7 +424,10 @@ new ones. **Every image opened for Charles carries a question or an explicit "no
 
 ---
 
-## 10. Design 4 — the hook in stock aluminium (2026-09-02)
+## 10. Design 4 — the hook in stock aluminium — REJECTED 2026-09-02
+**Charles: "the hand drilled aluminum is not an option - I don't want to do that."** Do not propose it
+again. What survives: the magnet right-sizing study, the finding that a plate over ~134 mm tall
+blanks the Pi fan, and the hinge-window placement logic. Files stay so the reasoning is auditable.
 `angle/angle.py` is the model, validator and generator; `angle/angle_sheets.py` draws the elevation
 sheet and the 1:1 drill drawing; `angle/dxf/` holds three audited drill templates and `D4_params.json`.
 - **Same load path as design 1.** A 2 x 2 x 3/16 in 6061 angle CLIP bears on the top corner and
