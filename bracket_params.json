@@ -50,6 +50,10 @@
     "extra_magnet_rows": [],
     "spare_mid_holes": true,
     "spare_arm_holes": false,
+    "strut_bolt_spacing": 0.0,
+    "strut_bolt_dia": 8.5,
+    "strut_bolt_rows": [],
+    "strut_bolt_disc_clearance": 2.0,
     "magnet_disc_dia": 48.021874999999994,
     "magnet_standoff": 11.509374999999999,
     "magnet_stud_len": 12.7,
@@ -429,6 +433,123 @@
       "r": 1.4
     }
   ],
+  "magnet_discs": [
+    {
+      "tag": "magnet_disc",
+      "x": 32.0,
+      "y": 32.0,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "magnet_disc",
+      "x": 32.0,
+      "y": 278.0,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "magnet_disc",
+      "x": 278.0,
+      "y": 32.0,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "magnet_disc",
+      "x": 278.0,
+      "y": 278.0,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "spare_arm_magnet_disc",
+      "x": 155.0,
+      "y": 648.8085000000001,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "arm_magnet_disc",
+      "x": 95.0,
+      "y": 594.8085000000001,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "arm_magnet_disc",
+      "x": 215.0,
+      "y": 594.8085000000001,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "arm_magnet_disc",
+      "x": 95.0,
+      "y": 702.8085000000001,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "arm_magnet_disc",
+      "x": 215.0,
+      "y": 702.8085000000001,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "spare_arm_magnet_disc",
+      "x": 95.0,
+      "y": 648.8085000000001,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "spare_arm_magnet_disc",
+      "x": 215.0,
+      "y": 648.8085000000001,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "spare_magnet_disc",
+      "x": 155.0,
+      "y": 32.0,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "spare_magnet_disc",
+      "x": 155.0,
+      "y": 278.0,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "spare_magnet_disc",
+      "x": 32.0,
+      "y": 155.0,
+      "dia": 48.021874999999994
+    },
+    {
+      "tag": "spare_magnet_disc",
+      "x": 278.0,
+      "y": 155.0,
+      "dia": 48.021874999999994
+    }
+  ],
+  "center_opening": {
+    "x": 155.0,
+    "y": 155.0,
+    "dia": 90.0
+  },
+  "regions": {
+    "body": [
+      0.0,
+      0.0,
+      310.0,
+      310.0
+    ],
+    "neck": [
+      60.0,
+      310.0,
+      250.0,
+      562.90425
+    ],
+    "arm": [
+      60.0,
+      562.90425,
+      250.0,
+      738.8085000000001
+    ]
+  },
   "engineering": {
     "display_weight_lbf": 8.686213129892,
     "plate_mass_kg": 5.808099781902166,

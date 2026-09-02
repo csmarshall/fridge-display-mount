@@ -468,6 +468,17 @@ class BracketParams:
     # works on a 3 mm plate — the threaded-HOLE version of the same magnet (5679K58) carries an
     # 11.28 mm boss that would stand the magnet off the plate by that much.
     # McMaster 3506K67, 1 57/64 in. Male-stud construction, as with the K66 it supersedes.
+    # STRUT BOLTS — the third design (fridge-strut-mount/hybrid.py): the same plate, prepared to
+    # take two slotted struts to the floor if the hook proves too lively. Two holes per row at the
+    # strut spacing, rows given as heights above the plate's BOTTOM edge (body y = 0). Empty means
+    # the archived hook, byte-identical. The ROWS are chosen by hybrid.py from this generator's own
+    # params JSON (holes, windows, magnet discs), so what they must clear is known in one place;
+    # this file validates what it is given and refuses anything that fouls a feature.
+    strut_bolt_spacing: float = 0.0
+    strut_bolt_dia: float = 8.5             # clears the 5/16 in elevator bolt, as the clamp design
+    strut_bolt_rows: tuple[float, ...] = ()
+    # A strut bolt's head or nut must not ride up onto a magnet face: hole edge to disc edge.
+    strut_bolt_disc_clearance: float = 2.0
     magnet_disc_dia: float = (1 + 57 / 64) * MM_PER_INCH
     # 5/16 in = 7.9375. The magnet body height IS the standoff, so this sets how far the
     # display sits off the fridge and it feeds the CG offset and the bottom pad thickness.
@@ -939,6 +950,14 @@ def build_geometry(params: BracketParams, flat: FlatPattern) -> Geometry:
             holes.append(Hole(hx, hy, params.magnet_hole_dia, "magnet"))
             magnet_discs.append(Hole(hx, hy, params.magnet_disc_dia, "magnet_disc"))
 
+    if params.strut_bolt_rows:
+        for row_y in params.strut_bolt_rows:
+            for sx in (-1, 1):
+                holes.append(Hole(cx + sx * params.strut_bolt_spacing / 2.0, row_y,
+                                  params.strut_bolt_dia, "strut_bolt"))
+        LOG.debug("strut bolt rows at body y %s, spacing %.2f, O%.1f",
+                  list(params.strut_bolt_rows), params.strut_bolt_spacing, params.strut_bolt_dia)
+
     # Retention magnets on the arm. They stop the arm walking fore-aft on the fridge top
     # and resist a jostle lifting the hook; they are given ZERO credit in the load path. Placed
     # by formed distance from the bend apex, so the flat position moves with the bend deduction.
@@ -1232,6 +1251,20 @@ def validate(params: BracketParams, geom: Geometry) -> list[Issue]:
             f"{hole.tag} hole is {center_clear:.2f} mm from the centre vent; need >= "
             f"{MATERIAL.min_edge_distance:.2f} mm",
         )
+
+    # --- strut bolts vs magnet faces -------------------------------------------------
+    # The 1T hole-to-hole rule above only keeps the HOLES apart. A strut bolt carries a 30 mm
+    # elevator-bolt head on the panel side and a nut on the other, and a magnet is a 48 mm disc:
+    # the two must not overlap in plan or the plate does one job or the other, never both.
+    for hole in (h for h in geom.holes if h.tag == "strut_bolt"):
+        for disc in geom.magnet_discs:
+            gap = math.hypot(hole.x - disc.x, hole.y - disc.y) - disc.radius - hole.radius
+            _check(
+                issues, gap >= params.strut_bolt_disc_clearance, "ERROR", "strut_bolt_disc",
+                f"strut bolt at ({hole.x:.2f}, {hole.y:.2f}) is {gap:.2f} mm from the {disc.tag} "
+                f"face at ({disc.x:.1f}, {disc.y:.1f}); need >= "
+                f"{params.strut_bolt_disc_clearance:.1f} mm — the bolt head would sit on the magnet",
+            )
 
     # --- windows ---------------------------------------------------------------------
     for win in geom.windows:
@@ -2097,6 +2130,10 @@ def _preview_legend_entries(params: BracketParams, geom: Geometry) -> list[tuple
         ("circle", "#c0169a", 2.25, [
             f"O{params.magnet_hole_dia:.1f} magnet hole (M6 clearance),",
             "never countersunk"]),
+        *([("circle", "#1a5fb4", 2.25, [
+            f"O{params.strut_bolt_dia:.1f} strut bolt holes, {len(params.strut_bolt_rows)} rows at "
+            f"{params.strut_bolt_spacing:.0f} centres — the third design's",
+            "struts bolt here. Absent on the archived hook"])] if params.strut_bolt_rows else []),
         ("circle", "#a8630f", 6.0, [
             "Pi fan / GPIO opening in the display's rear box,",
             f"R{DISPLAY.rear_face_feature_radius:.0f} from the VESA centre — drawn in all four",
@@ -2526,6 +2563,10 @@ def write_params_json(path: Path, params: BracketParams, geom: Geometry, report:
         },
         "holes": [{"tag": h.tag, "x": h.x, "y": h.y, "dia": h.dia} for h in geom.holes],
         "windows": [{"tag": w.tag, "cx": w.cx, "cy": w.cy, "w": w.w, "h": w.h, "r": w.r} for w in geom.windows],
+        "magnet_discs": [{"tag": d.tag, "x": d.x, "y": d.y, "dia": d.dia} for d in geom.magnet_discs],
+        "center_opening": {"x": geom.center_opening.x, "y": geom.center_opening.y,
+                           "dia": geom.center_opening.dia},
+        "regions": {k: list(v) for k, v in geom.regions.items()},
         "engineering": report,
     }
     path.write_text(json.dumps(payload, indent=2, sort_keys=False), encoding="utf-8")
@@ -2600,6 +2641,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--press-force", type=float, default=defaults.press_force_lbf,
                    help="assumed touch press at the outer screen edge, lb")
     p.add_argument("--spacer-length", type=float, default=defaults.spacer_len)
+    p.add_argument("--strut-bolts", type=float, nargs="+", default=None, metavar="MM",
+                   help="strut bolt holes for the third design: SPACING then one or more ROW heights "
+                        "above the plate's bottom edge, e.g. --strut-bolts 187.28 17.73 220.93. "
+                        "Absent = the archived hook, no strut holes")
     p.add_argument("--out-dir", type=Path, default=Path("."))
     p.add_argument("--name", default="",
                    help="variant suffix for the output filenames, e.g. --name reach180 writes "
@@ -2658,7 +2703,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         arm_pad_override=args.arm_pad_thickness,
         press_force_lbf=args.press_force,
         spacer_len=args.spacer_length,
+        **({"strut_bolt_spacing": args.strut_bolts[0], "strut_bolt_rows": tuple(args.strut_bolts[1:])}
+           if args.strut_bolts else {}),
     )
+    if args.strut_bolts is not None and len(args.strut_bolts) < 2:
+        raise SystemExit("--strut-bolts needs a spacing and at least one row height")
     LOG.debug("params: %s", {k: getattr(params, k) for k in params.__dataclass_fields__})
 
     flat = derive_flat(params)
