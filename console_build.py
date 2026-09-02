@@ -65,10 +65,12 @@ DIAGRAM_INFO = {
                                           "The hook generator's own preview of THE file to "
                                           "upload: every hook hole plus four strut bolts in two "
                                           "rows. Reference only.", "hybrid"),
-    "angle_concept.svg": ("Design 4 concept - the hook in stock aluminium",
-                          "Clip, two bars, a small plate, four O36 magnets. Same load path, no custom "
-                          "plate, no coat, hand-drilled. Not validated; a sketch with derived numbers.",
-                          "shared"),
+    "angle/angle_concept.svg": ("Design 4 - the hook in stock aluminium",
+                                "Clip, two bars, a 5 in plate, four O36 magnets. Same load path, no custom "
+                                "plate, no coat, hand-drilled. Validated by angle/angle.py.", "angle"),
+    "angle/angle_drill.svg": ("Design 4 drill drawing - 1:1 templates",
+                              "The three parts with every hole dimensioned from a datum corner; the SVG's "
+                              "unit is 1 mm, print at 100 %.", "angle"),
     "magnet_sizing.svg": ("Right-sizing the magnets",
                           "What one magnet actually holds (touch, peel, a grab) against a ladder of "
                           "smaller male-stud magnets, and what a smaller one changes: pad, stud, holes.",
@@ -186,6 +188,7 @@ DIAGRAM_INFO = {
 GROUP_ORDER_ALL = [("hybrid", "DESIGN 3 — hook with optional strut"),
                    ("hook", "DESIGN 1 — the hook alone"),
                    ("clamp", "DESIGN 2 — clamped strut"),
+                   ("angle", "DESIGN 4 — stock aluminium"),
                    ("shared", "APPLIES TO EVERY DESIGN")]
 
 
@@ -239,7 +242,7 @@ def export_pngs(root: Path, out_dir: Path, scale: int = 2) -> list[Path]:
     written, skipped = [], 0
     strut = root / "strut"
     for svg in (sorted(root.glob("*.svg")) + sorted(strut.glob("*.svg"))
-                + sorted((strut / "dxf").glob("*_preview.svg"))):
+                + sorted((strut / "dxf").glob("*_preview.svg")) + sorted((root / "angle").glob("*.svg"))):
         w, h = svg_size(svg)
         png = out_dir / (svg.stem + ".png")
         # Incremental: rasterising all 29 costs ~20 s, which is enough friction that the PNGs
@@ -321,6 +324,11 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     _q3 = PR.quote_hybrid(n_magnets=h3.n_magnets_fitted, strut_ft=int(h3.strut_ft))
     now3, later3 = PR.phase(_q3, 1), PR.phase(_q3, 2)
     rows3 = sorted(h3.bolt_rows)
+    sys.path.insert(0, str((root / "angle").resolve()))
+    import angle as AN
+    a4 = AN.Angle()
+    d4 = json.loads((root / "angle" / "dxf" / "D4_params.json").read_text(encoding="utf-8"))
+    q4 = PR.quote_angle()
 
     S.append(Section("status", "Three designs, one plate", "One display, one fridge, three ways to "
                      "hold the plate up. Design 3 is what is being ordered; the other two are its "
@@ -350,13 +358,16 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "wins — the physics of why magnet ratings mislead does not change.",
              "settled"),
         Item("st-angle",
-             "[ALL] DESIGN 4 - CONCEPT: the hook in stock aluminium",
-             "A 2 x 2 x 1/4 in angle clipped over the fridge top corner, two 2 x 1/4 in flat bars "
-             "down the side 250 mm apart carrying four O36 K&J magnets, and an 8 x 8 plate for the "
-             "VESA. Same load path as the hook, no custom plate, no coat, bare 6061. About $150 in "
-             "parts, half of it estimates. Hand-drilled; no strut option.",
-             "Sketched 2026-09-02 because the custom plate is a third of the hook cost and the O48 "
-             "magnets another third. Not validated by a generator. Moot if design 3 plate is cut.",
+             "[ANGLE] DESIGN 4 — the hook in stock aluminium, hand-drilled",
+             f"A 2 x 2 x 3/16 in angle clipped over the fridge top corner, two 2 x 1/4 in flat bars "
+             f"down the side {a4.bar_spacing:.0f} mm apart carrying four O36 K&J magnets, and a 5 x 3/16 in "
+             f"bar across them for the VESA. Same load path as the hook, no custom plate, no coat, "
+             f"bare 6061. ${q4.priced:.2f} in parts, {q4.unpriced} lines unpriced, some estimated. "
+             f"Validated by its own generator; three drill templates audited.",
+             f"Hangs {a4.hanging_lbf:.1f} lb at {a4.bearing_psi:.2f} psi on the top; magnet SF {a4.magnet_sf_touch:.0f}x "
+             f"touch / {a4.magnet_sf_grab:.1f}x on a 20 lb grab; screen edge {a4.bar_touch_flex_mm:.3f} mm. The clip "
+             f"must live inside the hinge-cover window, which puts the screen {a4.display_bias_rearward:.0f} mm "
+             f"rearward of the case centre unless the cover is lifted. No strut option.",
              "open"),
         Item("st-clamp",
              "[CLAMP] DESIGN 2 — a clamped strut standing on the floor",
@@ -511,6 +522,27 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "model agrees with the strip model to ~15%.",
              "Bend deduction is SendCutSend's published 4.97 mm for this gauge, one home for all "
              "three designs.", "settled"),
+        Item("d-a-magnet",
+             "[ANGLE] O36 K&J MM-C-36 on the bars, 5/16 in pad — SETTLED 2026-09-02",
+             f"The largest male-stud pot magnet that fits a 2 in bar with an edge margin ({a4.bar_edge_margin:.1f} mm "
+             f"each side). Derated {a4.magnet_derated_lbf:.1f} lb against {a4.torsion_per_magnet_lbf:.2f} lb of touch "
+             f"torsion: SF {a4.magnet_sf_touch:.0f}x; {a4.magnet_sf_grab:.1f}x on an assumed 20 lb grab of the bottom "
+             f"edge. Its 8 mm body is the standoff, so the pad is 5/16 in foam ({a4.pad:.2f} mm, "
+             f"{a4.pad - a4.standoff:+.2f} in the -0.60/+0.30 band).",
+             "See magnet_sizing.svg for the ladder. The O48 would not fit the bar.", "settled"),
+        Item("d-a-plate",
+             "[ANGLE] Plate is a 5 x 3/16 in bar, not an 8 x 8 plate — SETTLED 2026-09-02",
+             f"The display's rear box carries the Pi fan at ~R{a4.fan_r:.0f} on its vertical axis; an 8 in plate "
+             f"would blank it. 5 in stops {a4.plate_fan_clearance:.1f} mm short of the opening. 3/16 in, because "
+             f"the VESA holes sit 13.5 mm from the bar's edge and the 2T rule needs that to be >= 2 x thickness.",
+             "The fan position is SCALED off a raster drawing to ±5 mm — measure it before cutting the plate.", "settled"),
+        Item("d-a-clip",
+             "[ANGLE] Clip inside the hinge-cover window; bars butt the clip's top leg — SETTLED 2026-09-02",
+             f"Centred on the case the 12 in clip would run into the hinge cover. It sits {a4.clip_from_rear:.0f}-"
+             f"{a4.clip_from_rear + a4.clip_len:.0f} mm from the rear edge with {a4.hinge_margin:.0f} mm to the cover, "
+             f"putting the screen {a4.display_bias_rearward:.0f} mm rearward of the case centre. The bars run the full "
+             f"2 in leg so the two 1/4-20 bolts per bar sit 17 and 37 mm from the top, 2T inside both parts.",
+             "The cover lifts off (Charles): recover the bias by removing it, or accept it.", "settled"),
         Item("d-coat",
              "[ALL] Powder coat at SendCutSend, or spray it yourself",
              "Matte black powder adds $66–70 and pushes delivery Aug 31 → Sep 3. Bare CRS will "
@@ -558,6 +590,11 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "Nothing is in a cart. The four clamp-design DXFs also moved 0.38 mm when the bend "
              "deduction went to the published value — re-upload those too before any order.",
              "open"),
+        Item("m-a-stock", "[ANGLE] Price the aluminium for real",
+             "The angle is priced from Speedy Metals; the two bars and the 5 in bar are ESTIMATES from a "
+             "metals4u price range. Three items, one order from one supplier.", "", "open"),
+        Item("m-a-foam", "[ANGLE] Source 5/16 in neoprene foam strips",
+             "The 8 mm magnet standoff wants 7.94 mm foam. McMaster stocks it; not yet priced.", "", "open"),
         Item("m-thread", "[ALL] VESA insert thread depth",
              "Sets the M4 screw length. Any standard head clears the fridge inside the "
              f"{p.magnet_standoff:.0f} mm standoff.", "", "open"),
@@ -688,9 +725,27 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
                      "whichever design wins. Nothing in a cart.", "table",
                      columns=["design", "group", "line", "cost", "source", "note"], rows=qrows))
 
+    e4 = d4["engineering"]
+    S.append(Section("anumbers", "Design 4 — the numbers",
+                     "From angle/dxf/D4_params.json, which angle/angle.py wrote after validating — these "
+                     "cannot drift from the drill templates.", "table",
+                     columns=["", "value", "note"],
+                     rows=[
+        ("Stock", "2 x 2 x 3/16 angle 12 in; 2 x 1/4 bar 24 in x2; 5 x 3/16 bar 12 in", "6061-T6, bare"),
+        ("Clip position", f"{e4['clip_from_rear_mm']:.0f} mm from the rear edge", f"{e4['hinge_margin_mm']:.0f} mm to the hinge cover; screen {e4['display_bias_rearward_mm']:.0f} mm rearward"),
+        ("Hanging / bearing", f"{e4['hanging_lbf']:.1f} lb / {e4['bearing_psi']:.2f} psi", "2 in x 12 in on 5/16 in foam"),
+        ("Magnets", f"4 x MM-C-36 at {a4.bar_spacing:.0f} centres, rows {e4['magnet_rows_mm'][0]:.0f} / {e4['magnet_rows_mm'][1]:.0f}", f"derated {e4['magnet_derated_lbf']:.1f} lb; SF touch {e4['magnet_sf_touch']:.0f}x, peel {e4['magnet_sf_peel']:.0f}x, grab {e4['magnet_sf_grab']:.1f}x"),
+        ("Bar bending", f"{e4['bar_overturning_psi']:.0f} psi, SF {e4['bar_overturning_sf']:.0f}x", "35 ksi yield"),
+        ("Plate bending", f"{e4['plate_psi']:.0f} psi, SF {e4['plate_sf']:.0f}x", "weak axis, 5 in strip"),
+        ("Screen edge under 5 lb", f"{e4['bar_touch_flex_mm']:.3f} mm", "bar as a beam between its magnets"),
+        ("Plate vs fan opening", f"{e4['plate_fan_clearance_mm']:.1f} mm", "against a ±5 mm scaled figure — measure"),
+        ("Display face", f"{e4['display_face_mm']:.0f} mm off the panel", "8 + 6.35 + 4.76 + 25 + 18"),
+        ("Holes to drill", f"{sum(len(p['holes']) * p['qty'] for p in d4['parts'].values())}", "three DXF templates, audited"),
+    ]))
+
     strut = root / "strut"
     found = (sorted(root.glob("*.svg")) + sorted(strut.glob("*.svg"))
-             + sorted((strut / "dxf").glob("*_preview.svg")))
+             + sorted((strut / "dxf").glob("*_preview.svg")) + sorted((root / "angle").glob("*.svg")))
     rel = lambda f: f.relative_to(root).as_posix()
     S.append(Section("diagrams", "Diagrams",
                      "DIAGRAM_COUNT drawings, all generated from the same parameters as the cut file.",
@@ -902,17 +957,21 @@ def render_table(sec: Section) -> str:
 
 
 GROUP_ORDER = GROUP_ORDER_ALL
-PAGES = {"hybrid": "index.html", "hook": "hook.html", "clamp": "clamp.html"}
+PAGES = {"hybrid": "index.html", "hook": "hook.html", "clamp": "clamp.html", "angle": "angle.html"}
 TITLES = {"hybrid": "FRIDGE-SIDE CHORE DISPLAY",
           "hook": "DESIGN 1 — THE HOOK ALONE",
-          "clamp": "DESIGN 2 — CLAMPED STRUT"}
+          "clamp": "DESIGN 2 — CLAMPED STRUT",
+          "angle": "DESIGN 4 — STOCK ALUMINIUM"}
 SUBS = {"hybrid": "design 3: the hook, with the plate prepared for struts — being ordered",
         "hook": "finished and quoted; design 3 is this plate with four more holes",
-        "clamp": "floor-standing fallback; its feet and lower clamp are design 3's support kit"}
+        "clamp": "floor-standing fallback; its feet and lower clamp are design 3's support kit",
+        "angle": "the hook in hardware-store 6061, hand-drilled; the cheapest to try"}
 PAGE_TITLES = {"hybrid": "Fridge display mount — design 3, hook with optional strut",
                "hook": "Fridge display mount — design 1, the hook",
-               "clamp": "Fridge display mount — design 2, clamped strut"}
-NAV_LABEL = {"hybrid": "Design 3 — being ordered", "hook": "Design 1 — hook", "clamp": "Design 2 — clamped strut"}
+               "clamp": "Fridge display mount — design 2, clamped strut",
+               "angle": "Fridge display mount — design 4, stock aluminium"}
+NAV_LABEL = {"hybrid": "Design 3 — being ordered", "hook": "Design 1 — hook", "clamp": "Design 2 — clamped strut",
+             "angle": "Design 4 — stock aluminium"}
 
 # Which groups and which items belong on each page. Items are tagged [HYBRID], [HOOK], [CLAMP]
 # or [ALL]; design 3 IS the hook plate, so its page carries the hook's items as well as its own.
@@ -920,16 +979,20 @@ VARIANTS = {
     "hybrid": {"groups": [("hybrid", "Design 3 — the plate prepared for struts"),
                           ("hook", "Design 1 — the hook this is built on"),
                           ("shared", "Background — applies to any mount")],
-               "drop_sections": {"parity", "numbers", "prices", "hprices"},
+               "drop_sections": {"parity", "numbers", "prices", "hprices", "anumbers"},
                "keep": lambda t: t.startswith(("[HYBRID]", "[HOOK]", "[ALL]"))},
     "hook":   {"groups": [("hook", "Design 1 — the hook"),
                           ("shared", "Background — applies to any mount")],
-               "drop_sections": {"parity", "hnumbers", "hprices"},
+               "drop_sections": {"parity", "hnumbers", "hprices", "anumbers"},
                "keep": lambda t: t.startswith(("[HOOK]", "[ALL]"))},
     "clamp":  {"groups": [("clamp", "Design 2 — the clamped strut"),
                           ("shared", "Background — applies to any mount")],
-               "drop_sections": {"numbers", "prices", "hnumbers", "hprices"},
+               "drop_sections": {"numbers", "prices", "hnumbers", "hprices", "anumbers"},
                "keep": lambda t: t.startswith(("[CLAMP]", "[ALL]"))},
+    "angle":  {"groups": [("angle", "Design 4 — stock aluminium"),
+                          ("shared", "Background — applies to any mount")],
+               "drop_sections": {"parity", "numbers", "prices", "hnumbers", "hprices"},
+               "keep": lambda t: t.startswith(("[ANGLE]", "[ALL]"))},
 }
 
 
@@ -951,6 +1014,10 @@ def filter_sections(sections: list[Section], variant: str) -> list[Section]:
                                 "Things waiting on you for the clamped strut."),
                   "checklist": ("Before ordering",
                                 "Measurements that gate an order for this design on its own.")},
+        "angle": {"decisions": ("Decisions",
+                                "Design 4's own; it inherits the hook's load-path reasoning, not its parts."),
+                  "checklist": ("Before buying stock",
+                                "What gates a trip to the metal supplier.")},
     }[variant]
     out: list[Section] = []
     for sec in sections:
@@ -1020,6 +1087,9 @@ def render_diagrams(sec: Section, ctx: dict) -> str:
 
 BANNERS = {
     "hybrid": "",
+    "angle": ('<div style="background:#6b3fa0;color:#fff;padding:9px 16px;font:600 13px/1.4 '
+              'system-ui,sans-serif">DESIGN 4 &mdash; the hook in stock aluminium, hand-drilled. Validated by its '
+              'own generator; the cheapest to try. See the index page for what is being ordered.</div>'),
     "hook": ('<div style="background:#1b6ea8;color:#fff;padding:9px 16px;font:600 13px/1.4 '
              'system-ui,sans-serif">DESIGN 1 &mdash; the hook alone. Finished and quoted, and the '
              'basis of design 3, which is this plate cut thinner with four strut holes. See the '

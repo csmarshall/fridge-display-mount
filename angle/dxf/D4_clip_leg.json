@@ -1,0 +1,50 @@
+{
+  "part": "D4_clip_leg",
+  "stock": "2 x 2 x 3/16 in 6061 angle, 12 in \u2014 drill the HANGING leg",
+  "qty": 1,
+  "thickness_mm": 4.762499999999999,
+  "holes": [
+    {
+      "tag": "bar_bolt",
+      "x": 27.399999999999977,
+      "y": 33.8,
+      "dia": 6.6
+    },
+    {
+      "tag": "bar_bolt",
+      "x": 27.399999999999977,
+      "y": 13.799999999999997,
+      "dia": 6.6
+    },
+    {
+      "tag": "bar_bolt",
+      "x": 277.4,
+      "y": 33.8,
+      "dia": 6.6
+    },
+    {
+      "tag": "bar_bolt",
+      "x": 277.4,
+      "y": 13.799999999999997,
+      "dia": 6.6
+    }
+  ],
+  "expected_dxf": {
+    "insunits": 4,
+    "layers": [
+      "0"
+    ],
+    "lwpolyline_count": 1,
+    "circle_count": 4,
+    "bend_line_count": 0,
+    "extents_mm": [
+      0.0,
+      0.0,
+      304.79999999999995,
+      50.8
+    ],
+    "hole_diameters_mm": [
+      6.6
+    ]
+  }
+}

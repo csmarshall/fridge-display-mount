@@ -1,0 +1,224 @@
+{
+  "params": {
+    "fridge_h": 1743.07,
+    "fridge_d": 609.6,
+    "clear_window": 400.05,
+    "cover_margin": 20.0,
+    "fridge_corner_r": 12.0,
+    "screen_centre": 1331.0,
+    "display_w": 324.65,
+    "display_h": 555.23,
+    "display_kg": 3.94,
+    "rear_box": 25.0,
+    "box_w": 134.0,
+    "fan_r": 82.0,
+    "fan_dia": 30.0,
+    "cg_from_box_face": 29.4,
+    "vesa": 100.0,
+    "vesa_hole_dia": 4.4,
+    "press_lbf": 5.0,
+    "grab_lbf": 20.0,
+    "clip_leg": 50.8,
+    "clip_t": 4.762499999999999,
+    "clip_len": 304.79999999999995,
+    "clip_inside_r": 3.0,
+    "bar_w": 50.8,
+    "bar_t": 6.35,
+    "bar_len": 609.5999999999999,
+    "bar_spacing": 250.0,
+    "plate_w": 304.79999999999995,
+    "plate_h": 127.0,
+    "plate_t": 4.762499999999999,
+    "magnet_dia": 36.0,
+    "magnet_h": 8.0,
+    "magnet_stud": "M6",
+    "magnet_hole_dia": 6.5,
+    "magnet_rated_lbf": 90.4,
+    "magnet_mass_kg": 0.058,
+    "derate": 0.35,
+    "magnet_gap_to_plate": 10.0,
+    "bolt_dia": 6.35,
+    "bolt_hole_dia": 6.6,
+    "clip_overlap": 50.8,
+    "pad": 7.9375
+  },
+  "engineering": {
+    "clip_from_rear_mm": 75.25000000000006,
+    "display_bias_rearward_mm": 77.14999999999998,
+    "hinge_margin_mm": 20.0,
+    "magnet_rows_mm": [
+      1239.5,
+      1422.5
+    ],
+    "bar_top_mm": 1743.07,
+    "bar_bottom_mm": 1133.47,
+    "bar_above_display_mm": 134.45499999999993,
+    "plate_fan_clearance_mm": 3.5,
+    "hardware_kg": 1.9391785813124998,
+    "hanging_lbf": 13.472842546221168,
+    "bearing_psi": 0.5613684394258821,
+    "cg_offset_mm": 48.512499999999996,
+    "display_face_mm": 62.1125,
+    "overturning_in_lbf": 25.73233362297458,
+    "torsion_in_lbf": 31.953740157480315,
+    "torsion_per_magnet_lbf": 1.6232499999999999,
+    "magnet_derated_lbf": 31.64,
+    "magnet_sf_touch": 19.49176035730787,
+    "peel_lbf": 1.2979352900759664,
+    "magnet_sf_peel": 48.754356618423024,
+    "magnet_sf_grab": 3.164,
+    "bar_overturning_psi": 617.5760069513899,
+    "bar_overturning_sf": 56.67318614396056,
+    "bar_touch_psi": 280.6816535433071,
+    "bar_touch_flex_mm": 0.03206021187930752,
+    "plate_psi": 327.20629921259854,
+    "plate_sf": 106.96615586015706,
+    "clip_bolt_shear_psi": 68.61662363935667,
+    "clip_flat_gap_mm": 2.637,
+    "pad_excess_mm": -0.0625
+  },
+  "parts": {
+    "D4_clip_leg": {
+      "w": 304.79999999999995,
+      "h": 50.8,
+      "t": 4.762499999999999,
+      "qty": 1,
+      "stock": "2 x 2 x 3/16 in 6061 angle, 12 in \u2014 drill the HANGING leg",
+      "holes": [
+        {
+          "tag": "bar_bolt",
+          "x": 27.399999999999977,
+          "y": 33.8,
+          "dia": 6.6
+        },
+        {
+          "tag": "bar_bolt",
+          "x": 27.399999999999977,
+          "y": 13.799999999999997,
+          "dia": 6.6
+        },
+        {
+          "tag": "bar_bolt",
+          "x": 277.4,
+          "y": 33.8,
+          "dia": 6.6
+        },
+        {
+          "tag": "bar_bolt",
+          "x": 277.4,
+          "y": 13.799999999999997,
+          "dia": 6.6
+        }
+      ]
+    },
+    "D4_bar": {
+      "w": 50.8,
+      "h": 609.5999999999999,
+      "t": 6.35,
+      "qty": 2,
+      "stock": "2 x 1/4 in 6061 flat bar, 24 in",
+      "holes": [
+        {
+          "tag": "magnet",
+          "x": 25.4,
+          "y": 106.02999999999997,
+          "dia": 6.5
+        },
+        {
+          "tag": "magnet",
+          "x": 25.4,
+          "y": 289.03,
+          "dia": 6.5
+        },
+        {
+          "tag": "plate_bolt",
+          "x": 25.4,
+          "y": 159.02999999999997,
+          "dia": 6.6
+        },
+        {
+          "tag": "plate_bolt",
+          "x": 25.4,
+          "y": 236.02999999999997,
+          "dia": 6.6
+        },
+        {
+          "tag": "clip_bolt",
+          "x": 25.4,
+          "y": 592.5999999999999,
+          "dia": 6.6
+        },
+        {
+          "tag": "clip_bolt",
+          "x": 25.4,
+          "y": 572.5999999999999,
+          "dia": 6.6
+        }
+      ]
+    },
+    "D4_plate": {
+      "w": 304.79999999999995,
+      "h": 127.0,
+      "t": 4.762499999999999,
+      "qty": 1,
+      "stock": "5 x 3/16 in 6061 flat bar, 12 in",
+      "holes": [
+        {
+          "tag": "vesa",
+          "x": 102.39999999999998,
+          "y": 13.5,
+          "dia": 4.4
+        },
+        {
+          "tag": "vesa",
+          "x": 102.39999999999998,
+          "y": 113.5,
+          "dia": 4.4
+        },
+        {
+          "tag": "vesa",
+          "x": 202.39999999999998,
+          "y": 13.5,
+          "dia": 4.4
+        },
+        {
+          "tag": "vesa",
+          "x": 202.39999999999998,
+          "y": 113.5,
+          "dia": 4.4
+        },
+        {
+          "tag": "bar_bolt",
+          "x": 27.399999999999977,
+          "y": 25.0,
+          "dia": 6.6
+        },
+        {
+          "tag": "bar_bolt",
+          "x": 27.399999999999977,
+          "y": 102.0,
+          "dia": 6.6
+        },
+        {
+          "tag": "bar_bolt",
+          "x": 277.4,
+          "y": 25.0,
+          "dia": 6.6
+        },
+        {
+          "tag": "bar_bolt",
+          "x": 277.4,
+          "y": 102.0,
+          "dia": 6.6
+        }
+      ]
+    }
+  },
+  "issues": [
+    {
+      "severity": "WARNING",
+      "tag": "fan_opening_margin",
+      "message": "plate edge only 3.5 mm from the fan opening against a \u00b15 mm scaled figure \u2014 MEASURE the box"
+    }
+  ]
+}

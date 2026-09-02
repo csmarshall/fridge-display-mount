@@ -35,7 +35,7 @@ log "plate FEA on design 3's plate"
 
 log "magnet sizing + design 4 concept"
 "$PY" magnet_sizing.py --log-level WARNING
-"$PY" angle_concept.py --log-level WARNING
+( cd angle && "$PY" angle.py --log-level WARNING && "$PY" angle_sheets.py --log-level WARNING )
 
 log "prices: quotes from one table"
 "$PY" prices.py --log-level WARNING >/dev/null
@@ -47,9 +47,10 @@ done
 
 log "pages"
 "$PY" console_build.py --log-level WARNING
+"$PY" review_build.py --log-level WARNING
 
 # Every SVG the pages reference must exist, or a card is a broken image on the live site.
-for page in index.html hook.html clamp.html; do
+for page in index.html hook.html clamp.html review.html; do
   grep -oE 'src="[^"?]+\.svg' "$page" | sed 's/src="//' | sort -u | while read -r f; do
     [ -f "$f" ] || die "$page references missing $f"
   done
@@ -89,11 +90,12 @@ else
   git worktree add -q --detach "$WT"
   ( cd "$WT" && git checkout -q --orphan gh-pages && git rm -rqf . )
 fi
-cp index.html hook.html clamp.html archive.html "$WT/"
-mkdir -p "$WT/strut/dxf"
+cp index.html hook.html clamp.html archive.html review.html "$WT/"
+mkdir -p "$WT/strut/dxf" "$WT/angle"
 cp ./*.svg "$WT/"
 cp strut/*.svg "$WT/strut/"
 cp strut/dxf/*_preview.svg "$WT/strut/dxf/"
+cp angle/*.svg "$WT/angle/"
 printf 'png/\n' > "$WT/.gitignore"
 ( cd "$WT" && git add -A && git -c user.name="$(git config user.name)" -c user.email="$(git config user.email)" commit -q -m "Publish $(git -C "$ROOT" rev-parse --short main): $(git -C "$ROOT" log -1 --format=%s main)" && git push -q origin gh-pages )
 log "published https://csmarshall.github.io/fridge-display-mount/"

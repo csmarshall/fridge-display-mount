@@ -8,9 +8,10 @@ ONE project, THREE designs, one plate. A Waveshare 23.8" FHD touch monitor on th
 | 1 | **Hook** — magnetic-assisted hook bracket over the fridge top | repo root | finished, quoted, tagged `hook-final` |
 | 2 | **Clamped strut** — two slotted struts to the floor, clamped top and bottom | `strut/` | standalone fallback; its feet + lower clamp are design 3's support kit |
 | 3 | **Hook with optional strut** — design 1's plate, cut thinner with four strut holes, so design 2's feet can be added later without recutting | `strut/hybrid*.py`, plate via the root generator | **BEING ORDERED** |
+| 4 | **Stock aluminium hook** — 2 x 2 angle clip, two 2 x 1/4 bars, a 5 in bar for the VESA, four O36 magnets; hand-drilled | `angle/` | validated, cheapest; the fallback if the plate is never cut |
 
 Sections 1–8 below are design 1's invariants and remain the base of design 3. Section 9 carries
-designs 2 and 3. `strut/` was its own repo (`csmarshall/fridge-strut-mount`) until 2026-09-02;
+designs 2 and 3; section 10 carries design 4. `strut/` was its own repo (`csmarshall/fridge-strut-mount`) until 2026-09-02;
 it was merged here with history because the third design's plate is built by the root generator
 and two repos meant two homes for one fact.
 
@@ -420,3 +421,27 @@ SVG is XML: escape `&`, `<`, `>`. Emit leaders and dimensions BEFORE text. Deriv
 Colour follows the BACKGROUND (the fridge renders near-black). **Render it and look at it** —
 layout cannot be reasoned about; three consecutive fix passes each repaired defects and introduced
 new ones. **Every image opened for Charles carries a question or an explicit "no action needed".**
+
+---
+
+## 10. Design 4 — the hook in stock aluminium (2026-09-02)
+`angle/angle.py` is the model, validator and generator; `angle/angle_sheets.py` draws the elevation
+sheet and the 1:1 drill drawing; `angle/dxf/` holds three audited drill templates and `D4_params.json`.
+- **Same load path as design 1.** A 2 x 2 x 3/16 in 6061 angle CLIP bears on the top corner and
+  carries all the weight; two 2 x 1/4 in BARS (24 in) hang from it 250 mm apart; four K&J MM-C-36
+  magnets (O36 x 8 mm, M6 stud, 90 lb) on the bars hold it flat; a 5 x 3/16 in bar across the bars
+  carries VESA 100. Bare 6061, no coat. Everything hand-drilled from the templates.
+- **The plate is 5 in tall because of the Pi fan** (~R82 on the box's vertical axis): 8 in would
+  blank it. 5 in clears by 3.5 mm against a ±5 mm SCALED figure — measure the box before cutting.
+- **3/16 in for the clip and the plate, not 1/4.** The 2T hole-to-edge rule fails at 1/4 in for the
+  VESA holes (13.5 mm from the bar edge) and for the clip bolts inside a 2 in leg. The validator
+  caught both; the fix was the gauge, not the rule.
+- **The bars run the full leg and butt the clip's top leg**, so the two 1/4-20 bolts per bar sit 17
+  and 37 mm from the top with 2T of edge in both parts.
+- **The clip lives inside the hinge-cover window** (400.05 on the later reading, 20 mm margin), which
+  puts the screen ~77 mm rearward of the case centre. The cover lifts off; the model reports the
+  bias rather than hiding it.
+- **Standoff 8 mm = 5/16 in foam** (7.94, in the pad band). Not the O48's 7/16 in. Not yet sourced.
+- Numbers (validated): hangs ~14 lb at ~0.6 psi; magnet SF ~19x touch / ~49x peel / 3.2x on an
+  assumed 20 lb grab; bar SF ~57x; screen edge ~0.03 mm. No strut option — the fallback is design 2.
+- Money: `prices.py` design 4, ~$130 priced, the bars ESTIMATES, the angle and magnets sourced.

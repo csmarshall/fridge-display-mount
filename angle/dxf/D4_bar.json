@@ -1,0 +1,63 @@
+{
+  "part": "D4_bar",
+  "stock": "2 x 1/4 in 6061 flat bar, 24 in",
+  "qty": 2,
+  "thickness_mm": 6.35,
+  "holes": [
+    {
+      "tag": "magnet",
+      "x": 25.4,
+      "y": 106.02999999999997,
+      "dia": 6.5
+    },
+    {
+      "tag": "magnet",
+      "x": 25.4,
+      "y": 289.03,
+      "dia": 6.5
+    },
+    {
+      "tag": "plate_bolt",
+      "x": 25.4,
+      "y": 159.02999999999997,
+      "dia": 6.6
+    },
+    {
+      "tag": "plate_bolt",
+      "x": 25.4,
+      "y": 236.02999999999997,
+      "dia": 6.6
+    },
+    {
+      "tag": "clip_bolt",
+      "x": 25.4,
+      "y": 592.5999999999999,
+      "dia": 6.6
+    },
+    {
+      "tag": "clip_bolt",
+      "x": 25.4,
+      "y": 572.5999999999999,
+      "dia": 6.6
+    }
+  ],
+  "expected_dxf": {
+    "insunits": 4,
+    "layers": [
+      "0"
+    ],
+    "lwpolyline_count": 1,
+    "circle_count": 6,
+    "bend_line_count": 0,
+    "extents_mm": [
+      0.0,
+      0.0,
+      50.8,
+      609.5999999999999
+    ],
+    "hole_diameters_mm": [
+      6.5,
+      6.6
+    ]
+  }
+}

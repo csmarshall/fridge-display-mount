@@ -121,14 +121,14 @@ P: dict[str, Price] = {p.key: p for p in (
           "K&J Magnetics", "2026-09-02",
           "NOT in the budget column: 8 mm standoff needs an 8 mm pad no imperial foam gives, and the "
           "plate's O8.5 holes want a 6.5 for an M6 stud. SF still ~19x. A design change, not a swap"),
-    # DESIGN 4 - stock aluminium (angle_concept.py). ESTIMATE where the vendor page would not
+    # DESIGN 4 - stock aluminium (angle/angle.py). ESTIMATE where the vendor page would not
     # give a price for the exact size; sourced where it did.
-    Price("al_angle", "6061-T6 angle 2 x 2 x 1/4 in, 12 in", 18.86, "each", "Speedy Metals", "2026-09-02",
-          "price shown is their 2 x 2-1/2 x 1/4; 2 x 2 is the same order of cost"),
+    Price("al_angle", "6061-T6 angle 2 x 2 x 3/16 in, 12 in", 18.86, "each", "Speedy Metals", "2026-09-02",
+          "price shown is their 2 x 2-1/2 x 1/4; 2 x 2 x 3/16 is the same order of cost or less"),
     Price("al_bar", "6061-T6 flat bar 2 x 1/4 in, 24 in", 12.50, "each", "ESTIMATE", "2026-09-02",
           "metals4u lists $8.33 for 12 in and a $8.33-49.42 range; 24 in taken as ~$12.50"),
-    Price("al_plate", "6061 plate 1/4 in, 8 x 8 in", 30.00, "each", "ESTIMATE", "2026-09-02",
-          "Online Metals cut-to-size; page blocked the price fetch"),
+    Price("al_plate", "6061-T6 flat bar 5 x 3/16 in, 12 in (the VESA plate)", 24.00, "each", "ESTIMATE", "2026-09-02",
+          "5 in wide, not 8 x 8: the Pi fan opening sets the height. Same order as the 2 in bar per inch"),
     Price("mmc36", "K&J MM-C-36 pot magnet, O36 x 8 mm, M6 male stud, 90.4 lb", 9.72, "each",
           "K&J Magnetics", "2026-09-02", ""),
     Price("m6_nyloc", "M6 nyloc nuts + 1/4-20 bolts, washers", 15.00, "lot", "ESTIMATE", "2026-09-02",
