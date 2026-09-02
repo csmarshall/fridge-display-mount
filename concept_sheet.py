@@ -27,6 +27,34 @@ from bracket_common import (LOG_LEVELS, configure_logging, FRIDGE_SIDE, FRIDGE_S
 LOG = logging.getLogger("concept")
 IN = 25.4
 
+
+@dataclass(frozen=True)
+class BendSpec:
+    """One row of SendCutSend's published bending specs for a gauge, in inches as they print it."""
+    deduction_in: float   # bend deduction for a 90 deg bend
+    radius_in: float      # effective inside radius after forming
+
+
+# SendCutSend's PUBLISHED bending specs for A36/1008 mild steel, transcribed 2026-08-24 from
+# sendcutsend.com/materials/mild-steel (bending specs table) and carried in the hook generator as
+# BEND_SPECS_MILD_STEEL. Keyed by nominal thickness in inches. This is THE home for the bend
+# deduction in this repo: Assembly and Hybrid both read it, nothing derives its own.
+SCS_MILD_STEEL_BEND: dict[float, BendSpec] = {
+    0.119: BendSpec(deduction_in=0.1955, radius_in=0.063),
+    0.135: BendSpec(deduction_in=0.2440, radius_in=0.100),
+    0.187: BendSpec(deduction_in=0.3225, radius_in=0.125),
+    0.250: BendSpec(deduction_in=0.4215, radius_in=0.150),
+}
+
+
+def scs_bend_spec(thickness_mm: float) -> BendSpec:
+    """Published spec for a gauge given in mm; refuses a gauge SendCutSend does not bend."""
+    key = round(thickness_mm / IN, 3)
+    if key not in SCS_MILD_STEEL_BEND:
+        raise SystemExit(f"no published bend spec for {key:.3f} in mild steel — "
+                         f"SendCutSend list {sorted(SCS_MILD_STEEL_BEND)}")
+    return SCS_MILD_STEEL_BEND[key]
+
 INK, MUTED, RULE, PAPER = "#14181c", "#6b757e", "#c9d1d8", "#fbfcfd"
 OK, BAD, WARN = "#0a8f6f", "#b00020", "#b8860b"
 C_STEEL, C_STRUT, C_PLATE = "#4a545e", "#8f9aa4", "#b9c2c9"
@@ -130,8 +158,21 @@ class Assembly:
     vesa_hole_dia: float = 4.5            # M4 clearance
     pi_fan_radius: float = 87.5           # Pi 5 fan/GPIO opening, from the dimension drawing
     plate_bolt_dia: float = 8.5           # clearance for the 5/16 strut hardware
-    bend_radius: float = 3.02             # ESTIMATE ~1T; replace with SendCutSend's calculator
-    k_factor: float = 0.42
+
+    @property
+    def bend_radius(self) -> float:
+        """Effective INSIDE radius after the bend, mm — SendCutSend's published figure, not ~1T."""
+        return scs_bend_spec(self.bracket_t).radius_in * IN
+
+    @property
+    def bend_deduction(self) -> float:
+        """Bend deduction, mm, for one 90 deg bend in this gauge — PUBLISHED, not K-derived.
+
+        The hook generator has used the same published table since 2026-08-24; until 2026-09-01
+        this repo re-derived it from an estimated 1T radius and K = 0.42 and got 5.35 mm where
+        the vendor says 4.97. Every flat length in every DXF moved 0.38 mm when this was fixed.
+        """
+        return scs_bend_spec(self.bracket_t).deduction_in * IN
 
     @property
     def n_clamps(self) -> int:

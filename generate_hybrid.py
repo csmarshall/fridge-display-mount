@@ -1,89 +1,113 @@
 #!/usr/bin/env python3
-"""The two cut parts of the hook+feet design, in SendCutSend's accepted form.
+"""The third design's cut part: the hook plate with strut holes, made BY THE HOOK GENERATOR.
 
-Same rules as every other DXF here: millimetres ($INSUNITS = 4), one layer, every
-contour closed, and a bend marked by ONE DASHED line spanning only the material it
-crosses. A solid line there would be read as a cut.
+This repo does not draw the plate. It runs the hook repo's generate_bracket.py twice at this
+design's gauge: once plain, to learn where every hole, window and magnet disc is; then with
+`--strut-bolts` carrying the rows hybrid.pick_bolt_rows chose from that answer. The generator
+validates the rows against its own features and refuses to write if any fouls; then the hook
+repo's audit_dxf.py accepts the DXF against the JSON it was written with. Nothing here is a
+second home for the hook's geometry.
+
+Outputs, all in dxf/: H_hook_plate.dxf (upload this), H_hook_plate.json (what the audit and the
+sheets read), H_hook_plate_preview.svg (reference only, never upload).
 """
 from __future__ import annotations
 
+import argparse
+import json
 import logging
-import math
+import shutil
+import subprocess
 import sys
 from pathlib import Path
+from typing import Sequence
 
-import ezdxf
-
-from concept_sheet import IN, Assembly
-from hybrid import Hybrid
+from hybrid import (HOOK_REPO_DEFAULT, PHASES, PLATE_JSON, Hybrid, hook_generator_args,
+                    pick_bolt_rows, structural, validate)
 
 LOG = logging.getLogger("hyb")
+OUT = Path("dxf")
+STEM = "H_hook_plate"
 
 
-def build(h: Hybrid, a: Assembly):
-    d = ezdxf.new("R2010", setup=True)
-    d.header["$INSUNITS"] = 4
-    if "DASHED" not in d.linetypes:
-        d.linetypes.add("DASHED", pattern=[6.0, 4.0, -2.0])
-    msp = d.modelspace()
-    bd = h.bend_deduction
-    L, W = h.flat_len, h.body_w
-    arm_end = h.arm_reach - bd / 2.0                 # bend centre
-    neck_end = h.arm_reach + h.neck - bd             # where the body starts
-    aw, cx = h.arm_w / 2.0, W / 2.0
-
-    # ONE closed outline: narrow arm+neck, then the wider body. A stepped rectangle.
-    msp.add_lwpolyline([
-        (0.0, cx - aw), (neck_end, cx - aw), (neck_end, 0.0), (L, 0.0),
-        (L, W), (neck_end, W), (neck_end, cx + aw), (0.0, cx + aw),
-    ], close=True)
-
-    # bend marker, spanning only the material it crosses
-    msp.add_line((arm_end, cx - aw), (arm_end, cx + aw), dxfattribs={"linetype": "DASHED"})
-
-    body_top_flat = neck_end
-    vesa_flat = body_top_flat + h.body / 2.0
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            msp.add_circle((vesa_flat + sy * a.vesa / 2.0, cx + sx * a.vesa / 2.0),
-                           a.vesa_hole_dia / 2.0)
-    for sgn in (1, -1):
-        vy = vesa_flat + sgn * a.vent_r
-        r = a.vent_wid / 2.0
-        b = math.tan(math.pi / 8)
-        x0, y0, ww, hh = vy - a.vent_len / 2.0, cx - r, a.vent_len, a.vent_wid
-        msp.add_lwpolyline([(x0 + r, y0, 0), (x0 + ww - r, y0, b), (x0 + ww, y0 + r, 0),
-                            (x0 + ww, y0 + hh - r, b), (x0 + ww - r, y0 + hh, 0),
-                            (x0 + r, y0 + hh, b), (x0, y0 + hh - r, 0), (x0, y0 + r, b)],
-                           format="xyb", close=True)
-
-    bolt_flat = L - h.bolt_edge_margin
-    for sx in (-1, 1):
-        msp.add_circle((bolt_flat, cx + sx * h.strut_spacing / 2.0), a.plate_bolt_dia / 2.0)
-    return d, L, W, bolt_flat
+def run_hook_generator(hook_repo: Path, extra: Sequence[str], out_dir: Path, name: str) -> dict:
+    """One run of the hook generator into out_dir; returns its params JSON. Raises on refusal."""
+    gen = hook_repo / "generate_bracket.py"
+    if not gen.exists():
+        raise SystemExit(f"hook generator not found at {gen} — pass --hook-repo")
+    cmd = [sys.executable, str(gen), *extra, "--out-dir", str(out_dir.resolve()), "--name", name]
+    LOG.debug("running: %s", " ".join(cmd))
+    res = subprocess.run(cmd, cwd=hook_repo, capture_output=True, text=True)
+    for line in res.stdout.splitlines() + res.stderr.splitlines():
+        if " ERROR " in line or " WARNING " in line:
+            LOG.log(logging.ERROR if " ERROR " in line else logging.WARNING,
+                    "hook generator: %s", line.split("] ", 1)[-1])
+    if res.returncode != 0:
+        raise SystemExit(f"hook generator refused ({res.returncode}) — see above")
+    return json.loads((out_dir / f"bracket_params_{name}.json").read_text(encoding="utf-8"))
 
 
-def main() -> int:
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-    h, a = Hybrid(), Assembly()
-    Path("dxf").mkdir(exist_ok=True)
+def run_audit(hook_repo: Path, dxf: Path, expect: Path) -> None:
+    cmd = [sys.executable, str(hook_repo / "audit_dxf.py"), "--dxf", str(dxf.resolve()),
+           "--expect", str(expect.resolve())]
+    res = subprocess.run(cmd, cwd=hook_repo, capture_output=True, text=True)
+    tail = (res.stdout + res.stderr).strip().splitlines()[-1] if (res.stdout + res.stderr) else ""
+    if res.returncode != 0:
+        raise SystemExit(f"audit FAILED: {tail}")
+    LOG.info("audit: %s", tail.split("] ", 1)[-1])
 
-    doc, L, W, bolt = build(h, a)
-    doc.saveas("dxf/H_hook_plate.dxf")
-    LOG.info(f"dxf/H_hook_plate.dxf  {L:.2f} x {W:.0f}, 1 bend")
-    LOG.info(f"  strut bolts at flat {bolt:.2f}, {L - bolt:.2f} from the bottom edge")
-    LOG.info(f"  needs >= {a.plate_edge:.2f} -> {'OK' if L - bolt >= a.plate_edge else 'FAIL'}")
-    LOG.info(f"  bolt to strut-spacing {h.strut_spacing:.0f}, plate {W:.0f} wide -> "
-             f"{(W - h.strut_spacing) / 2:.1f} mm of plate outboard of each hole")
 
-    # No foot DXF here on purpose. Moving the strut bolts off the magnets landed them on the
-    # clamped-strut design's own spacing, so the FOOT and LOWER CLAMP of that design are the
-    # fallback kit unchanged -- see generate_parts.py, B_foot.dxf and A_clamp_bar.dxf.
-    LOG.info(f"  magnet-to-bolt clearance {h.magnet_to_bolt:.2f}, needs "
-             f">= {h.magnet_to_bolt_needed:.2f} -> "
-             f"{'OK' if h.magnet_to_bolt >= h.magnet_to_bolt_needed else 'FAIL'}")
-    LOG.info(f"  foot + lower clamp are the clamp design's parts, {a.foot_width:.2f} wide, "
-             f"NOT new")
+def main(argv: Sequence[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--hook-repo", type=Path, default=HOOK_REPO_DEFAULT,
+                    help=f"checkout of csmarshall/fridge-display-mount (default {HOOK_REPO_DEFAULT})")
+    ap.add_argument("--log-level", default="INFO")
+    args = ap.parse_args(argv)
+    logging.basicConfig(level=args.log_level, format="%(message)s")
+
+    h = Hybrid()
+    OUT.mkdir(exist_ok=True)
+    scratch = OUT / "_hook_ref"
+    scratch.mkdir(exist_ok=True)
+
+    # Pass 1: the plain hook at this gauge, for its feature map. Written to a scratch dir that
+    # is gitignored; nothing in it is a deliverable.
+    ref = run_hook_generator(args.hook_repo, hook_generator_args(h), scratch, "ref")
+    rows = pick_bolt_rows(h, ref)
+    LOG.info("slot rows inside the plate: %s", [round(r, 1) for r in h.candidate_rows])
+    LOG.info("rows chosen (lowest and highest CLEAR, bracketing the VESA): %s",
+             [round(r, 2) for r in rows])
+    h = Hybrid(bolt_rows=rows)
+
+    # This repo's own checks, BEFORE the second run: bracketing, gauge agreement, both phases.
+    issues = validate(h, ref)
+    for sev, tag, msg in issues:
+        LOG.log(logging.ERROR if sev == "ERROR" else logging.WARNING, "%s %s: %s", sev, tag, msg)
+    if any(sev == "ERROR" for sev, _, _ in issues):
+        LOG.error("%d error(s) — nothing written", sum(sev == "ERROR" for sev, _, _ in issues))
+        return 1
+    for phase in PHASES:
+        s = structural(h, phase, ref["engineering"]["plate_mass_kg"])
+        LOG.info("  %-8s standoff %.2f, hangs %.1f lb, neck SF %.1fx, body SF %.1fx, "
+                 "screen edge %.3f mm (%s)", phase, s.standoff, s.hanging_lbf, s.neck_sf,
+                 s.body_sf, s.screen_edge_mm, s.model)
+
+    # Pass 2: the plate with the strut rows. The generator re-validates every row against its
+    # features and exits non-zero having written nothing if one fouls.
+    strut = ["--strut-bolts", f"{h.strut_spacing:.4f}", *(f"{r:.4f}" for r in rows)]
+    plate = run_hook_generator(args.hook_repo, hook_generator_args(h) + strut, scratch, "plate")
+    for src, dst in (("bracket_flat_plate.dxf", f"{STEM}.dxf"),
+                     ("bracket_params_plate.json", f"{STEM}.json"),
+                     ("bracket_preview_plate.svg", f"{STEM}_preview.svg")):
+        shutil.copyfile(scratch / src, OUT / dst)
+    run_audit(args.hook_repo, OUT / f"{STEM}.dxf", OUT / f"{STEM}.json")
+
+    n_strut = sum(1 for x in plate["holes"] if x["tag"] == "strut_bolt")
+    LOG.info("dxf/%s.dxf  %.2f x %.0f, 1 bend, %d holes (%d strut) + %d windows",
+             STEM, plate["flat"]["height_mm"], plate["flat"]["width_mm"], len(plate["holes"]),
+             n_strut, len(plate["windows"]))
+    LOG.info("  foot + lower clamp are the clamp design's parts, NOT new — see generate_parts.py")
+    assert PLATE_JSON == OUT / f"{STEM}.json"
     return 0
 
 

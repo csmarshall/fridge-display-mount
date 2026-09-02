@@ -18,7 +18,9 @@ from typing import Sequence
 
 from concept_sheet import (IN, INK, MUTED, RULE, PAPER, OK, BAD, WARN,
                            C_STEEL, C_STRUT, C_PLATE, Assembly, _t, _wrap)
-from hybrid import Hybrid, costed
+import json
+
+from hybrid import PLATE_JSON, Hybrid, costed, structural
 
 LOG = logging.getLogger("sketch")
 BAND = "#1b6ea8"
@@ -53,19 +55,21 @@ def render(path: Path, h: Hybrid, a: Assembly) -> None:
             anchor="start", fill=MUTED)]
 
     # ---------------------------------------------------------------- the one thing that is real
-    o.extend(_panel(40, 104, 1480, 116, "THE ONLY PART OF THIS THAT HAS TO BE RIGHT NOW", BAD))
+    o.extend(_panel(40, 104, 1480, 128, "THE ONLY PART OF THIS THAT HAS TO BE RIGHT NOW", BAD))
+    rows = sorted(h.bolt_rows)
     o.extend(_para(56, 152,
-                   f"Two Ø8.5 holes in the plate at {a.strut_spacing:.2f} centres, "
-                   f"{h.bolt_edge_margin:.2f} above its bottom edge. They cost nothing to add "
-                   f"and cannot be added once the plate is cut. Everything else on this sheet "
-                   f"is bought or cut later, and only if needed.", 176, size=11.0, lead=15.0,
-                   fill=INK))
+                   f"Four Ø8.5 holes in the plate: two rows at {a.strut_spacing:.2f} centres, "
+                   f"{rows[0]:.2f} and {rows[-1]:.2f} above its bottom edge, bracketing the VESA. "
+                   f"They cost nothing to add and cannot be added once the plate is cut. "
+                   f"Everything else on this sheet is bought or cut later, and only if needed.",
+                   176, size=11.0, lead=15.0, fill=INK))
     o.extend(_para(56, 190,
                    f"They sit at {a.strut_spacing:.2f}, NOT the hook's 246 mm magnet spacing. "
                    f"At 246 a bolt centre falls 14.27 mm from a magnet centre against a "
                    f"{h.magnet_disc / 2:.2f} mm disc radius — the plate could take magnets "
-                   f"or struts, never both. At {a.strut_spacing:.2f} the clearance is "
-                   f"{h.magnet_to_bolt:.2f} mm against {h.magnet_to_bolt_needed:.2f} needed.",
+                   f"or struts, never both. The rows are the lowest and highest slots of a "
+                   f"{h.strut_ft:.0f} ft strut that clear every magnet face, window and hole — "
+                   f"the hook generator checks that and refuses to write otherwise.",
                    176, size=11.0, lead=15.0))
 
     # This is a detail of the BOTTOM END, so it is cropped to it. Showing the whole
@@ -222,8 +226,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--log-level", default="INFO")
     args = ap.parse_args(argv)
     logging.basicConfig(level=args.log_level, format="%(message)s")
-    render(args.out, Hybrid(), Assembly())
-    render_overview(args.out.with_name('hybrid_overview.svg'), Hybrid(), Assembly())
+    h = Hybrid.from_plate_json()
+    hook = json.loads(PLATE_JSON.read_text(encoding="utf-8"))
+    render(args.out, h, Assembly())
+    render_overview(args.out.with_name('hybrid_overview.svg'), h, Assembly(), hook)
     return 0
 
 
@@ -234,7 +240,7 @@ NOW = "#1b6ea8"          # bought and cut in the first order
 LATER = "#c8791a"        # bought ONLY if the arm + magnets prove too lively
 
 
-def render_overview(path: Path, h: Hybrid, a: Assembly) -> None:
+def render_overview(path: Path, h: Hybrid, a: Assembly, hook: dict) -> None:
     """The whole third design, colour-split by WHEN it gets bought.
 
     The point of the sheet is the split, not the geometry: everything blue is in the first order
@@ -322,7 +328,7 @@ def render_overview(path: Path, h: Hybrid, a: Assembly) -> None:
     # plate bottom and strut top are only 43 mm apart, so they go on OPPOSITE sides
     LEVELS = [(a.fridge_h, f"fridge top {a.fridge_h:.0f}", "left", MUTED),
               (h.body_bottom, f"plate bottom {h.body_bottom:.0f}", "left", NOW),
-              (h.strut_len, f"strut top {h.strut_len:.0f} \u2014 4 ft stock", "right", LATER)]
+              (h.strut_len, f"strut top {h.strut_len:.0f} \u2014 {h.strut_ft:.0f} ft stock", "right", LATER)]
     for mm, lab, side, col in LEVELS:
         o.append(f'<line x1="{X(-190):.1f}" y1="{Y(mm):.1f}" x2="{X(a.fridge_d + 120):.1f}" '
                  f'y2="{Y(mm):.1f}" stroke="{col}" stroke-width="0.6" '
@@ -331,21 +337,24 @@ def render_overview(path: Path, h: Hybrid, a: Assembly) -> None:
             o.append(_t(X(-188), Y(mm) - 5, lab, 8.8, anchor="start", fill=col))
         else:
             o.append(_t(X(a.fridge_d + 118), Y(mm) + 12, lab, 8.8, anchor="end", fill=col))
-    # the overlap, which is the whole reason 4 ft works
-    o.append(f'<rect x="{X(c + a.strut_spacing / 2 + 30):.1f}" y="{Y(h.strut_len):.1f}" '
-             f'width="9" height="{(Y(h.body_bottom) - Y(h.strut_len)):.1f}" fill="{BAD}" '
-             f'opacity="0.5"/>')
+    # the two bolt rows, drawn across both struts, and a callout off the upper one
+    bolt_rows = sorted(h.bolt_rows)
+    for r in bolt_rows:
+        yy = Y(h.body_bottom + r)
+        o.append(f'<line x1="{X(c - a.strut_spacing / 2 - 14):.1f}" y1="{yy:.1f}" '
+                 f'x2="{X(c + a.strut_spacing / 2 + 14):.1f}" y2="{yy:.1f}" stroke="{BAD}" '
+                 f'stroke-width="2.2"/>')
     ox_lbl = X(a.fridge_d + 16)
-    o.append(f'<path d="M{X(c + a.strut_spacing / 2 + 34):.1f} '
-             f'{(Y(h.strut_len) + Y(h.body_bottom)) / 2:.1f} L{ox_lbl - 6:.1f} '
-             f'{Y(h.body_bottom) + 34:.1f}" fill="none" stroke="{BAD}" stroke-width="0.9"/>')
-    o.append(_t(ox_lbl, Y(h.body_bottom) + 37, f"{h.strut_overlap:.1f} mm overlap", 9.0,
+    o.append(f'<path d="M{X(c + a.strut_spacing / 2 + 16):.1f} {Y(h.body_bottom + bolt_rows[-1]):.1f} '
+             f'L{ox_lbl - 6:.1f} {Y(h.body_bottom + bolt_rows[-1]) + 4:.1f}" fill="none" '
+             f'stroke="{BAD}" stroke-width="0.9"/>')
+    ly = Y(h.body_bottom + bolt_rows[-1]) + 7
+    o.append(_t(ox_lbl, ly, f"{len(bolt_rows)} bolt rows, {bolt_rows[0]:.0f} and {bolt_rows[-1]:.0f}", 9.0,
                 anchor="start", fill=BAD, weight="bold"))
-    o.append(_t(ox_lbl, Y(h.body_bottom) + 49, "the only place the bolts", 8.6, anchor="start",
-                fill=BAD))
-    o.append(_t(ox_lbl, Y(h.body_bottom) + 60, "can go, and one slot lands", 8.6, anchor="start",
-                fill=BAD))
-    o.append(_t(ox_lbl, Y(h.body_bottom) + 71, "in it", 8.6, anchor="start", fill=BAD))
+    o.append(_t(ox_lbl, ly + 12, "above the plate edge,", 8.6, anchor="start", fill=BAD))
+    o.append(_t(ox_lbl, ly + 23, "bracketing the VESA —", 8.6, anchor="start", fill=BAD))
+    o.append(_t(ox_lbl, ly + 34, "the plate is a beam", 8.6, anchor="start", fill=BAD))
+    o.append(_t(ox_lbl, ly + 45, "between them", 8.6, anchor="start", fill=BAD))
 
     # ------------------------------------------------------------------------ what you buy when
     o.extend(_panel(700, 104, 820, 470, "WHAT YOU BUY, AND WHEN", INK))
@@ -383,25 +392,31 @@ def render_overview(path: Path, h: Hybrid, a: Assembly) -> None:
 
     # ------------------------------------------------------------------------- the one caveat
     o.extend(_panel(700, 596, 820, 408, "THE ONE THING THE FIRST ORDER HAS TO GET RIGHT", BAD))
+    s2 = structural(h, "struts", hook["engineering"]["plate_mass_kg"])
     o.extend(_para(716, 644,
-                   f"Two Ø8.5 holes in the plate at {a.strut_spacing:.2f} centres, "
-                   f"{h.bolt_edge_margin:.2f} above its bottom edge. If the struts are never "
-                   f"bought they are two unused holes hidden behind the display. If they are "
-                   f"bought and the holes are not there, the plate is scrap.", 88, size=10.6,
+                   f"Four Ø8.5 holes in the plate: two rows at {a.strut_spacing:.2f} centres, "
+                   f"{bolt_rows[0]:.2f} and {bolt_rows[-1]:.2f} above its bottom edge. If the struts are "
+                   f"never bought they are four unused holes hidden behind the display. If they "
+                   f"are bought and the holes are not there, the plate is scrap.", 88, size=10.6,
                    lead=14.0, fill=INK))
     o.extend(_para(716, 718,
                    f"They are NOT at the hook's 246 mm magnet spacing. At 246 a bolt centre "
                    f"lands {14.27:.2f} mm from a magnet centre against a "
                    f"{h.magnet_disc / 2:.2f} mm disc — the bolts would sit UNDER the "
-                   f"magnets and the plate could do one job or the other, never both. At "
-                   f"{a.strut_spacing:.2f} the clearance is {h.magnet_to_bolt:.2f} mm against "
-                   f"{h.magnet_to_bolt_needed:.2f} needed.", 88, size=10.6, lead=14.0))
+                   f"magnets and the plate could do one job or the other, never both. The plate "
+                   f"is the HOOK GENERATOR's output with these holes added; it checks every bolt "
+                   f"against every magnet face, window and hole and refuses to write otherwise.",
+                   88, size=10.6, lead=14.0))
     o.extend(_para(716, 806,
-                   f"The strut length is luck, not design. A 4 ft stick reaches "
-                   f"{h.strut_overlap:.1f} mm past the plate's bottom edge and exactly one of "
-                   f"its slots falls in that overlap. 3 ft is 262 short, 5 ft overshoots by 348. "
-                   f"If the mounting height ever moves, this has to be rechecked.", 88,
-                   size=10.6, lead=14.0))
+                   f"{h.strut_ft:.0f} ft struts, not 4. A 4 ft strut put ONE slot row 17.7 mm "
+                   f"above the plate edge and the plate cantilevered 144 mm to the VESA: 0.876 mm "
+                   f"of screen-edge movement under a 5 lb press, four times the feel-rigid band. "
+                   f"{h.strut_ft:.0f} ft puts {len(h.candidate_rows)} rows inside the plate; the "
+                   f"lowest and highest clear ones bracket the VESA and the same press now moves "
+                   f"the edge {s2.screen_edge_mm:.3f} mm. The strut stands "
+                   f"{h.strut_above_plate:.0f} mm above the plate, behind the display. If the "
+                   f"mounting height moves, the rows are re-picked and the generator refuses if "
+                   f"they no longer bracket.", 88, size=10.6, lead=14.0))
     o.extend(_para(716, 894,
                    "The foot and lower clamp are the clamped-strut design's parts, unchanged — "
                    "nothing new gets designed for the fallback, only cut.", 88, size=10.6,

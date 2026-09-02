@@ -61,9 +61,8 @@ def _display_ghost(x, y, w, h, label="23.8 in display — TRUE SCALE") -> list[s
 
 
 def bend_deduction(a: Assembly) -> float:
-    """Same derivation the magnet bracket used. An ESTIMATE until SendCutSend's calculator says."""
-    r, t, k = a.bend_radius, a.bracket_t, a.k_factor
-    return 2.0 * (r + t) * math.tan(math.radians(45.0)) - (math.pi / 2.0) * (r + k * t)
+    """SendCutSend's PUBLISHED deduction for this gauge. One home: Assembly.bend_deduction."""
+    return a.bend_deduction
 
 
 def slot_centres(a: Assembly) -> list[float]:
@@ -160,7 +159,7 @@ def sheet_parts(path: Path, a: Assembly) -> None:
         o += _para(px + 16, py + 54, note, 62)
         o += _para(px + 16, py + 424,
                    f"Material {a.bracket_t:.2f} mm ({a.bracket_t / IN:.3f} in), bend radius "
-                   f"{a.bend_radius:.2f} at about 1T, K = {a.k_factor}, deduction {bd:.2f} mm. "
+                   f"{a.bend_radius:.2f} (SendCutSend published), deduction {bd:.2f} mm (published). "
                    f"Both parts drawn at the SAME scale.", 62)
 
     o += _panel(40, 590, 1085, 130, "WHAT SPANNING COSTS, AND THE ONE RISK IT CARRIES", WARN)

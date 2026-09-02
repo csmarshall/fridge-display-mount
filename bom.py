@@ -76,9 +76,8 @@ class Buy:
 
 
 def bend_deduction(a: Assembly) -> float:
-    import math
-    r, t, k = a.bend_radius, a.bracket_t, a.k_factor
-    return 2.0 * (r + t) * math.tan(math.radians(45.0)) - (math.pi / 2.0) * (r + k * t)
+    """SendCutSend's PUBLISHED deduction for this gauge. One home: Assembly.bend_deduction."""
+    return a.bend_deduction
 
 
 def fabricated(a: Assembly, with_strips: bool = True) -> list[Fab]:

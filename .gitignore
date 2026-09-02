@@ -7,3 +7,6 @@ CLAUDE.local.md
 *.swp
 *.swo
 *~
+
+# hook generator scratch runs made by generate_hybrid.py; the deliverables are copied out of it
+dxf/_hook_ref/
