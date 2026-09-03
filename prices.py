@@ -348,8 +348,8 @@ VENDORS_NOT_QUOTED = [
 def render_vendors(path: Path) -> None:
     import html as _h
     PAPER, INK, MUTED, RULE = "#f7f8fa", "#111", "#5b6166", "#d0d4d8"
-    W, H = 1180, 520
-    cols = [40, 190, 470, 560, 650, 740, 1140]   # vendor, material, cut, +bend, +coat, lead, (end)
+    W, H = 1180, 590
+    cols = [40, 190, 470, 560, 650, 750, 1140]   # vendor, material, cut, +bend, +coat, lead, (end)
 
     def t(x, y, s, size=10.5, anchor="start", fill=INK, weight="normal"):
         return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="Helvetica, Arial, sans-serif" '
@@ -382,10 +382,14 @@ def render_vendors(path: Path) -> None:
                    fill=MUTED if v.bend is None else INK, weight="bold"))
         o.append(t(cols[4], y, f"${v.coat:.2f}" + (" (flat)" if v.bend is None else ""), 12,
                    fill=MUTED if v.bend is None else INK, weight="bold"))
-        o.append(t(cols[5], y, v.lead[:64], 9.4))
-        o.append(t(cols[1], y + 18, f"{v.date}: {v.note}"[:150], 8.6, fill=MUTED))
-        o.append(t(cols[1], y + 32, v.note[150:300] if len(v.note) > 150 else "", 8.6, fill=MUTED))
-        y += 72
+        import textwrap
+        lead_lines = textwrap.wrap(v.lead, 46)[:3]
+        for i, line in enumerate(lead_lines):
+            o.append(t(cols[5], y + 14 * i, line, 9.4))
+        ny = y + 14 * len(lead_lines) + 6
+        for i, line in enumerate(textwrap.wrap(f"{v.date}: {v.note}", 165)):
+            o.append(t(cols[1], ny + 13 * i, line, 8.6, fill=MUTED))
+        y += 92
     y += 10
     o.append(t(40, y, "NOT QUOTED", 9.2, fill=MUTED, weight="bold"))
     for name, why in VENDORS_NOT_QUOTED:
@@ -395,9 +399,10 @@ def render_vendors(path: Path) -> None:
     scs, osh = VENDORS[0], VENDORS[1]
     o.append(t(40, y, f"Bent + coated: SendCutSend ${scs.coat:.2f} vs OSH Cut ${osh.coat:.2f} standard "
                       f"(${osh.coat - scs.coat:.2f} apart). Bent, bare: OSH Cut ${osh.bend:.2f} vs SendCutSend "
-                      f"${scs.bend:.2f}. OSH Cut's standby tier at $60.93 bent is the cheapest complete part "
-                      "anywhere, at the cost of no promised date.", 10.2))
-    o.append(t(40, y + 18, "The clamp parts (design 2) and the strut plate were not re-shopped; they were only ever "
+                      f"${scs.bend:.2f}.", 10.2))
+    o.append(t(40, y + 16, "OSH Cut's standby tier at $60.93 bent is the cheapest complete part anywhere, at the "
+                           "cost of no promised date.", 10.2))
+    o.append(t(40, y + 34, "The clamp parts (design 2) and the strut plate were not re-shopped; they were only ever "
                            "quoted at SendCutSend and would follow the same pattern.", 9.6, fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
