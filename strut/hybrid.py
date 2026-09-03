@@ -81,8 +81,11 @@ class Hybrid:
     # hanging on the fridge top. structural() below re-checks it in BOTH phases; the earlier
     # comment "the feet take load off the plate" was wrong for phase 1, where there are no feet.
     plate_t: float = 0.119 * IN
-    magnet_standoff: float = 11.51     # O48 pot magnet height = plate-to-panel gap in phase 1
-    magnet_mass_kg: float = 1.27 / 8   # per magnet, ESTIMATE — no vendor publishes one (hook BOM)
+    # The magnet is the HOOK GENERATOR's choice; these defaults are overwritten from its params JSON
+    # by from_plate_json() / generate_hybrid.py so the two can never disagree. 2026-09-02: K&J
+    # MM-C-32, O32 x 8 mm, eight fitted (see magnet_economics.svg).
+    magnet_standoff: float = 8.0       # magnet height = plate-to-panel gap in phase 1
+    magnet_mass_kg: float = 0.040      # per magnet, ESTIMATE, overwritten from the JSON
     display_kg: float = 3.94           # Waveshare 23.8 in, published
     display_cg_from_box_face: float = 29.4   # hook generator: volume-weighted, 18 panel + 25 box
     spacer_len: float = 0.0            # M4 spacers between plate and display, as the hook built it
@@ -90,8 +93,8 @@ class Hybrid:
     torsion_arm: float = 324.65 / 2.0  # half the portrait width — where the finger lands
     vesa: float = 100.0
     magnet_spacing: float = 246.0      # hook design, unchanged: 310 body, 32 inset
-    magnet_disc: float = 48.02         # O48 pot magnet
-    n_magnets_fitted: int = 4          # the four BODY magnets. Arm holes cut, magnets not bought.
+    magnet_disc: float = 32.0
+    n_magnets_fitted: int = 8          # BODY magnets, from the JSON. Arm holes cut, magnets not bought.
 
     # --- what this design adds ---
     # 5 ft, not 4. A 4 ft strut put exactly ONE slot row inside the plate, 17.7 mm above its
@@ -201,8 +204,17 @@ class Hybrid:
         """The design as the last generated plate embodies it. Refuses to guess if none exists."""
         if not path.exists():
             raise SystemExit(f"{path} not found — run generate_hybrid.py first")
-        p = json.loads(path.read_text(encoding="utf-8"))["params"]
-        return cls(bolt_rows=tuple(p["strut_bolt_rows"]), **overrides)
+        j = json.loads(path.read_text(encoding="utf-8"))
+        return cls(**dict(cls.fields_from_hook(j), bolt_rows=tuple(j["params"]["strut_bolt_rows"])), **overrides)
+
+    @staticmethod
+    def fields_from_hook(j: dict) -> dict:
+        """The magnet as the hook generator has it: standoff, disc, fitted body count, mass."""
+        p, e = j["params"], j["engineering"]
+        n_body = sum(1 for h in j["holes"] if h["tag"] == "magnet")
+        n_all = e.get("magnet_count_fitted", n_body) or n_body
+        return dict(magnet_standoff=p["magnet_standoff"], magnet_disc=p["magnet_disc_dia"],
+                    n_magnets_fitted=n_body, magnet_mass_kg=e["magnet_mass_kg"] / n_all)
 
 
 def hook_generator_args(h: Hybrid) -> list[str]:
@@ -257,18 +269,18 @@ def clear_rows(h: Hybrid, hook: dict) -> list[tuple[float, float, str]]:
 
 
 def pick_bolt_rows(h: Hybrid, hook: dict) -> tuple[float, ...]:
-    """The lowest and the highest clear rows, which must bracket the VESA centre.
+    """The pair of clear rows, one each side of the VESA, that flexes LEAST under the touch couple.
 
-    Two rows as far apart as the plate allows make the plate a beam between supports rather than
-    a cantilever off one edge — that is the whole reason for the 5 ft strut.
+    A beam loaded at the VESA between two supports deflects as a^2 b^2 / L, so the stiffest pair
+    is the one that hugs the VESA, not the widest. "Lowest and highest" was the first rule and it
+    chose a wider, floppier span as soon as the smaller magnet freed up more rows.
     """
     vesa_y = h.body / 2.0
     clear = [row for row, margin, _ in clear_rows(h, hook) if margin >= 0.0]
-    below = [r for r in clear if r < vesa_y]
-    above = [r for r in clear if r > vesa_y]
-    if not below or not above:
+    pairs = [(lo, hi) for lo in clear if lo < vesa_y for hi in clear if hi > vesa_y]
+    if not pairs:
         return tuple(clear[:1])
-    return (min(below), max(above))
+    return min(pairs, key=lambda p: (vesa_y - p[0]) ** 2 * (p[1] - vesa_y) ** 2 / (p[1] - p[0]))
 
 
 @dataclass(frozen=True)
@@ -439,10 +451,9 @@ def costed(h: Hybrid) -> list[tuple[str, str, float | None, str]]:
     from prices import P, quote_hybrid
     q = quote_hybrid(n_magnets=h.n_magnets_fitted, strut_ft=int(h.strut_ft))
     # Short names for the sheet's cost table; the full descriptions live in prices.py.
-    SHORT = {"plate_119": "HOOK PLATE", "magnet": "MAGNETS", "jam_nut": "Jam nuts, pack",
-             "washer_os": "Oversized washers, pack", "threadlocker": "Threadlocker",
-             "primer": "Primer for threadlocker", "vesa_screws": "VESA screws, pack",
-             "spacers": "M4 spacers", "foam_hook": "Foam roll 7/16 in", "velcro": "VELCRO roll",
+    SHORT = {"plate_119": "HOOK PLATE", "magnet": "MAGNETS", "m6_nyloc_thin": "M6 thin nylocs",
+             "m6_fender": "M6 fender washers", "vesa_screws": "VESA screws, pack",
+             "spacers": "M4 spacers 10 mm", "foam_5_16": "Foam 5/16 in", "velcro": "VELCRO roll",
              "foot": "FOOT", "clamp_bar_q1": "LOWER CLAMP", "strut_5ft": "STRUT 5 ft",
              "strut_4ft": "STRUT 4 ft", "elevator": "Elevator bolts, pack",
              "foam_3mm": "Foam 3 mm", "floor_pad": "Floor pads"}

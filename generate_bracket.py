@@ -432,7 +432,9 @@ class BracketParams:
     # 0.65 mm — between a close and a free fit — and still leaves 26.5 mm to the plate edge.
     # 8.5 clears the 3506K66's male 5/16"-18 stud (7.94 mm major) by 0.56 mm. The stud passes
     # THROUGH the plate and takes a washer and nut in the 25 mm of air behind.
-    magnet_hole_dia: float = 8.5
+    # 6.5 for the MM-C-32's M6 stud (6.0 major): 0.25 mm each side, a close-to-free fit, and the
+    # fender washer covers any wander. Was 8.5 for the 3506K67's 5/16-18 stud (2026-08-27 to 2026-09-02).
+    magnet_hole_dia: float = 6.5
     # 29.06 = disc radius 21.06 + an 8 mm edge margin. 8 mm is 12.7x the 0.63 mm worst-case
     # radial tolerance stack (magnet diameter + laser position + screw play), and it is what the
     # O42.11 disc needs to keep BOTH magnet spacings above the 240 mm floor.
@@ -457,6 +459,9 @@ class BracketParams:
     # is that failure mode, capacity is purely count x pull, so position does not matter.
     # A O48 disc here clips ~5% of the display's fan opening; a O25 would clear it entirely.
     spare_mid_holes: bool = True
+    # FITTED as of 2026-09-02: with the O32 magnet, eight positions are the economical set (see
+    # magnet_economics.svg), so the four mid-side holes carry magnets rather than waiting as spares.
+    mid_magnets_fitted: bool = True
     # Same idea on the ARM: one spare row INBOARD of the fitted one, toward the bend. Outboard
     # does not fit — it would land at bend +144 on a 130 mm arm. The strap slots do NOT clash:
     # they run up the centreline at x 145-165 while arm magnets sit at x 95 and 215, 52 mm apart
@@ -479,16 +484,25 @@ class BracketParams:
     strut_bolt_rows: tuple[float, ...] = ()
     # A strut bolt's head or nut must not ride up onto a magnet face: hole edge to disc edge.
     strut_bolt_disc_clearance: float = 2.0
-    magnet_disc_dia: float = (1 + 57 / 64) * MM_PER_INCH
-    # 5/16 in = 7.9375. The magnet body height IS the standoff, so this sets how far the
-    # display sits off the fridge and it feeds the CG offset and the bottom pad thickness.
-    magnet_standoff: float = (29.0 / 64.0) * MM_PER_INCH   # 11.51 mm, the 3506K67 disc height
+    # K&J MM-C-32 — SETTLED 2026-09-02 on magnet_economics.svg: eight of them at $7.64 hold 125 lb at
+    # the bottom edge (6.3x on a 20 lb grab) for $61, where four O48 3506K67 held 146 lb for $96.
+    # Per dollar the small magnet is 34 % better and eight fit where four O48 sat: the four mid-side
+    # positions that were spare holes are now FITTED (mid_magnets_fitted). The O32 disc also clears
+    # every vent window, which the O48 overlapped by 11.5 mm.
+    magnet_disc_dia: float = 32.0
+    # The magnet body height IS the standoff, so this sets how far the display sits off the
+    # fridge and it feeds the CG offset and the bottom pad thickness. 8 mm -> 5/16 in pad (7.94).
+    magnet_standoff: float = 8.0
 
     # --- the fastener behind the plate --------------------------------------------------------
     # Only the STUD lives here, because it is a property of the magnet. Every nut and washer is in
     # the NUTS / WASHERS catalogues below — one home per part, and the permutation table, the
     # section drawings and the BOM all derive from the same rows.
-    magnet_stud_len: float = 0.5 * MM_PER_INCH        # 3506K67: male 5/16"-18 x 1/2 in stud
+    # MM-C-32: M6 male stud. K&J's page gives 32 x 8 mm for the body and does not print the overall
+    # height; First4Magnets and MagnetPartner list the same 32 x 8 / M6 pot at 18 mm overall, i.e. a
+    # 10 mm stud. ESTIMATE until K&J's drawing is read — the fastener stack margin hangs on it.
+    magnet_stud_len: float = 10.0
+    magnet_stud_thread: str = "M6"
 
     center_open_dia: float = 90.0
     # 80, not 100. The MIS-E 200x100 holes land exactly on the ends of the left/right windows at
@@ -549,8 +563,8 @@ class BracketParams:
     # leaves enough that the strap threads with a fingertip rather than a tool.
     strap_slot_thickness: float = 4.0
     arm_magnets: bool = True
-    arm_magnet_disc_dia: float = (1 + 57 / 64) * MM_PER_INCH  # same SKU: 3506K67
-    arm_magnet_standoff: float = (29.0 / 64.0) * MM_PER_INCH
+    arm_magnet_disc_dia: float = 32.0    # same SKU: MM-C-32. Holes cut; magnets not bought (anti-walk only)
+    arm_magnet_standoff: float = 8.0
     arm_magnet_offset: float = 36.0  # formed distance from the bend apex, along the arm
     # Extra rows of arm ("top lip") magnets, as further formed offsets from the bend apex. Each
     # entry adds a PAIR at arm_magnet_spacing. These still carry ZERO vertical load — the hook does
@@ -593,7 +607,10 @@ class BracketParams:
     #    precisely so one lands over that opening in every rotation.
     # Deleting them lowers the CG offset 48.5 -> 38.5 mm, cuts neck bending 21%, removes 10 mm of
     # protrusion and takes a compliant column out of the load path. Set non-zero to restore.
-    spacer_len: float = 0.0
+    # 10 mm M4 spacers between plate and display (docs/BOM.md item 9, CLAUDE.md 1.5: "load-bearing
+    # on the vent invariant"). Was 0 in the model while the BOM carried them — the mid-side
+    # magnets under the rear box need the room for their nut stack, and the validator said so.
+    spacer_len: float = 10.0
     screw_head_height: float = 4.0  # M4 socket head cap screw
     press_force_lbf: float = 5.0
     # McMaster 5679K57: encased neodymium N42 in a zinc-plated STEEL case, threaded hole,
@@ -603,7 +620,9 @@ class BracketParams:
     # McMaster 3506K66, N42 in a zinc-plated STEEL case, male 5/16"-18 x 1/2" stud.
     # Their rating basis is "direct contact with rust-free, unpainted iron", the same as K&J's,
     # so the 35% derate for thin PAINTED appliance sheet still applies on top.
-    magnet_rated_pull_lbf: float = 175.0
+    # K&J MM-C-32, N38 pot with M6 male stud: 75 lb "to a thick steel plate", same basis as before,
+    # so the 35 % derate for thin painted appliance sheet applies on top. Was 175 (3506K67).
+    magnet_rated_pull_lbf: float = 75.0
     magnet_derate: float = 0.35
     # RENAMED from mu_rubber, which held 0.2 while being named for the 0.7 rubber-faced case —
     # a field whose name asserted the opposite of its value. The specified magnet is a BARE
@@ -1008,10 +1027,12 @@ def build_geometry(params: BracketParams, flat: FlatPattern) -> Geometry:
         i = params.magnet_inset
         for sx, sy, tag in ((cx, i, "spare_bottom"), (cx, bh - i, "spare_top"),
                             (i, bh / 2.0, "spare_left"), (bw - i, bh / 2.0, "spare_right")):
-            holes.append(Hole(sx, sy, params.magnet_hole_dia, "spare_magnet", "body"))
+            fitted = params.mid_magnets_fitted
+            holes.append(Hole(sx, sy, params.magnet_hole_dia, "magnet" if fitted else "spare_magnet", "body"))
             # Give them discs too. Without these the drawings show a bare hole and a reader
             # cannot see how much plate an added magnet would actually occupy.
-            magnet_discs.append(Hole(sx, sy, params.magnet_disc_dia, "spare_magnet_disc", "body"))
+            magnet_discs.append(Hole(sx, sy, params.magnet_disc_dia,
+                                     "magnet_disc" if fitted else "spare_magnet_disc", "body"))
         LOG.debug("spare mid-side magnet holes at inset %.1f, O%.1f", i, params.magnet_hole_dia)
 
     center_opening = Hole(cx, cy, params.center_open_dia, "center_vent")
@@ -1531,30 +1552,24 @@ class Nut:
         return (self.bearing_od_in or self.across_flats_in) * MM_PER_INCH
 
 
+# METRIC, for the MM-C-32's M6 stud (2026-09-02). Heights are DIN nominal; McMaster part numbers
+# are NOT VERIFIED — the 5/16-18 catalogue this replaced was read off McMaster's tables, this one
+# has not been yet. Across-flats 10 mm (DIN 934) unless noted.
 NUTS: tuple[Nut, ...] = (
-    Nut("nyloc_thin", "THIN nylon-insert locknut", 1 / 4, "mechanical",
-        "90101A237", "90101A122", note="half height; McMaster also sells it as a jam nut"),
-    Nut("distorted_center", "distorted-thread locknut (centre-lock)", 17 / 64, "mechanical",
-        "90047A115", None, note="all-metal, reversible, NOT reusable"),
-    Nut("distorted_top", "distorted-thread locknut (top-lock)", 17 / 64, "mechanical",
-        "90045A453", None, note="all-metal, NOT reusable"),
-    Nut("hex_jam", "JAM nut (half height)", 3 / 16, "none",
-        "91847A030", "98514A035", note="thinnest nut of any kind"),
-    Nut("hex_std", "standard hex nut", 17 / 64, "none",
-        "91841A030", "97149A150"),
-    Nut("keps", "locknut with external-tooth lock washer (keps)", 21 / 64, "mechanical",
-        "96278A519", None, bearing_od_in=0.578, note="captive washer; teeth can mar the plate"),
-    Nut("nyloc_std", "nylon-insert locknut", 11 / 32, "mechanical",
-        "91831A030", "94407A105"),
-    Nut("nyloc_flange", "nylon-insert FLANGE nut", 11 / 32, "mechanical",
-        "94238A102", "94238A330", bearing_od_in=0.68,
+    Nut("nyloc_thin", "THIN nylon-insert locknut, DIN 985 low", 4.0 / MM_PER_INCH, "mechanical",
+        "NOT VERIFIED", None, across_flats_in=10.0 / MM_PER_INCH, note="the stack's only comfortable locking nut"),
+    Nut("hex_jam", "JAM nut, DIN 439", 3.0 / MM_PER_INCH, "none",
+        "NOT VERIFIED", None, across_flats_in=10.0 / MM_PER_INCH, note="thinnest; no locking feature"),
+    Nut("hex_std", "standard hex nut, DIN 934", 5.0 / MM_PER_INCH, "none",
+        "NOT VERIFIED", None, across_flats_in=10.0 / MM_PER_INCH),
+    Nut("nyloc_std", "nylon-insert locknut, DIN 985", 6.0 / MM_PER_INCH, "mechanical",
+        "93625A250", None, across_flats_in=10.0 / MM_PER_INCH, note="part number from a reseller listing, unverified"),
+    Nut("nyloc_flange", "nylon-insert FLANGE nut, DIN 6926", 6.5 / MM_PER_INCH, "mechanical",
+        "NOT VERIFIED", None, across_flats_in=10.0 / MM_PER_INCH, bearing_od_in=14.2 / MM_PER_INCH,
         note="flange spreads load — no separate washer wanted"),
-    Nut("nyloc_thin_heavy", "THIN-HEAVY nylon-insert locknut", 5 / 16, "mechanical",
-        "90098A115", None, across_flats_in=0.5625, note="10% wider across the flats"),
-    Nut("flex_top", "flex-top locknut", 23 / 64, "mechanical",
-        "91839A127", None, note="for constant heavy vibration"),
-    Nut("nyloc_heavy", "HEAVY nylon-insert locknut", 7 / 16, "mechanical",
-        "90099A030", None, across_flats_in=0.5625),
+    Nut("keps", "keps nut with external-tooth washer", 6.0 / MM_PER_INCH, "mechanical",
+        "NOT VERIFIED", None, across_flats_in=10.0 / MM_PER_INCH, bearing_od_in=12.5 / MM_PER_INCH,
+        note="teeth can mar the plate"),
 )
 
 
@@ -1597,13 +1612,11 @@ class Washer:
 # 0.069 was an early mis-read of the plain-finish row and is not the specified part.
 WASHERS: tuple[Washer, ...] = (
     Washer("none", "no washer", 0.0, 0.0, 0.0, 0.0, None, None),
-    # 96765A150 is the 3/8 in row — an earlier revision had it here by mis-reading the table.
-    Washer("standard", "flat washer O0.750", 0.750, 0.344, 0.060, 0.040,
-           "92141A030", "96765A145"),
-    # Same thickness, 10x the bearing area. Thickness is what runs out in this stack, not
-    # diameter, so the oversized one costs nothing extra to fit.
-    Washer("oversized", "OVERSIZED washer O1.250", 1.250, 0.344, 0.060, 0.040,
-           "90313A111", "90377A164"),
+    Washer("standard", "flat washer M6 DIN 125, O12", 12.0 / MM_PER_INCH, 6.4 / MM_PER_INCH,
+           1.6 / MM_PER_INCH, 1.4 / MM_PER_INCH, "NOT VERIFIED", None),
+    # Fender (DIN 9021): O18, same thickness, 2.4x the bearing area of the DIN 125.
+    Washer("oversized", "FENDER washer M6 DIN 9021, O18", 18.0 / MM_PER_INCH, 6.4 / MM_PER_INCH,
+           1.6 / MM_PER_INCH, 1.4 / MM_PER_INCH, "NOT VERIFIED", None),
 )
 
 # A threadlocker adds ZERO height. It is the only way to lock a joint that has run out of room
@@ -1613,13 +1626,14 @@ LOCKERS: tuple[tuple[str, str], ...] = (("dry", "as-assembled"), ("threadlocker"
 NUTS_BY_KEY = {n.key: n for n in NUTS}
 WASHERS_BY_KEY = {w.key: w for w in WASHERS}
 
-# CHOSEN 2026-08-27. Not the highest-ranked row by the sort below — that ranks a mechanical
-# locking feature above a chemical one — but the deliberate pick: it takes the most bearing area
-# available (732 mm2, 10x a bare nut) and the most thread margin of any stack carrying a washer,
-# and accepts threadlocker as the locking feature instead of a nylon insert.
-SPECIFIED_NUT = "hex_jam"
-SPECIFIED_WASHER = "oversized"
-SPECIFIED_LOCKER = "threadlocker"
+# CHOSEN 2026-09-02 with the MM-C-32: a THIN nyloc, NO washer, dry. The stud is ~10 mm (ESTIMATE)
+# against 4.75 plate + 4.0 nut = 8.75, +1.25 mm to spare; adding the 1.6 mm fender washer put the
+# stack at -0.35, inside the tolerance band, which the matrix refuses to build on. The nut's own
+# 45 mm2 face at 373 psi is nothing against a 36 ksi plate. Mechanical locking, no threadlocker.
+# fastener_matrix.svg re-ranks every permutation for the stud; check it after any change here.
+SPECIFIED_NUT = "nyloc_thin"
+SPECIFIED_WASHER = "none"
+SPECIFIED_LOCKER = "dry"
 
 
 @dataclass(frozen=True)
@@ -1699,7 +1713,7 @@ def stack_permutations(params: "BracketParams") -> list[StackOption]:
 FINISH = "black"
 
 PART_NOS: dict[str, dict[str, str | None]] = {
-    "magnet": {"plain": "3506K67", "black": None},   # zinc case; a black option never existed
+    "magnet": {"plain": "MM-C-32", "black": None},   # K&J, Ni-Cu-Ni; no black option
     # Loctite 243, medium strength, blue: 105 in-lb breakaway, removable with hand tools,
     # hardens in 5 min / full strength 24 hr. 0.34 fl oz bottle covers 15 positions many times.
     # McMaster's own copy: primer "is recommended when working with aluminum, STAINLESS STEEL,
@@ -2460,7 +2474,7 @@ def write_svg(path: Path, params: BracketParams, geom: Geometry, report: dict, d
                     f"magnets, same SKU as the body — zero VERTICAL load, but they do resist peel"),
         ("#c0169a", f"{len([h for h in geom.magnet_discs if h.region == 'body'])} x "
                     f"O{params.magnet_disc_dia:.0f} x {params.magnet_standoff:.0f} mm BARE nickel pot "
-                    f"magnets, M6 female thread — tape the fridge, not the magnet"),
+                    f"magnets, {params.magnet_stud_thread} male stud — tape the fridge, not the magnet"),
         ("#8a6a10", f"bottom bearing pad {params.bottom_pad_thickness:.2f} mm, "
                     f"{params.bottom_pad_thickness - params.magnet_standoff:+.2f} mm proud of the magnets "
                     f"— sponge squashes flush"),

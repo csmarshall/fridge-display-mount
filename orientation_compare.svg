@@ -17,7 +17,7 @@
 <text x="79.5" y="440.3" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#ff8a8a" font-weight="bold" transform="rotate(-90.0 79.5 440.3)">door sweep 64</text>
 <rect x="70.0" y="194.0" width="33.0" height="11.0" fill="#8a9199" stroke="#5c6368" stroke-width="1"/>
 <text x="111.0" y="192.0" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#5c6368" font-weight="normal">hinge cover, 37 mm proud</text>
-<rect x="142.5" y="197.6" width="57.0" height="4" fill="#9a5b00"/>
+<rect x="142.5" y="198.6" width="57.0" height="4" fill="#9a5b00"/>
 <text x="171.0" y="218.0" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#ffd27a" font-weight="bold">arm 190 mm</text>
 <rect x="124.5" y="282.1" width="93.0" height="93.0" fill="#9a5b00" fill-opacity="0.45" stroke="#5d3600" stroke-width="1"/>
 <rect x="87.7" y="279.9" width="166.6" height="97.4" fill="#2b2b2b" fill-opacity="0.88" stroke="#000" stroke-width="1.2"/>
@@ -42,7 +42,7 @@
 <text x="522.4" y="440.3" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#ff8a8a" font-weight="bold" transform="rotate(-90.0 522.4 440.3)">door sweep 64</text>
 <rect x="512.9" y="194.0" width="33.0" height="11.0" fill="#8a9199" stroke="#5c6368" stroke-width="1"/>
 <text x="553.9" y="192.0" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#5c6368" font-weight="normal">hinge cover, 37 mm proud</text>
-<rect x="585.3" y="197.6" width="57.0" height="4" fill="#9a5b00"/>
+<rect x="585.3" y="198.6" width="57.0" height="4" fill="#9a5b00"/>
 <text x="613.8" y="218.0" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#ffd27a" font-weight="bold">arm 190 mm</text>
 <rect x="567.3" y="282.1" width="93.0" height="93.0" fill="#9a5b00" fill-opacity="0.45" stroke="#5d3600" stroke-width="1"/>
 <rect x="565.1" y="245.3" width="97.4" height="166.6" fill="#2b2b2b" fill-opacity="0.88" stroke="#000" stroke-width="1.2"/>

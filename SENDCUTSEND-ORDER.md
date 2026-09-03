@@ -1,5 +1,7 @@
 # SendCutSend Order Package — Fridge-Side Display Mount
 
+> **SUPERSEDED IN PART 2026-09-02.** Magnet holes are now O6.5 for the K&J MM-C-32 (M6 stud), standoff 8 mm, pad 5/16 in, eight body magnets fitted, M4 display spacers 10 mm in the model. Read `bracket_params.json` for the geometry and `prices.py` for money; this file is the O48-era order package and is kept as the record.
+
 > **REBUILT 2026-08-27 for the 0.187 in (.188) build.** Every figure in this document was
 > previously on the superseded 0.119 in part — thickness, bend deduction, blank size, neck length,
 > magnet spacing, stress margins and prices. It also described magnet screws threading into a

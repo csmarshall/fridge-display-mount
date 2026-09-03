@@ -50,16 +50,18 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     h = Hybrid()
     OUT.mkdir(exist_ok=True)
+    # pass 1 below also tells us which magnet the hook carries; h is rebuilt from it before validating
     scratch = OUT / "_hook_ref"
     scratch.mkdir(exist_ok=True)
 
     # Pass 1: the plain hook at this gauge, for its feature map. Scratch dir, gitignored.
     ref = run_hook_generator(hook_generator_args(h), scratch, "ref")
+    h = Hybrid(**Hybrid.fields_from_hook(ref))
     rows = pick_bolt_rows(h, ref)
     LOG.info("slot rows inside the plate: %s", [round(r, 1) for r in h.candidate_rows])
     LOG.info("rows chosen (lowest and highest CLEAR, bracketing the VESA): %s",
              [round(r, 2) for r in rows])
-    h = Hybrid(bolt_rows=rows)
+    h = Hybrid(**dict(Hybrid.fields_from_hook(ref), bolt_rows=rows))
 
     # This design's own checks, BEFORE the second run: bracketing, gauge agreement, both phases.
     issues = validate(h, ref)

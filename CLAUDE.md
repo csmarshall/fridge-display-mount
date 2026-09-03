@@ -252,14 +252,16 @@ had drifted a whole revision behind the generator, which is exactly the failure 
 supposed to prevent. If you change a parameter, re-read the JSON rather than editing prose here.
 
 Body **310 x 310** (hides behind the display in BOTH orientations; portrait is only 324.65 mm
-wide). Magnet inset **32 mm**, giving spacing **246 x 246** against the 240 mm floor, and a
-derived **7.99 mm** of plate beyond each disc — 12.7x the 0.63 mm tolerance stack.
+wide). Magnet inset **32 mm**, giving corner spacing **246 x 246** against the 240 mm floor; with
+the O32 magnet (2026-09-02) the plate beyond each disc is 16 mm, and the four mid-side positions
+at the same inset are FITTED, so eight body magnets in all.
 Neck/arm width **190 mm**. Neck **257 mm**. Arm reach **180 mm** — the shortest that lands the
 outermost full O48 disc on metal. Flat blank **310 x 738.8 mm**, bend line at **562.9**, bend
 deduction **8.19 mm**.
 
-**Arm retention magnets:** rows at **+36 and +144 mm** from the bend apex are FITTED; a third row
-at **+90** is cut but left empty as an upgrade path. 120 mm apart across the arm. Anti-jostle only
+**Arm retention magnets:** rows at **+36 and +144 mm** from the bend apex are CUT; as of
+2026-09-02 they are NOT BOUGHT (anti-walk only, zero load credit) — fit later if the arm creeps.
+A third row at **+90** is cut but left empty as an upgrade path. 120 mm apart across the arm. Anti-jostle only
 — **zero credit in the load path**. The 54 mm row pitch is a hard floor (O48 disc + 6 mm).
 
 **Cable retention is SLOTS, not round holes** — 5 pairs of 4.0 x 18.0 mm slots (R1.40 ends),
@@ -278,8 +280,20 @@ proud head against the fridge. Any standard M4 head works.
 +textured black **$197.07**. (~~$185.85 / blank 742~~ was the .119 in build.)
 
 ## 5. BOM constraints
-- Magnets: **McMaster 3506K67, O 48.02 x 11.51 mm bare-nickel/zinc-cased pot, 5/16"-18 MALE
-  STUD.** ~~O43 x 6 mm rubber-coated, M4 female thread~~ — **RETRACTED 2026-08-27.**
+- **Magnets — SETTLED 2026-09-02: K&J MM-C-32, O32 x 8 mm N38 pot, M6 MALE STUD, 75 lb rated,
+  $7.64, EIGHT on the body** (the four corners plus the four mid-sides that used to be spare holes;
+  `mid_magnets_fitted = True`). Chosen on `magnet_economics.svg`: hold at the bottom edge is
+  linear in count, the K&J mid-sizes give ~3.4 lb/$ against the O48's 2.6, and 8 x MM-C-32 is the
+  cheapest set that reaches 6x on a 20 lb grab ($61, 125 lb) using only holes already cut.
+  Standoff 8 mm -> pad **8 mm metric stock / 5/16 in**; hole O6.5; stack = M6 THIN nyloc on an
+  M6 fender washer, dry (no threadlocker, no primer). M6 McMaster part numbers NOT VERIFIED.
+  Stud length ESTIMATED 10 mm (K&J drawing to read) — the stack margin hangs on it. The 35 %
+  derate is a rule of thumb that flatters thin magnets; Charles chose not to measure one first.
+  The O32 disc also cut the vent-window overlap from 11.5 mm to 3.5 (issue #1 still open).
+  The 10 mm M4 display spacers (BOM item 9) are now IN THE MODEL (`spacer_len = 10`): the two
+  mid-side magnets under the rear box need the room, and the validator refused without it.
+- ~~Magnets: **McMaster 3506K67, O 48.02 x 11.51 mm bare-nickel/zinc-cased pot, 5/16"-18 MALE
+  STUD.**~~ SUPERSEDED 2026-09-02, above. The paragraph that follows is that magnet's history. ~~O43 x 6 mm rubber-coated, M4 female thread~~ — **RETRACTED 2026-08-27.**
   The original rule said "not male-stud, because a stud needs a nut on the display-facing side and
   breaks the flat mounting plane." That reasoning was wrong on its own terms: the display does not
   sit on the plate, it stands off on M4 spacers, so there is no flat mounting plane for a nut to
@@ -382,9 +396,9 @@ sags but stays hung; design 2 rotates on the captured tail.
   --thickness 0.119 --strut-bolts 187.28 <rows>`. An earlier six-hole redrawing could not take
   the magnets phase 1 needs; it is gone. `strut/generate_hybrid.py` runs the generator twice
   (plain, for the feature map; then with rows) and the root audit accepts the result.
-- **Two phases, one plate.** Phase 1 = the hook: arm over the top, **4 body magnets REQUIRED**
-  (nothing else holds the plate bottom in; the 4 arm magnets are anti-walk only, holes cut, not
-  bought). Phase 2 = if too lively: two **5 ft** struts through **two bolt rows bracketing the
+- **Two phases, one plate.** Phase 1 = the hook: arm over the top, **8 body magnets REQUIRED**
+  (K&J MM-C-32 since 2026-09-02; nothing else holds the plate bottom in; the 4 arm magnets are
+  anti-walk only, holes cut, not bought). Phase 2 = if too lively: two **5 ft** struts through **two bolt rows bracketing the
   VESA** onto design 2's feet and lower clamp UNCHANGED; the **magnets come OFF** (plate then
   sits 6.02 mm off the panel vs the magnets' 11.51).
 - **Why 5 ft, not 4:** 4 ft put ONE row 17.7 mm above the plate edge; the plate cantilevered
@@ -393,8 +407,9 @@ sags but stays hung; design 2 rotates on the captured tail.
   `strut/hybrid.py` from the generator's JSON (lowest and highest clear of every magnet face,
   window and hole) and the build refuses if they no longer bracket.
 - **Strut bolts must clear the magnet faces** (`strut_bolt_disc`, 2 mm): at the hook's 246
-  spacing the bolts sat under the lower discs (14.27 mm centre-to-centre vs 30.26 needed); 187.28
-  is the first spacing that clears AND is design 2's own.
+  spacing the O48 bolts sat under the lower discs; 187.28 clears and is design 2's own. The bolt
+  rows are now picked for LEAST FLEX (the pair hugging the VESA), not widest span — with the
+  smaller magnet freeing more rows, "lowest and highest" chose a floppier pair.
 - **0.119 in, not the hook's 0.187.** Design 1 chose 0.187 for heft (its own record); checked at
   0.119 in both phases (neck SF 32x/41x, body 34x/36x; FEA agrees with the strip model to ~15 %).
   One gauge for the whole kit.

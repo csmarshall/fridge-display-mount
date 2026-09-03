@@ -153,7 +153,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--od", type=float, default=(1+57/64)*25.4)
     ap.add_argument("--thk", type=float, default=(29/64)*25.4)
     ap.add_argument("--margin", type=float, default=MATERIAL.min_edge_distance)
-    ap.add_argument("--pull", type=float, default=175.0)
+    ap.add_argument("--pull", type=float, default=175.0, help="rated pull of the DEMO magnet (the O48, so the refusal is the real one)")
     ap.add_argument("--out", type=Path, default=Path("harness_view.svg"))
     ap.add_argument("--log-level", choices=LOG_LEVELS, default="INFO")
     a = ap.parse_args(argv)

@@ -174,22 +174,23 @@ def render(path: Path, p: BracketParams) -> None:
     spec = next(r for r in rows if r.nut.key == SPECIFIED_NUT
                 and r.washer.key == SPECIFIED_WASHER and r.locker == SPECIFIED_LOCKER)
     o.append(_t(56, fy, f"SPECIFIED: {spec.label}", 14, anchor="start", weight="bold", fill=OK))
+    runner = next((r for r in sorted(fits, key=lambda r: -r.slack)
+                   if r.nut.locking == "mechanical" and r is not spec), None)
     o.append(_t(56, fy + 24,
                 f"Of {len(rows)} permutations, {len(fits)} fit and {len(mech)} of those lock "
-                f"MECHANICALLY. The specified stack is a deliberate pick rather than the top of "
-                f"this sort: {spec.slack:+.2f} mm of thread AND {spec.bearing_area:.0f} mm2 of "
-                f"bearing - the most of anything that fits - with threadlocker doing the locking.",
+                f"MECHANICALLY. The specified stack: {spec.slack:+.2f} mm of thread to spare, "
+                f"{spec.bearing_area:.0f} mm2 of bearing, locking {spec.nut.locking if spec.locker == 'dry' else spec.locker}.",
                 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 44,
-                f"THICKNESS is what runs out in this stack, not diameter — which is why the "
-                f"OVERSIZED washer is no harder to fit than the standard one and was taken for "
-                f"free. The half-height jam nut is what pays for it.", 11.5,
-                anchor="start", fill=MUTED))
+                f"THICKNESS is what runs out in this stack, not diameter: the stud is "
+                f"{rows[0].stud:.1f} mm (an ESTIMATE for the MM-C-32 until K&J's drawing is read) "
+                f"against a {rows[0].plate:.2f} mm plate, so a 1.6 mm washer is the difference "
+                f"between fitting and the tolerance band.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 68,
-                f"The cost is that threadlocker is a CHEMICAL lock: it has to be cleaned off and "
-                f"reapplied to service the joint, where a nylon insert does not. Runner-up if you "
-                f"would rather have that: THIN nylon-insert locknut, no washer, +1.60 mm, "
-                f"mechanical, 70 mm2.", 11.5, anchor="start", fill=MUTED))
+                (f"Runner-up with a mechanical lock: {runner.label}, {runner.slack:+.2f} mm, "
+                 f"{runner.bearing_area:.0f} mm2." if runner else "No other mechanical-locking stack fits.")
+                + " M6 part numbers are NOT VERIFIED: this catalogue is DIN nominal heights, not "
+                "McMaster's tables yet.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 92,
                 f"None of this is close to a bearing problem: even the smallest annulus here is "
                 f"~{MATERIAL.yield_psi / rows[0].bearing_psi(clamp):.0f}x under {MATERIAL.name}'s "

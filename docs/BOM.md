@@ -1,5 +1,7 @@
 # Bill of Materials — Fridge-Side Display Mount
 
+> **SUPERSEDED IN PART 2026-09-02.** Items 3, 4, 5, 5b, 5c and 7 describe the O48 3506K67 magnet and its 5/16-18 stack. The build now carries EIGHT K&J MM-C-32 (O32 x 8 mm, M6 stud, $7.64) on M6 thin nylocs and fender washers, dry, with 5/16 in (8 mm) pad. Money has one home: `prices.py`; the quotes are `quotes.svg` and the page. This file is kept as the record of the O48 build.
+
 > **CORRECTION 2026-08-27.** This BOM was drafted assuming the VESA holes are countersunk 90°. They are NOT — countersinking is disabled in the build because SendCutSend does not offer it on mild steel. Countersinking is NOT needed: the magnets hold the plate 11.5 mm off the panel, so a proud screw head on the fridge-facing side has clearance. Any standard M4 head works — socket cap, pan or low head. Confirmed by the owner. Everything else stands.
 
 

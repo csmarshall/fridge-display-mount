@@ -39,8 +39,9 @@ SIZE_RE = re.compile(r'<svg[^>]*?\bwidth="([\d.]+)"[^>]*?\bheight="([\d.]+)"', r
 # lightening, reach ladder) was arguing from a part that is no longer being made.
 PRICE_DATE = "2026-08-27"
 
-# McMaster 3506K67 unit price, qty 1. An observation with a date, not a derived value.
-MAGNET_UNIT_USD = 23.92
+# The magnet's unit price lives in prices.py (one home); read, never retyped.
+import prices as _PR
+MAGNET_UNIT_USD = _PR.P["magnet"].unit
 PRICES = [
     ("reach180 (AS BUILT, .188 in)", "310 x 738.8", "$112.50", "$126.71", "$197.07"),
 ]
@@ -170,7 +171,7 @@ DIAGRAM_INFO = {
                         "Every stack shape that fits, in true section — magnet | plate | washer | "
                         "nut, and whether the fixed 1/2 in stud still reaches.", "hook"),
     "magnet_primer.svg": ("Why not just magnets?",
-                         "Pull vs shear vs peel, and why a 175 lb magnet delivers 12 lb where "
+                         "Pull vs shear vs peel, and why a rated pull delivers a small fraction where "
                          "it counts. Start here if the hook looks like overkill.", "shared"),
     "fastener_matrix.svg": ("Every fastener permutation",
                            "All 39 nut x washer x threadlocker combinations with the arithmetic "
@@ -320,7 +321,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
     import hybrid as HY
     plate_json = root / "strut" / "dxf" / "H_hook_plate.json"
     hook3 = json.loads(plate_json.read_text(encoding="utf-8"))
-    h3 = HY.Hybrid(bolt_rows=tuple(hook3["params"]["strut_bolt_rows"]))
+    h3 = HY.Hybrid(**dict(HY.Hybrid.fields_from_hook(hook3), bolt_rows=tuple(hook3["params"]["strut_bolt_rows"])))
     s3 = {ph: HY.structural(h3, ph, hook3["engineering"]["plate_mass_kg"]) for ph in HY.PHASES}
     cost3 = HY.costed(h3)
     import prices as PR
@@ -398,7 +399,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "buys +97% attachment for +100% magnets: essentially linear, 1.7% LESS efficient per "
              "magnet. There is no knee. Symmetric counts are 4/8/12 only — the centre vent and the "
              "four vent windows occupy both centrelines, so no symmetric 6 exists on the body.",
-             f"SETTLED: {len(rows)*2} body + {len(arm_offs)*2} arm, McMaster 3506K67 "
+             f"SETTLED 2026-09-02: {n_body} body magnets, K&J MM-C-32 "
              f"(O{p.magnet_disc_dia:.0f} x {p.magnet_standoff:.1f} mm, {p.magnet_rated_pull_lbf:.0f} lb rated, "
              f"{rep['magnet_derated_pull_lbf']:.1f} lb derated on painted sheet). That reads "
              f"{rep['magnet_tension_sf']:.0f}x on the governing touch-torsion case and lets go at "
@@ -509,11 +510,13 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"refuses if they no longer bracket. The strut stands {h3.strut_above_plate:.0f} mm "
              f"above the plate top, behind the display.", "settled"),
         Item("d-h-magnets",
-             f"[HYBRID] {h3.n_magnets_fitted} body magnets in phase 1, arm magnets not bought — SETTLED 2026-09-01",
+             f"[HYBRID] {h3.n_magnets_fitted} body magnets in phase 1, arm magnets not bought — SETTLED 2026-09-02",
              "The magnets are NOT optional in phase 1: nothing else holds the bottom of the plate to "
-             "the panel. An earlier costing called them optional and was wrong. The four ARM "
-             "magnets are anti-walk insurance with zero load credit; their holes are cut, they are "
-             "bought only if the arm is seen to creep on the foam.",
+             "the panel. An earlier costing called them optional and was wrong. Eight K&J MM-C-32 "
+             "(O32 x 8 mm, M6 stud) on the body — chosen on magnet_economics.svg as the most hold "
+             "per dollar that reaches 6x on a 20 lb grab. The four ARM magnets are anti-walk "
+             "insurance with zero load credit; their holes are cut, they are bought only if the "
+             "arm is seen to creep on the foam.",
              f"${h3.n_magnets_fitted * HY.MAGNET_EACH_USD:.2f} at ${HY.MAGNET_EACH_USD:.2f} each. "
              f"They come OFF when the struts go on: the plate then sits {h3.strut_standoff:.2f} mm "
              f"off the panel against the magnets' {h3.magnet_standoff:.2f}.", "settled"),

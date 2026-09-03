@@ -13,10 +13,14 @@
 <rect x="346.7" y="391.5" width="48.3" height="84.0" rx="5.2" fill="#fff" stroke="#333" stroke-width="1.2"/>
 <rect x="530.5" y="391.5" width="48.3" height="84.0" rx="5.2" fill="#fff" stroke="#333" stroke-width="1.2"/>
 <circle cx="462.8" cy="433.5" r="47.2" fill="#fff" stroke="#333" stroke-width="1.2"/>
-<circle cx="333.6" cy="562.6" r="25.2" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
-<circle cx="333.6" cy="304.3" r="25.2" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
-<circle cx="591.9" cy="562.6" r="25.2" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
-<circle cx="591.9" cy="304.3" r="25.2" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="333.6" cy="562.6" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="333.6" cy="304.3" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="591.9" cy="562.6" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="591.9" cy="304.3" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="462.8" cy="562.6" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="462.8" cy="304.3" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="333.6" cy="433.5" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
+<circle cx="591.9" cy="433.5" r="16.8" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.2"/>
 <circle cx="410.2" cy="486.0" r="2.3" fill="#fff" stroke="#1a5fb4" stroke-width="1.3"/>
 <circle cx="410.2" cy="381.0" r="2.3" fill="#fff" stroke="#1a5fb4" stroke-width="1.3"/>
 <circle cx="515.2" cy="486.0" r="2.3" fill="#fff" stroke="#1a5fb4" stroke-width="1.3"/>
@@ -33,14 +37,14 @@
 <circle cx="357.8" cy="328.5" r="3.4" fill="#fff" stroke="#7aa7d9" stroke-width="1.3"/>
 <circle cx="567.8" cy="538.5" r="3.4" fill="#fff" stroke="#7aa7d9" stroke-width="1.3"/>
 <circle cx="567.8" cy="328.5" r="3.4" fill="#fff" stroke="#7aa7d9" stroke-width="1.3"/>
-<circle cx="333.6" cy="562.6" r="4.5" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
-<circle cx="333.6" cy="304.3" r="4.5" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
-<circle cx="591.9" cy="562.6" r="4.5" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
-<circle cx="591.9" cy="304.3" r="4.5" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
-<circle cx="462.8" cy="562.6" r="4.5" fill="#fff" stroke="#555" stroke-width="1.3"/>
-<circle cx="462.8" cy="304.3" r="4.5" fill="#fff" stroke="#555" stroke-width="1.3"/>
-<circle cx="333.6" cy="433.5" r="4.5" fill="#fff" stroke="#555" stroke-width="1.3"/>
-<circle cx="591.9" cy="433.5" r="4.5" fill="#fff" stroke="#555" stroke-width="1.3"/>
+<circle cx="333.6" cy="562.6" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
+<circle cx="333.6" cy="304.3" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
+<circle cx="591.9" cy="562.6" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
+<circle cx="591.9" cy="304.3" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
+<circle cx="462.8" cy="562.6" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
+<circle cx="462.8" cy="304.3" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
+<circle cx="333.6" cy="433.5" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
+<circle cx="591.9" cy="433.5" r="3.4" fill="#fff" stroke="#e7b6dd" stroke-width="1.3"/>
 <circle cx="462.8" cy="525.4" r="15.8" fill="#e8a33d" fill-opacity="0.75" stroke="#a8630f" stroke-width="1.6"/>
 <circle cx="462.8" cy="341.6" r="15.8" fill="#e8a33d" fill-opacity="0.75" stroke="#a8630f" stroke-width="1.6"/>
 <line x1="478.5" y1="341.6" x2="543.1" y2="341.6" stroke="#a8630f" stroke-width="0.8"/>
@@ -60,22 +64,22 @@
 <text x="547.1" y="335.6" font-family="Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" fill="#a8630f" font-weight="bold">Pi fan / GPIO opening</text>
 <text x="547.1" y="347.6" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="start" fill="#a8630f" font-weight="normal">sits inside the vent window</text>
 <text x="855.5" y="150.7" font-family="Helvetica,Arial,sans-serif" font-size="13" text-anchor="start" fill="#111" font-weight="bold">DEPTH SECTION</text>
-<text x="855.5" y="166.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#666" font-weight="normal">total 59.3 mm off the fridge face  ·  2.9x</text>
+<text x="855.5" y="166.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#666" font-weight="normal">total 55.7 mm off the fridge face  ·  2.9x</text>
 <rect x="855.5" y="200.7" width="55.7" height="150" fill="#3a3734" fill-opacity="0.30" stroke="#1f1d1b" stroke-width="1.3"/>
 <text x="883.3" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#1f1d1b" font-weight="bold">6.00</text>
 <text x="883.3" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#1f1d1b" font-weight="normal" transform="rotate(-40.0 883.3 192.7)">FRIDGE PANEL</text>
-<rect x="911.2" y="200.7" width="106.8" height="150" fill="#e7b6dd" fill-opacity="0.30" stroke="#1a7a44" stroke-width="1.3"/>
-<text x="964.6" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#1a7a44" font-weight="bold">11.51</text>
-<text x="964.6" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#1a7a44" font-weight="normal" transform="rotate(-40.0 964.6 192.7)">magnet</text>
-<rect x="1018.0" y="200.7" width="44.1" height="150" fill="#8a9199" fill-opacity="0.30" stroke="#333" stroke-width="1.3"/>
-<text x="1040.0" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#333" font-weight="bold">4.75</text>
-<text x="1040.0" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#333" font-weight="normal" transform="rotate(-40.0 1040.0 192.7)">plate</text>
-<rect x="1062.1" y="200.7" width="232.0" height="150" fill="#c0169a" fill-opacity="0.30" stroke="#8c1070" stroke-width="1.3"/>
-<text x="1178.1" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#8c1070" font-weight="bold">25.00</text>
-<text x="1178.1" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#8c1070" font-weight="normal" transform="rotate(-40.0 1178.1 192.7)">rear box</text>
-<rect x="1294.1" y="200.7" width="167.0" height="150" fill="#1a5fb4" fill-opacity="0.30" stroke="#12447f" stroke-width="1.3"/>
-<text x="1377.6" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#12447f" font-weight="bold">18.00</text>
-<text x="1377.6" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#12447f" font-weight="normal" transform="rotate(-40.0 1377.6 192.7)">panel</text>
+<rect x="911.2" y="200.7" width="74.2" height="150" fill="#e7b6dd" fill-opacity="0.30" stroke="#1a7a44" stroke-width="1.3"/>
+<text x="948.3" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#1a7a44" font-weight="bold">8.00</text>
+<text x="948.3" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#1a7a44" font-weight="normal" transform="rotate(-40.0 948.3 192.7)">magnet</text>
+<rect x="985.4" y="200.7" width="44.1" height="150" fill="#8a9199" fill-opacity="0.30" stroke="#333" stroke-width="1.3"/>
+<text x="1007.5" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#333" font-weight="bold">4.75</text>
+<text x="1007.5" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#333" font-weight="normal" transform="rotate(-40.0 1007.5 192.7)">plate</text>
+<rect x="1029.5" y="200.7" width="232.0" height="150" fill="#c0169a" fill-opacity="0.30" stroke="#8c1070" stroke-width="1.3"/>
+<text x="1145.5" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#8c1070" font-weight="bold">25.00</text>
+<text x="1145.5" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#8c1070" font-weight="normal" transform="rotate(-40.0 1145.5 192.7)">rear box</text>
+<rect x="1261.5" y="200.7" width="167.0" height="150" fill="#1a5fb4" fill-opacity="0.30" stroke="#12447f" stroke-width="1.3"/>
+<text x="1345.0" y="366.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#12447f" font-weight="bold">18.00</text>
+<text x="1345.0" y="192.7" font-family="Helvetica,Arial,sans-serif" font-size="8.5" text-anchor="middle" fill="#12447f" font-weight="normal" transform="rotate(-40.0 1345.0 192.7)">panel</text>
 <text x="855.5" y="394.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">No spacers: the rear box holds the panel 25 mm off the plate,</text>
 <text x="855.5" y="408.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">which is what the spacers were originally specified to do.</text>
 <text x="855.5" y="444.7" font-family="Helvetica,Arial,sans-serif" font-size="12" text-anchor="start" fill="#111" font-weight="bold">LAYERS</text>
@@ -88,9 +92,9 @@
 <rect x="855.5" y="511.7" width="15" height="11" fill="#e8a33d" fill-opacity="0.55" stroke="#e8a33d" stroke-width="1.1"/>
 <text x="878.5" y="520.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">rear-face opening, R88 from VESA centre</text>
 <rect x="855.5" y="531.7" width="15" height="11" fill="#e7b6dd" fill-opacity="0.22" stroke="#e7b6dd" stroke-width="1.1"/>
-<text x="878.5" y="540.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">4 body magnets O48.02 mm (1.89 in) — FITTED</text>
+<text x="878.5" y="540.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">8 body magnets O32.00 mm (1.26 in) — FITTED</text>
 <rect x="855.5" y="551.7" width="15" height="11" fill="#c0169a" fill-opacity="0.1" stroke="#c0169a" stroke-width="1.1"/>
-<text x="878.5" y="560.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">4 more body positions cut but NOT fitted</text>
+<text x="878.5" y="560.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">0 more body positions cut but NOT fitted</text>
 <rect x="855.5" y="571.7" width="15" height="11" fill="#a8630f" fill-opacity="1.0" stroke="#a8630f" stroke-width="1.1"/>
 <text x="878.5" y="580.7" font-family="Helvetica,Arial,sans-serif" font-size="9.5" text-anchor="start" fill="#333" font-weight="normal">strap slots 4 x 18 mm (on the neck, not shown here)</text>
 </svg>

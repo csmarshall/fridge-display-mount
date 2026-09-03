@@ -79,7 +79,10 @@ def forces(n_plate: int, n_arm: int, p: BracketParams, rep: dict) -> dict[str, f
     }
 
 
-LADDER = [(4, 2), (4, 4), (5, 4), (6, 4), (6, 6), (7, 6), (8, 6), (8, 7)]
+# (plate, arm) magnet counts. The AS-BUILT pair is inserted from the geometry at render time so
+# the highlighted column always exists whatever the generator currently fits.
+LADDER_BASE = [(4, 0), (4, 4), (6, 0), (6, 4), (8, 0), (8, 4), (8, 7), (12, 4)]
+LADDER = list(LADDER_BASE)
 
 
 def render(path: Path, p: BracketParams) -> None:
@@ -89,7 +92,10 @@ def render(path: Path, p: BracketParams) -> None:
     dirs = list(forces(4, 4, p, rep).keys())
 
     fitted_plate = len([h for h in geom.holes if h.tag == "magnet"])
-    fitted_arm = len([h for h in geom.holes if h.tag == "arm_magnet"])
+    fitted_arm = 0      # arm magnets: holes cut, NOT bought (2026-09-02); zero credit either way
+    global LADDER
+    LADDER = sorted(set(LADDER_BASE) | {(fitted_plate, fitted_arm)})
+    as_built_x = None
 
     colw, rowh = 116.0, 30.0
     x0, y0 = 330.0, 210.0
@@ -145,7 +151,7 @@ def render(path: Path, p: BracketParams) -> None:
     # y0-9 sat inside row 1 and overprinted its "146 lb" cell. The header band above is full
     # (count, then the plate/reach breakdown), so the only clear space in this column is under
     # the last rule — which still reads as belonging to the column it sits beneath.
-    _as_built_tag = (f'<text x="{as_built_x:.1f}" y="{y0 + rowh*len(dirs) + 12:.1f}" '
+    _as_built_tag = "" if as_built_x is None else (f'<text x="{as_built_x:.1f}" y="{y0 + rowh*len(dirs) + 12:.1f}" '
                      f'font-family="Helvetica,Arial,sans-serif" font-size="9.5" '
                      f'text-anchor="middle" font-weight="bold" fill="{OK}">AS BUILT</text>')
     for r, name in enumerate(dirs):

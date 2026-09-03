@@ -63,8 +63,14 @@ P: dict[str, Price] = {p.key: p for p in (
     Price("strip", "Backing strip (part D), 20 mm wide, BARE CRS", 8.11, "each",
           "SendCutSend", "2026-08-31", "qty-2 rate; too narrow for powder coat — fit-or-not undecided"),
     # McMaster-Carr
-    Price("magnet", "Pot magnet 3506K67, O48 x 11.51, 5/16-18 male stud, 175 lb", 23.92, "each",
-          "McMaster 3506K67", "2026-08-27", "$20.62 ea at 10+"),
+    Price("magnet", "Pot magnet K&J MM-C-32, O32 x 8 mm, M6 male stud, 75 lb", 7.64, "each",
+          "K&J Magnetics", "2026-09-02", "SETTLED 2026-09-02 on magnet_economics.svg; $6.12 at 1000+"),
+    Price("magnet_o48", "Pot magnet 3506K67, O48 x 11.51, 5/16-18 male stud, 175 lb — SUPERSEDED", 23.92, "each",
+          "McMaster 3506K67", "2026-08-27", "the magnet designs 1 and 3 carried until 2026-09-02"),
+    Price("m6_nyloc_thin", "M6 THIN nylon-insert locknut, 18-8, DIN 985 low", None, "pack",
+          "McMaster", "", "NOT VERIFIED — part number and price; the fastener sheets assume 4 mm tall"),
+    Price("m6_fender", "M6 fender washer O18, 18-8, DIN 9021", None, "pack",
+          "McMaster", "", "NOT VERIFIED"),
     Price("jam_nut", "Jam nut 5/16-18, black-oxide 18-8, half height", 3.20, "pack of 25",
           "McMaster 98514A035", "2026-08-27", ""),
     Price("washer_os", "Oversized washer O1.250 OD, black-oxide 18-8", 8.37, "pack of 10",
@@ -195,17 +201,17 @@ class Quote:
 
 # The hardware a hook plate needs whichever gauge it is cut at. ONE list, used by 1 and 3.
 def hook_hardware(n_magnets: int) -> Group:
+    """M6 stack for the MM-C-32 (2026-09-02): thin nyloc on a fender washer, dry. No threadlocker."""
     return Group("Hook hardware", [
-        Line("jam_nut", 1), Line("washer_os", 2 if n_magnets > 5 else 1),
-        Line("threadlocker", 1), Line("primer", 1), Line("vesa_screws", 1), Line("spacers", 1),
-        Line("foam_hook", 1), Line("velcro", 1),
+        Line("m6_nyloc_thin", 1), Line("m6_fender", 1),
+        Line("vesa_screws", 1), Line("spacers", 1), Line("foam_5_16", 1), Line("velcro", 1),
     ])
 
 
 def quote_hook() -> Quote:
     return Quote(1, "THE HOOK", "one bent plate over the fridge top, held flat by magnets", [
         Group("Cut steel", [Line("plate_187", 1)]),
-        Group("Magnets", [Line("magnet", 8, "Pot magnet 3506K67 — 4 body + 4 arm, as the BOM fits them")]),
+        Group("Magnets", [Line("magnet", 8, "K&J MM-C-32 — the eight BODY positions; arm holes cut, not bought")]),
         hook_hardware(8),
     ])
 
@@ -222,13 +228,13 @@ def quote_clamp(with_strips: bool = False) -> Quote:
     ])
 
 
-def quote_hybrid(n_magnets: int = 4, strut_ft: int = 5) -> Quote:
+def quote_hybrid(n_magnets: int = 8, strut_ft: int = 5) -> Quote:
     strut_key = {4: "strut_4ft", 5: "strut_5ft"}[strut_ft]
-    return Quote(3, "HOOK + STRUT KIT", "design 1 rebased to 0.119 in and 4 magnets; the kit only if needed", [
+    return Quote(3, "HOOK + STRUT KIT", "design 1 rebased to 0.119 in; the kit only if needed", [
         Group("Phase 1 — cut steel (this is design 1's plate, thinner, four more holes)",
               [Line("plate_119", 1)]),
         Group("Phase 1 — magnets", [Line("magnet", n_magnets,
-                                          f"Pot magnet 3506K67 — the {n_magnets} BODY magnets; arm holes cut, not bought")]),
+                                          f"K&J MM-C-32 — the {n_magnets} BODY magnets; arm holes cut, not bought")]),
         hook_hardware(n_magnets),
         Group("Phase 2 — the strut kit, ONLY if the arm is too lively", [
             Line("foot", 2), Line("clamp_bar_q1", 1), Line(strut_key, 2), Line("elevator", 1),
@@ -242,10 +248,11 @@ def quote_hybrid(n_magnets: int = 4, strut_ft: int = 5) -> Quote:
 # exactly as in the main column: the plate keeps its powder coat (Charles, 2026-09-02) and the O48
 # magnets have no cheaper source ($25.68 at AMF, $23.92 McMaster).
 BUDGET: dict[str, tuple[str, float] | None] = {
-    "jam_nut": ("b_nyloc", 1), "threadlocker": None, "primer": None,
-    "washer_os": ("b_fender", 2), "foam_hook": ("b_foam", 1), "velcro": ("b_velcro", 1),
+    "velcro": ("b_velcro", 1),
     "strut_5ft": ("b_strut10", 1), "strut_4ft": ("b_strut10", 1), "strut_1ft": None,
     "floor_pad": ("b_epdm", 1), "foam_3mm": None, "plate_pad": None,
+    # The 5/16-18 alternatives (b_nyloc, b_fender, b_foam) belonged to the O48 stack and are kept
+    # in the table as history; nothing swaps to them now.
 }
 
 
@@ -314,7 +321,7 @@ def render(path: Path, quotes: list[Quote]) -> None:
                       "cart. Display and PSU excluded (same purchase whichever design wins).", 11.5,
            "middle", "#fff", "bold"),
          t(40, 62, "WHAT EACH DESIGN COSTS — three quotes from one price table", 21, weight="bold"),
-         t(40, 84, "Design 3's phase 1 is design 1 at 0.119 in with 4 magnets instead of 8; its kit is "
+         t(40, 84, "Design 3's phase 1 is design 1 at 0.119 in; its kit is "
                    "design 2's feet and lower clamp plus 5 ft struts. Design 2's plate is a different "
                    "part and shares nothing but the strut hardware.", 11.5, fill=MUTED)]
     for k, q in enumerate(quotes):
@@ -367,8 +374,8 @@ def render(path: Path, quotes: list[Quote]) -> None:
     c = common()
     o.append(t(40, H - 40, f"Common to every design: {'; '.join(f'{ln.item} ${ln.total:.2f}' for ln in c.lines)} "
                           f"= ${c.priced:.2f}.", 9.8, fill=MUTED))
-    o.append(t(40, H - 24, "Design 1 vs design 3 phase 1: the same plate and hardware; the difference is the gauge "
-                          "($197.07 vs $177.77) and four fewer magnets ($95.68).", 9.8, fill=MUTED))
+    o.append(t(40, H - 24, "Design 1 vs design 3 phase 1: the same plate, magnets and hardware; the only difference is "
+                          "the gauge ($197.07 vs $177.77).", 9.8, fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
     LOG.info("Wrote %s", path)

@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461286.6931018517
+2461286.844895833
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461286.6931018517
+2461286.844895833
   9
 $TDUUPDATE
  40
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{FBA2E30B-5459-428A-9129-470ABF5128F1}
+{2C65C896-2A30-42CB-B7B2-FAA724D6C355}
   9
 $VERSIONGUID
   2
-{10A9DFA0-FC47-4F66-96D4-BC581B4B6B28}
+{BEC559A8-893B-4D2B-9E1C-B9204B13872B}
   9
 $EXTNAMES
 290
@@ -1323,9 +1323,9 @@ ISM
   0
 CLASS
   1
-ACDBPLACEHOLDER
+LAYOUT
   2
-AcDbPlaceHolder
+AcDbLayout
   3
 ObjectDBX Classes
  90
@@ -1339,9 +1339,9 @@ ObjectDBX Classes
   0
 CLASS
   1
-LAYOUT
+ACDBPLACEHOLDER
   2
-AcDbLayout
+AcDbPlaceHolder
   3
 ObjectDBX Classes
  90
@@ -6447,7 +6447,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6467,7 +6467,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6487,7 +6487,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6507,7 +6507,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6523,7 +6523,7 @@ AcDbCircle
  10
 61.3625
  20
-17.73
+68.53
  30
 0.0
  40
@@ -6543,7 +6543,7 @@ AcDbCircle
  10
 248.6375
  20
-17.73
+68.53
  30
 0.0
  40
@@ -6607,7 +6607,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6627,7 +6627,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6647,7 +6647,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6667,7 +6667,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6687,7 +6687,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6707,7 +6707,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6727,7 +6727,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6747,7 +6747,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6767,7 +6767,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6787,7 +6787,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 CIRCLE
   5
@@ -6807,7 +6807,7 @@ AcDbCircle
  30
 0.0
  40
-4.25
+3.25
   0
 LINE
   5
@@ -7937,7 +7937,7 @@ DictionaryVariables
 280
 0
   1
-1.4.2 @ 2026-09-02T21:38:04.401887+00:00
+1.4.2 @ 2026-09-03T01:16:39.387123+00:00
   0
 VISUALSTYLE
   5
@@ -8649,7 +8649,7 @@ DictionaryVariables
 280
 0
   1
-1.4.2 @ 2026-09-02T21:38:04.405515+00:00
+1.4.2 @ 2026-09-03T01:16:39.390886+00:00
   0
 ENDSEC
   0

@@ -262,8 +262,8 @@ def render(path: Path, p: BracketParams) -> None:
                     f"O{p.magnet_hole_dia:.1f} mm, stud a fixed {p.magnet_stud_len:.2f} mm "
                     f"({p.magnet_stud_len/IN:.3f} in). Change any of those and every panel here "
                     f"changes with it.", 12, anchor="start", fill=MUTED),
-         _t(40, 112, "The orange band is where that part actually touches the plate. Part numbers "
-                     "are McMaster-Carr, read off their tables on 2026-08-27.", 12,
+         _t(40, 112, "The orange band is where that part actually touches the plate. M6 nut and washer "
+                     "heights are DIN nominal; McMaster part numbers are NOT VERIFIED (2026-09-02).", 12,
             anchor="start", fill="#8a5a00", weight="bold"),
          _t(40, 132, f"Washer thickness is the MAX of the range it is sold to - every stack is "
                      f"checked against the thickest one that might ship.", 11.5, anchor="start",
@@ -287,26 +287,25 @@ def render(path: Path, p: BracketParams) -> None:
     o.append(f'<rect x="40" y="{fy - 20:.1f}" width="{W - 80:.1f}" height="152" fill="#fff" '
              f'stroke="{OK}" stroke-width="1.6" rx="4"/>')
     o.append(_t(56, fy, f"USE: {spec.label}", 13.5, anchor="start", weight="bold", fill=OK))
+    runner = next((r for r in sorted(fits, key=lambda r: -r.slack)
+                   if r.nut.locking == "mechanical" and r is not spec), None)
     o.append(_t(56, fy + 22,
                 f"{spec.plate:.2f} + {spec.washer.t:.2f} + {spec.nut.height:.2f} = "
                 f"{spec.needed:.2f} mm against a {spec.stud:.2f} mm stud: "
-                f"{spec.slack:+.2f} mm to spare, and {spec.bearing_area:.0f} mm2 of bearing - "
-                f"the most of any stack that fits, {spec.bearing_area / 69.9:.0f}x a bare nut.",
+                f"{spec.slack:+.2f} mm to spare, {spec.bearing_area:.0f} mm2 of bearing, "
+                f"locking {spec.nut.locking if spec.locker == 'dry' else spec.locker}.",
                 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 42,
-                f"The half-height JAM nut is what buys the room: it is "
-                f"{G.NUTS_BY_KEY['nyloc_thin'].height - spec.nut.height:.2f} mm shorter than the "
-                f"thinnest LOCKNUT, which is exactly what a washer costs. Locking is chemical "
-                f"instead - threadlocker adds no height at all.", 11.5, anchor="start",
-                fill=MUTED))
-    # Was one line and ran past the box and off the canvas. Split at a sentence boundary.
+                f"The stud length is an ESTIMATE ({spec.stud:.0f} mm from two vendors' 32 x 18 mm "
+                f"overall figure; K&J do not print it). A washer costs 1.6 mm here, which is why the "
+                f"specified stack has none.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 62,
-                f"Runner-up is the THIN nylon-insert locknut, no washer: "
-                f"{G.NUTS_BY_KEY['nyloc_thin'].height + spec.plate:.2f} mm used, +1.60 mm spare, "
-                f"and a MECHANICAL lock that needs no chemical.", 11.5, anchor="start", fill=MUTED))
+                (f"Runner-up with a mechanical lock: {runner.label}, {runner.needed:.2f} mm used, "
+                 f"{runner.slack:+.2f} mm spare, {runner.bearing_area:.0f} mm2." if runner
+                 else "No other mechanical-locking stack fits."), 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 80,
-                "It survives being taken apart, and bears on only 70 mm2 — which is harmless. So "
-                "this is a preference, not a correctness call.", 11.5, anchor="start", fill=MUTED))
+                "Bearing is harmless at every one of these: the plate is 36 ksi steel. The choice is "
+                "thread length and locking, nothing else.", 11.5, anchor="start", fill=MUTED))
     o.append(_t(56, fy + 100, f"Fasteners are {FINISH.upper()} OXIDE where stocked - only the ARM "
                 f"nuts are visible, facing up against a textured-black arm.", 11.0, anchor="start",
                 fill=MUTED))

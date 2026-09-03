@@ -74,7 +74,7 @@ def load_numbers(root: Path) -> dict:
     from concept_sheet import Assembly
     hook = json.loads((root / "bracket_params.json").read_text(encoding="utf-8"))
     plate3 = json.loads((root / "strut" / "dxf" / "H_hook_plate.json").read_text(encoding="utf-8"))
-    h3 = HY.Hybrid(bolt_rows=tuple(plate3["params"]["strut_bolt_rows"]))
+    h3 = HY.Hybrid(**dict(HY.Hybrid.fields_from_hook(plate3), bolt_rows=tuple(plate3["params"]["strut_bolt_rows"])))
     s3 = {ph: HY.structural(h3, ph, plate3["engineering"]["plate_mass_kg"]) for ph in HY.PHASES}
     quotes = {q.design: q for q in PR.all_quotes()}
     return dict(PR=PR, hook=hook, plate3=plate3, h3=h3, s3=s3, quotes=quotes, a4=Angle(),
@@ -160,19 +160,19 @@ leaving no mark.</p>
 has no fallback, design 2 stands alone on the floor, and design 3 is design 1 with a fallback built in and is what we
 intend to order. A fourth, the hook rebuilt from stock aluminium and hand-drilled, was worked up and rejected by the
 owner; its magnet study survives below.</p>
-{fig(root, "magnet_primer.svg", "Why not just magnets?", "The derate chain: a 175 lb magnet delivers about 12 lb of shear on painted appliance sheet. This is why every design carries the weight some other way.")}
+{fig(root, "magnet_primer.svg", "Why not just magnets?", "The derate chain: a magnet's rated pull delivers a small fraction as shear on painted appliance sheet. This is why every design carries the weight some other way.")}
 </section>""")
 
     # ---------------------------------------------------------------- design 1
     body.append(f"""<section id="d1" class="design"><h2><span class="tag t1">DESIGN 1</span> The hook — one bent plate, held flat by magnets</h2>
 <p class="blurb">An arm reaches 180 mm over the fridge top and bears there, carrying the entire weight into the
-top corner. A neck drops down the side to a 310 x 310 mm body carrying the VESA and four (up to eight) O48
-pot magnets that hold the plate flat. 0.187 in A36 steel, laser cut and bent, powder coated. Finished, audited
+top corner. A neck drops down the side to a 310 x 310 mm body carrying the VESA and eight O32 K&J pot
+magnets that hold the plate flat. 0.187 in A36 steel, laser cut and bent, powder coated. Finished, audited
 and quoted; no fallback if it proves too lively.</p>
 {table([
     ("Hanging on the hook", f"{rep['total_hanging_lbf']:.1f} lb", "display + steel + magnets + foam"),
     ("Neck bending", f"{rep['neck_stress_psi']:.0f} psi, SF {rep['neck_sf']:.0f}x", "on 36,000 psi yield"),
-    ("Touch torsion per magnet", f"{rep['torsion_force_per_magnet_lbf']:.2f} lb", f"O48 derated {rep['magnet_derated_pull_lbf']:.1f} lb: SF {rep['magnet_tension_sf']:.0f}x"),
+    ("Touch torsion per magnet", f"{rep['torsion_force_per_magnet_lbf']:.2f} lb", f"MM-C-32 derated {rep['magnet_derated_pull_lbf']:.1f} lb: SF {rep['magnet_tension_sf']:.0f}x"),
     ("Peel", f"{rep['peel_lbf']:.2f} lb", f"CG {rep['cg_offset_mm']:.1f} mm off the panel over {rep['peel_lever_mm']:.0f} mm"),
     ("Flat pattern", f"{hook['flat']['width_mm']:.0f} x {hook['flat']['height_mm']:.1f} mm, 1 bend", "the bend deduction is SendCutSend's published figure"),
     ("Parts", f"${q[1].priced:.2f} priced, {q[1].unpriced} not", f"budget-sourced ${PR.budget(q[1]).priced:.2f}"),
@@ -185,7 +185,7 @@ and quoted; no fallback if it proves too lively.</p>
 {fig(root, "magnet_sizing.svg", "Right-sizing the magnets", "What one magnet actually holds against a ladder of smaller male-stud magnets, and what a smaller one changes: pad, stud, holes. The O48 stays; this is why.")}
 {ask(1, [
     "The arm bears the whole load on an 11.5 mm closed-cell foam pad over a corner of unknown radius. Would you want a stiffer bearing, or is the foam the right thing between steel and painted sheet?",
-    "The magnets are 37x over the touch case and 6x over a 20 lb pull on the bottom edge. Is that the right margin for a household display, or is it money?",
+    "Eight O32 magnets read 16x on the touch case and 6.3x on a 20 lb pull of the bottom edge, chosen from the economics chart. Right margin for a household display, or would you spend the $35 for the O36s?",
     "Anything you would change in the plate before it is cut: the vent windows, the 0.187 in gauge, the powder coat?",
 ])}
 </section>""")
