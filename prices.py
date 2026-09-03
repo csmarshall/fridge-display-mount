@@ -48,10 +48,10 @@ P: dict[str, Price] = {p.key: p for p in (
     # SendCutSend, A36/1008 mild steel, configurator quotes qty 1 unless the note says otherwise
     Price("plate_187", "Hook plate, 0.187 in HRPO, 1 bend, textured black", 197.07, "each",
           "SendCutSend", "2026-08-27", "bracket_flat.dxf as built; cut $112.50, +bend $126.71"),
-    Price("plate_119", "Hook plate, 0.119 in CRS, 1 bend, matte black, WITH strut holes", 177.77, "each",
-          "SendCutSend", "2026-09-01",
-          "RE-QUOTE: taken on a six-hole redrawing; the real file has the hook's full hole set. "
-          "Same bounding box, more cut length. $123.52 ea at qty 2"),
+    Price("plate_119", "Hook plate, 0.119 in CRS, 1 bend, matte black, WITH strut holes", 187.20, "each",
+          "SendCutSend", "2026-09-02",
+          "the REAL H_hook_plate.dxf (310 x 742.03, full hole set); cut $104.82, +bend $116.59, "
+          "+powder coat $187.20 (any colour). $132.60 ea at qty 2. Was $177.77 on a six-hole redrawing"),
     Price("clamp_bar", "Clamp bar (part A), 0.119 in, 1 bend, matte black", 59.74, "each",
           "SendCutSend", "2026-08-31", "qty-2 rate; $77.95 at qty 1"),
     Price("clamp_bar_q1", "Lower clamp (part A) alone, qty 1", 77.95, "each",
@@ -299,6 +299,110 @@ def phase(q: Quote, which: int) -> float:
     return sum(g.priced for g in q.groups if (g.title.startswith("Phase 2")) == (which == 2))
 
 
+
+# --------------------------------------------------------------------------------- vendor shop
+@dataclass(frozen=True)
+class VendorQuote:
+    """One vendor's instant quote on the SAME upload: strut/dxf/H_hook_plate.dxf, 310 x 742.03 mm,
+    qty 1. `bend` and `coat` are the running totals AFTER adding that service, not the increments,
+    so the table reads like the configurator did. None = the vendor could not price it from a DXF."""
+    vendor: str
+    material: str
+    cut: float                      # cut + deburr, flat
+    bend: float | None              # + 1 bend at 90 deg
+    coat: float | None              # + black powder coat (on the bent part where bending exists)
+    lead: str
+    date: str
+    note: str
+
+    @property
+    def best_complete(self) -> float | None:
+        """The bent, coated part — what the design actually needs. None if the vendor cannot bend."""
+        return self.coat if self.bend is not None else None
+
+
+VENDORS: list[VendorQuote] = [
+    VendorQuote("SendCutSend", "A36/1008 mild steel 0.119 in CRS", 104.82, 116.59, 187.20,
+                "arrives Sep 10 bent, Sep 14 coated", "2026-09-02",
+                "dashed bend line in the DXF read as 1 bend; all powder colours priced the same; "
+                "$132.60 ea at qty 2; deburring included"),
+    VendorQuote("OSH Cut", "A36 HR P&O 0.12 in", 110.76, 110.76, 204.26,
+                "4 business days; 8 with coat; STANDBY tier $60.93 bent (no promised date)", "2026-09-02",
+                "bend priced INTO the cut figure (bend line drawn in their app, not from the DXF); "
+                "Black Satin Texture; bend spec inner R 0.105 in, deduction 0.200 in, K 0.45 — differs from "
+                "SendCutSend's 0.1955 in, so the flat pattern would be regenerated for them"),
+    VendorQuote("Fabworks", "Steel 1008 0.119 in", 90.63, None, 112.12,
+                "not read — guest quote #26-09-5704", "2026-09-02",
+                "FLAT ONLY from a DXF: their bending needs a STEP model, and a DXF with the dashed bend "
+                "line is rejected as an open contour. $112.12 is the flat coated plate (Textured Black); "
+                "the bend would be yours to do — not an option on 0.119 in steel at 310 mm wide"),
+]
+VENDORS_NOT_QUOTED = [
+    ("Xometry", "account wall before a price; sheet-metal quotes reported 2-5x OSH Cut for one-offs"),
+    ("Protolabs Network (Hubs)", "account wall; minimum-order oriented, no instant DXF-with-bend flow"),
+    ("Fictiv", "account wall; production-oriented"),
+    ("eMachineShop", "needs its own CAD app for a quote; no DXF instant path"),
+]
+
+
+def render_vendors(path: Path) -> None:
+    import html as _h
+    PAPER, INK, MUTED, RULE = "#f7f8fa", "#111", "#5b6166", "#d0d4d8"
+    W, H = 1180, 520
+    cols = [40, 190, 470, 560, 650, 740, 1140]   # vendor, material, cut, +bend, +coat, lead, (end)
+
+    def t(x, y, s, size=10.5, anchor="start", fill=INK, weight="normal"):
+        return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="Helvetica, Arial, sans-serif" '
+                f'font-size="{size}" text-anchor="{anchor}" fill="{fill}" font-weight="{weight}">'
+                f'{_h.escape(s)}</text>')
+
+    o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',
+         f'<rect width="{W}" height="{H}" fill="{PAPER}"/>',
+         f'<rect width="{W}" height="26" fill="#8a1c1c"/>',
+         t(W / 2, 18, "REFERENCE ONLY — dated instant quotes on the SAME file, qty 1. Nothing is in a cart.",
+           11.5, "middle", "#fff", "bold"),
+         t(40, 62, "COMPARISON SHOP — strut/dxf/H_hook_plate.dxf, 310 x 742.03 mm, 0.119 in steel", 21, weight="bold"),
+         t(40, 84, "Running totals as each service is added, the way the configurators show them. The part the design "
+                   "needs is the bent, coated one; a vendor that cannot bend from a DXF is not a complete option.",
+           11.5, fill=MUTED)]
+    y = 120
+    for x, hdr in zip(cols, ["vendor", "material", "cut + deburr", "+ 1 bend", "+ black coat", "lead time"]):
+        o.append(t(x, y, hdr.upper(), 9.2, fill=MUTED, weight="bold"))
+    o.append(f'<line x1="40" y1="{y + 8}" x2="{W - 40}" y2="{y + 8}" stroke="{RULE}"/>')
+    y += 34
+    best = min((v.best_complete for v in VENDORS if v.best_complete is not None), default=None)
+    for v in VENDORS:
+        complete = v.best_complete
+        if complete is not None and complete == best:
+            o.append(f'<rect x="30" y="{y - 18}" width="{W - 60}" height="70" rx="6" fill="#0b7a4b" fill-opacity="0.08"/>')
+        o.append(t(cols[0], y, v.vendor, 13, weight="bold"))
+        o.append(t(cols[1], y, v.material, 10))
+        o.append(t(cols[2], y, f"${v.cut:.2f}", 12, weight="bold"))
+        o.append(t(cols[3], y, "cannot" if v.bend is None else f"${v.bend:.2f}", 12,
+                   fill=MUTED if v.bend is None else INK, weight="bold"))
+        o.append(t(cols[4], y, f"${v.coat:.2f}" + (" (flat)" if v.bend is None else ""), 12,
+                   fill=MUTED if v.bend is None else INK, weight="bold"))
+        o.append(t(cols[5], y, v.lead[:64], 9.4))
+        o.append(t(cols[1], y + 18, f"{v.date}: {v.note}"[:150], 8.6, fill=MUTED))
+        o.append(t(cols[1], y + 32, v.note[150:300] if len(v.note) > 150 else "", 8.6, fill=MUTED))
+        y += 72
+    y += 10
+    o.append(t(40, y, "NOT QUOTED", 9.2, fill=MUTED, weight="bold"))
+    for name, why in VENDORS_NOT_QUOTED:
+        y += 16
+        o.append(t(52, y, f"{name} — {why}", 9.4))
+    y += 30
+    scs, osh = VENDORS[0], VENDORS[1]
+    o.append(t(40, y, f"Bent + coated: SendCutSend ${scs.coat:.2f} vs OSH Cut ${osh.coat:.2f} standard "
+                      f"(${osh.coat - scs.coat:.2f} apart). Bent, bare: OSH Cut ${osh.bend:.2f} vs SendCutSend "
+                      f"${scs.bend:.2f}. OSH Cut's standby tier at $60.93 bent is the cheapest complete part "
+                      "anywhere, at the cost of no promised date.", 10.2))
+    o.append(t(40, y + 18, "The clamp parts (design 2) and the strut plate were not re-shopped; they were only ever "
+                           "quoted at SendCutSend and would follow the same pattern.", 9.6, fill=MUTED))
+    o.append("</svg>")
+    path.write_text("".join(o), encoding="utf-8")
+    LOG.info("Wrote %s", path)
+
 # --------------------------------------------------------------------------------- the sheet
 def render(path: Path, quotes: list[Quote]) -> None:
     import html as _h
@@ -375,7 +479,7 @@ def render(path: Path, quotes: list[Quote]) -> None:
     o.append(t(40, H - 40, f"Common to every design: {'; '.join(f'{ln.item} ${ln.total:.2f}' for ln in c.lines)} "
                           f"= ${c.priced:.2f}.", 9.8, fill=MUTED))
     o.append(t(40, H - 24, "Design 1 vs design 3 phase 1: the same plate, magnets and hardware; the only difference is "
-                          "the gauge ($197.07 vs $177.77).", 9.8, fill=MUTED))
+                          f"the gauge (${P['plate_187'].unit:.2f} vs ${P['plate_119'].unit:.2f}).", 9.8, fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
     LOG.info("Wrote %s", path)
@@ -402,7 +506,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"  BUDGET-SOURCED ${b.priced:.2f} ({b.unpriced} not priced): "
               + "; ".join(f"{ln.item.split(' — ')[0][:40]} ${ln.total:.2f}" for g in b.groups for ln in g.lines if ln.key.startswith('b_')))
     print(f"\nCommon to all: ${common().priced:.2f}")
+    print("\nVENDOR SHOP, same file, qty 1:")
+    for v in VENDORS:
+        print(f"  {v.vendor:12} cut ${v.cut:7.2f}  +bend {'cannot ' if v.bend is None else '$' + format(v.bend, '.2f'):>8}"
+              f"  +coat ${v.coat:7.2f}  {v.lead[:50]}")
     render(args.out, qs)
+    render_vendors(args.out.with_name("vendors.svg"))
     return 0
 
 

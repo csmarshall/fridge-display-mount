@@ -247,6 +247,7 @@ finite-element model.</p>
 <p class="blurb">Dated vendor observations from one price table, never derived. Display and PSU excluded; they are
 the same purchase whichever design wins.</p>
 {fig(root, "quotes.svg", "Three quotes from one price table", "As listed, and budget-sourced with the substitutions shown and their caveats.")}
+{fig(root, "vendors.svg", "Comparison shop", "The same plate file quoted at SendCutSend, OSH Cut and Fabworks on the same day. Only the first two can bend from a DXF.")}
 </section>
 <section id="revisions"><h2>Revisions</h2>
 <p class="blurb">Milestones, from the repository history. {len(MILESTONES)} of {subprocess.run(['git', 'rev-list', '--count', 'HEAD'], capture_output=True, text=True).stdout.strip()} commits.</p>

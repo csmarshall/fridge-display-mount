@@ -415,9 +415,13 @@ sags but stays hung; design 2 rotates on the captured tail.
   One gauge for the whole kit.
 - **Money has ONE home: `prices.py`** (dated vendor observations, never derived), which builds all
   three quotes and `quotes.svg`; `strut/bom.py`, `strut/hybrid.py` and the page read it. Design 3
-  phase 1 = design 1 rebased to 0.119 in and 4 magnets: **$476.52** priced (plate $177.77 —
-  RE-QUOTE, taken on the six-hole file; 4 magnets $95.68; the hook hardware $203.07) + 3 unpriced
-  lines; the kit **$207.48** only if needed. Design 1 $599.87, design 2 $346.24. Display + PSU
+  phase 1 = design 1 rebased to 0.119 in and 8 MM-C-32 magnets: **$279.57** priced (plate $187.20,
+  quoted 2026-09-02 on the REAL file, up from $177.77 on a six-hole redrawing) + unpriced lines;
+  the kit **$207.48** only if needed. Re-read `prices.py` for the other two designs.
+  **Comparison shop 2026-09-02 (`VENDORS` in `prices.py`, `vendors.svg`):** the same file at OSH Cut
+  is $110.76 bent / $204.26 coated (standby tier $60.93 bent, no promised date) and at Fabworks
+  $90.63 flat — Fabworks cannot bend from a DXF (needs STEP). OSH Cut's bend spec differs (deduction
+  0.200 in vs SendCutSend's 0.1955), so ordering there means regenerating the flat for their table. Display + PSU
   ($387.01) are the same purchase whichever wins and are listed once, outside the quotes.
   **Budget column (sourced 2026-09-02, single observations):** nyloc nuts replace jam nut +
   Loctite + primer; Home Depot fender washers; Foam Factory 1/2 in sheet (FAILS the pad rule by

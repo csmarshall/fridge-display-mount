@@ -79,6 +79,9 @@ DIAGRAM_INFO = {
     "magnet_economics.svg": ("Magnet economics - hold against cost",
                              "Every magnet type at every count the plate takes, on one hold model. Where the "
                              "grab targets fall, and what each option costs per pound of hold.", "shared"),
+    "vendors.svg": ("Comparison shop — the same plate file at three cutting services",
+                    "SendCutSend, OSH Cut and Fabworks instant quotes on strut/dxf/H_hook_plate.dxf, "
+                    "qty 1, 2026-09-02. Fabworks cannot bend from a DXF.", "hybrid"),
     "quotes.svg": ("What each design costs — three quotes from one price table",
                    "Dated vendor observations. Design 3's phase 1 is design 1 at 0.119 in with "
                    "4 magnets; its kit is design 2's feet and lower clamp. Display excluded.",
@@ -590,14 +593,14 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "one covers the fan in every rotation; the clamp design's plate stops short of both.",
              "Neither feature is dimensioned anywhere. One photo with a rule across the box "
              "settles the windows for designs 1 and 3 and the plate height for design 2.", "open"),
-        Item("m-h-requote", "[HYBRID] Re-quote the plate at SendCutSend",
-             "The $177.77 quote (2026-09-01, 0.119 CRS, 1 bend, matte black) was taken on a "
-             "six-hole redrawing that could not take magnets. The real plate has the hook's full "
-             "hole set plus four strut holes: same bounding box to the millimetre, more cut length. "
-             "Upload strut/dxf/H_hook_plate.dxf and re-quote; expect a small increase.",
-             "Nothing is in a cart. The four clamp-design DXFs also moved 0.38 mm when the bend "
-             "deduction went to the published value — re-upload those too before any order.",
-             "open"),
+        Item("m-h-requote", "[HYBRID] Re-quote the plate — DONE 2026-09-02, and comparison-shopped",
+             "The real strut/dxf/H_hook_plate.dxf was uploaded to SendCutSend ($104.82 cut, $116.59 "
+             "bent, $187.20 bent and powder coated — up from $177.77 on the six-hole redrawing), "
+             "OSH Cut ($110.76 bent, $204.26 coated, standby tier $60.93) and Fabworks ($90.63 flat, "
+             "cannot bend from a DXF). See vendors.svg.",
+             "Nothing is in a cart. The four clamp-design DXFs still need re-upload before any "
+             "order — they moved 0.38 mm when the bend deduction went to the published value.",
+             "settled"),
         Item("m-a-stock", "[ANGLE] Price the aluminium for real",
              "The angle is priced from Speedy Metals; the two bars and the 5 in bar are ESTIMATES from a "
              "metals4u price range. Three items, one order from one supplier.", "", "open"),
