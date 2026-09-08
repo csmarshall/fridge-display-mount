@@ -153,9 +153,11 @@ P: dict[str, Price] = {p.key: p for p in (
           "K&J Magnetics", "2026-09-02", ""),
     Price("m6_nyloc", "M6 nyloc nuts + 1/4-20 bolts, washers", 15.00, "lot", "ESTIMATE", "2026-09-02",
           "hardware store; 4 nylocs, 8 bolts, washers"),
-    Price("foam_5_16", "Neoprene-blend foam strip 5/16 in x 2 in x 10 ft, adhesive-backed, closed cell (Buna-N/neoprene/vinyl, 8 lb/ft3, 11 psi)", 45.63, "roll",
-          "McMaster 1488N706", "2026-09-08",
-          "READ LOGGED IN. 7.94 mm against the 8 mm standoff (-0.06, in band); ONE 2 in run, so it replaces three side-by-side 3/4 in Fix Supply runs ($50.40). Pure neoprene 15 lb/ft3 at 2 in is 93375K665 $109.81"),
+    Price("foam_5_16", "Neoprene foam sheet 1/4 in x 12 x 12, adhesive-backed, closed cell, 12 psi soft — the pads' base layer", 23.87, "sheet",
+          "McMaster 93375K431", "2026-09-08",
+          "READ LOGGED IN. 1/4 + the 1/16 in EPDM skin (3727T47, same order) = 7.94 mm = the magnet standoff EXACTLY. "
+          "One 12 x 12 covers the arm (7.5 x 7.1) plus two 2 x 12 bottom pads; the EPDM 12 x 12 skins all three. "
+          "Replaces the 5/16 x 2 in x 10 ft strip 1488N706 at $45.63 — 5/16 is a niche thickness sold only by the roll"),
     # common to every design
     Price("display", "Waveshare 23.8 in FHD touch monitor, SKU 34025, with 12 V 5 A PSU", 349.99, "each",
           "waveshare.com", "2026-08-27", ""),

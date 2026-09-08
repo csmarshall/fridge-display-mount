@@ -97,6 +97,11 @@ magnet height matches.
   6 mm-magnet era and is deleted. The code has always implemented the rule as stated above:
   `-PAD_UNDERSIZE_ALLOWANCE_MM (0.60) <= excess <= +0.30`, biased UNDER, because a pad proud of
   the magnets means the plate lands on sponge and the magnets never reach steel.
+- **Pads are a LAMINATE, 2026-09-08:** 1/4 in adhesive neoprene sheet (McMaster 93375K431) under the
+  1/16 in crisscross EPDM (3727T47) = 7.94 mm = the 3506K64 standoff exactly, pad-rule excess 0.00.
+  5/16 in foam is a niche thickness sold only as a 10 ft strip ($45.63 for a fifth of it used); the
+  laminate is $23.87 of foam plus the EPDM the arm skin already needed. One 12 x 12 of each covers the
+  arm (7.5 x 7.1 in) and both bottom pads. The model still says "5/16 stock"; the thickness is the same.
 - Arm pad is **closed-cell sponge**, thick enough to conform to the top corner radius. A
   rigid bracket landing on folded appliance sheet will line-load and crease it.
 - **Do not blank off the display's rear vents** with solid plate — a Pi 5 behind an
