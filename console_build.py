@@ -76,6 +76,9 @@ DIAGRAM_INFO = {
                           "What one magnet actually holds (touch, peel, a grab) against a ladder of "
                           "smaller male-stud magnets, and what a smaller one changes: pad, stud, holes.",
                           "shared"),
+    "cost_sturdiness.svg": ("Cost vs sturdiness — gauge x magnet count with the cutoffs drawn",
+                            "Live plate price plus magnets in every cell; red lines are the feels-rigid and "
+                            "bump-margin cutoffs, grey rows are dominated, green is the order.", "hybrid"),
     "removability.svg": ("Removability band — a bump must not shift it, a person must be able to",
                          "Force to slide, twist, lift or peel the mount by magnet set, against estimated human "
                          "forces. The magnet count is chosen INSIDE the band, not for maximum hold.", "hybrid"),
