@@ -129,6 +129,10 @@ P: dict[str, Price] = {p.key: p for p in (
           "Home Depot / Lowe's Rubber-Cal 31-P16-125-012-024", "2026-09-02",
           "DECIDED 2026-09-08 instead of the 4 arm magnets: friction from the hanging weight, mu ~0.6 ESTIMATE. "
           "If the arm magnets are ever fitted, cut the skin around them or drop it"),
+    Price("arm_grip", "OPTION for the arm skin: McMaster 1621N71 reusable dry-adhesive grip sheet (micro-suction), 9-3/4 x 11-3/4 in, 0.02 in",
+          None, "sheet", "McMaster 1621N71", "2026-09-08",
+          "microscopic fingers to the fridge top, acrylic adhesive to the sponge; one sheet covers the 190 x 180 arm. "
+          "No holding figure published — slide-test it against the EPDM skin and fit the winner. Price needs a browser"),
     Price("b_magnet36", "OPTION: K&J MM-C-36 pot magnet, O36 x 8 mm, M6 male stud, 90.4 lb", 9.72, "each",
           "K&J Magnetics", "2026-09-02",
           "NOT in the budget column: 8 mm standoff needs an 8 mm pad no imperial foam gives, and the "
