@@ -134,6 +134,11 @@ P: dict[str, Price] = {p.key: p for p in (
     Price("arm_grip", "OPTION for the arm skin: McMaster 1621N71 reusable dry-adhesive grip sheet (micro-suction), 9-3/4 x 11-3/4 in, 0.02 in", 22.83, "sheet",
           "McMaster 1621N71", "2026-09-08",
           "READ LOGGED IN 2026-09-08, delivers next day. Foam carrier: microscopic fingers to the fridge top, acrylic to the sponge; one sheet covers the 190 x 180 arm. No holding figure published — slide-test against the EPDM skin and fit the winner"),
+    Price("magnet_mcm", "OPTION (vendor consolidation): McMaster 3506K64 encased neodymium, 1-17/64 in (32.1 mm) x 5/16 in, N42, "
+          "75 lb, 1/4-20 x 3/8 in stud, zinc case", 9.62, "each", "McMaster 3506K64", "2026-09-08",
+          "READ LOGGED IN. Same disc and rating as MM-C-32; standoff 7.94 mm matches 5/16 in foam EXACTLY; stud 9.53 mm "
+          "(shorter than K&J's 10 +/-2.5) so the nut is the 5/32 in thin jam nut 91847A029 (18-8, 100/pk $6.75), no washer, "
+          "no nyloc — the 13/64 in thin nyloc 90101A230 is 0.4 mm too tall. A DESIGN CHANGE: stud thread and fastener catalogue"),
     Price("b_magnet36", "OPTION: K&J MM-C-36 pot magnet, O36 x 8 mm, M6 male stud, 90.4 lb", 9.72, "each",
           "K&J Magnetics", "2026-09-02",
           "NOT in the budget column: 8 mm standoff needs an 8 mm pad no imperial foam gives, and the "
