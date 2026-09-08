@@ -72,15 +72,14 @@ class Hybrid:
     body_w: float = 310.0
     arm_w: float = 190.0
     screen_centre: float = 1331.0
-    # 0.119 in CRS, where the archived hook shipped at 0.187 in HRPO. The hook's own record
-    # (generate_bracket.Material) says 0.187 was chosen "for HEFT and margin, not for
-    # stiffness-you-can-feel": plate flex under a touch is 0.064 mm at 0.119 against 0.016 at
-    # 0.187, neither perceptible, and the thicker gauge cost +$11.21. Run at 0.119 the hook
-    # generator validates with neck SF 30x and body SF 34x (2026-09-01). What 0.119 buys here is
-    # one gauge across the whole kit — plate, clamp and feet share a bend spec — and 2.1 kg less
-    # hanging on the fridge top. structural() below re-checks it in BOTH phases; the earlier
-    # comment "the feet take load off the plate" was wrong for phase 1, where there are no feet.
-    plate_t: float = 0.119 * IN
+    # 0.187 in HRPO — DECIDED 2026-09-08 on the live gauge sweep (gauge_magnet_matrix.svg): the
+    # thickest steel SendCutSend publishes a bend spec for, $199.90 bent and coated against $187.20
+    # at 0.119, 4x stiffer (0.022 vs 0.085 mm at the screen edge), and hot-rolled undercuts 0.135
+    # CRS. It was 0.119 from 2026-09-01 to 2026-09-08 ("one gauge for the whole kit", 2.1 kg less);
+    # the kit's clamp and feet stay at 0.119, so the kit is now two gauges and two bend specs,
+    # which structural() and the generator each handle per part. The nut stack is the one cost:
+    # 4.75 plate + 1.7 washer + ~4 jam nut against a 10 +/-2.5 mm stud — measure the stud first.
+    plate_t: float = 0.187 * IN
     # The magnet is the HOOK GENERATOR's choice; these defaults are overwritten from its params JSON
     # by from_plate_json() / generate_hybrid.py so the two can never disagree. 2026-09-02: K&J
     # MM-C-32, O32 x 8 mm, eight fitted (see magnet_economics.svg).
@@ -313,7 +312,7 @@ def structural(h: Hybrid, phase: str, plate_mass_kg: float) -> Structural:
     """Neck bending, body weak-axis bending and touch flex, by the hook generator's own model.
 
     Same formulas as generate_bracket.py / thickness_study.py so the answers can be compared:
-    at 0.119 in the hook generator reports neck SF 30.3x and body SF 33.9x for the magnet phase.
+    at 0.187 in the hook generator reports neck SF 78x and body SF 56x for the magnet phase.
 
     phase "magnets": plate on the magnets, torsion reacted across the 246 magnet spacing,
                      cantilever from the VESA screw out to the magnet.
@@ -437,7 +436,7 @@ def fabricated(h: Hybrid, hook: dict) -> list[B.Fab]:
               f"{len(hook['windows'])} windows, plus {n_strut_holes} x O{a.plate_bolt_dia:.1f} "
               f"strut bolts at {h.strut_spacing:.0f} centres in "
               f"{len(h.bolt_rows)} rows",
-              "generate_bracket.py --strut-bolts, at 0.119 in"),
+              f"generate_bracket.py --strut-bolts, at {h.plate_t / IN:.3f} in"),
         B.Fab("B", "FOOT", a.n_feet, a.foot_leg + a.foot_rise - B.bend_deduction(a),
               a.foot_width, 1, f"1 slot {a.slot_len:.1f} long",
               "one per strut, per BRIEF.md Part B. UNCHANGED from the clamped-strut design"),
@@ -452,7 +451,7 @@ def costed(h: Hybrid) -> list[tuple[str, str, float | None, str]]:
     from prices import P, quote_hybrid
     q = quote_hybrid(n_magnets=h.n_magnets_fitted, strut_ft=int(h.strut_ft))
     # Short names for the sheet's cost table; the full descriptions live in prices.py.
-    SHORT = {"plate_119": "HOOK PLATE", "magnet": "MAGNETS", "m6_nyloc_thin": "M6 thin nylocs",
+    SHORT = {"plate_187": "HOOK PLATE", "magnet": "MAGNETS", "m6_nyloc_thin": "M6 thin nylocs",
              "m6_fender": "M6 fender washers", "vesa_screws": "VESA screws, pack",
              "spacers": "M4 spacers 10 mm", "foam_5_16": "Foam 5/16 in", "velcro": "VELCRO roll",
              "foot": "FOOT", "clamp_bar_q1": "LOWER CLAMP", "strut_5ft": "STRUT 5 ft",

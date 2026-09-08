@@ -62,7 +62,7 @@ DIAGRAM_INFO = {
     "strut/hybrid_sketch.svg": ("If the hook needs help — the bottom end",
                                 "Contingency sketch of the feet and lower clamp under the plate. "
                                 "Not a fabrication drawing.", "hybrid"),
-    "strut/dxf/H_hook_plate_preview.svg": ("The plate as cut — 0.119 in, with strut holes",
+    "strut/dxf/H_hook_plate_preview.svg": ("The plate as cut — 0.187 in HRPO, with strut holes",
                                           "The hook generator's own preview of THE file to "
                                           "upload: every hook hole plus four strut bolts in two "
                                           "rows. Reference only.", "hybrid"),
@@ -89,7 +89,7 @@ DIAGRAM_INFO = {
                     "SendCutSend, OSH Cut and Fabworks instant quotes on strut/dxf/H_hook_plate.dxf, "
                     "qty 1, 2026-09-02. Fabworks cannot bend from a DXF.", "hybrid"),
     "quotes.svg": ("What each design costs — three quotes from one price table",
-                   "Dated vendor observations. Design 3's phase 1 is design 1 at 0.119 in with "
+                   "Dated vendor observations. Design 3's phase 1 is design 1's plate with strut holes and "
                    "4 magnets; its kit is design 2's feet and lower clamp. Display excluded.",
                    "shared"),
     "plate_fea.svg": ("Plate bending under a touch — finite elements vs the strip model",
@@ -530,10 +530,10 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              f"They come OFF when the struts go on: the plate then sits {h3.strut_standoff:.2f} mm "
              f"off the panel against the magnets' {h3.magnet_standoff:.2f}.", "settled"),
         Item("d-h-thickness",
-             f"[HYBRID] Plate thickness {h3.plate_t / 25.4:.3f} in for design 3 — SETTLED, checked both ways",
-             "Design 1 chose 0.187 in for heft, not stiffness — its own record says flex is "
-             "imperceptible at either gauge. 0.119 in makes the whole kit one gauge (plate, clamp, "
-             f"feet share a bend spec) and hangs 2.1 kg less on the fridge top. Checked: neck SF "
+             f"[HYBRID] Plate thickness {h3.plate_t / 25.4:.3f} in for design 3 — DECIDED 2026-09-08 on the live sweep",
+             "Was 0.119 in for a week (one gauge for the kit, 2.1 kg less). The live sweep on the real "
+             "file put 0.187 in HRPO at $199.90 against $187.20: 4x stiffer for $12.70, and hot-rolled "
+             "undercuts 0.135 CRS. The clamp and feet stay at 0.119. Checked: neck SF "
              f"{s3['magnets'].neck_sf:.0f}x / body SF {s3['magnets'].body_sf:.0f}x on magnets, "
              f"{s3['struts'].neck_sf:.0f}x / {s3['struts'].body_sf:.0f}x on struts; the FEA plate "
              "model agrees with the strip model to ~15%.",
@@ -737,7 +737,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
                       "sourced 2026-09-02", swaps))
     S.append(Section("quotes", "What each design costs",
                      "Three quotes from ONE price table (prices.py). Dated vendor observations, never "
-                     "derived. Design 3's phase 1 is design 1 rebased to 0.119 in and 4 magnets; its "
+                     "derived. Design 3's phase 1 is design 1's plate at 0.187 in with strut holes and 8 magnets; its "
                      "kit is design 2's feet and lower clamp. Display and PSU excluded — same purchase "
                      "whichever design wins. Nothing in a cart.", "table",
                      columns=["design", "group", "line", "cost", "source", "note"], rows=qrows))

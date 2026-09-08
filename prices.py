@@ -7,7 +7,7 @@ line shared between them (a magnet, a bolt pack, a foam roll) can only ever have
 
     design 1  THE HOOK          plate at 0.187 in HRPO + 8 magnets + the hook hardware
     design 2  CLAMPED STRUT     five cut parts + struts + bolts; no magnets
-    design 3  HOOK + STRUT KIT  design 1 REBASED to 0.119 in and 4 magnets (phase 1),
+    design 3  HOOK + STRUT KIT  design 1's plate at 0.187 in with strut holes, 8 magnets (phase 1),
                                 plus design 2's feet and lower clamp and 5 ft struts (the kit)
 
 Design 3's phase 1 IS design 1 at the other gauge and magnet count, and the sheet says so in one
@@ -233,9 +233,9 @@ def quote_clamp(with_strips: bool = False) -> Quote:
 
 def quote_hybrid(n_magnets: int = 8, strut_ft: int = 5) -> Quote:
     strut_key = {4: "strut_4ft", 5: "strut_5ft"}[strut_ft]
-    return Quote(3, "HOOK + STRUT KIT", "design 1 rebased to 0.119 in; the kit only if needed", [
+    return Quote(3, "HOOK + STRUT KIT", "design 1's plate with strut holes; the kit only if needed", [
         Group("Phase 1 — cut steel (this is design 1's plate, thinner, four more holes)",
-              [Line("plate_119", 1)]),
+              [Line("plate_187", 1)]),
         Group("Phase 1 — magnets", [Line("magnet", n_magnets,
                                           f"K&J MM-C-32 — the {n_magnets} BODY magnets; arm holes cut, not bought")]),
         hook_hardware(n_magnets),
@@ -319,9 +319,9 @@ class PlatePrice:
 
 PLATE_SWEEP: dict[tuple[str, float], PlatePrice] = {
     ("mild-steel", 0.104): PlatePrice(88.87, 173.69, "2026-09-08", "CRS; +bend $100.64"),
-    ("mild-steel", 0.119): PlatePrice(104.82, 187.20, "2026-09-02", "CRS; +bend $116.59 — the plate on order"),
+    ("mild-steel", 0.119): PlatePrice(104.82, 187.20, "2026-09-02", "CRS; +bend $116.59 — design 3's gauge until 2026-09-08"),
     ("mild-steel", 0.135): PlatePrice(131.68, 235.83, "2026-09-08", "CRS; cut figure is the 2026-08-25 sweep (not re-read), complete is live"),
-    ("mild-steel", 0.187): PlatePrice(115.08, 199.90, "2026-09-08", "HRPO (listed .188); hot-rolled undercuts .135 CRS"),
+    ("mild-steel", 0.187): PlatePrice(115.08, 199.90, "2026-09-08", "HRPO (listed .188); hot-rolled undercuts .135 CRS — THE PLATE ON ORDER"),
     ("mild-steel", 0.250): PlatePrice(147.25, 232.07, "2026-09-08", "HRPO; no bend spec in generate_bracket — indicative only"),
     ("5052", 0.100): PlatePrice(74.34, 159.16, "2026-09-08", ""),
     ("5052", 0.125): PlatePrice(74.62, 159.44, "2026-09-08", ""),
@@ -459,7 +459,7 @@ def render(path: Path, quotes: list[Quote]) -> None:
                       "cart. Display and PSU excluded (same purchase whichever design wins).", 11.5,
            "middle", "#fff", "bold"),
          t(40, 62, "WHAT EACH DESIGN COSTS — three quotes from one price table", 21, weight="bold"),
-         t(40, 84, "Design 3's phase 1 is design 1 at 0.119 in; its kit is "
+         t(40, 84, "Design 3's phase 1 is design 1's plate with four strut holes (0.187 in, decided 2026-09-08); its kit is "
                    "design 2's feet and lower clamp plus 5 ft struts. Design 2's plate is a different "
                    "part and shares nothing but the strut hardware.", 11.5, fill=MUTED)]
     for k, q in enumerate(quotes):

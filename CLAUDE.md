@@ -410,14 +410,26 @@ sags but stays hung; design 2 rotates on the captured tail.
   spacing the O48 bolts sat under the lower discs; 187.28 clears and is design 2's own. The bolt
   rows are now picked for LEAST FLEX (the pair hugging the VESA), not widest span — with the
   smaller magnet freeing more rows, "lowest and highest" chose a floppier pair.
-- **0.119 in, not the hook's 0.187.** Design 1 chose 0.187 for heft (its own record); checked at
-  0.119 in both phases (neck SF 32x/41x, body 34x/36x; FEA agrees with the strip model to ~15 %).
-  One gauge for the whole kit.
+- **0.187 in HRPO — DECIDED 2026-09-08**, reversing a week at 0.119. The live gauge sweep on the real
+  file (`gauge_magnet_matrix.svg`, `PLATE_SWEEP` in `prices.py`) put 0.187 HRPO at $199.90 bent and
+  coated against $187.20 for 0.119 CRS: 4x stiffer (0.022 vs 0.085 mm at the screen edge) for $12.70,
+  and hot-rolled undercuts 0.135 CRS ($235.83). Charles's criterion: "the cheapest material that can
+  be the thickest and still be powder coated and bent." Validated both phases (neck 78x/87x, body
+  56x/107x). The clamp and feet stay 0.119, so the kit is two gauges. `generate_hybrid.py
+  --thickness X --stem NAME` writes a side-by-side plate at another gauge without touching the
+  design's file. The cost is the NUT STACK: 4.75 plate + 1.7 washer + ~4 jam nut on a stud the K&J
+  drawing gives as 10 +/-2.5 mm — order the magnets first, measure, drop the washer or use a 3 mm
+  jam nut if short. Nothing cut changes.
+- **Magnets — 8 x MM-C-32 fitted, DECIDED 2026-09-08 on `removability.svg`.** Charles's definition of
+  reliable: "it takes effort to move it but it's not impossible" — a BAND. Against estimated human
+  forces (bump 20 lb x 1.5 margin, one hand 45, two hands 100), 4 x is under the bump margin, 6 x
+  and 8 x are in the band. 8 keeps margin against the derate; pull two if it fights repositioning.
 - **Money has ONE home: `prices.py`** (dated vendor observations, never derived), which builds all
   three quotes and `quotes.svg`; `strut/bom.py`, `strut/hybrid.py` and the page read it. Design 3
-  phase 1 = design 1 rebased to 0.119 in and 8 MM-C-32 magnets: **$279.57** priced (plate $187.20,
-  quoted 2026-09-02 on the REAL file, up from $177.77 on a six-hole redrawing) + unpriced lines;
-  the kit **$207.48** only if needed. Re-read `prices.py` for the other two designs.
+  phase 1 = design 1's plate with strut holes and 8 MM-C-32 magnets: **$347.31, every line priced**
+  2026-09-08 (plate $199.90 live on the real file at 0.187; magnets $58.48 at the 5-9 break; foam
+  $50.40 is 5/16 x 3/4 in strip, nobody stocks 5/16 at 2 in wide; hardware from BoltsandNuts). The
+  kit **$207.48** only if needed. Re-read `prices.py` for the other two designs.
   **Comparison shop 2026-09-02 (`VENDORS` in `prices.py`, `vendors.svg`):** the same file at OSH Cut
   is $110.76 bent / $204.26 coated (standby tier $60.93 bent, no promised date) and at Fabworks
   $90.63 flat — Fabworks cannot bend from a DXF (needs STEP). OSH Cut's bend spec differs (deduction
