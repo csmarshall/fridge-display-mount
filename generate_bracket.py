@@ -629,6 +629,12 @@ class BracketParams:
     # NICKEL/zinc-cased pot, so there is one coefficient, not two.
     mu_magnet_face: float = 0.2   # bare nickel on painted sheet. Irrelevant: the hook carries
                              # all vertical load and the magnets work in tension, not shear.
+    # The ARM PAD's friction on the fridge top — DECIDED 2026-09-08: an adhesive EPDM skin on the
+    # sponge (Rubber-Cal 60A) instead of the four arm magnets, which stay cut and unbought. The whole
+    # hanging weight sits on this pad, so weight x mu is front-to-back hold that owes nothing to the
+    # magnets or to the top being magnetic. ESTIMATE: EPDM on painted steel is ~0.6-0.8; 0.6 is the
+    # low end. Bare sponge would be ~0.3. force_table credits it in "slide"; nothing else uses it.
+    mu_arm_pad: float = 0.6
 
     min_magnet_spacing: float = 240.0  # LOAD-BEARING FLOOR — see CLAUDE.md §1.2
 

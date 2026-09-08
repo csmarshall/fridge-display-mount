@@ -11,7 +11,7 @@ casual hip or elbow bump, a deliberate one-hand pull, a determined two-hand pull
 at the top; the band moves with them.
 
 Which direction matters for each act:
-  bump          -> slide front-to-back (magnet shear at mu 0.2; the hook's arm friction is NOT credited)
+  bump          -> slide front-to-back (magnet shear at mu 0.2 PLUS the hanging weight on the arm's EPDM skin at mu_arm_pad)
                    and twist about the spine (an edge knock)
   reposition    -> slide front-to-back (the intended way to shift it along the panel)
   take it off   -> lift straight up (weight + magnet shear), or peel the bottom edge out first
@@ -85,7 +85,7 @@ def render(path: Path, p: BracketParams, rep: dict, tb: dict) -> None:
                    f"one hand {ONE_HAND_LBF:.0f} lb, two hands {TWO_HAND_LBF:.0f} lb. Green = in the band: slide resistance at least {BUMP_MARGIN:g}x "
                    "the bump, and two hands can lift it off.", 10.5, fill=MUTED),
          t(40, 82, f"Hangs {rep['total_hanging_lbf']:.1f} lb on the hook whichever set is fitted; the magnets only keep it flat. Slide "
-                   f"credits magnet shear at mu {p.mu_magnet_face:g} only — the arm pad's friction on the fridge top is extra, uncredited.",
+                   f"credits magnet shear at mu {p.mu_magnet_face:g} plus the weight on the arm's EPDM skin at mu {p.mu_arm_pad:g} (ESTIMATE, decided 2026-09-08).",
            10.5, fill=MUTED)]
     y = 118
     for j, (label, _, act) in enumerate(ACTS):
@@ -138,7 +138,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--log-level", choices=LOG_LEVELS, default="INFO")
     args = ap.parse_args(argv)
     configure_logging(args.log_level)
-    G.set_material("mild-steel", 0.119)     # design 3's plate — the one on order
+    G.set_material("mild-steel", 0.187)     # design 3's plate — the one on order (decided 2026-09-08)
     p = BracketParams()
     rep = G.engineering_report(p, G.build_geometry(p, G.derive_flat(p)))
     tb = table(p, rep)

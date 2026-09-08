@@ -74,7 +74,7 @@ def forces(n_plate: int, n_arm: int, p: BracketParams, rep: dict) -> dict[str, f
         "grab the MIDDLE and pull": pull_at(mid),
         "grab the TOP edge and pull": pull_at(top),
         "lift the whole thing straight UP": weight + n_plate * pull * mu + n_arm * pull,
-        "slide it front-to-back": (n_plate + n_arm) * pull * mu,
+        "slide it front-to-back": (n_plate + n_arm) * pull * mu + weight * p.mu_arm_pad,
         "press the screen edge to twist it off": twist_force,
     }
 

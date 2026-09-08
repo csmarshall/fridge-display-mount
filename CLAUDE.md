@@ -261,6 +261,11 @@ deduction **8.19 mm**.
 
 **Arm retention magnets:** rows at **+36 and +144 mm** from the bend apex are CUT; as of
 2026-09-02 they are NOT BOUGHT (anti-walk only, zero load credit) — fit later if the arm creeps.
+**DECIDED 2026-09-08: anti-walk is an EPDM SKIN on the arm pad instead** (`arm_skin` in `prices.py`,
+`mu_arm_pad = 0.6` ESTIMATE in the generator, credited in force_table's slide). The hanging weight on
+rubber gives more front-to-back hold than four derated arm magnets and does not need the top to be
+magnetic. Thicker arm sponge was considered and rejected: the pad fills the corner radius, it does
+not hold anything, and thicker means spongier (same rule as the bottom pad).
 A third row at **+90** is cut but left empty as an upgrade path. 120 mm apart across the arm. Anti-jostle only
 — **zero credit in the load path**. The 54 mm row pitch is a hard floor (O48 disc + 6 mm).
 

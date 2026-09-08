@@ -125,6 +125,10 @@ P: dict[str, Price] = {p.key: p for p in (
           "two 5 ft; electro-galvanized, not black. Measure the first slot from the cut end"),
     Price("b_epdm", "EPDM sheet 1/8 in x 12 x 24, adhesive-backed, 60A", 11.26, "sheet",
           "Home Depot / Lowe's Rubber-Cal 31-P16-125-012-024", "2026-09-02", "floor pads AND clamp faces"),
+    Price("arm_skin", "EPDM skin for the ARM PAD, 1/8 in x 12 x 24, adhesive-backed, 60A (same sheet)", 11.26, "sheet",
+          "Home Depot / Lowe's Rubber-Cal 31-P16-125-012-024", "2026-09-02",
+          "DECIDED 2026-09-08 instead of the 4 arm magnets: friction from the hanging weight, mu ~0.6 ESTIMATE. "
+          "If the arm magnets are ever fitted, cut the skin around them or drop it"),
     Price("b_magnet36", "OPTION: K&J MM-C-36 pot magnet, O36 x 8 mm, M6 male stud, 90.4 lb", 9.72, "each",
           "K&J Magnetics", "2026-09-02",
           "NOT in the budget column: 8 mm standoff needs an 8 mm pad no imperial foam gives, and the "
@@ -207,7 +211,7 @@ def hook_hardware(n_magnets: int) -> Group:
     """M6 stack for the MM-C-32 (2026-09-02): thin nyloc on a fender washer, dry. No threadlocker."""
     return Group("Hook hardware", [
         Line("m6_nyloc_thin", 1), Line("m6_fender", 1),
-        Line("vesa_screws", 1), Line("spacers", 1), Line("foam_5_16", 1), Line("velcro", 1),
+        Line("vesa_screws", 1), Line("spacers", 1), Line("foam_5_16", 1), Line("arm_skin", 1), Line("velcro", 1),
     ])
 
 
