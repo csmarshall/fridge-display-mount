@@ -96,6 +96,7 @@
     "magnet_rated_pull_lbf": 75.0,
     "magnet_derate": 0.35,
     "mu_magnet_face": 0.2,
+    "mu_arm_pad": 0.6,
     "min_magnet_spacing": 240.0,
     "bottom_pad_thickness_override": 0.0
   },
