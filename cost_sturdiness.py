@@ -46,7 +46,7 @@ def render(path: Path, rows: list[GM.Row]) -> None:
     cw = (W - 80 - lw) / len(COUNTS)
     rh = 56
     top = 150
-    H = top + 60 + len(rows) * rh + 150
+    H = top + 60 + len(rows) * rh + 150 + 16 * 9 + 22 * 3 + 20
 
     def t(x, y, s, size=10.0, anchor="start", fill=INK, weight="normal"):
         return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="Helvetica, Arial, sans-serif" font-size="{size}" '
@@ -79,6 +79,13 @@ def render(path: Path, rows: list[GM.Row]) -> None:
         o.append(t(x + cw / 2, y + 14, f"slide {slide[n]:.0f} lb — " + ("bump margin OK" if ok else "under the bump margin"), 8.8, "middle",
                    HI if ok else CUT))
     o.append(f'<line x1="40" y1="{y + 22}" x2="{W - 40}" y2="{y + 22}" stroke="{RULE}"/>')
+    # my ranking of the viable cells (Charles, 2026-09-08: "I don't want the plate to be too flimsy"):
+    # stiffest plate first, then the most magnets — margin against two stacked estimates — then cost.
+    viable = [(r, n) for r in rows for n in COUNTS
+              if slide[n] >= RM.BUMP_LBF * RM.BUMP_MARGIN and r.screen_edge_mm < FEELS_RIGID_MM
+              and (r.family, r.thickness_in) not in dominated]
+    ranked = sorted(viable, key=lambda rn: (rn[0].screen_edge_mm, -rn[1], rn[0].price.complete + rn[1] * m.usd))
+    rank = {(r.family, r.thickness_in, n): i + 1 for i, (r, n) in enumerate(ranked)}
     # rows
     y = top
     rigid_drawn = False
@@ -103,6 +110,10 @@ def render(path: Path, rows: list[GM.Row]) -> None:
             elif ok:
                 o.append(f'<rect x="{x + 4}" y="{y + 4}" width="{cw - 8}" height="{rh - 8}" rx="6" fill="{HI}" fill-opacity="0.05"/>')
             o.append(t(x + cw / 2, y + 26, f"${total:.2f}", 14, "middle", MUTED if (dom or not ok) else INK, "bold"))
+            if ok:
+                rk = rank[(r.family, r.thickness_in, n)]
+                o.append(f'<circle cx="{x + 22}" cy="{y + 22}" r="11" fill="{HI if rk <= 3 else MUTED}"/>')
+                o.append(t(x + 22, y + 26, str(rk), 11, "middle", "#fff", "bold"))
             o.append(t(x + cw / 2, y + 42, "CHOSEN" if chosen else ("viable" if ok else ("dominated" if dom else
                       ("flexible" if r.screen_edge_mm >= FEELS_RIGID_MM else "bump can shift it"))), 8.8, "middle",
                       HI if chosen or ok else MUTED))
@@ -132,6 +143,28 @@ def render(path: Path, rows: list[GM.Row]) -> None:
     ]
     for i, s in enumerate(lines):
         o.append(t(40, y + 16 * i + 4, s, 9.8, fill=INK if i < 2 else MUTED, weight="bold" if i == 1 else "normal"))
+    y += 16 * len(lines) + 22
+    o.append(t(40, y, "MY ORDER OF PREFERENCE — stiffest plate first (\"I don't want the plate to be too flimsy\"), then the most "
+                      "magnets, then cost. The numbers in the cells are this list.", 10, weight="bold"))
+    why = {
+        ("mild-steel", 0.187): "the only gauge whose flex is below anything a finger can find; hot-rolled, so it undercuts 0.135",
+        ("mild-steel", 0.119): "fine on paper, 4x the flex of 0.187 for $13 less — not a trade worth making",
+        ("mild-steel", 0.104): "inside the rigid band by a third; the thinnest steel I would call not flimsy, and only just",
+    }
+    yy = y
+    last_gauge = None
+    for i, (r, n) in enumerate(ranked):
+        key = (r.family, r.thickness_in)
+        if key != last_gauge:
+            yy += 22
+            o.append(t(52, yy, f"{r.label} — {why[key]}", 9.6, weight="bold", fill=INK if i < 3 else MUTED))
+            last_gauge = key
+        yy += 16
+        total = r.price.complete + n * m.usd
+        tag = {8: "full margin against both estimates", 6: "in the band, one estimate less margin",
+               4: "passes only because the rubber skin is credited — an estimate on an estimate"}[n]
+        o.append(t(70, yy, f"{i + 1}.  {n} x MM-C-32   ${total:.2f}   flex {r.screen_edge_mm:.3f} mm, slide {slide[n]:.0f} lb   —   {tag}",
+                   9.4, fill=INK if i < 3 else MUTED, weight="bold" if i == 0 else "normal"))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")
     LOG.info("Wrote %s", path)
