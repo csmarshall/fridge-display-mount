@@ -45,10 +45,17 @@ def run_hook_generator(extra: Sequence[str], out_dir: Path, name: str) -> dict:
 def main(argv: Sequence[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--log-level", default="INFO")
+    ap.add_argument("--thickness", type=float, default=None,
+                    help="plate gauge in inches (default: the design's 0.119). Any other value writes a "
+                         "SIDE-BY-SIDE file named by --stem, never the plate the sheets read")
+    ap.add_argument("--stem", default=STEM, help="output file stem (default H_hook_plate)")
     args = ap.parse_args(argv)
     logging.basicConfig(level=args.log_level, format="%(message)s")
+    stem = args.stem
+    if args.thickness is not None and stem == STEM:
+        raise SystemExit("--thickness needs --stem: a different gauge must not overwrite the design's plate")
 
-    h = Hybrid()
+    h = Hybrid() if args.thickness is None else Hybrid(plate_t=args.thickness * 25.4)
     OUT.mkdir(exist_ok=True)
     # pass 1 below also tells us which magnet the hook carries; h is rebuilt from it before validating
     scratch = OUT / "_hook_ref"
@@ -80,19 +87,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     # features and exits non-zero having written nothing if one fouls.
     strut = ["--strut-bolts", f"{h.strut_spacing:.4f}", *(f"{r:.4f}" for r in rows)]
     plate = run_hook_generator(hook_generator_args(h) + strut, scratch, "plate")
-    for src, dst in (("bracket_flat_plate.dxf", f"{STEM}.dxf"),
-                     ("bracket_params_plate.json", f"{STEM}.json"),
-                     ("bracket_preview_plate.svg", f"{STEM}_preview.svg")):
+    for src, dst in (("bracket_flat_plate.dxf", f"{stem}.dxf"),
+                     ("bracket_params_plate.json", f"{stem}.json"),
+                     ("bracket_preview_plate.svg", f"{stem}_preview.svg")):
         shutil.copyfile(scratch / src, OUT / dst)
-    if audit_dxf.main(["--dxf", str(OUT / f"{STEM}.dxf"), "--expect", str(OUT / f"{STEM}.json")]) != 0:
+    if audit_dxf.main(["--dxf", str(OUT / f"{stem}.dxf"), "--expect", str(OUT / f"{stem}.json")]) != 0:
         raise SystemExit("audit FAILED — see above")
 
     n_strut = sum(1 for x in plate["holes"] if x["tag"] == "strut_bolt")
     LOG.info("dxf/%s.dxf  %.2f x %.0f, 1 bend, %d holes (%d strut) + %d windows — audited",
-             STEM, plate["flat"]["height_mm"], plate["flat"]["width_mm"], len(plate["holes"]),
+             stem, plate["flat"]["height_mm"], plate["flat"]["width_mm"], len(plate["holes"]),
              n_strut, len(plate["windows"]))
     LOG.info("  foot + lower clamp are the clamp design's parts, NOT new — see generate_parts.py")
-    assert PLATE_JSON == OUT / f"{STEM}.json"
+    assert stem != STEM or PLATE_JSON == OUT / f"{stem}.json"
     return 0
 
 

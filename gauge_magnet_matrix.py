@@ -51,8 +51,7 @@ class Row:
     screen_edge_mm: float
     peel_lbf: float
     peel_lever_mm: float
-    cut_only: PR.Price | None
-    complete: PR.Price | None
+    price: PR.PlatePrice | None
     rep: dict
     p: BracketParams
 
@@ -86,7 +85,7 @@ def evaluate_gauge(family: str, t_in: float) -> Row:
     key = (family, t_in)
     return Row(family, t_in, rep["plate_mass_kg"], rep["total_hanging_lbf"], rep["neck_sf"],
                rep["body_weak_axis_sf"], screen_edge, rep["peel_lbf"], rep["peel_lever_mm"],
-               PR.PLATE_SWEEP.get(key), PR.P[PR.PLATE_COMPLETE[key]] if key in PR.PLATE_COMPLETE else None, rep, p)
+               PR.PLATE_SWEEP.get(key), rep, p)
 
 
 def peel_sf(row: Row, m: ME.Magnet, n: int) -> float:
@@ -138,7 +137,7 @@ def render(path: Path, rows: list[Row]) -> None:
     o.append(t(40, y, "WHAT THE GAUGE CHANGES (magnet-independent)", 11, fill=MUTED, weight="bold"))
     cols = [40, 250, 350, 460, 560, 660, 780, 930, 1150]
     hdr = ["material / gauge", "plate", "hangs", "neck SF", "body SF", "screen-edge flex", "peel demand",
-           "cut only (2026-08-25 sweep, old file)", "bent + coated (live, real file)"]
+           "cut only (live, real file)", "bent + coated (live, real file)"]
     y += 22
     for x, h in zip(cols, hdr):
         o.append(t(x, y, h, 9, fill=MUTED, weight="bold"))
@@ -155,9 +154,10 @@ def render(path: Path, rows: list[Row]) -> None:
         o.append(t(cols[4], y, f"{r.body_sf:.0f}x", 10))
         o.append(t(cols[5], y, f"{r.screen_edge_mm:.3f} mm", 10))
         o.append(t(cols[6], y, f"{r.peel_lbf:.2f} lb", 10))
-        o.append(t(cols[7], y, f"${r.cut_only.unit:.2f}" if r.cut_only else "not quoted", 10, fill=INK if r.cut_only else MUTED))
-        o.append(t(cols[8], y, f"${r.complete.unit:.2f}  {r.complete.date}" if r.complete else "not quoted", 10,
-                   fill=INK if r.complete else MUTED, weight="bold" if r.complete else "normal"))
+        pr = r.price
+        o.append(t(cols[7], y, f"${pr.cut:.2f}" if pr else "not quoted", 10, fill=INK if pr else MUTED))
+        o.append(t(cols[8], y, f"${pr.complete:.2f}  {pr.date}  {pr.note}"[:60] if pr and pr.complete else "not quoted", 10,
+                   fill=INK if pr else MUTED, weight="bold" if pr else "normal"))
     # ---- panel 2: the matrix
     y = 150 + top_h
     o.append(t(40, y, "FEWEST MAGNETS OF EACH TYPE TO 6x, AND WHAT THEY COST — by gauge", 11, fill=MUTED, weight="bold"))
@@ -189,11 +189,11 @@ def render(path: Path, rows: list[Row]) -> None:
             is_built = built and m.part == r.rep["part_nos"]["magnet"] and best.n == r.rep["magnet_count_fitted"]
             if is_built:
                 o.append(f'<rect x="{x + 3}" y="{y + 4}" width="{cw - 6}" height="{rh - 8}" rx="5" fill="none" stroke="{HI}" stroke-width="2"/>')
-            plate_usd = r.complete.unit if r.complete else (r.cut_only.unit if r.cut_only else None)
+            plate_usd = r.price.complete if r.price else None
             total = f"  plate+magnets ${plate_usd + best.magnets_usd:.2f}" if plate_usd is not None else ""
             o.append(t(x + cw / 2, y + 22, f"{best.n} x  ${best.magnets_usd:.2f}", 12, "middle", weight="bold"))
             o.append(t(x + cw / 2, y + 38, f"grab {best.grab_sf:.1f}x  peel {best.peel_sf:.0f}x{total}", 8.6, "middle", MUTED))
-            if plate_usd is not None and r.complete and (best_any is None or plate_usd + best.magnets_usd < best_any[0]):
+            if plate_usd is not None and (best_any is None or plate_usd + best.magnets_usd < best_any[0]):
                 best_any = (plate_usd + best.magnets_usd, r, best)
         y += rh
     # ---- reading
@@ -204,8 +204,8 @@ def render(path: Path, rows: list[Row]) -> None:
         "is the same on every row. Peel is where the plate weighs in, and even the heaviest gauge leaves it far above 6x.",
         "What the gauge actually buys is stiffness (a finger feels flex, not stress — neck and body SF are never near 1) at the cost of "
         "hanging weight and, on the same file, price. Aluminium halves the plate mass but its flex is 3x steel's at the same gauge.",
-        "Plate prices are on two bases and are not mixed in a cell: the sweep was cut-only on the aluminium-era file; only the two steel gauges "
-        "have live bent-and-coated quotes on the real file. The 'plate+magnets' figure uses whichever the row has, and says so in the table.",
+        "Plate prices are LIVE SendCutSend quotes on the real file (2026-09-08): cut only, and bent + coated. Hot-rolled .187 steel is cheaper "
+        "than cold-rolled .135; aluminium at .100 and .125 is the cheapest plate but 3x the flex of steel at the same gauge.",
     ]
     if best_any:
         tot, r, c = best_any

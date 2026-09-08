@@ -37,6 +37,7 @@ log "magnet sizing + design 4 concept"
 "$PY" magnet_sizing.py --log-level WARNING
 "$PY" magnet_economics.py --log-level WARNING
 "$PY" gauge_magnet_matrix.py --log-level WARNING
+"$PY" removability.py --log-level WARNING
 ( cd angle && "$PY" angle.py --log-level WARNING && "$PY" angle_sheets.py --log-level WARNING )
 
 log "prices: quotes from one table"

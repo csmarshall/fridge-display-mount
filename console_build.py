@@ -76,6 +76,9 @@ DIAGRAM_INFO = {
                           "What one magnet actually holds (touch, peel, a grab) against a ladder of "
                           "smaller male-stud magnets, and what a smaller one changes: pad, stud, holes.",
                           "shared"),
+    "removability.svg": ("Removability band — a bump must not shift it, a person must be able to",
+                         "Force to slide, twist, lift or peel the mount by magnet set, against estimated human "
+                         "forces. The magnet count is chosen INSIDE the band, not for maximum hold.", "hybrid"),
     "gauge_magnet_matrix.svg": ("Gauge x magnet matrix — material and thickness against magnet type and count",
                                 "Every bendable gauge against every magnet: plate mass, hanging load, flex and price per row; "
                                 "fewest magnets to 6x per cell. The magnet answer does not depend on the plate.", "hybrid"),

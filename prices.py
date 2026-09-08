@@ -46,8 +46,9 @@ class Price:
 # --------------------------------------------------------------------------------- the table
 P: dict[str, Price] = {p.key: p for p in (
     # SendCutSend, A36/1008 mild steel, configurator quotes qty 1 unless the note says otherwise
-    Price("plate_187", "Hook plate, 0.187 in HRPO, 1 bend, textured black", 197.07, "each",
-          "SendCutSend", "2026-08-27", "bracket_flat.dxf as built; cut $112.50, +bend $126.71"),
+    Price("plate_187", "Hook plate, 0.187 in HRPO, 1 bend, black powder coat, WITH strut holes", 199.90, "each",
+          "SendCutSend", "2026-09-08", "the real H file at .188 HRPO: cut $115.08, complete $199.90. "
+          "Was $197.07 on 2026-08-27 (bracket_flat.dxf, textured black)"),
     Price("plate_119", "Hook plate, 0.119 in CRS, 1 bend, matte black, WITH strut holes", 187.20, "each",
           "SendCutSend", "2026-09-02",
           "the REAL H_hook_plate.dxf (310 x 742.03, full hole set); cut $104.82, +bend $116.59, "
@@ -63,14 +64,15 @@ P: dict[str, Price] = {p.key: p for p in (
     Price("strip", "Backing strip (part D), 20 mm wide, BARE CRS", 8.11, "each",
           "SendCutSend", "2026-08-31", "qty-2 rate; too narrow for powder coat — fit-or-not undecided"),
     # McMaster-Carr
-    Price("magnet", "Pot magnet K&J MM-C-32, O32 x 8 mm, M6 male stud, 75 lb", 7.64, "each",
-          "K&J Magnetics", "2026-09-02", "SETTLED 2026-09-02 on magnet_economics.svg; $6.12 at 1000+"),
+    Price("magnet", "Pot magnet K&J MM-C-32, O32 x 8 mm, M6 male stud, 75 lb", 7.31, "each",
+          "K&J Magnetics", "2026-09-08", "5-9 pc break ($7.64 single); SETTLED 2026-09-02 on magnet_economics.svg. "
+          "Stud 10 mm +/-2.5 per the K&J drawing MM-C-32.pdf (read 2026-09-08)"),
     Price("magnet_o48", "Pot magnet 3506K67, O48 x 11.51, 5/16-18 male stud, 175 lb — SUPERSEDED", 23.92, "each",
           "McMaster 3506K67", "2026-08-27", "the magnet designs 1 and 3 carried until 2026-09-02"),
-    Price("m6_nyloc_thin", "M6 THIN nylon-insert locknut, 18-8, DIN 985 low", None, "pack",
-          "McMaster", "", "NOT VERIFIED — part number and price; the fastener sheets assume 4 mm tall"),
-    Price("m6_fender", "M6 fender washer O18, 18-8, DIN 9021", None, "pack",
-          "McMaster", "", "NOT VERIFIED"),
+    Price("m6_nyloc_thin", "M6-1.0 A2-70 nylon-insert JAM nut (half height), 8 pcs", 2.00, "8",
+          "BoltsandNuts M6CHJNTMA2", "2026-09-08", "$0.25/pc; height NOT stated — DIN 985-T nominal ~4 mm body; measure on receipt"),
+    Price("m6_fender", "M6 x 18 x 1.7 A2-70 fender washer, 8 pcs", 1.60, "8",
+          "BoltsandNuts M6X18FWA2", "2026-09-08", "$0.20/pc; OD 18.1, ID 6.62, 1.7 thick (page table)"),
     Price("jam_nut", "Jam nut 5/16-18, black-oxide 18-8, half height", 3.20, "pack of 25",
           "McMaster 98514A035", "2026-08-27", ""),
     Price("washer_os", "Oversized washer O1.250 OD, black-oxide 18-8", 8.37, "pack of 10",
@@ -79,10 +81,10 @@ P: dict[str, Price] = {p.key: p for p in (
           "McMaster 91458A115", "2026-08-27", "the jam nut has no locking feature of its own"),
     Price("primer", "Adhesive primer for the threadlocker (black oxide + stainless)", None, "bottle",
           "McMaster", "", "NOT SOURCED"),
-    Price("vesa_screws", "M4 x 0.7 low-head socket cap, 18-8", None, "pack of 25",
-          "McMaster 91239A180", "", "part number not verified; length after the spacer is chosen"),
-    Price("spacers", "M4 unthreaded aluminium spacers, ~10 mm", None, "4",
-          "McMaster", "", "length depends on the measured nut-stack height"),
+    Price("vesa_screws", "M4-0.7 x 16 ISO 7380 button head A2-70, 4 pcs", 0.56, "4",
+          "BoltsandNuts M4C16BSHCSA2/D", "2026-09-08", "$0.14/pc; x20 is $0.15/pc if the VESA insert wants it"),
+    Price("spacers", "RAF M0599-4-AL round spacer 4.3 ID x 8.0 OD x 10 mm, 4 pcs", 3.12, "4",
+          "Newark / element14 1874806", "2026-09-08", "$0.78 ea SNIPPET (page blocked); 8.0 OD, not 7 — the stainless twin is M0599-4-SS"),
     Price("foam_hook", "Neoprene foam strip 7/16 in x 2 in, adhesive-backed", 141.83, "10 ft roll",
           "McMaster 93375K678", "2026-08-27", "arm pad, neck strips and bottom pad from one roll"),
     Price("velcro", "VELCRO ONE-WRAP 1/2 in, black", 31.25, "25 yd roll",
@@ -139,8 +141,9 @@ P: dict[str, Price] = {p.key: p for p in (
           "K&J Magnetics", "2026-09-02", ""),
     Price("m6_nyloc", "M6 nyloc nuts + 1/4-20 bolts, washers", 15.00, "lot", "ESTIMATE", "2026-09-02",
           "hardware store; 4 nylocs, 8 bolts, washers"),
-    Price("foam_5_16", "Neoprene foam 5/16 in, adhesive strips", None, "roll", "McMaster", "",
-          "8 mm standoff wants 7.94 mm foam; stocked, not yet priced"),
+    Price("foam_5_16", "Neoprene foam strip 5/16 x 3/4 in x 10 ft, acrylic adhesive (USA Sealing ZUSANSR-224)", 50.40, "roll",
+          "Fix Supply", "2026-09-08",
+          "7.94 mm against the 8 mm standoff (-0.06, in band); 3/4 in wide, so three runs side by side under the plate bottom"),
     # common to every design
     Price("display", "Waveshare 23.8 in FHD touch monitor, SKU 34025, with 12 V 5 A PSU", 349.99, "each",
           "waveshare.com", "2026-08-27", ""),
@@ -301,19 +304,30 @@ def phase(q: Quote, which: int) -> float:
 
 
 # --------------------------------------------------------------------------------- plate sweep
-# Plate price by material and gauge. Two bases that must NOT be mixed in one column: the 2026-08-25
-# sweep was CUT ONLY on the aluminium-era file (docs/PRICE-STUDY.md); the live figures are the real
-# hook file, bent and powder coated. Keyed (family, thickness_in) to match generate_bracket.MATERIALS.
-PLATE_SWEEP: dict[tuple[str, float], Price] = {k: v for k, v in (
-    (("5052", 0.100), Price("sw_al_100", "5052-H32 .100 in, cut only", 59.38, "each", "SendCutSend sweep", "2026-08-25", "old file")),
-    (("5052", 0.125), Price("sw_al_125", "5052-H32 .125 in, cut only", 61.54, "each", "SendCutSend sweep", "2026-08-25", "old file")),
-    (("5052", 0.187), Price("sw_al_187", "5052-H32 .187 in, cut only", 131.49, "each", "SendCutSend sweep", "2026-08-25", "old file; +bend $145.70")),
-    (("5052", 0.250), Price("sw_al_250", "5052-H32 .250 in, cut only", 127.79, "each", "SendCutSend sweep", "2026-08-25", "old file")),
-    (("mild-steel", 0.119), Price("sw_st_119", "A36/1008 .119 in CRS, cut only", 87.39, "each", "SendCutSend sweep", "2026-08-25", "old file")),
-    (("mild-steel", 0.135), Price("sw_st_135", "A36/1008 .135 in CRS, cut only", 131.68, "each", "SendCutSend sweep", "2026-08-25", "old file")),
-)}
-# Bent + powder coated, on the real file — the number an order would actually pay.
-PLATE_COMPLETE: dict[tuple[str, float], str] = {("mild-steel", 0.119): "plate_119", ("mild-steel", 0.187): "plate_187"}
+# Plate price by material and gauge, LIVE on the real file (strut/dxf/H_hook_plate.dxf, 310 x 742.03,
+# qty 1, SendCutSend configurator 2026-09-08). `cut` = sheet cutting only; `complete` = the same part
+# with 1 bend at 90 deg, deburred, Gloss Black powder coat — the number an order pays. Keyed
+# (family, thickness_in) to match generate_bracket.MATERIALS. The 2026-08-25 sweep on the
+# aluminium-era file (docs/PRICE-STUDY.md) is superseded by these and no longer carried.
+@dataclass(frozen=True)
+class PlatePrice:
+    cut: float
+    complete: float | None          # None = bend or coat not offered at this gauge
+    date: str
+    note: str = ""
+
+
+PLATE_SWEEP: dict[tuple[str, float], PlatePrice] = {
+    ("mild-steel", 0.104): PlatePrice(88.87, 173.69, "2026-09-08", "CRS; +bend $100.64"),
+    ("mild-steel", 0.119): PlatePrice(104.82, 187.20, "2026-09-02", "CRS; +bend $116.59 — the plate on order"),
+    ("mild-steel", 0.135): PlatePrice(131.68, 235.83, "2026-09-08", "CRS; cut figure is the 2026-08-25 sweep (not re-read), complete is live"),
+    ("mild-steel", 0.187): PlatePrice(115.08, 199.90, "2026-09-08", "HRPO (listed .188); hot-rolled undercuts .135 CRS"),
+    ("mild-steel", 0.250): PlatePrice(147.25, 232.07, "2026-09-08", "HRPO; no bend spec in generate_bracket — indicative only"),
+    ("5052", 0.100): PlatePrice(74.34, 159.16, "2026-09-08", ""),
+    ("5052", 0.125): PlatePrice(74.62, 159.44, "2026-09-08", ""),
+    ("5052", 0.187): PlatePrice(148.33, 233.15, "2026-09-08", "past the aluminium cost cliff"),
+    ("5052", 0.250): PlatePrice(149.82, 234.64, "2026-09-08", ""),
+}
 
 # --------------------------------------------------------------------------------- vendor shop
 @dataclass(frozen=True)

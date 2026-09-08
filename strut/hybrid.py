@@ -213,7 +213,8 @@ class Hybrid:
         p, e = j["params"], j["engineering"]
         n_body = sum(1 for h in j["holes"] if h["tag"] == "magnet")
         n_all = e.get("magnet_count_fitted", n_body) or n_body
-        return dict(magnet_standoff=p["magnet_standoff"], magnet_disc=p["magnet_disc_dia"],
+        return dict(plate_t=j["material"]["thickness_mm"],
+                    magnet_standoff=p["magnet_standoff"], magnet_disc=p["magnet_disc_dia"],
                     n_magnets_fitted=n_body, magnet_mass_kg=e["magnet_mass_kg"] / n_all)
 
 
