@@ -300,6 +300,21 @@ def phase(q: Quote, which: int) -> float:
 
 
 
+# --------------------------------------------------------------------------------- plate sweep
+# Plate price by material and gauge. Two bases that must NOT be mixed in one column: the 2026-08-25
+# sweep was CUT ONLY on the aluminium-era file (docs/PRICE-STUDY.md); the live figures are the real
+# hook file, bent and powder coated. Keyed (family, thickness_in) to match generate_bracket.MATERIALS.
+PLATE_SWEEP: dict[tuple[str, float], Price] = {k: v for k, v in (
+    (("5052", 0.100), Price("sw_al_100", "5052-H32 .100 in, cut only", 59.38, "each", "SendCutSend sweep", "2026-08-25", "old file")),
+    (("5052", 0.125), Price("sw_al_125", "5052-H32 .125 in, cut only", 61.54, "each", "SendCutSend sweep", "2026-08-25", "old file")),
+    (("5052", 0.187), Price("sw_al_187", "5052-H32 .187 in, cut only", 131.49, "each", "SendCutSend sweep", "2026-08-25", "old file; +bend $145.70")),
+    (("5052", 0.250), Price("sw_al_250", "5052-H32 .250 in, cut only", 127.79, "each", "SendCutSend sweep", "2026-08-25", "old file")),
+    (("mild-steel", 0.119), Price("sw_st_119", "A36/1008 .119 in CRS, cut only", 87.39, "each", "SendCutSend sweep", "2026-08-25", "old file")),
+    (("mild-steel", 0.135), Price("sw_st_135", "A36/1008 .135 in CRS, cut only", 131.68, "each", "SendCutSend sweep", "2026-08-25", "old file")),
+)}
+# Bent + powder coated, on the real file — the number an order would actually pay.
+PLATE_COMPLETE: dict[tuple[str, float], str] = {("mild-steel", 0.119): "plate_119", ("mild-steel", 0.187): "plate_187"}
+
 # --------------------------------------------------------------------------------- vendor shop
 @dataclass(frozen=True)
 class VendorQuote:

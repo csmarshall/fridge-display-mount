@@ -76,6 +76,9 @@ DIAGRAM_INFO = {
                           "What one magnet actually holds (touch, peel, a grab) against a ladder of "
                           "smaller male-stud magnets, and what a smaller one changes: pad, stud, holes.",
                           "shared"),
+    "gauge_magnet_matrix.svg": ("Gauge x magnet matrix — material and thickness against magnet type and count",
+                                "Every bendable gauge against every magnet: plate mass, hanging load, flex and price per row; "
+                                "fewest magnets to 6x per cell. The magnet answer does not depend on the plate.", "hybrid"),
     "magnet_economics.svg": ("Magnet economics - hold against cost",
                              "Every magnet type at every count the plate takes, on one hold model. Where the "
                              "grab targets fall, and what each option costs per pound of hold.", "shared"),
