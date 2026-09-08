@@ -411,7 +411,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
              "buys +97% attachment for +100% magnets: essentially linear, 1.7% LESS efficient per "
              "magnet. There is no knee. Symmetric counts are 4/8/12 only — the centre vent and the "
              "four vent windows occupy both centrelines, so no symmetric 6 exists on the body.",
-             f"SETTLED 2026-09-02: {n_body} body magnets, K&J MM-C-32 "
+             f"SETTLED 2026-09-02, vendor switched 2026-09-08: {n_body} body magnets, McMaster 3506K64 (was K&J MM-C-32) "
              f"(O{p.magnet_disc_dia:.0f} x {p.magnet_standoff:.1f} mm, {p.magnet_rated_pull_lbf:.0f} lb rated, "
              f"{rep['magnet_derated_pull_lbf']:.1f} lb derated on painted sheet). That reads "
              f"{rep['magnet_tension_sf']:.0f}x on the governing touch-torsion case and lets go at "
@@ -524,7 +524,7 @@ def build_sections(root: Path) -> tuple[list[Section], dict]:
         Item("d-h-magnets",
              f"[HYBRID] {h3.n_magnets_fitted} body magnets in phase 1, arm magnets not bought — SETTLED 2026-09-02",
              "The magnets are NOT optional in phase 1: nothing else holds the bottom of the plate to "
-             "the panel. An earlier costing called them optional and was wrong. Eight K&J MM-C-32 "
+             "the panel. An earlier costing called them optional and was wrong. Eight McMaster 3506K64 (K&J MM-C-32 until 2026-09-08) "
              "(O32 x 8 mm, M6 stud) on the body — chosen on magnet_economics.svg as the most hold "
              "per dollar that reaches 6x on a 20 lb grab. The four ARM magnets are anti-walk "
              "insurance with zero load credit; their holes are cut, they are bought only if the "

@@ -172,7 +172,7 @@ and quoted; no fallback if it proves too lively.</p>
 {table([
     ("Hanging on the hook", f"{rep['total_hanging_lbf']:.1f} lb", "display + steel + magnets + foam"),
     ("Neck bending", f"{rep['neck_stress_psi']:.0f} psi, SF {rep['neck_sf']:.0f}x", "on 36,000 psi yield"),
-    ("Touch torsion per magnet", f"{rep['torsion_force_per_magnet_lbf']:.2f} lb", f"MM-C-32 derated {rep['magnet_derated_pull_lbf']:.1f} lb: SF {rep['magnet_tension_sf']:.0f}x"),
+    ("Touch torsion per magnet", f"{rep['torsion_force_per_magnet_lbf']:.2f} lb", f"{rep['part_nos']['magnet']['plain']} derated {rep['magnet_derated_pull_lbf']:.1f} lb: SF {rep['magnet_tension_sf']:.0f}x"),
     ("Peel", f"{rep['peel_lbf']:.2f} lb", f"CG {rep['cg_offset_mm']:.1f} mm off the panel over {rep['peel_lever_mm']:.0f} mm"),
     ("Flat pattern", f"{hook['flat']['width_mm']:.0f} x {hook['flat']['height_mm']:.1f} mm, 1 bend", "the bend deduction is SendCutSend's published figure"),
     ("Parts", f"${q[1].priced:.2f} priced, {q[1].unpriced} not", f"budget-sourced ${PR.budget(q[1]).priced:.2f}"),

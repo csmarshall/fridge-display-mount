@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cost against sturdiness: plate gauge (rows) x MM-C-32 count (columns), with the cutoffs drawn.
+"""Cost against sturdiness: plate gauge (rows) x magnet count (columns), with the cutoffs drawn.
 
 Charles, 2026-09-08: "a table showing material thicknesses vs # of magnets with lines to show the
 cutoffs you think for best cost <> sturdiness". Every cell is the LIVE plate price plus the magnets,
@@ -33,7 +33,7 @@ from bracket_common import LOG_LEVELS, configure_logging
 
 LOG = logging.getLogger("cost")
 FEELS_RIGID_MM = 0.2          # thickness_study.py's "feels rigid" band (it is a literal there)
-MAGNET = "MM-C-32"
+MAGNET = "3506K64"
 COUNTS = (4, 6, 8)
 CHOSEN = ("mild-steel", 0.187), 8
 
@@ -163,7 +163,7 @@ def render(path: Path, rows: list[GM.Row]) -> None:
         total = r.price.complete + n * m.usd
         tag = {8: "full margin against both estimates", 6: "in the band, one estimate less margin",
                4: "passes only because the rubber skin is credited — an estimate on an estimate"}[n]
-        o.append(t(70, yy, f"{i + 1}.  {n} x MM-C-32   ${total:.2f}   flex {r.screen_edge_mm:.3f} mm, slide {slide[n]:.0f} lb   —   {tag}",
+        o.append(t(70, yy, f"{i + 1}.  {n} x {MAGNET}   ${total:.2f}   flex {r.screen_edge_mm:.3f} mm, slide {slide[n]:.0f} lb   —   {tag}",
                    9.4, fill=INK if i < 3 else MUTED, weight="bold" if i == 0 else "normal"))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")

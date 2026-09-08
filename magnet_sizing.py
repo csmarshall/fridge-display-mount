@@ -62,7 +62,8 @@ class Candidate:
 CANDIDATES = [
     Candidate("MM-C-20", "K&J", 20.0, 7.0, "M4", 28.7, 3.77, "2026-09-02", "7 mm standoff: no stock foam lands in the pad band"),
     Candidate("MM-C-25", "K&J", 25.0, 8.0, "M5", 48.5, 5.04, "2026-09-02", ""),
-    Candidate("MM-C-32", "K&J", 32.0, 8.0, "M6", 75.0, 7.64, "2026-09-02", "FITTED from 2026-09-02, eight on the body"),
+    Candidate("MM-C-32", "K&J", 32.0, 8.0, "M6", 75.0, 7.31, "2026-09-08", "the choice 2026-09-02 to 2026-09-08; +$7 postage"),
+    Candidate("3506K64", "McMaster", 32.15, 7.94, "1/4-20", 75.0, 9.62, "2026-09-08", "FITTED from 2026-09-08 — same disc, one vendor for everything"),
     Candidate("MM-C-36", "K&J", 36.0, 8.0, "M6", 90.4, 9.72, "2026-09-02",
               "fits a 2 in (50.8) flat bar with 7.4 mm each side — design 4's bar magnet"),
     Candidate("3506K67", "McMaster", 48.02, 11.51, "5/16-18", 175.0, 23.92, "2026-08-27",
@@ -140,7 +141,7 @@ def render(path: Path, cands: list[Candidate], duties_: list[Duty], report: dict
     o.append(t(706, 164, "SF 1 touch · SF 2 peel · SF 3 grab — derated pull / per-magnet duty", 8.4, fill=MUTED))
     y = 186
     for c in cands:
-        fitted = c.part == "MM-C-32"
+        fitted = c.part == "3506K64"
         o.append(t(706, y, c.part + (" (fitted)" if fitted else ""), 10, weight="bold" if fitted else "normal"))
         o.append(t(830, y, f"{c.dia_mm:.0f} x {c.height_mm:.1f}", 10))
         o.append(t(920, y, c.stud, 10))

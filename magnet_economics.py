@@ -62,7 +62,8 @@ class Magnet:
 MAGNETS = [
     Magnet("MM-C-20", 20, 7.0, "M4", 28.7, 3.77, "9/32 in (7.14, -0.14 — no stock 7 mm foam; 1/4 in is -0.65, out of band)"),
     Magnet("MM-C-25", 25, 8.0, "M5", 48.5, 5.04, "5/16 in"),
-    Magnet("MM-C-32", 32, 8.0, "M6", 75.0, 7.64, "5/16 in"),
+    Magnet("MM-C-32", 32, 8.0, "M6", 75.0, 7.31, "5/16 in"),
+    Magnet("3506K64", 32.15, 7.94, "1/4-20", 75.0, 9.62, "5/16 in"),
     Magnet("MM-C-36", 36, 8.0, "M6", 90.4, 9.72, "5/16 in"),
     Magnet("3506K67", 48.02, 11.51, "5/16-18", 175.0, 23.92, "7/16 in"),
 ]
@@ -124,7 +125,7 @@ def cheapest_reaching(points: list[Point], target_lbf: float) -> Point | None:
 # ------------------------------------------------------------------------------ sheet
 def render(path: Path, points: list[Point], rep: dict) -> None:
     PAPER, INK, MUTED, RULE = "#f7f8fa", "#111", "#5b6166", "#d0d4d8"
-    COL = {"MM-C-20": "#8a8f94", "MM-C-25": "#c8791a", "MM-C-32": "#1b6ea8", "MM-C-36": "#0b7a4b", "3506K67": "#c0169a"}
+    COL = {"MM-C-20": "#8a8f94", "MM-C-25": "#c8791a", "MM-C-32": "#1b6ea8", "MM-C-36": "#0b7a4b", "3506K67": "#c0169a", "3506K64": "#0b7a4b"}
     W, H = 1720, 1060
 
     def t(x, y, s, size=10.5, anchor="start", fill=INK, weight="normal"):
@@ -246,7 +247,7 @@ def render(path: Path, points: list[Point], rep: dict) -> None:
 
     o.append(t(40, H - 60, f"Twist (press the screen edge to unseat it) scales the same way and is never the limit: "
                           f"even 4 x MM-C-20 read {min(pt.twist_lbf for pt in points):.0f} lb against a 5 lb press.", 10, fill=MUTED))
-    o.append(t(40, H - 42, "Sources: K&J product pages 2026-09-02; McMaster 3506K67 2026-08-27; hold model force_table.forces() "
+    o.append(t(40, H - 42, "Sources: K&J product pages 2026-09-02/08; McMaster 3506K64 and 3506K67 read 2026-09-08; hold model force_table.forces() "
                           "on the built plate (310 body, inset 32, neck 257).", 9.4, fill=MUTED))
     o.append("</svg>")
     path.write_text("".join(o), encoding="utf-8")

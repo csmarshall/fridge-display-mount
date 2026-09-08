@@ -285,7 +285,15 @@ proud head against the fridge. Any standard M4 head works.
 +textured black **$197.07**. (~~$185.85 / blank 742~~ was the .119 in build.)
 
 ## 5. BOM constraints
-- **Magnets — SETTLED 2026-09-02: K&J MM-C-32, O32 x 8 mm N38 pot, M6 MALE STUD, 75 lb rated,
+- **Magnets — VENDOR SWITCH 2026-09-08: McMaster 3506K64**, 1-17/64 x 5/16 in (32.15 x 7.94 mm), N42,
+  75 lb, zinc-plated steel case, **1/4-20 x 3/8 in male stud**, $9.62, EIGHT on the body. Same disc and
+  rating as the K&J MM-C-32 below; chosen so the whole hardware order is ONE McMaster shipment
+  (K&J charges $7 postage under $100, BoltsandNuts and Newark each their own). Two things got better:
+  standoff 7.94 = the 5/16 in pad EXACTLY, and the stud is READ (3/8 in) not estimated, so the nut
+  stack is settled: **thin hex jam nut 91847A029 (5/32 in), no washer, dry** — 4.75 + 3.97 = 8.72
+  against 9.53, +0.81. The 13/64 in thin nyloc is 0.4 mm too tall. Hole O7.0 (was 6.5) for the
+  6.35 mm stud under powder coat. The K&J paragraph below is that magnet's record (2026-09-02..08).
+- ~~Magnets — SETTLED 2026-09-02: K&J MM-C-32, O32 x 8 mm N38 pot, M6 MALE STUD, 75 lb rated,
   $7.64, EIGHT on the body** (the four corners plus the four mid-sides that used to be spare holes;
   `mid_magnets_fitted = True`). Chosen on `magnet_economics.svg`: hold at the bottom edge is
   linear in count, the K&J mid-sizes give ~3.4 lb/$ against the O48's 2.6, and 8 x MM-C-32 is the

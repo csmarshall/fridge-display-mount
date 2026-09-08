@@ -45,7 +45,7 @@
     "vesa_hole_dia": 4.4,
     "countersink_vesa": false,
     "countersink_major": 8.001,
-    "magnet_hole_dia": 6.5,
+    "magnet_hole_dia": 7.0,
     "magnet_inset": 32.0,
     "extra_magnet_rows": [],
     "spare_mid_holes": true,
@@ -58,10 +58,10 @@
       220.93
     ],
     "strut_bolt_disc_clearance": 2.0,
-    "magnet_disc_dia": 32.0,
-    "magnet_standoff": 8.0,
-    "magnet_stud_len": 10.0,
-    "magnet_stud_thread": "M6",
+    "magnet_disc_dia": 32.15,
+    "magnet_standoff": 7.94,
+    "magnet_stud_len": 9.53,
+    "magnet_stud_thread": "1/4-20",
     "center_open_dia": 90.0,
     "window_long": 80.0,
     "window_short": 46.0,
@@ -80,8 +80,8 @@
     "strap_clearance": 2.65,
     "strap_slot_thickness": 4.0,
     "arm_magnets": true,
-    "arm_magnet_disc_dia": 32.0,
-    "arm_magnet_standoff": 8.0,
+    "arm_magnet_disc_dia": 32.15,
+    "arm_magnet_standoff": 7.94,
     "arm_magnet_offset": 36.0,
     "extra_arm_magnet_offsets": [
       144.0
@@ -133,6 +133,7 @@
     "hole_diameters_mm": [
       4.4,
       6.5,
+      7.0,
       8.5,
       90.0
     ]
@@ -238,25 +239,25 @@
       "tag": "magnet",
       "x": 32.0,
       "y": 32.0,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "magnet",
       "x": 32.0,
       "y": 278.0,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "magnet",
       "x": 278.0,
       "y": 32.0,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "magnet",
       "x": 278.0,
       "y": 278.0,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "strut_bolt",
@@ -286,67 +287,67 @@
       "tag": "spare_arm_magnet",
       "x": 155.0,
       "y": 648.8085000000001,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "arm_magnet",
       "x": 95.0,
       "y": 594.8085000000001,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "arm_magnet",
       "x": 215.0,
       "y": 594.8085000000001,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "arm_magnet",
       "x": 95.0,
       "y": 702.8085000000001,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "arm_magnet",
       "x": 215.0,
       "y": 702.8085000000001,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "spare_arm_magnet",
       "x": 95.0,
       "y": 648.8085000000001,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "spare_arm_magnet",
       "x": 215.0,
       "y": 648.8085000000001,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "magnet",
       "x": 155.0,
       "y": 32.0,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "magnet",
       "x": 155.0,
       "y": 278.0,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "magnet",
       "x": 32.0,
       "y": 155.0,
-      "dia": 6.5
+      "dia": 7.0
     },
     {
       "tag": "magnet",
       "x": 278.0,
       "y": 155.0,
-      "dia": 6.5
+      "dia": 7.0
     }
   ],
   "windows": [
@@ -468,91 +469,91 @@
       "tag": "magnet_disc",
       "x": 32.0,
       "y": 32.0,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "magnet_disc",
       "x": 32.0,
       "y": 278.0,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "magnet_disc",
       "x": 278.0,
       "y": 32.0,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "magnet_disc",
       "x": 278.0,
       "y": 278.0,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "spare_arm_magnet_disc",
       "x": 155.0,
       "y": 648.8085000000001,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "arm_magnet_disc",
       "x": 95.0,
       "y": 594.8085000000001,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "arm_magnet_disc",
       "x": 215.0,
       "y": 594.8085000000001,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "arm_magnet_disc",
       "x": 95.0,
       "y": 702.8085000000001,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "arm_magnet_disc",
       "x": 215.0,
       "y": 702.8085000000001,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "spare_arm_magnet_disc",
       "x": 95.0,
       "y": 648.8085000000001,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "spare_arm_magnet_disc",
       "x": 215.0,
       "y": 648.8085000000001,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "magnet_disc",
       "x": 155.0,
       "y": 32.0,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "magnet_disc",
       "x": 155.0,
       "y": 278.0,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "magnet_disc",
       "x": 32.0,
       "y": 155.0,
-      "dia": 32.0
+      "dia": 32.15
     },
     {
       "tag": "magnet_disc",
       "x": 278.0,
       "y": 155.0,
-      "dia": 32.0
+      "dia": 32.15
     }
   ],
   "center_opening": {
@@ -583,43 +584,43 @@
   "engineering": {
     "display_weight_lbf": 8.686213129892,
     "plate_mass_kg": 5.808099781902166,
-    "magnet_mass_kg": 0.586779136015133,
+    "magnet_mass_kg": 0.5878508853851886,
     "magnet_count_fitted": 12,
     "fastener_mass_kg": 0.14400000000000002,
-    "foam_mass_kg": 0.137015424,
-    "magnet_only_hanging_kg": 7.310378156441972,
-    "magnet_only_hanging_lbf": 16.11662505760455,
+    "foam_mass_kg": 0.135944991,
+    "magnet_only_hanging_kg": 7.3104202660220095,
+    "magnet_only_hanging_lbf": 16.116717893337295,
     "magnet_only_body_plate_kg": 2.7971261457652172,
     "magnet_only_magnets": 8,
-    "bracket_mass_kg": 6.675894341917299,
-    "bracket_weight_lbf": 14.717827686937502,
-    "total_hanging_lbf": 23.4040408168295,
-    "overturning_moment_in_lbf": 23.862734551110012,
+    "bracket_mass_kg": 6.675895658287354,
+    "bracket_weight_lbf": 14.717830589036703,
+    "total_hanging_lbf": 23.404043718928705,
+    "overturning_moment_in_lbf": 23.807450593860143,
     "torsion_arm_mm": 162.325,
     "torsion_moment_in_lbf": 31.953740157480315,
     "magnet_spacing_mm": 246.0,
     "torsion_force_per_side_lbf": 3.2992886178861784,
     "torsion_force_per_magnet_lbf": 1.6496443089430892,
-    "cg_offset_mm": 52.19967094390464,
+    "cg_offset_mm": 52.13967094390464,
     "peel_lever_mm": 278.0,
-    "peel_lbf": 2.1802642359647275,
+    "peel_lbf": 2.175213111813121,
     "magnet_derated_pull_lbf": 26.25,
-    "magnet_hole_dia_mm": 6.5,
+    "magnet_hole_dia_mm": 7.0,
     "part_nos": {
       "magnet": {
-        "plain": "MM-C-32",
+        "plain": "3506K64",
         "black": null
       },
       "threadlocker": {
         "plain": "91458A115",
         "black": null
       },
-      "nut_nyloc_thin": {
-        "plain": "NOT VERIFIED",
-        "black": null
-      },
       "nut_hex_jam": {
-        "plain": "NOT VERIFIED",
+        "plain": "91847A029",
+        "black": "98514A029"
+      },
+      "nut_nyloc_thin": {
+        "plain": "90101A230",
         "black": null
       },
       "nut_hex_std": {
@@ -627,7 +628,7 @@
         "black": null
       },
       "nut_nyloc_std": {
-        "plain": "93625A250",
+        "plain": "NOT VERIFIED",
         "black": null
       },
       "nut_nyloc_flange": {
@@ -648,22 +649,22 @@
       }
     },
     "finish": "black",
-    "magnet_bearing_area_mm2": 771.0646469154449,
-    "washer_bearing_area_mm2": 80.92742675647307,
-    "washer_oversize_bearing_area_mm2": 222.29909616801373,
-    "specified_bearing_area_mm2": 45.35674393620264,
-    "specified_bearing_psi": 373.38328394606253,
-    "nut_bearing_area_mm2": 45.35674393620264,
-    "washer_bearing_gain": 1.7842424242424242,
-    "nut_bearing_psi": 373.38328394606253,
-    "washer_bearing_psi": 209.26712585292228,
-    "magnet_bearing_psi": 21.963722585062502,
+    "magnet_bearing_area_mm2": 773.320703139804,
+    "washer_bearing_area_mm2": 157.92247976544255,
+    "washer_oversize_bearing_area_mm2": 466.69734984048023,
+    "specified_bearing_area_mm2": 58.50246841453044,
+    "specified_bearing_psi": 289.48265703936846,
+    "nut_bearing_area_mm2": 58.50246841453044,
+    "washer_bearing_gain": 2.699415666471585,
+    "nut_bearing_psi": 289.48265703936846,
+    "washer_bearing_psi": 107.23900755075343,
+    "magnet_bearing_psi": 21.899646461344435,
     "magnet_shear_lbf": 5.25,
     "magnet_tension_sf": 15.912521176651781,
-    "neck_stress_psi": 547.3540843828844,
-    "neck_sf": 65.77095344157024,
-    "body_weak_axis_stress_psi": 645.7006628344687,
-    "body_weak_axis_sf": 55.753388639820756,
+    "neck_stress_psi": 546.0860025653227,
+    "neck_sf": 65.92368204071242,
+    "body_weak_axis_stress_psi": 642.6880625413064,
+    "body_weak_axis_sf": 56.01473264906991,
     "flat_gap_by_fridge_radius_mm": {
       "3": 0.0,
       "4": 0.2416369055210984,
@@ -685,12 +686,12 @@
       "20": 4.9279284065363385
     },
     "worst_flat_gap_mm": 4.9279284065363385,
-    "arm_pad_thickness_mm": 8.0,
+    "arm_pad_thickness_mm": 7.9375,
     "arm_pad_budget_mm": 3.463462312469076,
     "fridge_corner_radius_envelope_mm": 15.0,
     "max_arm_reach_mm": 454.0,
     "max_fridge_corner_radius_covered_mm": 25.0,
-    "bottom_pad_thickness_mm": 8.0,
+    "bottom_pad_thickness_mm": 7.9375,
     "power_budget_w": 63.0,
     "fridge_height_mm": 1743.07,
     "screen_centre_height_mm": 1331.07,
@@ -717,7 +718,7 @@
       25.0
     ],
     "rear_face_feature_radius_mm": 87.5,
-    "cut_length_mm": 4404.905626385153,
+    "cut_length_mm": 4428.467571287076,
     "plate_area_mm2": 155771.88987648065,
     "bounding_area_mm2": 229030.63500000004
   }

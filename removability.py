@@ -39,7 +39,7 @@ BUMP_MARGIN = 1.5          # slide resistance must exceed the bump by this much 
 ONE_HAND_LBF = 45.0        # a deliberate one-hand pull or push
 TWO_HAND_LBF = 100.0       # a determined two-hand pull at waist to chest height
 COUNTS = (4, 6, 8)
-TYPES = ("MM-C-25", "MM-C-32", "MM-C-36")
+TYPES = ("MM-C-25", "3506K64", "MM-C-36")
 ACTS = [("slide front-to-back", "slide it front-to-back", "bump / reposition"),
         ("press the screen edge to twist it off", "press the screen edge to twist it off", "edge knock"),
         ("lift straight up (weight + shear)", "lift the whole thing straight UP", "take it off"),

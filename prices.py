@@ -64,11 +64,16 @@ P: dict[str, Price] = {p.key: p for p in (
     Price("strip", "Backing strip (part D), 20 mm wide, BARE CRS", 8.11, "each",
           "SendCutSend", "2026-08-31", "qty-2 rate; too narrow for powder coat — fit-or-not undecided"),
     # McMaster-Carr
-    Price("magnet", "Pot magnet K&J MM-C-32, O32 x 8 mm, M6 male stud, 75 lb", 7.31, "each",
-          "K&J Magnetics", "2026-09-08", "5-9 pc break ($7.64 single); SETTLED 2026-09-02 on magnet_economics.svg. "
-          "Stud 10 mm +/-2.5 per the K&J drawing MM-C-32.pdf (read 2026-09-08)"),
+    Price("magnet", "Encased neodymium magnet McMaster 3506K64, 1-17/64 x 5/16 in, N42, 75 lb, 1/4-20 x 3/8 stud", 9.62, "each",
+          "McMaster 3506K64", "2026-09-08",
+          "VENDOR SWITCH 2026-09-08 (one order instead of four). Same disc and rating as the K&J MM-C-32; "
+          "standoff 7.94 = the 5/16 in pad exactly; stud 9.53 READ off McMaster's table"),
+    Price("magnet_kj", "K&J MM-C-32, O32 x 8 mm, M6 male stud, 75 lb — the magnet from 2026-09-02 to 2026-09-08", 7.31, "each",
+          "K&J Magnetics", "2026-09-08", "5-9 pc break; +$7 USPS flat under $100. Stud 10 +/-2.5 per K&J drawing"),
     Price("magnet_o48", "Pot magnet 3506K67, O48 x 11.51, 5/16-18 male stud, 175 lb — SUPERSEDED", 23.92, "each",
           "McMaster 3506K67", "2026-08-27", "the magnet designs 1 and 3 carried until 2026-09-02"),
+    Price("jam_nut_14", "Thin hex jam nut 1/4-20, 18-8, 5/32 in tall, pack of 100", 6.75, "pack of 100",
+          "McMaster 91847A029", "2026-09-08", "READ LOGGED IN. The only nut that fits the 3/8 in stud behind the 0.187 plate (8.72 stack)"),
     Price("m6_nyloc_thin", "M6-1.0 A2-70 nylon-insert JAM nut (half height), 8 pcs", 2.0, "8",
           "BoltsandNuts M6CHJNTMA2", "2026-09-08",
           "$0.25/pc; height NOT stated — DIN 985-T nominal ~4 mm body; measure on receipt. McMaster has NO thin M6 nyloc: their 'thin-profile' 90453A114 (zinc, 10-pk $4.67) and standard 93625A250 (18-8, 100-pk $11.25) are BOTH 6 mm tall"),
@@ -83,10 +88,10 @@ P: dict[str, Price] = {p.key: p for p in (
           "McMaster 91458A115", "2026-08-27", "the jam nut has no locking feature of its own"),
     Price("primer", "Adhesive primer for the threadlocker (black oxide + stainless)", None, "bottle",
           "McMaster", "", "NOT SOURCED"),
-    Price("vesa_screws", "M4-0.7 x 16 ISO 7380 button head A2-70, 4 pcs", 0.56, "4",
-          "BoltsandNuts M4C16BSHCSA2/D", "2026-09-08", "$0.14/pc; x20 is $0.15/pc if the VESA insert wants it"),
-    Price("spacers", "RAF M0599-4-AL round spacer 4.3 ID x 8.0 OD x 10 mm, 4 pcs", 3.12, "4",
-          "Newark / element14 1874806", "2026-09-08", "$0.78 ea SNIPPET (page blocked); 8.0 OD, not 7 — the stainless twin is M0599-4-SS"),
+    Price("vesa_screws", "M4 x 0.7 x 16 mm button head hex-drive screw, 18-8, pack of 100", 15.5, "pack of 100",
+          "McMaster 92095A194", "2026-09-08", "READ LOGGED IN. Head 7.6 dia x 2.2 tall. 20 mm is 92095A196 $9.47/50 if the VESA insert wants it"),
+    Price("spacers", "Aluminium unthreaded spacer, 8 mm OD x 4.2 mm ID x 10 mm, for M4, 4 pcs", 9.28, "4",
+          "McMaster 94469A046", "2026-09-08", "READ LOGGED IN: $2.32 each at 1-24"),
     Price("foam_hook", "Neoprene foam strip 7/16 in x 2 in, adhesive-backed", 141.83, "10 ft roll",
           "McMaster 93375K678", "2026-08-27", "arm pad, neck strips and bottom pad from one roll"),
     Price("velcro", "VELCRO ONE-WRAP 1/2 in, black", 31.25, "25 yd roll",
@@ -127,18 +132,11 @@ P: dict[str, Price] = {p.key: p for p in (
           "two 5 ft; electro-galvanized, not black. Measure the first slot from the cut end"),
     Price("b_epdm", "EPDM sheet 1/8 in x 12 x 24, adhesive-backed, 60A", 11.26, "sheet",
           "Home Depot / Lowe's Rubber-Cal 31-P16-125-012-024", "2026-09-02", "floor pads AND clamp faces"),
-    Price("arm_skin", "EPDM skin for the ARM PAD, 1/8 in x 12 x 24, adhesive-backed, 60A (same sheet)", 11.26, "sheet",
-          "Home Depot / Lowe's Rubber-Cal 31-P16-125-012-024", "2026-09-02",
-          "DECIDED 2026-09-08 instead of the 4 arm magnets: friction from the hanging weight, mu ~0.6 ESTIMATE. "
-          "If the arm magnets are ever fitted, cut the skin around them or drop it"),
+    Price("arm_skin", "EPDM skin for the ARM PAD: crisscross nonslip EPDM sheet 1/16 in x 12 x 12, adhesive-backed, 60A", 18.46, "sheet",
+          "McMaster 3727T47", "2026-09-08", "READ LOGGED IN; nonslip texture both sides. DECIDED 2026-09-08 instead of the 4 arm magnets. Was Rubber-Cal 1/8 in $11.26 (Home Depot). If the arm magnets are ever fitted, cut the skin around them"),
     Price("arm_grip", "OPTION for the arm skin: McMaster 1621N71 reusable dry-adhesive grip sheet (micro-suction), 9-3/4 x 11-3/4 in, 0.02 in", 22.83, "sheet",
           "McMaster 1621N71", "2026-09-08",
           "READ LOGGED IN 2026-09-08, delivers next day. Foam carrier: microscopic fingers to the fridge top, acrylic to the sponge; one sheet covers the 190 x 180 arm. No holding figure published — slide-test against the EPDM skin and fit the winner"),
-    Price("magnet_mcm", "OPTION (vendor consolidation): McMaster 3506K64 encased neodymium, 1-17/64 in (32.1 mm) x 5/16 in, N42, "
-          "75 lb, 1/4-20 x 3/8 in stud, zinc case", 9.62, "each", "McMaster 3506K64", "2026-09-08",
-          "READ LOGGED IN. Same disc and rating as MM-C-32; standoff 7.94 mm matches 5/16 in foam EXACTLY; stud 9.53 mm "
-          "(shorter than K&J's 10 +/-2.5) so the nut is the 5/32 in thin jam nut 91847A029 (18-8, 100/pk $6.75), no washer, "
-          "no nyloc — the 13/64 in thin nyloc 90101A230 is 0.4 mm too tall. A DESIGN CHANGE: stud thread and fastener catalogue"),
     Price("b_magnet36", "OPTION: K&J MM-C-36 pot magnet, O36 x 8 mm, M6 male stud, 90.4 lb", 9.72, "each",
           "K&J Magnetics", "2026-09-02",
           "NOT in the budget column: 8 mm standoff needs an 8 mm pad no imperial foam gives, and the "
@@ -218,9 +216,9 @@ class Quote:
 
 # The hardware a hook plate needs whichever gauge it is cut at. ONE list, used by 1 and 3.
 def hook_hardware(n_magnets: int) -> Group:
-    """M6 stack for the MM-C-32 (2026-09-02): thin nyloc on a fender washer, dry. No threadlocker."""
+    """1/4-20 stack for the 3506K64 (2026-09-08): thin hex jam nut, no washer, dry. Everything McMaster."""
     return Group("Hook hardware", [
-        Line("m6_nyloc_thin", 1), Line("m6_fender", 1),
+        Line("jam_nut_14", 1),
         Line("vesa_screws", 1), Line("spacers", 1), Line("foam_5_16", 1), Line("arm_skin", 1), Line("velcro", 1),
     ])
 
@@ -251,7 +249,7 @@ def quote_hybrid(n_magnets: int = 8, strut_ft: int = 5) -> Quote:
         Group("Phase 1 — cut steel (this is design 1's plate, thinner, four more holes)",
               [Line("plate_187", 1)]),
         Group("Phase 1 — magnets", [Line("magnet", n_magnets,
-                                          f"K&J MM-C-32 — the {n_magnets} BODY magnets; arm holes cut, not bought")]),
+                                          f"McMaster 3506K64 — the {n_magnets} BODY magnets; arm holes cut, not bought")]),
         hook_hardware(n_magnets),
         Group("Phase 2 — the strut kit, ONLY if the arm is too lively", [
             Line("foot", 2), Line("clamp_bar_q1", 1), Line(strut_key, 2), Line("elevator", 1),
